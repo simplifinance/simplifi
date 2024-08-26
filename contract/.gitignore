@@ -1,5 +1,8 @@
 node_modules
+
+# Secret files
 .env
+.env*.local
 
 # Hardhat files
 /cache
