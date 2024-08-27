@@ -5,7 +5,7 @@ pragma solidity 0.8.24;
 import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
+// import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
 import { ITrustee } from "../apis/ITrustee.sol";
 import { IRouter } from "../apis/IRouter.sol";
 import { ISmartStrategy } from "../apis/ISmartStrategy.sol";
@@ -234,7 +234,7 @@ library RouterLib {
 
   /**
    * @dev Add new member to the pool
-   * Note: `target` is expected to be an instance of the `AccountStrategy`
+   * Note: `target` is expected to be an instance of the `SmartStrategy`
    * @param self: Storage pointer
    * @param poolId: Pool index
    * @param strategy: Strategy to add to the pool.

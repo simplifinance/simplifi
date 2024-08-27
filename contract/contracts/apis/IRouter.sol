@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.18;
 
-import "./Common.sol";
+import { Common } from "./Common.sol";
 
 interface IRouter is Common {
   error InsufficientFund();

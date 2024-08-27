@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import "./Common.sol";
+import { Common } from "./Common.sol";
 
 /**
  * @title ISmartStrategy

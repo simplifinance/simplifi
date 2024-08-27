@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../apis/IAssetClass.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { IAssetClass } from "../apis/IAssetClass.sol";
 
 contract AssetClass is IAssetClass, Ownable {
   uint public totalSupportedAssets;

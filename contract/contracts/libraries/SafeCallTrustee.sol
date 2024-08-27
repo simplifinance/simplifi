@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import "../api/ITrustee.sol";
-import "@openzeppelin/contracts/utils/Address.sol";
+import { ITrustee } from "../api/ITrustee.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
 library SafeCallTrustee {
   using Address for address;

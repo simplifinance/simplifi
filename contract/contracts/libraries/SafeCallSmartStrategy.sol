@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import "@openzeppelin/contracts/utils/Address.sol";
-import "../apis/ISmartStrategy.sol";
+import { Address } from "@openzeppelin/contracts/utils/Address.sol";
+import { ISmartStrategy } from "../apis/ISmartStrategy.sol";
 
 library SafeCallSmartStrategy {
   using Address for address;
