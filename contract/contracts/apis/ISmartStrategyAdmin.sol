@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-interface IStrategyAdmin {
+interface ISmartStrategyAdmin {
   error OperationFailed();
   error RouterNotSet();
   error UpgradeNotReady();

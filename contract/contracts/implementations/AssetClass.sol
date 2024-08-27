@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../apis/IAsset.sol";
+import "../apis/IAssetClass.sol";
 
-contract Assets is IAsset, Ownable {
+contract AssetClass is IAssetClass, Ownable {
   uint public totalSupportedAssets;
   /**
    * @dev Mapping assets address to bool i.e Assets must be contract account

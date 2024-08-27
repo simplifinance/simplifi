@@ -5,11 +5,11 @@ pragma solidity 0.8.24;
 import "./Common.sol";
 
 /**
- * @title ISmartAcount
+ * @title ISmartStrategy
  * @author Simplifinance
  * @notice Interface of the Smart account contract
  */
-interface ISmartAcount is Common {
+interface ISmartStrategy is Common {
   error TransferFailed();
   error AssetIndentifierNotMatch();
 
