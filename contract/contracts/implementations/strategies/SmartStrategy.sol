@@ -3,12 +3,12 @@
 pragma solidity 0.8.24;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ISmartStrategy } from "../../apis/ISmartStategy.sol";
+import { ISmartStrategy } from "../../apis/ISmartStrategy.sol";
 import { Lib } from "../../libraries/Lib.sol";
 import { Utils } from "../../libraries/Utils.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
 
 /**
   @title SmartStategy: 
@@ -23,7 +23,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
     our preference based on the status of the pool they belong.
     Note: Routers don't take actions on account unless triggered by the participants.
 */
-contract SmartStategy is  ISmartStategy, Ownable, ReentrancyGuard {
+contract SmartStategy is  ISmartStrategy, Ownable, ReentrancyGuard {
   using Lib for *;
 
   /// @dev User address
@@ -35,9 +35,9 @@ contract SmartStategy is  ISmartStategy, Ownable, ReentrancyGuard {
    * function other than the constructor.
    * At construction, we make Router contract the owner.
    */
-  constructor (address _router) Ownable(_router) { }
+  constructor (address factory) Ownable(factory) { }
 
-  // Fallback - receive platform asset
+  // Fallback
   receive() external payable {
     (bool d,) = owner().call{value: msg.value}("");
     d.yes("/|/");
@@ -51,23 +51,23 @@ contract SmartStategy is  ISmartStategy, Ownable, ReentrancyGuard {
    * 
    * Note: Smart wallet can only be reactivated by the Router by assigning it to a new
    * user.
-   * @param _newWalletStrategy : New strategy account.
+   * @param _newWSmartStrategy : New strategy account.
    * @param _asset : ERC20 asset
    * @notice Only Router can call.
    */
-  function upgrade(address _newWalletStrategy, address _asset) 
+  function upgrade(address _newWSmartStrategy, address _asset) 
     external 
     onlyOwner 
     returns(bool) 
   {
     Address.functionCall(
-      _newWalletStrategy,
+      _newWSmartStrategy,
       abi.encodeWithSelector(
         bytes4(keccak256(bytes("acceptRekey(address)"))), 
         _asset
       )
     );
-    _tryTransfer(IERC20(_asset).balanceOf(address(this)), address(this).balance, _asset, _newStrategy);
+    _tryTransfer(IERC20(_asset).balanceOf(address(this)), address(this).balance, _asset, _newWSmartStrategy);
 
     return true;
   }
@@ -106,9 +106,8 @@ contract SmartStategy is  ISmartStategy, Ownable, ReentrancyGuard {
   }
 
   /**@dev Reset state variables for a new user.
-   * This function can be called by the deployer. It can be invoked 
+   * This function can be called by the deployer, and can be invoked 
    * multiple times only by the owner. 
-   * @param router_ : Router contract.
    * @notice Where @param newRouter : {New version of Router contract} is not address(0)
    *         is an indication to upgrade the router contract to the latest version.
    */
@@ -118,7 +117,7 @@ contract SmartStategy is  ISmartStategy, Ownable, ReentrancyGuard {
       _transferOwnership(newRouter);
     }
     bool(caller == owner()).yes("Account: Not an Owner");
-    router = router_;
+    // router = newRouter;
 
     return true;
   }

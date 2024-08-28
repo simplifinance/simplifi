@@ -21,7 +21,7 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
   uint private creationFee;
 
   //Address to receive fee
-  address private feeTo;
+  address public feeTo;
 
   // Token contract
   address public token;
@@ -32,8 +32,10 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
   // Asset contract
   address public assetAdmin;
 
-  //Implementation contract
-  address public implementation;
+  /**
+   * @notice An instance of the SmartStrategy deployed beforehand
+   */
+  address public smartStrategyInstance;
 
   /**
    * @dev Strategies already upgraded and not in use
@@ -52,15 +54,21 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
 
   /**
    * @dev Upgraded strategies
-   * mapping of implementation to strategies to bool
+   * mapping of smartStrategyInstance to strategies to bool
    */
   mapping(address => mapping(address => bool)) public upgraded;
 
-  constructor (uint _alcCreationFee, address _feeTo,address _token,address _assetAdmin, ISmartStrategy _implementation) {
+  constructor (
+    uint _alcCreationFee, 
+    address _feeTo,
+    address _token,
+    address _assetAdmin, 
+    ISmartStrategy _smartStrategyInstance
+  ) Ownable(_msgSender()) {
     feeTo = _feeTo;
     token = _token;
     assetAdmin = _assetAdmin;
-    implementation = address(_implementation);
+    smartStrategyInstance = address(_smartStrategyInstance);
     _setCreationFee(_alcCreationFee);
   }
 
@@ -76,7 +84,7 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
   /**@dev Only support asset
    */
   modifier isSupportedAsset(address asset) {
-    require(IAssetClass(assetAdmin).isAssetSupported(asset),"NS");
+    require(IAssetClass(assetAdmin).isSupportedAsset(asset),"NS");
     _;
   }
   
@@ -109,24 +117,33 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
     isStrategy(_msgSender(), false, "User's strategy exist")
     returns(bool) 
   {
-    _createStrategy(creationFee, _msgSender());
+    _createStrategy(msg.value, _msgSender());
     return true;
   }
 
   /**
-   * @dev Create strategy - Internal
-   * @param fee : Upgrade fee.
+   * @dev Create strategy - private function
+   * @param valueSent : Msg.value
    * @param caller : msg.sender
+   * 
+   * @notice Even if user is trying to rekey or upgrade smartstrategy, same amount of fee is required
+   * for successful upgrade.
    */
-  function _createStrategy(uint256 fee, address caller)internal returns(address strategy) {
-    require(msg.value >= fee, "AccountAdmin: Insufficient value");
-    (bool done,) = feeTo.call{value: fee}("");
-    if(!done) revert OperationFailed();
+  function _createStrategy(uint256 valueSent, address caller)private returns(address strategy) {
+    uint fee = creationFee;
+    if(valueSent < fee) {
+      revert InsufficientMsgValue(valueSent);
+    }
+    if(valueSent > 0) {
+      (bool done,) = feeTo.call{value: valueSent}("");
+      require(done, "Fallback not executed: Check FeeTo");
+    }
     if(router == address(0)) revert RouterNotSet();
     totalStrategies ++;
-    strategy = implementation.cloneDeterministic(keccak256(abi.encodePacked(totalStrategies, caller)));
+    address ssi = smartStrategyInstance;
+    strategy = ssi.cloneDeterministic(keccak256(abi.encodePacked(totalStrategies, caller)));
     _activateStrategy(caller, strategy);
-    upgraded[implementation][strategy] = true;
+    upgraded[ssi][strategy] = true;
     ISmartStrategy(strategy).safeActivateStrategy(router);
     // safeSetVariables(router, token);
   }
@@ -138,7 +155,7 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
    * actual index - 1 otherwise a wrong strategy will be picked or 
    * execution fails.
    * 
-   * If there are dormant strategy, user could safe some gas by selecting 
+   * If there are dormant strategies , user could safe some gas by selecting 
    * from the list instead of creating a new one.
    */
   function handpickStrategy(uint index) 
@@ -148,8 +165,12 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
   {
     address caller = _msgSender();
     address strategy = _searchDormant(index, dormantStrategies.length);
-    _activateStrategy(caller, strategy);
-    ISmartStrategy(strategy).safeActivateStrategy(router);
+    if(strategy != address(0)) {
+      _activateStrategy(caller, strategy);
+      ISmartStrategy(strategy).safeActivateStrategy(router);
+    } else {
+      revert StrategyWasDeleted(index);
+    }
     
     return true;
   }
@@ -188,34 +209,35 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
     assetAdmin = newAssetAdmin;
   }
 
-  //Set new implementation address : onlyOwner
-  function setImplementation(address newImplementation) public onlyOwner {
-    if(newImplementation == address(0)) revert ZeroAddress(newImplementation);
-    router = newImplementation;
+  //Set new smartStrategyInstance address : onlyOwner function
+  function setdeployedInstance(address newInstance) public onlyOwner {
+    if(newInstance == address(0)) revert ZeroAddress(newInstance);
+    smartStrategyInstance = newInstance;
   }
 
-  /**@dev Upgrade to a new account.
-   * We ensure that users are running a copy of the latest implementation.
-   * Note: When upgraded[implementation][current.active] = true, it means 
-   * there's no new implementation contract. Until the implementation address
+  /**@dev Upgrade to a new smartstrategy wallet.
+   * This function ensures users are running a copy of the latest smartStrategyInstance.
+   * Note: When upgraded[smartStrategyInstance][current.active] is true, it means 
+   * there's no new version of smartStrategyInstance contract. Until the smartStrategyInstance address
    * is upgraded, upgrading strategy is not possible.
    */
   function rekeyStrategy(address _asset) 
     external
+    payable
     isStrategy(_msgSender(), true, "Strategy not found")
     isSupportedAsset(_asset)
     returns(bool) 
   {
     address msgSender = _msgSender();
-    address current = strategies[msgSender].active;
-    if(upgraded[implementation][current]) revert UpgradeNotReady();
-    upgraded[implementation][current] = true;
-    address newStrategy = _createStrategy(creationFee/2, msgSender);
-    _deactivateStrategy(msgSender, current);
+    address ssi = smartStrategyInstance;
+    address oldStrategy = strategies[msgSender].active;
+    if(upgraded[ssi][oldStrategy]) revert UpgradeNotReady();
+    address newStrategy = _createStrategy(msg.value, msgSender);
+    _deactivateStrategy(msgSender, oldStrategy);
     _activateStrategy(msgSender, newStrategy);
-    ISmartStrategy(current).safeUpgrade(newStrategy, _asset);
+    ISmartStrategy(oldStrategy).safeUpgrade(newStrategy, _asset);
 
-    dormantStrategies.push(current);
+    dormantStrategies.push(oldStrategy);
 
     return true;
   }
@@ -230,33 +252,42 @@ abstract contract AbstractStrategyAdmin is ISmartStrategyAdmin, Common, Ownable 
 
   /**
    * @dev Deactivate strategy
-   * @param account : EOA
+   * @param user : EOA
    */
-  function deactivateStrategy(address account) 
+  function deactivateStrategy(address user) 
     public
     onlyOwner
-    isStrategy(account, true, "User is deactivated")
+    isStrategy(user, true, "User already deactivated")
   {
-    Strategy memory alcs = strategies[account];
-    if(alcs.deactivated == address(0)) revert NoStrategyFound();
-    _deactivateStrategy(account, alcs.active);
+    Strategy memory alcs = strategies[user];
+    _deactivateStrategy(user, alcs.active);
   }
 
-  function _deactivateStrategy(address account, address strategy) private {
-    // if(alcs.active == address(0)) revert NoStrategyFound();
-    // Strategy memory alcs = strategies[account];
-    strategies[account] = Strategy(address(0), strategy);
+  function _deactivateStrategy(address user, address strategy) private {
+    strategies[user] = Strategy({active: address(0), deactivated: strategy});
   }
 
-  ///@dev Activate strategy
-  function activateStrategy(address account) 
+  /**
+   * @dev Utility to activate strategy. 
+   * @param user : Target account to active
+   * @notice Only owner function. Account with owner permission can use this 
+   *          method to create new strategy for user if none was found.
+   */
+  function activateStrategy(address user) 
     public
+    payable
     onlyOwner
-    isStrategy(account, false, "User already active")
+    isStrategy(user, false, "User already active")
+    returns(bool)
   {
-    Strategy memory alcs = strategies[account];
-    if(alcs.deactivated == address(0)) revert NoStrategyFound();
-    _activateStrategy(account, alcs.deactivated);
+    Strategy memory alcs = strategies[user];
+    if(alcs.active == address(0) && alcs.deactivated == address(0)) {
+      _createStrategy(msg.value, user);
+    } else {
+      require(alcs.deactivated != address(0), "User was deactivated");
+      _activateStrategy(user, alcs.deactivated);
+    }
+    return true;
   }
 
   function _activateStrategy(address account, address strategy) private {

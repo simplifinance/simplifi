@@ -6,12 +6,14 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 
 contract AssetClass is IAssetClass, Ownable {
-  uint public totalSupportedAssets;
+  address[] private assets;
   /**
    * @dev Mapping assets address to bool i.e Assets must be contract account
    * and must be supported
    */
   mapping(address => bool) private supportedAssets;
+
+  mapping(address => bool) public listed;
 
   /**
    * @dev Asset must be supported before they can be used.
@@ -21,7 +23,7 @@ contract AssetClass is IAssetClass, Ownable {
     _;
   }
 
-  constructor(address _asset) {
+  constructor(address _asset) Ownable(_msgSender()) {
     if(_asset != address(0)) {
       _supportAsset(_asset);
     }
@@ -33,6 +35,10 @@ contract AssetClass is IAssetClass, Ownable {
    * @param _asset : Asset to add to list of supported asset
    */
   function supportAsset(address _asset) public onlyOwner {
+    if(!listed[_asset]){
+      listed[_asset] = true;
+      assets.push(_asset);
+    }
     if(!_isAssetSupported(_asset)){
       _supportAsset(_asset);
     }
@@ -40,7 +46,6 @@ contract AssetClass is IAssetClass, Ownable {
 
   function _supportAsset(address _asset) private {
     supportedAssets[_asset] = true;
-    totalSupportedAssets ++;
   }
 
   /**
@@ -50,7 +55,6 @@ contract AssetClass is IAssetClass, Ownable {
    */
   function unsupportAsset(address newAsset) public onlyOwner {
     supportedAssets[newAsset] = false;
-    totalSupportedAssets --;
   }
 
   function _isAssetSupported(address _asset) internal view returns(bool) {
@@ -67,11 +71,9 @@ contract AssetClass is IAssetClass, Ownable {
   /**
    * @dev Returns a list of supported assets
    */
-  function getSupportedAssets() external view returns(address[] memmory _assets) {
-    uint totalAssets = totalSupportedAssets;
-    for(uint i = 0; i < totalAssets; i++) {
-
-    }
+  function getSupportedAssets() external view returns(address[] memory _assets) {
+    _assets = assets;
+    return _assets;
   }
 
 }

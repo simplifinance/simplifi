@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { ITrustee } from "../api/ITrustee.sol";
+import { ITrustee } from "../apis/ITrustee.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
 library SafeCallTrustee {
@@ -39,7 +39,7 @@ library SafeCallTrustee {
     // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
     // the target address contains contract code and also asserts for success in the low-level call.
 
-    bytes memory returndata = address(trustee).functionCall(data, "SafeCallTrustee: low-level call failed");
+    bytes memory returndata = address(trustee).functionCall(data);
     if (returndata.length > 0) {
       // Return data is optional
       require(abi.decode(returndata, (bool)), "SafeCallTrustee: operation failed");

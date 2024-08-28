@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.18;
+pragma solidity 0.8.24;
 
 import { Common } from "./Common.sol";
 
-interface IRouter is Common {
+interface IFactory is Common {
   error InsufficientFund();
   error AllMemberIsPaid();
   error QuorumIsInvalid();

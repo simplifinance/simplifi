@@ -3,15 +3,15 @@
 pragma solidity 0.8.24;
 
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { ISmartWalletStrategy } from "../../../apis/ISmartWalletStrategy.sol";
-import { Lib } from "../../../apis/libraries/Lib.sol";
+import { ISmartStrategy } from "../../../apis/ISmartStrategy.sol";
+import { Lib } from "../../../libraries/Lib.sol";
 import { Utils } from "../../../libraries/Utils.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
-  @title SmartWalletStrategyV2: 
+  @title SmartStrategyV2: 
     Interactive account is a separate entity distinct from participants. 
     This account is created and managed by the Strategy admin contract.
     All interactions from the user must go through the admin.
@@ -24,7 +24,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
     our preference based on the status of the pool they belong.
     Note: Routers don't take actions on account unless triggered by the participants.
 */
-contract SmartWalletStrategyV2 is  ISmartWalletStrategy, ReentrancyGuard, Ownable {
+contract SmartStrategyV2 is  ISmartStrategy, ReentrancyGuard, Ownable {
   using Lib for *;
 
   /// @dev Router contract
@@ -35,7 +35,7 @@ contract SmartWalletStrategyV2 is  ISmartWalletStrategy, ReentrancyGuard, Ownabl
    * for users, it makes sense that we use set the variable using
    * function other than the constructor.
    */
-  constructor () {
+  constructor (address factory) Ownable(factory) {
     renounceOwnership();
   }
 

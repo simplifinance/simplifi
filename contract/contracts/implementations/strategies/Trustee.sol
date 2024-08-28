@@ -2,15 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { SafeCallERC20 } from "../../libraries/SafeCallERC20.sol";
+import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { ITrustee } from "../../apis/ITrustee.sol";
 import { ISmartStrategyAdmin } from "../../apis/ISmartStrategyAdmin.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Trustee is 
-  ITrustee,
-  Ownable,
-{
+contract Trustee is ITrustee, Ownable {
   using SafeCallERC20 for IERC20;
 
   error InvalidAddress(address);
@@ -77,8 +74,6 @@ contract Trustee is
    */
   constructor () Ownable(_msgSender()) {}
   
-  function __Trustee_init_unchained() internal initializer {}
-
   /**
    * @dev Get strategy
   */

@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "../../apis/Common.sol";
-import { ISmartStrategyAdmin } from "../../apis/ISmartStrategyAdmin.sol";
+// import { Common } from "../../apis/Common.sol";
+// import { ISmartStrategyAdmin } from "../../apis/ISmartStrategyAdmin.sol";
 import { ISmartStrategy } from "../../apis/ISmartStrategy.sol";
-import { SafeCallSmartStrategy } from "../../libraries/SafeCallSmartStrategy.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
+// import { SafeCallSmartStrategy } from "../../libraries/SafeCallSmartStrategy.sol";
+// import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+// import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
 import { AbstractStrategyAdmin } from "../../abstracts/AbstractStrategyAdmin.sol";
 
 /**@title SmartStrategyAdmin: A standalone contract that manages account creation, 
@@ -15,7 +15,7 @@ import { AbstractStrategyAdmin } from "../../abstracts/AbstractStrategyAdmin.sol
 
    Author: Simplify
  */
-contract StrategyAdmin is StrategyAdminAbstract {
+contract SmartStrategyAdmin is AbstractStrategyAdmin {
 
   constructor (
     uint _alcCreationFee,
@@ -23,10 +23,12 @@ contract StrategyAdmin is StrategyAdminAbstract {
     address _token,
     address _assetAdmin, 
     ISmartStrategy _implementation
-  ) StrategyAdminAbstract(_alcCreationFee, _feeTo, _token, _assetAdmin, _implementation) {}
+  ) AbstractStrategyAdmin(_alcCreationFee, _feeTo, _token, _assetAdmin, _implementation) {}
 
-
-  receive() external payable {}
+  receive() external payable {
+    (bool forwarded,) = feeTo.call{value:msg.value}("");
+    require(forwarded, "");
+  }
   
   /**@dev Strategy owner withdraw from strategy.
     Only ERC20 withdrawal is allowed.
@@ -43,12 +45,6 @@ contract StrategyAdmin is StrategyAdminAbstract {
   /// Returns smart wallet for 'user'
   /// @param user : User Address
   function getStrategy(address user) external view returns(address) { 
-    return _getStrategy(account);
+    return _getStrategy(user);
   }
 }
-
-
-// safeCloseTo(
-//     ISmartStrategy strategy,
-//     address account
-//   )

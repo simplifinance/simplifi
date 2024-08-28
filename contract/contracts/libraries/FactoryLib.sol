@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import { Counters } from "@openzeppelin/contracts/utils/Counters.sol";
+import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
+import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 // import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
 import { ITrustee } from "../apis/ITrustee.sol";
-import { IRouter } from "../apis/IRouter.sol";
+import { IFactory } from "../apis/IFactory.sol";
 import { ISmartStrategy } from "../apis/ISmartStrategy.sol";
 import { Common } from "../apis/Common.sol";
 import { SafeCallSmartStrategy } from "../libraries/SafeCallSmartStrategy.sol";
@@ -24,11 +24,11 @@ import { Utils } from "../libraries/Utils.sol";
   * @param positions : Reverse map of strategies to poolId to positions on the list.
 */
 struct Data {
-  IRouter.ContractData pData;
+  IFactory.ContractData pData;
   Counters.Counter poolCount; 
-  mapping(uint => ICommon.Pool) pools;
+  mapping(uint => Common.Pool) pools;
   mapping(uint256 => bool) amountExist; 
-  mapping(uint => ICommon.StrategyInfo[]) strategies;
+  mapping(uint => Common.StrategyInfo[]) strategies;
   mapping(address => mapping(uint => uint)) positions;
   address trustee;
 }
@@ -41,14 +41,14 @@ struct Def {
   address zeroAddr;
 }
 
-library RouterLib {
+library FactoryLib {
   using Utils for *;
   using SafeMath for uint256;
   using SafeCallTrustee for ITrustee;
   using SafeCallSmartStrategy for ISmartStrategy;
   using Counters for Counters.Counter;
 
-  event AllGh(uint poolId, ICommon.Pool pool);
+  event AllGh(uint poolId, Common.Pool pool);
 
   /**@dev Get the positions of strategy on the list
     @param self : Storage of type mappping
@@ -60,7 +60,7 @@ library RouterLib {
 
   /**@dev Return number of members already in the pool
    */
-  function _currentParticipants(mapping(uint => ICommon.StrategyInfo[]) storage self, uint poolId) internal view returns(uint _return) {
+  function _currentParticipants(mapping(uint => Common.StrategyInfo[]) storage self, uint poolId) internal view returns(uint _return) {
     _return = self[poolId].length;
   }
 
@@ -80,7 +80,7 @@ library RouterLib {
       `_generatePosition` must be invoked before adding a new data 
       to the strategies array.
    */
-  function _generatePosition(mapping(uint => ICommon.StrategyInfo[]) storage self, uint poolId) internal view returns(uint16 _return) {
+  function _generatePosition(mapping(uint => Common.StrategyInfo[]) storage self, uint poolId) internal view returns(uint16 _return) {
     _return = uint16(self[poolId].length);
   }
 
@@ -93,7 +93,7 @@ library RouterLib {
     updated otherwise use `_addStrategyInfoself.strategies, info, poolId, position`. The position must have 
     be generated.
    */
-  function _setStrategyInfo(mapping(uint => ICommon.StrategyInfo[]) storage self, ICommon.StrategyInfo memory info, uint poolId, uint16 position) private {
+  function _setStrategyInfo(mapping(uint => Common.StrategyInfo[]) storage self, Common.StrategyInfo memory info, uint poolId, uint16 position) private {
     self[poolId][position] = info;
   }
 
@@ -103,7 +103,7 @@ library RouterLib {
     @param poolId : Pool id
     @param position : Position of Strategy 
    */
-  function _getStrategyInfo(mapping(uint => ICommon.StrategyInfo[]) storage self, uint poolId, uint16 position) internal view returns(ICommon.StrategyInfo memory info) {
+  function _getStrategyInfo(mapping(uint => Common.StrategyInfo[]) storage self, uint poolId, uint16 position) internal view returns(Common.StrategyInfo memory info) {
     info = self[poolId][position];
   }
 
@@ -114,7 +114,7 @@ library RouterLib {
     Note: This utility should only be used when the array is not 
     updated otherwise use `_setStrategyInfo` 
    */
-  function _addStrategyInfo(mapping(uint => ICommon.StrategyInfo[]) storage self, ICommon.StrategyInfo memory info, uint poolId) private {
+  function _addStrategyInfo(mapping(uint => Common.StrategyInfo[]) storage self, Common.StrategyInfo memory info, uint poolId) private {
     self[poolId].push(info);
   }
 
@@ -129,7 +129,7 @@ library RouterLib {
     Data storage self,
     uint poolId,
     address strategy
-  ) internal view returns(ICommon.StrategyInfo memory info) {
+  ) internal view returns(Common.StrategyInfo memory info) {
     info = self.strategies[poolId][_getPosition(self.positions, strategy, poolId)];
     info.isMember.assertTrue("Not A Member");
     // info = getStrategyInfo(strategy, poolId);
@@ -146,7 +146,7 @@ library RouterLib {
     Data storage self,
     uint poolId,
     address strategy
-  ) internal view returns(ICommon.StrategyInfo memory info) {
+  ) internal view returns(Common.StrategyInfo memory info) {
     info = self.strategies[poolId][_getPosition(self.positions, strategy, poolId)];
     // require(!info.isMember, "Is A Member");
     // info.isMember.assertFalse("Is A Member");
@@ -155,13 +155,13 @@ library RouterLib {
 
   /**@dev Check if all participants have received financial help
   */
-  function allIsGh(mapping(uint => ICommon.Pool) storage self, uint poolId) internal view returns(bool) {
-    ICommon.Pool memory pool = self[poolId];
+  function allIsGh(mapping(uint => Common.Pool) storage self, uint poolId) internal view returns(bool) {
+    Common.Pool memory pool = self[poolId];
     return pool.allGh == pool.uints.quorum;
   }
 
   ///@dev Returns all uint256s related data in pool at poolId.
-  function _fetchPoolData(Data storage self, uint poolId) internal view returns (ICommon.Pool memory _return) {
+  function _fetchPoolData(Data storage self, uint poolId) internal view returns (Common.Pool memory _return) {
     _return = self.pools[poolId];
   }
 
@@ -189,19 +189,19 @@ library RouterLib {
   /**@dev Check if pool is filled
    */
   function _isPoolFilled(Data storage self, uint poolId) internal view returns(bool) {
-    ICommon.Pool memory pool = self.pools[poolId];
+    Common.Pool memory pool = self.pools[poolId];
     return self.strategies[poolId].length == pool.uints.quorum;
   }
 
   /**@dev Increment participant selector
   */
-  function _incrementSelector(mapping(uint => ICommon.Pool) storage self, uint poolId) private {
+  function _incrementSelector(mapping(uint => Common.Pool) storage self, uint poolId) private {
     self[poolId].uints.selector ++;
   }
 
   /**@dev Increment allGh when one member get finance
   */
-  function _incrementAllGh(mapping(uint => ICommon.Pool) storage self, uint poolId) private {
+  function _incrementAllGh(mapping(uint => Common.Pool) storage self, uint poolId) private {
     self[poolId].allGh ++;
   }
 
@@ -219,7 +219,7 @@ library RouterLib {
     @param self: Storage of type mapping
     @param poolId : Pool index
    */
-  function _resetPoolBalance(mapping(uint => ICommon.Pool) storage self, uint poolId) private {
+  function _resetPoolBalance(mapping(uint => Common.Pool) storage self, uint poolId) private {
     self[poolId].uint256s.currentPool = _def().zero;
   }
 
@@ -227,8 +227,8 @@ library RouterLib {
     @param self: Storage of type mapping
     @param poolId : Pool index
    */
-  function _replenishPoolBalance(mapping(uint => ICommon.Pool) storage self, uint poolId) private {
-    ICommon.Pool memory pool = self[poolId];
+  function _replenishPoolBalance(mapping(uint => Common.Pool) storage self, uint poolId) private {
+    Common.Pool memory pool = self[poolId];
     self[poolId].uint256s.currentPool = pool.uint256s.unit.mul(pool.uints.quorum);
   }
 
@@ -250,7 +250,7 @@ library RouterLib {
   ) private returns(uint16 position) { 
     position = _generatePosition(self.strategies, poolId);
     _setPosition(self.positions, strategy, position, poolId);
-    ICommon.StrategyInfo memory info;
+    Common.StrategyInfo memory info;
     info.isAdmin = isAdmin;
     info.isMember = isMember;
     info.id = strategy;
@@ -263,32 +263,32 @@ library RouterLib {
    * @param cpp: This is a struct of data much like an object. We use it to compress a few parameters
    *              instead of overloading _createPool.
    * @param poolId: Pool we are currently dealing with.
-   * @param _unlock: Function as parameter. It should unlock a function with related `ICommon.FuncTag'
+   * @param _unlock: Function as parameter. It should unlock a function with related `Common.FuncTag'
    *                 when invoked.
    * @notice We first check that the duraetion given by the admin should not be zero.
    * Note: `.assertChained3` is simply making tripple boolean checks.
    */
   function _createPool(
     Data storage self,
-    ICommon.CreatePoolParam memory cpp,
-    function (uint, ICommon.FuncTag) internal _unlock,
+    Common.CreatePoolParam memory cpp,
+    function (uint, Common.FuncTag) internal _unlock,
     address strategy,
     uint poolId,
     uint16 position
-  ) private returns(ICommon.Pool memory pool, ICommon.StrategyInfo memory info, uint16 _position) {
+  ) private returns(Common.Pool memory pool, Common.StrategyInfo memory info, uint16 _position) {
     Def memory _d = _def();
     _compareBalance(cpp.asset, strategy, cpp.value);
     // unchecked{
     //   cpp.value = cpp.value * cpp.value._decimals(cpp.asset);
     // }
     // Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration < type(uint8).max, "Invalid duration"); // Please uncomment this line after you have completed the testing.
-    self.pools[poolId] = ICommon.Pool(
-      ICommon.Uints(cpp.quorum, _d.zero, cpp.ccr, cpp.duration * 1 hours),
-      ICommon.Uint256s(cpp.value, cpp.value),
-      ICommon.Addresses(cpp.asset, _d.zeroAddr),
+    self.pools[poolId] = Common.Pool(
+      Common.Uints(cpp.quorum, _d.zero, cpp.ccr, cpp.duration * 1 hours),
+      Common.Uint256s(cpp.value, cpp.value),
+      Common.Addresses(cpp.asset, _d.zeroAddr),
       _d.zero
     );
-    _unlock(poolId, ICommon.FuncTag.JOIN);
+    _unlock(poolId, Common.FuncTag.JOIN);
     pool = _fetchPoolData(self, poolId);
     info = _getStrategyInfo(self.strategies, poolId, position);
     ISmartStrategy(strategy).safeWithdrawAsset(cpp.asset, self.trustee, cpp.value);
@@ -303,7 +303,7 @@ library RouterLib {
    */
   function _compareBalance(address asset, address strategy, uint contributionAmount) internal view returns(uint256 spendable) {
     spendable = IERC20(asset).balanceOf(strategy);
-    if(spendable < contributionAmount) revert IRouter.InsufficientFund();
+    if(spendable < contributionAmount) revert IFactory.InsufficientFund();
   }
 
   /**
@@ -319,19 +319,19 @@ library RouterLib {
    * @param cpp: This is a struct of data much like an object. We use it to compress a few parameters
    *              instead of overloading _createPool.
    * @param getStrategy : Return an interactive standalone account strategy.
-   * @param _unlock: Function as parameter. It should unlock a function with related `ICommon.FuncTag'
+   * @param _unlock: Function as parameter. It should unlock a function with related `Common.FuncTag'
    *                 when invoked.
    * Note: Only in private bands we ensure that amount selected for contribution does not exist.
    *       This is to ensure orderliness in the system, timeliness, and efficiency.
    */
   function createPermissionlessPool( 
     Data storage self, 
-    ICommon.CreatePoolParam memory cpp,
+    Common.CreatePoolParam memory cpp,
     function (address) internal view returns(address) getStrategy,
-    function (uint, ICommon.FuncTag) internal _unlock
+    function (uint, Common.FuncTag) internal _unlock
   )
     internal
-    returns (ICommon.CreatePoolReturnValueParam memory cpr)
+    returns (Common.CreatePoolReturnValueParam memory cpr)
   {
     Def memory _d = _def();
     address strategy = _validateStrategy(cpp.members[0], getStrategy);
@@ -359,10 +359,10 @@ library RouterLib {
    */
   function createPermissionedPool(
     Data storage self,
-    ICommon.CreatePermissionedPoolInputParam memory cpi
+    Common.CreatePermissionedPoolInputParam memory cpi
   ) 
     internal
-    returns (ICommon.CreatePoolReturnValueParam memory cpr) 
+    returns (Common.CreatePoolReturnValueParam memory cpr) 
   {
     Def memory _d = _def();
     cpr.poolId = _generateGroupID(self);
@@ -393,12 +393,12 @@ library RouterLib {
   */
   function addToBand(
     Data storage self,
-    ICommon.AddTobandParam memory abp
+    Common.AddTobandParam memory abp
   )
     internal
-    returns (ICommon.Pool memory _pool, ICommon.StrategyInfo memory info) 
+    returns (Common.Pool memory _pool, Common.StrategyInfo memory info) 
   {
-    ICommon.Pool memory pool = _fetchPoolData(self, abp.poolId);
+    Common.Pool memory pool = _fetchPoolData(self, abp.poolId);
     address strategy = _validateStrategy(_msgSender(), abp.getStrategy);
     Def memory _d = _def(); 
 
@@ -415,8 +415,8 @@ library RouterLib {
     }
 
     if(_isPoolFilled(self, abp.poolId)) {
-      abp.lock(abp.poolId, ICommon.FuncTag.JOIN);
-      abp.unlock(abp.poolId, ICommon.FuncTag.GET);
+      abp.lock(abp.poolId, Common.FuncTag.JOIN);
+      abp.unlock(abp.poolId, Common.FuncTag.GET);
       _setTurnTime(self, strategy, abp.poolId);
     }
     _compareBalance(pool.addrs.asset, strategy, pool.uint256s.unit);
@@ -442,7 +442,7 @@ library RouterLib {
    * process in favor of the current caller provided they satisfy a few 
    * conditions.
     * @param self: Storage
-    * @param upm : Parameter of type ICommon.UpdateMemberDataParam
+    * @param upm : Parameter of type Common.UpdateMemberDataParam
     * Note: 
   *   position = exp.position;
       If the caller is not the next on the queue to getfinance
@@ -450,10 +450,10 @@ library RouterLib {
   */
   function _updateMemberData(
     Data storage self,
-    ICommon.UpdateMemberDataParam memory upm
+    Common.UpdateMemberDataParam memory upm
   ) 
     private 
-    returns (ICommon.StrategyInfo memory exp) 
+    returns (Common.StrategyInfo memory exp) 
   {
     Def memory _d = _def();
     _resetPoolBalance(self.pools, upm.poolId);
@@ -471,7 +471,7 @@ library RouterLib {
     uint colBals = self.pData.token.computeCollateral(strategy, upm.pool.uints.ccr, upm.getPriceInUSD(), upm.pool.uint256s.currentPool);
     self.pools[upm.poolId].addrs.lastPaid = strategy;
     _incrementSelector(self.pools, upm.poolId);
-    exp = ICommon.StrategyInfo(
+    exp = Common.StrategyInfo(
       exp.isMember,
       exp.isAdmin,
       _now().add(upm.pool.uints.duration),
@@ -509,12 +509,12 @@ library RouterLib {
    */
   function _swapStrategyInfo(
     Data storage self,
-    ICommon.StrategyInfo memory _expInfo, 
+    Common.StrategyInfo memory _expInfo, 
     uint16 _expPos,
     address _expStrategy,
     address _actualStrategy,
     uint poolId
-  ) private returns(ICommon.StrategyInfo memory _actInfo, uint16 _actPos) {
+  ) private returns(Common.StrategyInfo memory _actInfo, uint16 _actPos) {
     _actPos = _getPosition(self.positions, _actualStrategy, poolId);
     _actInfo = _getStrategyInfo(self.strategies, poolId, _actPos);
     self.strategies[poolId][_actPos] = _expInfo;
@@ -535,25 +535,25 @@ library RouterLib {
   function getFinance(
     Data storage self,
     uint poolId,
-    function (uint, ICommon.FuncTag) internal lock,
-    function (uint, ICommon.FuncTag) internal unlock,
+    function (uint, Common.FuncTag) internal lock,
+    function (uint, Common.FuncTag) internal unlock,
     function (address) internal view returns(address) getStrategy,
     function () internal returns(uint) getPriceInUSD
   ) 
     internal
-    returns(ICommon.StrategyInfo memory info)
+    returns(Common.StrategyInfo memory info)
   {
-    lock(poolId, ICommon.FuncTag.GET);
-    unlock(poolId, ICommon.FuncTag.PAYBACK);
-    ICommon.Pool memory pool = _fetchPoolData(self, poolId);
-    if(pool.allGh == pool.uints.quorum) revert IRouter.AllMemberIsPaid();
+    lock(poolId, Common.FuncTag.GET);
+    unlock(poolId, Common.FuncTag.PAYBACK);
+    Common.Pool memory pool = _fetchPoolData(self, poolId);
+    if(pool.allGh == pool.uints.quorum) revert IFactory.AllMemberIsPaid();
     _incrementAllGh(self.pools, poolId);
     bool(pool.uint256s.currentPool >= (pool.uint256s.unit.mul(pool.uints.quorum))).assertTrue("Pool not complete");
 
     uint mFee = pool.uint256s.currentPool.computeFee(self.pData.makerRate);
     info = _updateMemberData(
       self,
-      ICommon.UpdateMemberDataParam(
+      Common.UpdateMemberDataParam(
         self.strategies[poolId][pool.uints.selector].id,
         poolId,
         pool.uint256s.currentPool,
@@ -570,11 +570,11 @@ library RouterLib {
    * @param self : Storage
    * @param poolId: Pool id
    */
-  function _enquireLiquidation(Data storage self, uint poolId) internal view returns (ICommon.Liquidation memory _liq, bool defaulted) {
-    ICommon.Pool memory _p = _fetchPoolData(self, poolId);
+  function _enquireLiquidation(Data storage self, uint poolId) internal view returns (Common.Liquidation memory _liq, bool defaulted) {
+    Common.Pool memory _p = _fetchPoolData(self, poolId);
     uint16 pos = _getPosition(self.positions, _p.addrs.lastPaid, poolId);
-    ICommon.StrategyInfo memory info = _getStrategyInfo(self.strategies, poolId, pos);
-    (_liq, defaulted) = _now() <= info.payDate ? (_liq, defaulted) : (ICommon.Liquidation(
+    Common.StrategyInfo memory info = _getStrategyInfo(self.strategies, poolId, pos);
+    (_liq, defaulted) = _now() <= info.payDate ? (_liq, defaulted) : (Common.Liquidation(
       pos,
       _p.addrs.lastPaid,
       info.payDate,
@@ -583,7 +583,7 @@ library RouterLib {
     ), _def().t);
   }
 
-  function enquireLiquidation(Data storage self, uint poolId) external view returns (ICommon.Liquidation memory _liq, bool defaulted) {
+  function enquireLiquidation(Data storage self, uint poolId) external view returns (Common.Liquidation memory _liq, bool defaulted) {
     return _enquireLiquidation(self, poolId);
   }
 
@@ -597,19 +597,19 @@ library RouterLib {
   */
   function liquidate(
     Data storage self,
-    ICommon.LiquidateParam memory lp
+    Common.LiquidateParam memory lp
   ) 
     internal
-    returns (ICommon.StrategyInfo memory info)
+    returns (Common.StrategyInfo memory info)
   {
-    (ICommon.Liquidation memory liquidated, bool defaulted) = _enquireLiquidation(self, lp.poolId);
+    (Common.Liquidation memory liquidated, bool defaulted) = _enquireLiquidation(self, lp.poolId);
     defaulted.assertTrue("No defaulter");
     address liquidator = lp.getStrategy(_msgSender());
     requireNotAMember(self, lp.poolId, liquidator);
     _compareBalance(self.pools[lp.poolId].addrs.asset, liquidator, liquidated.debt);
     ISmartStrategy(liquidator).safeWithdrawAsset(self.pools[lp.poolId].addrs.asset, self.trustee, liquidated.debt);
 
-    info = payback(self, ICommon.PaybackParam(
+    info = payback(self, Common.PaybackParam(
       lp.poolId, 
       liquidated.target, 
       liquidator, 
@@ -636,7 +636,7 @@ library RouterLib {
     internal
     returns (uint)
   {
-    ICommon.Pool memory _p = _fetchPoolData(self, poolId);
+    Common.Pool memory _p = _fetchPoolData(self, poolId);
     address strategy = getStrategy(_msgSender());
     requireIsMember(self, poolId, strategy);
     Def memory _d = _def();
@@ -660,20 +660,20 @@ library RouterLib {
   */
   function payback(
     Data storage self,
-    ICommon.PaybackParam memory pb
+    Common.PaybackParam memory pb
   )
     internal
-    returns(ICommon.StrategyInfo memory info)
+    returns(Common.StrategyInfo memory info)
   {
-    ICommon.Pool memory _p = _fetchPoolData(self, pb.poolId);
+    Common.Pool memory _p = _fetchPoolData(self, pb.poolId);
     bool(pb.expInfo.owings > 0).assertTrue("No debt");
     Def memory _d = _def();
     _compareBalance(_p.addrs.asset, pb.strategy, pb.expInfo.owings);
     ISmartStrategy(pb.strategy).safeWithdrawAsset(_p.addrs.asset, self.trustee, pb.expInfo.owings);
     pb.expInfo.owings = _d.zero;
     info = pb.expInfo;
-    pb.unlock(pb.poolId, ICommon.FuncTag.GET);
-    pb.lock(pb.poolId, ICommon.FuncTag.PAYBACK);
+    pb.unlock(pb.poolId, Common.FuncTag.GET);
+    pb.lock(pb.poolId, Common.FuncTag.PAYBACK);
     _replenishPoolBalance(self.pools, pb.poolId);
     ITrustee(self.trustee).safeTransferOut(
       self.pData.token, 
@@ -694,7 +694,7 @@ library RouterLib {
   function _roundUp(
     Data storage self, 
     uint poolId,
-    ICommon.Pool memory pool
+    Common.Pool memory pool
   ) private {
     uint len = self.strategies[poolId].length;
     address[] memory _addrs = new address[](len);

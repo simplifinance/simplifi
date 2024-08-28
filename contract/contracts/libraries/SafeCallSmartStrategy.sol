@@ -12,15 +12,15 @@ library SafeCallSmartStrategy {
    * @dev Imitates a Solidity high-level call (i.e. a regular function call to a contract), relaxing the requirement
    * on the return value: the return value is optional (but if data is returned, it must not be false).
    */
-  function _callOptionalReturnAccount(ISmartWallet strategy, bytes memory data) private {
-    bytes memory returndata = address(strategy).functionCall(data, "SafeCall: low-level call failed");
+  function _callOptionalReturnAccount(ISmartStrategy strategy, bytes memory data) private {
+    bytes memory returndata = address(strategy).functionCall(data);
     if (returndata.length > 0) {
       // Return data is optional
       require(abi.decode(returndata, (bool)), "SafeCall: Account operation failed");
     }
   }
 
-  function safeActivateStrategy(ISmartWallet strategy, address router) internal {
+  function safeActivateStrategy(ISmartStrategy strategy, address router) internal {
     _callOptionalReturnAccount(
       strategy, 
       abi.encodeWithSelector(
@@ -31,7 +31,7 @@ library SafeCallSmartStrategy {
   }
 
   function safeUpgrade(
-    ISmartWallet strategy,
+    ISmartStrategy strategy,
     address newStrategy,
     address asset
   ) internal {
@@ -44,7 +44,7 @@ library SafeCallSmartStrategy {
   }
 
   function safeCloseTo(
-    ISmartWallet strategy,
+    ISmartStrategy strategy,
     address account
   ) internal {
       _callOptionalReturnAccount(strategy, abi.encodeWithSelector(
@@ -55,7 +55,7 @@ library SafeCallSmartStrategy {
   }
 
   function safeWithdrawAsset(
-    ISmartWallet strategy,
+    ISmartStrategy strategy,
     address asset_, 
     address to,
     uint amount

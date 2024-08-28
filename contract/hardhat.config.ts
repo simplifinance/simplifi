@@ -1,5 +1,5 @@
 import type { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox-viem";
+// import "@nomicfoundation/hardhat-toolbox-viem";
 import { config as dotconfig } from "dotenv";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
@@ -26,7 +26,7 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
-      evmVersion: "byzantium"
+      evmVersion: "constantinople"
       }
     },
 };

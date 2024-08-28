@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-interface ICommon {
+interface Common {
   /**
    * @dev Tags/Placeholders for functions available in the implementation contract.
    */

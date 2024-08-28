@@ -2,24 +2,27 @@
 
 pragma solidity 0.8.24;
 
-import { RouterLib } from "../libraries/RouterLib.sol";
+import { FactoryLib, Data, Def } from "../libraries/FactoryLib.sol";
 import { FuncHandler } from "../peripherals/FuncHandler.sol";
-import { IAssetClass } "../apis/IAssetClass.sol";
+import { Utils } from "../libraries/Utils.sol";
+import { IFactory } from "../apis/IFactory.sol";
+import { IAssetClass } from "../apis/IAssetClass.sol";
+import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
+import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
 
 /**@title Abstract Router Contract
  * This is not deployable since marked abstract.
 */
 
 abstract contract AbstractRouter is
-    IRouter,
+    IFactory,
     FuncHandler,
     Pausable,
     Ownable
 {
     using Utils for bool;
-    using RouterLib for Data;
+    using FactoryLib for Data;
 
     Data private data;
 
@@ -37,8 +40,8 @@ abstract contract AbstractRouter is
      * @param _asset : Input asset contract address
      */
     modifier onlySupportedAsset(address _asset) {
-        if (!IAsset(data.pData.assetAdmin).isAssetSupported(_asset)) {
-            revert IAsset.UnSupportedAsset(_asset);
+        if (!IAssetClass(data.pData.assetAdmin).isSupportedAsset(_asset)) {
+            revert IAssetClass.UnSupportedAsset(_asset);
         }
         _;
     }
@@ -73,7 +76,7 @@ abstract contract AbstractRouter is
         address _assetAdmin,
         address _strategyAdmin,
         address _trustee
-    ) public onlyOWner {
+    ) public onlyOwner {
         _RouterInitSetUp(makerRate, _minContribution, _bandCreationFee, _token, _feeTo, _assetAdmin, _strategyAdmin,_trustee);
     }
 
@@ -92,16 +95,16 @@ abstract contract AbstractRouter is
         minContribution = _minContribution;
         data.pData = ContractData(_feeTo, _token, _assetAdmin, makerRate);
         strategyAdmin = ISmartStrategyAdmin(_strategyAdmin);
-        creationFee = _bandCreationFee
+        creationFee = _bandCreationFee;
         data.trustee = _trustee;
     }
 
     /**
      * @dev Get strategy
-     * @param target : Target account
+     * @param user : User account
      */
-    function _getStrategy(address target) internal view returns (address alc) {
-        alc = ISmartStrategyAdmin(strategyAdmin).getStrategy(target);
+    function _getStrategy(address user) internal view returns (address alc) {
+        alc = ISmartStrategyAdmin(strategyAdmin).getStrategy(user);
     }
 
     /**
@@ -143,9 +146,9 @@ abstract contract AbstractRouter is
                     asset
                 ),
                 _getStrategy,
-                _unlock
+                _unlockFunction
                )
-            ) : data.createPermissionlessPool(ICommon.CreatePoolParam(quorum, durationInHours, colCoverageRatio, amount, participants, asset ), _getStrategy, _unlock);
+            ) : data.createPermissionlessPool(CreatePoolParam(quorum, durationInHours, colCoverageRatio, amount, participants, asset ), _getStrategy, _unlockFunction);
 
         emit BandCreated(crp.poolId, crp.pool, crp.info, crp.pos);
         return crp.poolId;
@@ -176,13 +179,13 @@ abstract contract AbstractRouter is
         virtual
         returns(bool)
     {
-        (, ICommon.StrategyInfo memory info) = data.addToBand(
+        (, StrategyInfo memory info) = data.addToBand(
             AddTobandParam(
                 poolId,
                 isPermissioned,
                 _getStrategy,
-                _lock,
-                _unlock
+                _lockFunction,
+                _unlockFunction
             )
         );
         emit NewMemberAdded(poolId, info);
@@ -203,7 +206,7 @@ abstract contract AbstractRouter is
         checkFunctionPass(poolId, FuncTag.GET)
         returns (bool)
     {
-        ICommon.StrategyInfo memory info = data.getFinance(poolId, _lock, _unlock, _getStrategy, _getPriceInUSD);
+        StrategyInfo memory info = data.getFinance(poolId, _lockFunction, _unlockFunction, _getStrategy, _getPriceInUSD);
         emit GetFinanced(poolId, info);
 
         return true;
@@ -212,7 +215,7 @@ abstract contract AbstractRouter is
     /**
     @dev Utility to payback borrowed fund.
       @param poolId : Pool number.
-     See RouterLib._payback().
+     See FactoryLib._payback().
    */
     function payback(
         uint poolId
@@ -224,10 +227,10 @@ abstract contract AbstractRouter is
         returns (bool)
     {
         address strategy = _getStrategy(_msgSender());
-        ICommon.StrategyInfo memory info = RouterLib._getStrategyInfo(
+        StrategyInfo memory info = FactoryLib._getStrategyInfo(
             data.strategies,
             poolId,
-            RouterLib._getPosition(data.positions, strategy, poolId)
+            FactoryLib._getPosition(data.positions, strategy, poolId)
         );
         info = data.payback(
            PaybackParam(
@@ -235,8 +238,8 @@ abstract contract AbstractRouter is
             strategy,
             strategy,
             info,
-            _lock,
-            _unlock
+            _lockFunction,
+            _unlockFunction
            )
         );
 
@@ -247,18 +250,18 @@ abstract contract AbstractRouter is
     /**
   @dev Liquidate defaulter.
     Note: The expected repayment time for last paid participant must have passed.
-    See RouterLib.liquidate() for more details.
+    See FactoryLib.liquidate() for more details.
   */
     function liquidate(
         uint poolId
     ) external payable whenNotPaused returns (bool) {
-        Def memory _d = RouterLib._def();
-        ICommon.StrategyInfo memory info = data.liquidate(
+        Def memory _d = FactoryLib._def();
+        StrategyInfo memory info = data.liquidate(
           LiquidateParam(
             poolId,
             _d.f,
-            _lock,
-            _unlock,
+            _lockFunction,
+            _unlockFunction,
             _getStrategy
           )
         );
@@ -269,7 +272,7 @@ abstract contract AbstractRouter is
     }
 
     /**
-     * @dev See RouterLib.enquireLiquidation
+     * @dev See FactoryLib.enquireLiquidation
      */
     function enquireLiquidation(
         uint poolId
@@ -308,12 +311,12 @@ abstract contract AbstractRouter is
     }
 
     /**
-     * @dev See RouterLib._cancelBand()
+     * @dev See FactoryLib._cancelBand()
      */
-    function cancelBand(
+    function removeBand(
         uint poolId
     ) external payable whenNotPaused returns (bool) {
-        Def memory _d = RouterLib._def();
+        Def memory _d = FactoryLib._def();
         data.cancelBand(poolId, _d.f, _getStrategy);
 
         emit Cancellation(poolId);

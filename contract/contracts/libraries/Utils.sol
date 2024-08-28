@@ -2,11 +2,10 @@
 
 pragma solidity 0.8.24;
 
-import { SafeMath } from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Common } from "../apis/Common.sol";
-import { ISmartAccount } from "../apis/ISmartAccount.sol";
 
 library Utils {
     using Address for address;
@@ -14,7 +13,7 @@ library Utils {
 
     error InsufficientCollateral(uint256 actual, uint256 expected);
 
-    error InvalidDenominator(string memory);
+    error InvalidDenominator(string message);
 
     ///@dev Requires all conditions to be true 
     function assertTrue_2(bool a, bool b, string memory errorMessage) internal pure {

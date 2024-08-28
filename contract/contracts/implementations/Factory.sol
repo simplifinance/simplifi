@@ -97,14 +97,14 @@ contract Factory is AbstractRouter {
     }
 
     /**@dev See RouterUpgradeable.sol */
-    function joinABand(uint poolId) 
+    function joinBand(uint poolId) 
         external 
         payable
         checkFunctionPass(poolId, FuncTag.JOIN) 
         whenNotPaused
         returns(bool) 
     {
-        return _joinABand(poolId, routers[poolId] == Router.PERMISSIONED);
+        return _joinBand(poolId, routers[poolId] == Router.PERMISSIONED);
     }
 
     function withdraw(address to, uint amount) public onlyOwner {
