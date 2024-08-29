@@ -15,7 +15,7 @@ import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
  * This is not deployable since marked abstract.
 */
 
-abstract contract AbstractRouter is
+abstract contract AbstractFactory is
     IFactory,
     FuncHandler,
     Pausable,

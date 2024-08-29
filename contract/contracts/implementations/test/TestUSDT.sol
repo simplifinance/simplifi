@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract TestUSD is ERC20 {
+contract TestUSDT is ERC20 {
 
   constructor() ERC20("TEST cUSD", "TCUSD") {}
 

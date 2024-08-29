@@ -14,7 +14,7 @@ import { ERC20Abstract } from "./ERC20Abstract.sol";
         Max Supply: 1_000_000_000.
         Decimal: 18.
 */
-contract SimplToken is ERC20Abstract {
+contract SimpliToken is ERC20Abstract {
     event Locked(address from, uint256 amount);
     event UnLocked(address from, uint256 amount);
 

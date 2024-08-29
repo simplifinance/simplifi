@@ -22,8 +22,7 @@ contract Reserve is Ownable {
     revert("NA");
   } 
 
-  constructor() Ownable(msg.sender) {
-  }
+  constructor() Ownable(msg.sender) { }
 
   function setToken(IERC20 newToken) public onlyOwner {
     address(newToken).cannotBeEmptyAddress();

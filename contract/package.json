@@ -3,7 +3,14 @@
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
     "deploy": "npx hardhat deploy --network hardhat",
-    "deploy-bsct": "hardhat deploy --network crossfi --export deployments/contracts.json"
+    "deploy-testnet": "hardhat deploy --network crossfi --export deployments/contracts.json",
+    "deploy-reset-watch": "hardhat deploy --reset --watch --export-all deployments/hardhat_contracts.json",
+    "watch": "node scripts/watch.js",
+    "flatten-router": "npx hardhat flatten contracts/implementations/Factory.sol > contracts/implementations/flattened/FactoryFlattened.sol",
+    "flatten-trustee": "npx hardhat flatten contracts/strategies/Trustee.sol > contracts/implementations/flattened/TrusteeFlattened.sol",
+    "flatten-token": "npx hardhat flatten contracts/implementations/token/SimpliToken.sol > contracts/implementations/flattened/token/SimpliTokenFlattened.sol",
+    "flatten-reserve": "npx hardhat flatten contracts/implementations/token/Reserve.sol > contracts/implementations/flattened/token/ReserveFlattened.sol",
+    "flatten-attorney": "npx hardhat flatten contracts/implementations/token/Attorney.sol > contracts/implementations/flattened/token/AttorneyFlattened.sol"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",

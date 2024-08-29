@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { AbstractRouter } from "../../../abstracts/AbstractRouter.sol";
+import { AbstractFactory } from "../../../abstracts/AbstractFactory.sol";
 
 /**@title Router Version 2 {For testing purpose}
 */
 
-contract FactoryV2 is AbstractRouter {
+contract FactoryV2 is AbstractFactory {
   mapping(uint => Router) public routers;
 
   /** @dev Initializes state variables.
@@ -27,7 +27,7 @@ contract FactoryV2 is AbstractRouter {
     address _assetAdmin,
     address _strategyAdmin,
     address _trustee
-  ) AbstractRouter(
+  ) AbstractFactory(
     _makerRate,
     _minContribution,
     _token,
@@ -41,7 +41,7 @@ contract FactoryV2 is AbstractRouter {
   receive() external payable {}
 
   /**@dev Create permissioned pool
-    See AbstractRouter.sol for more details
+    See AbstractFactory.sol for more details
   */
   function createPermissionedPool(
     uint8 durationInHours,
@@ -57,7 +57,7 @@ contract FactoryV2 is AbstractRouter {
   }
 
   /**@dev Create permissionless
-      See AbstractRouter.sol for more details
+      See AbstractFactory.sol for more details
   */
   function createPermissionlessPool(
     uint8 quorum,
@@ -73,7 +73,7 @@ contract FactoryV2 is AbstractRouter {
     return true;
   }
 
-  /**@dev Add msg.sender to a pool at poolId See AbstractRouter.sol */
+  /**@dev Add msg.sender to a pool at poolId See AbstractFactory.sol */
   function joinBand(uint poolId) 
     external 
     payable

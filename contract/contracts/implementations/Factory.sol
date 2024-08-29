@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { AbstractRouter } from "../abstracts/AbstractRouter.sol";
+import { AbstractFactory } from "../abstracts/AbstractFactory.sol";
 
 /**@title Factory : Main contract
  * A multi peer-to-peer lending and borrowing structure where two or more people form a synergy to provide financial support
@@ -30,7 +30,7 @@ import { AbstractRouter } from "../abstracts/AbstractRouter.sol";
         - ERC20 tokens.
 */
 
-contract Factory is AbstractRouter {
+contract Factory is AbstractFactory {
     mapping(uint => Router)public routers;
 
   /** @dev Initializes state variables.
@@ -50,7 +50,7 @@ contract Factory is AbstractRouter {
         address _assetAdmin,
         address _strategyAdmin,
         address _trustee
-    ) AbstractRouter(
+    ) AbstractFactory(
         _makerRate,
         _minContribution,
         _token,
