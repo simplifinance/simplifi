@@ -53,7 +53,7 @@ export const balanceOf = async(token: SimpliTokenReturnType | TestUSDTReturnType
  * @param amount : Value to send
  * @returns Promise<void>
  */
-export const transfer = async(token: SimpliTokenReturnType | TestUSDTReturnType, to: Address, from: Signer, amount: Hex) : Null => {
+export const transfer = async(token: SimpliTokenReturnType | TestUSDTReturnType, to: Address, from: Signer, amount: bigint) : Null => {
   await token.connect(from).transfer(to, amount);
 }
 
@@ -65,7 +65,7 @@ export const transfer = async(token: SimpliTokenReturnType | TestUSDTReturnType,
  * @param amounts : Array of values
  * @returns Promise<void>
  */
-export const transferMultiple = async(token: SimpliTokenReturnType, tos: Addresses, from: Signer, amounts: Array<Hex>) : Null => {
+export const transferMultiple = async(token: SimpliTokenReturnType, tos: Addresses, from: Signer, amounts: BigIntArray) : Null => {
   await token.connect(from).batchTransfer(amounts, tos);
 };
 
@@ -167,7 +167,7 @@ export const accountBalances = async(token: SimpliTokenReturnType, account: Addr
   return await token.accountBalances(account); 
 };
 
-export const panicUnlock = async (attorney: AttorneyReturnType, signer: Signer, accountToRetrieve: Address) : Promise<string> => {
+export const panicUnlock = async (attorney: AttorneyReturnType, signer: Signer, accountToRetrieve: Address) : Promise<bigint> => {
   await attorney.connect(signer).panicUnlock(accountToRetrieve, { value: FEE});
   return FEE;
 }

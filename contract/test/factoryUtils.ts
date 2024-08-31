@@ -1,10 +1,9 @@
 // import { Contract, ContractTransactionResponse } from "ethers";
-import type { Address, Addresses, AssetClassReturnType, BandParam, ContractResponse, CreateStrategyParam, FundAccountParam, FundStrategyParam, GetPaidParam, GetPaidResultParam, JoinABandParam, Null, PrivateBandParam, PublicBandParam, Signer } from "../types";
-import { CREATION_FEE, AMOUNT_SENT_TO_ACCOUNT_ONE, AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1, formatAddr, } from "../Utils";
-import { balances, initiateTransaction, signAndExecuteTransaction, transfer, transferMultiple } from "../Index";
+import type { Address, Addresses, AssetClassReturnType, BandParam, ContractResponse, FundAccountParam, FundStrategyParam, GetPaidParam, GetPaidResultParam, JoinABandParam, Null, PrivateBandParam, PublicBandParam, Signer } from "./types";
+import { CREATION_FEE, AMOUNT_SENT_TO_ACCOUNT_ONE, AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1, formatAddr, } from "./utilities";
+import { balances, initiateTransaction, signAndExecuteTransaction, transfer, transferMultiple } from "./tokenUtils";
 import { expect } from "chai";
-// import { AssetClass } from "../../typechain-types";
-import { Common } from "../../typechain-types/contracts/apis/IFactory";
+import { Common } from "../typechain-types/contracts/apis/IFactory";
 
 /**
  * @dev Create public pool
@@ -68,23 +67,23 @@ export async function enquireLiquidation(x: BandParam) : Promise<Common.Liquidat
   return await x.factory.connect(x.signer).enquireLiquidation(x.poolId);
 }
 
-/**
- * @dev Create stretegy
- * @param strategyAdmin : The strategy admin contract 
- * @param signer : Signer
- * @returns ContractResponse
- */
-export const createStrategies = async(x: CreateStrategyParam) : Promise<Addresses>  => {
-  let result : Addresses = [];
+// /**
+//  * @dev Create stretegy
+//  * @param strategyAdmin : The strategy admin contract 
+//  * @param signer : Signer
+//  * @returns ContractResponse
+//  */
+// export const createStrategies = async(arg: CreateStrategyParam) : Promise<Addresses>  => {
+//   let result : Addresses = [];
 
-  for (let i = 0; i < x.signers.length; i++) {
-    const from : Signer = x.signers[i];
-    await x.strategyAdmin.connect(from).createStrategy({value: CREATION_FEE});
-    result.push(formatAddr(await x.strategyAdmin.getStrategy(from.address)));
-    x.callback();
-  }
-  return result;
-}
+//   for (let i = 0; i < arg.signers.length; i++) {
+//     const from : Signer = arg.signers[i];
+//     await arg.strategyAdmin.connect(from).createStrategy({value: CREATION_FEE});
+//     result.push(formatAddr(await arg.strategyAdmin.getStrategy(from.address)));
+//     arg.callback();
+//   }
+//   return result;
+// }
 
 /**
  * @dev Support new asset

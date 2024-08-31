@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
-import type { Address, Addresses, AssetClassReturnType, AttorneyReturnType, FactoryReturnType, ReserveReturnType, Signers, SimpliTokenReturnType, SmartStrategyAdminReturnType, TestUSDTReturnType, TokenDistributorReturnType, TrusteeReturnType } from "../types";
-import { CREATION_FEE, FEETO, formatAddr, MAKER_RATE, MINIMUM_CONTRIBUTION, QUORUM,} from "../Utils";
+import type { Address, Addresses, AssetClassReturnType, AttorneyReturnType, FactoryReturnType, ReserveReturnType, Signers, SimpliTokenReturnType, SmartStrategyAdminReturnType, TestUSDTReturnType, TokenDistributorReturnType, TrusteeReturnType } from "./types";
+import { CREATION_FEE, FEETO, formatAddr, MAKER_RATE, MINIMUM_CONTRIBUTION, QUORUM,} from "./utilities";
 // import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 /**
@@ -99,7 +99,7 @@ export async function deployTestcUSD(): Promise<TestUSDTReturnType> {
  * @returns : Library address : Type - Address
  */
 export async function deployLibrary(): Promise<Address> {
-  const RouterLib = await ethers.getContractFactory("RouterLib");
+  const RouterLib = await ethers.getContractFactory("FactoryLib");
   return formatAddr(await (await (await RouterLib.deploy()).waitForDeployment()).getAddress());
 }
 

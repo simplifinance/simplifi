@@ -38,7 +38,7 @@ export interface CreateRouterParam {
   quorum: number;
   durationInHours : number; 
   colCoverageRatio: number;
-  amount: Hex;
+  amount: bigint;
   asset: Address;
   participants: Addresses;
   contract: FactoryReturnType;
@@ -87,20 +87,20 @@ export interface ReduceAllowanceParam {
   token:  SimpliTokenReturnType; 
   alc1: Signer; 
   alc2: Address;
-  value: Hex;
+  value: bigint;
 }
 
 export interface UnlockTokenParam {
   token: SimpliTokenReturnType; 
   alc1: Signer; 
-  value: Hex;
+  value: bigint;
 }
 
 export interface LockTokenParam {
   token:  SimpliTokenReturnType;
   alc1: Signer; 
   alc3: Address;
-  value: Hex;
+  value: bigint;
 }
 
 export interface GetAllowanceParam {
@@ -113,7 +113,7 @@ export interface ApproveParam {
   token: SimpliTokenReturnType; 
   alc1: Signer; 
   alc2: Address; 
-  value: Hex;
+  value: bigint;
 }
 
 export interface TrxFrmParam {
@@ -121,7 +121,7 @@ export interface TrxFrmParam {
   alc2: Signer; 
   alc1: Address;
   alc3: Address;
-  value: Hex;
+  value: bigint;
 }
 
 export interface SignTx {
@@ -136,7 +136,7 @@ export interface PublicBandParam {
   quorum : number;
   durationInHours: number;
   colCoverageRatio: number;
-  amount: Hex;
+  amount: bigint;
   asset: Address;
 }
 
@@ -145,7 +145,7 @@ export interface PrivateBandParam {
   signer: Signer;
   durationInHours: number;
   colCoverageRatio: number;
-  amount: Hex;
+  amount: bigint;
   asset: Address;
   participants: Addresses;
 }
@@ -164,7 +164,7 @@ export interface SetVariableParam {
   trustee: Address;
   assetAdmin: Address;
   makerRate: number;
-  creationFee: Hex;
+  creationFee: bigint;
 }
 
 export interface FundAccountParam {
@@ -179,17 +179,17 @@ export interface FundAccountParam {
   signer3: Signer;
 }
 
-export interface CreateStrategyParam {
-  strategyAdmin: SmartStrategyAdminReturnType;
-  signers: SignersArr;
-  callback: () => void;
-}
+// export interface CreateStrategyParam {
+//   strategyAdmin: SmartStrategyAdminReturnType;
+//   signers: SignersArr;
+//   callback: () => void;
+// }
 
 export interface FundStrategyParam {
   tUSD: TestUSDTReturnType | SimpliTokenReturnType;
   recipients: Addresses;
   froms: SignersArr;
-  amount: Hex;
+  amount: bigint;
   operation: string;
 }
 

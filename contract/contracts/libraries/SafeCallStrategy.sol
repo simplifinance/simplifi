@@ -2,14 +2,14 @@
 
 pragma solidity 0.8.24;
 
-import { ITrustee } from "../apis/ITrustee.sol";
+import { IStrategy } from "../apis/IStrategy.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 
-library SafeCallTrustee {
+library SafeCallStragey {
   using Address for address;
 
   function safeRegisterBeneficiaries(
-    ITrustee trustee,
+    IStrategy trustee,
     address[] memory strategies,
     uint256 amount, 
     uint poolId,
@@ -19,7 +19,7 @@ library SafeCallTrustee {
   }
 
   function safeTransferOut(
-    ITrustee trustee,
+    IStrategy trustee,
     address asset, 
     address strategy, 
     uint256 amount,
@@ -34,7 +34,7 @@ library SafeCallTrustee {
    * @param trustee: Trustee contract.
    * @param data The call data (encoded using abi.encode or one of its variants).
    */
-  function _callOptionalReturn(ITrustee trustee, bytes memory data) private {
+  function _callOptionalReturn(IStrategy trustee, bytes memory data) private {
     // We need to perform a low level call here, to bypass Solidity's return data size checking mechanism, since
     // we're implementing it ourselves. We use {Address.functionCall} to perform this call, which verifies that
     // the target address contains contract code and also asserts for success in the low-level call.

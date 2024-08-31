@@ -102,13 +102,18 @@ abstract contract AbstractFactory is
     /**
      * @dev Get strategy
      * @param user : User account
+     * @notice If there is no associated strategy to user, we will deploy a new instance 
+     * for them. 
      */
-    function _getStrategy(address user) internal view returns (address alc) {
-        alc = ISmartStrategyAdmin(strategyAdmin).getStrategy(user);
+    function _getStrategy(address user) internal returns (address _smartStrategy) {
+        _smartStrategy = ISmartStrategyAdmin(strategyAdmin).getStrategy(user);
+        if(_smartStrategy == address(0)) {
+            _smartStrategy = ISmartStrategyAdmin(strategyAdmin).createStrategy(user);
+        }
     }
 
     /**
-    @dev Launches a public band - Native currency i.e ETH or Platform currency.
+    @dev Launche a new pool. Based on router, it could be permissioned or permissionkless.
       @param quorum - Required number of participants to form a band. 
       @param durationInHours - The maximum time limit (from when the turn time begins) with which a participant
                                 will take custody of the loan before repayment.

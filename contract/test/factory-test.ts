@@ -11,10 +11,10 @@ import {
   // deployToken, 
   // deployTrustee 
   deployContracts
-} from "./Deployments";
+} from "./deployments";
 
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import { balanceOf, balances,} from "./Index";
+import { balanceOf, balances,} from "./tokenUtils";
 import type { SignersArr } from "./types";
 import { ethers } from "hardhat";
 import { expect } from "chai";
@@ -30,9 +30,9 @@ import { expect } from "chai";
     FEE,
     formatAddr,
     convertStringsToAddresses
-  } from "./Utils";
+  } from "./utilities";
 
-import { createPermissionedPool, createPermissionlessPool, createStrategies, fundAccount, getFinanceAndPayback, joinBand, sendToken, setSupportedToken } from "./poolUtils";
+import { createPermissionedPool, createPermissionlessPool, fundAccount, getFinanceAndPayback, joinBand, sendToken, setSupportedToken } from "./factoryUtils";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("Factory", function () {
@@ -94,10 +94,10 @@ describe("Factory", function () {
 
       const { signer1, signer2, signer3, deployer } = accounts;
       let strategyCount = 0;
-      const signers: SignersArr = Array.from([signer1, signer2, signer3]);
+      const signers: SignersArr = [signer1, signer2, signer3];
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
-      const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
+      await strategyAdmin.setFactory(factoryAddr);
+      // const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
         initTokenReceiver,
@@ -153,7 +153,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       const signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -222,7 +222,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       const signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -286,7 +286,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       const signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -318,7 +318,7 @@ describe("Factory", function () {
         signer: signer1
       })).toNumber();
 
-      console.log("PrivPool", poolIdPriv);
+      // console.log("PrivPool", poolIdPriv);
 
       const poolId = bn(await createPermissionlessPool({
         amount: CONTRIBUTION,
@@ -366,7 +366,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       let signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -465,7 +465,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       let signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -546,7 +546,7 @@ describe("Factory", function () {
     });
   });
 
-  describe("All SignersArr getfinance and payback, roundup and reclaim", function () {
+  describe("All Signers getfinance and payback, roundup and reclaim", function () {
     it("Signer 1, 2 and 3 should get finance and pay back successfully from the permissioned community", async function () {
       const {
         tcUSD,
@@ -567,7 +567,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       let signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -663,7 +663,7 @@ describe("Factory", function () {
       let strategyCount = 0;
       let signers: SignersArr = Array.from([signer1, signer2, signer3]);
       await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-      await strategyAdmin.setRouter(factoryAddr);
+      await strategyAdmin.setFactory(factoryAddr);
       let strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
       await fundAccount({
         deployer,
@@ -770,7 +770,7 @@ describe("Factory", function () {
         let strategyCount = 0;
         let signers: SignersArr = Array.from([signer1, signer2, signer3]);
         await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-        await strategyAdmin.setRouter(factoryAddr);
+        await strategyAdmin.setFactory(factoryAddr);
         const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
         await fundAccount({
           deployer,
@@ -829,7 +829,7 @@ describe("Factory", function () {
         let strategyCount = 0;
         let signers: SignersArr = Array.from([signer1, signer2, signer3]);
         await setSupportedToken(assetAdmin, formatAddr(tokenAddr));
-        await strategyAdmin.setRouter(factoryAddr);
+        await strategyAdmin.setFactory(factoryAddr);
         const strategies = await createStrategies({signers, strategyAdmin, callback: function() { strategyCount ++},});
         await fundAccount({
           deployer,

@@ -1,7 +1,25 @@
-import { compareEqualString, TOTAL_LOCKED, TOTALSUPPLY, buildstring, bigintToStr, sumToString, DECIMALS, reduce, SYMBOL, toHex, NAME, bn, QUORUM, FEE, formatAddr, convertStringsToAddresses,} from "./Utils";
-import { deployContracts } from "./Deployments";
+import { 
+  compareEqualString, 
+  TOTAL_LOCKED, 
+  TOTALSUPPLY, 
+  buildstring, 
+  bigintToStr, 
+  sumToString, 
+  DECIMALS, 
+  reduce, 
+  SYMBOL, 
+  toHex, 
+  NAME, 
+  bn, 
+  TEN_THOUSAND_TOKEN,
+  ONE_THOUSAND_TOKEN,
+  ONE_HUNDRED_TOKEN,
+  formatAddr, 
+  convertStringsToAddresses,
+} from "./utilities";
+
+import { deployContracts } from "./deployments";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import type { Balances } from "./types";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { 
@@ -17,9 +35,10 @@ import {
   lockToken,
   balanceOf,
   balances,
-  approve, } from "./Index";
+  approve, } from "./tokenUtils";
 
-describe("TokenUpgradeable", function () {
+
+describe("Simplifinance Token", function () {
   async function deployContractsFixcture() {
     return { ...await deployContracts(ethers.getSigners) };
   }
@@ -70,7 +89,6 @@ describe("TokenUpgradeable", function () {
       const { alc1, signer1, signer2, signer3, deployer } = signers;
 
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       const initBal_sender = await balanceOf(token, formatAddr(initTokenReceiverAddr));
       const initBal_receiver = await balanceOf(token, formatAddr(alc1.address));
       await initiateTransaction({
@@ -79,7 +97,7 @@ describe("TokenUpgradeable", function () {
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
@@ -89,8 +107,8 @@ describe("TokenUpgradeable", function () {
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
       const alcInfo_sender = await accountBalances(token, formatAddr(initTokenReceiverAddr));
       const alcInfo_receiver = await token.accountBalances(formatAddr(alc1.address));
-      compareEqualString(bn(alcInfo_sender[0]).toString(), reduce(initBal_sender, amount).toString());
-      compareEqualString(bn(alcInfo_receiver[0]).toString(), sumToString(initBal_receiver, amount));
+      compareEqualString(bn(alcInfo_sender[0]).toString(), reduce(initBal_sender, TEN_THOUSAND_TOKEN).toString());
+      compareEqualString(bn(alcInfo_receiver[0]).toString(), sumToString(initBal_receiver, TEN_THOUSAND_TOKEN));
     });
 
     it("Should dynamically transfer token to accounts using batchTransfer", async () => {
@@ -102,33 +120,30 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, alc2, alc3, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
-      const amount_2 = toHex(buildstring('1', '0', 21)); // 1000 token different from AMOUNT => 10,000
-      const amount_3 = toHex(buildstring('1', '0', 21)); // 1000 token different from AMOUNT => 10,000
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
-      await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
+      await signAndExecuteTransaction({reqId, signers: [signer2, signer3], initTokenReceiver});
 
       const initBal_recs = await balances(token, convertStringsToAddresses([alc2.address, alc3.address]));
       const initBal_Alc1 = await balanceOf(token, formatAddr(alc1.address));
       var tos = convertStringsToAddresses([alc2.address, alc3.address]);
-      var amounts = Array.from([toHex(amount_2), toHex(amount_3)]);
+      var amounts = convertStringsToAddresses([toHex(ONE_THOUSAND_TOKEN), toHex(ONE_THOUSAND_TOKEN)]);
       await batchTransfer({token, alc1, tos, amounts});
       const curBal_recs = await balances(token, convertStringsToAddresses([alc2.address, alc3.address]));
 
-      compareEqualString(bn(await balanceOf(token, formatAddr(alc1.address))).toString(), reduce(initBal_Alc1, sumToString(amount_2, amount_3)).toString());
-      compareEqualString(bn(curBal_recs[0]).toString(), sumToString(bn(initBal_recs[0]).toString(), bn(amount_2).toString()));
-      compareEqualString(bn(curBal_recs[1]).toString(), sumToString(bn(initBal_recs[1]).toString(), bn(amount_3).toString()));
+      compareEqualString(bn(await balanceOf(token, formatAddr(alc1.address))).toString(), reduce(initBal_Alc1, sumToString(ONE_THOUSAND_TOKEN, ONE_THOUSAND_TOKEN)).toString());
+      compareEqualString(bn(curBal_recs[0]).toString(), sumToString(bn(initBal_recs[0]).toString(), bn(ONE_THOUSAND_TOKEN).toString()));
+      compareEqualString(bn(curBal_recs[1]).toString(), sumToString(bn(initBal_recs[1]).toString(), bn(ONE_THOUSAND_TOKEN).toString()));
     });
 
     it("Should increase allowance of account", async () => {
@@ -140,22 +155,20 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, alc2, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const value = toHex(buildstring('1', '0', 20)); // 100 token
-      await approve({token, alc1, alc2: formatAddr(alc2.address), value});
+      await approve({token, alc1, alc2: formatAddr(alc2.address), value: ONE_HUNDRED_TOKEN});
 
       compareEqualString(
         bn(
@@ -164,7 +177,7 @@ describe("TokenUpgradeable", function () {
             alc2: formatAddr(alc2.address), 
             token
           })).toString(), 
-          bn(value).toString()
+          bn(ONE_HUNDRED_TOKEN).toString()
         );
     });
 
@@ -177,24 +190,21 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, alc2, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const increase = toHex(buildstring('1', '0', 21)); // Increase allowance by 1000 token
-      const decrease = toHex(buildstring('1', '0', 20)); //Decrease by 100 token
-      await approve({token, alc1, alc2: formatAddr(alc2.address), value: increase});
-      await decreaseAllowance({token,  alc1,  alc2: formatAddr(alc2.address), value: decrease});
+      await approve({token, alc1, alc2: formatAddr(alc2.address), value: ONE_THOUSAND_TOKEN});
+      await decreaseAllowance({token,  alc1,  alc2: formatAddr(alc2.address), value: ONE_HUNDRED_TOKEN});
       compareEqualString(
         bn(
           await getAllowance({
@@ -202,7 +212,7 @@ describe("TokenUpgradeable", function () {
             alc2: formatAddr(alc2.address), 
             token
           })).toString(), 
-          reduce(increase, decrease).toString()
+          reduce(ONE_THOUSAND_TOKEN, ONE_HUNDRED_TOKEN).toString()
         );
     });
 
@@ -215,27 +225,25 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, alc2, alc3, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const value = toHex(buildstring('1', '0', 21));
-      await approve({token, alc1, alc2: formatAddr(alc2.address), value: value});
+      await approve({token, alc1, alc2: formatAddr(alc2.address), value: ONE_THOUSAND_TOKEN});
       const init_bal = await balances(token, convertStringsToAddresses([alc1.address, alc3.address]));
-      await transferFrom({token, alc2, alc1: formatAddr(alc1.address), alc3: formatAddr(alc3.address),value});
+      await transferFrom({token, alc2, alc1: formatAddr(alc1.address), alc3: formatAddr(alc3.address), value:ONE_THOUSAND_TOKEN});
       const current_bal = await balances(token, convertStringsToAddresses([alc1.address, alc3.address]));
-      compareEqualString(bn(current_bal[0]).toString(), reduce(init_bal[0], value).toString());
-      compareEqualString(bn(current_bal[1]).toString(), sumToString(init_bal[1], value));
+      compareEqualString(bn(current_bal[0]).toString(), reduce(init_bal[0], ONE_THOUSAND_TOKEN).toString());
+      compareEqualString(bn(current_bal[1]).toString(), sumToString(init_bal[1], ONE_THOUSAND_TOKEN));
     });
 
     it("Should lock token successfully", async () => {
@@ -247,25 +255,23 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, alc3, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const value = toHex(buildstring('1', '0', 20)); // Increase allowance by 1000 token
       const initBal = await balanceOf(token, formatAddr(alc1.address));
-      await lockToken({token, alc1, alc3: formatAddr(alc3.address), value});
+      await lockToken({token, alc1, alc3: formatAddr(alc3.address), value: ONE_HUNDRED_TOKEN});
       const alcBals = await accountBalances(token, formatAddr(alc1.address));
-      compareEqualString(bn(alcBals[0]).toString(), reduce(initBal, value).toString()); // spendable balance should be equal
+      compareEqualString(bn(alcBals[0]).toString(), reduce(initBal, ONE_HUNDRED_TOKEN).toString()); // spendable balance should be equal
       compareEqualString(alcBals[1][1], alc3.address); // Esape address should be thesame as alc3.address
     });
 
@@ -276,31 +282,30 @@ describe("TokenUpgradeable", function () {
         signers,
         initTokenReceiver, } = await loadFixture(deployContractsFixcture);
         
-      const { alc1, alc2, alc3, signer1, signer2, signer3, deployer, } = signers;
+      const { alc1, alc3, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: TEN_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const value = toHex(buildstring('1', '0', 20)); // Increase allowance by 1000 token
+      const value = ONE_THOUSAND_TOKEN; // Increase allowance by 1000 token
       await lockToken({token, alc1, alc3: formatAddr(alc3.address), value});
-      const valueToUnlock = toHex(buildstring('3', '0', 19)); // Increase allowance by 1000 token
+      const valueToUnlock = ONE_HUNDRED_TOKEN; // Increase allowance by 1000 token
       const balsAlc1AfterLocked = await balanceOf(token, formatAddr(alc1.address));
       await unlockToken({token, alc1, value: valueToUnlock});
       const balsAlc1AfterUnlocked = await balanceOf(token, formatAddr(alc1.address));
       const balAlc3AfterUnLocked = await balanceOf(token, formatAddr(alc3.address));
       expect(balsAlc1AfterLocked).to.be.equal(balsAlc1AfterUnlocked);
-      compareEqualString(toHex(bn(balAlc3AfterUnLocked).toString()), valueToUnlock);
+      compareEqualString(toHex(bn(balAlc3AfterUnLocked).toString()), toHex(valueToUnlock));
     });
 
     it("Should successfully reClaim token assume alc1 has lost access to his account.", async () => {
@@ -313,26 +318,24 @@ describe("TokenUpgradeable", function () {
         
       const { alc1, feeTo, alc3, signer1, signer2, signer3, deployer, } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       await initiateTransaction({
         initTokenReceiver,
         tokenAddr: formatAddr(tokenAddr),
         recipient: formatAddr(alc1.address),
         deployer,
         from: signer1,
-        amount,
+        amount: ONE_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
         }
       });
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-      const value = toHex(buildstring('1', '0', 20)); // Increase allowance by 1000 token
-      await lockToken({token, alc1, alc3: formatAddr(alc3.address), value});
+      await lockToken({token, alc1, alc3: formatAddr(alc3.address), value: ONE_HUNDRED_TOKEN});
       await attorney.setToken(tokenAddr);
       const balAlc1B4Panic = await accountBalances(token, formatAddr(alc1.address));
       const eThBalOfDevB4Panic = await ethers.provider.getBalance(feeTo.address);
-      compareEqualString(bn(balAlc1B4Panic[1][0]).toString(), bn(value).toString()); // Check that the balance after token is ocked is correct
+      compareEqualString(bn(balAlc1B4Panic[1][0]).toString(), bn(ONE_HUNDRED_TOKEN).toString()); // Check that the balance after token was locked is correct
       
       await panicUnlock(attorney, alc3, formatAddr(alc1.address));
       const balAlc1AfterPanic = await balanceOf(token, formatAddr(alc1.address));
@@ -354,24 +357,22 @@ describe("TokenUpgradeable", function () {
           
         const { alc1, alc3, signer1, signer2, signer3, deployer, } = signers;
         let reqId = 0;
-        const amount = toHex(buildstring('1', '0', 22));
         await initiateTransaction({
           initTokenReceiver,
           tokenAddr: formatAddr(tokenAddr),
           recipient: formatAddr(alc1.address),
           deployer,
           from: signer1,
-          amount,
+          amount: ONE_THOUSAND_TOKEN,
           trxnType: 0,
           callback: () => {
             reqId ++;
           }
         });
         await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-        const value = toHex(buildstring('1', '0', 20)); // Increase allowance by 1000 token
-        await expect(token.connect(alc1).lockToken(alc3.address, value))
+        await expect(token.connect(alc1).lockToken(alc3.address, ONE_HUNDRED_TOKEN))
           .to.emit(token, "Locked")
-          .withArgs(alc1.address, value); // We accept any value as `when` arg
+          .withArgs(alc1.address, ONE_HUNDRED_TOKEN); // We accept any value as `when` arg
       });
     });
 
@@ -386,26 +387,24 @@ describe("TokenUpgradeable", function () {
           
         const { alc1, feeTo, alc3, signer1, signer2, signer3, deployer, } = signers;
         let reqId = 0;
-        const amount = toHex(buildstring('1', '0', 22));
         await initiateTransaction({
           initTokenReceiver,
           tokenAddr: formatAddr(tokenAddr),
           recipient: formatAddr(alc1.address),
           deployer,
           from: signer1,
-          amount,
+          amount: ONE_THOUSAND_TOKEN,
           trxnType: 0,
           callback: () => {
             reqId ++;
           }
         });
         await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
-        const value = toHex(buildstring('1', '0', 20)); // Increase allowance by 1000 token
-        await lockToken({token, alc1, alc3: formatAddr(alc3.address), value});
+        await lockToken({token, alc1, alc3: formatAddr(alc3.address), value: ONE_HUNDRED_TOKEN});
         await attorney.setToken(tokenAddr);
         const balAlc1B4Panic = await accountBalances(token, formatAddr(alc1.address));
         const eThBalOfFeeToB4Panic = await ethers.provider.getBalance(feeTo.address);
-        compareEqualString(bn(balAlc1B4Panic[1][0]).toString(), bn(value).toString()); // Check that the balance after token is ocked is correct
+        compareEqualString(bn(balAlc1B4Panic[1][0]).toString(), bn(ONE_HUNDRED_TOKEN).toString()); // Check that the balance after token is ocked is correct
         
         await panicUnlock(attorney, alc3, formatAddr(alc1.address));
         const eThBalOfFeeToAfterPanic = await ethers.provider.getBalance(feeTo.address);

@@ -1,5 +1,5 @@
 // import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
-import { Address, Addresses, NullNoPromise, StrBigHex } from "../types";
+import { Address, Addresses, NullNoPromise, StrBigHex } from "./types";
 import { ethers, Web3 } from "hardhat";
 import BigNumber from "bignumber.js";
 import { Hex } from "viem";
@@ -25,18 +25,21 @@ export const SYMBOL = "SFT";
 export const NAME = "Simplifinance Token";
 export const TOTALSUPPLY = buildstring('1', '0', 27);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
-
+export const TEN_THOUSAND_TOKEN = 10000000000000000000000n;
+export const ONE_THOUSAND_TOKEN = 1000000000000000000000n;
+export const ONE_HUNDRED_TOKEN = 100000000000000000000n;
+export const ONE_TOKEN = 1000000000000000000n;
 export const INITIAL_ACCOUNT_BALANCE = ethers.parseEther("1.0");
 export const CREATION_FEE = ethers.parseEther("0.02");
 export const VALUE_TO_SEND = ethers.parseEther("2.0");
-export const AMOUNT_SENT_TO_ACCOUNT_ONE = toHex(buildstring('3', '0', 23)); //300,000 token
-export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = toHex(buildstring('1', '0', 23)); // 100,000 token
-export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = toHex(buildstring('1', '0', 23)); // 100,000 token
+export const AMOUNT_SENT_TO_ACCOUNT_ONE = 300000000000000000000000n; //300,000 token
+export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = 100000000000000000000000n; // 100,000 token
+export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = 100000000000000000000000n; // 100,000 token
 
-/**
- * Zero address i.e `0x${'0'.repeat(40)}`
- */
-export const ZERO_ADDRESS = buildstring("0x", "0", 40);
+// /**
+//  * Zero address i.e `0x${'0'.repeat(40)}`
+//  */
+// export const ZERO_ADDRESS = buildstring("0x", "0", 40);
 
 /**
  * Maker rate. 1020 equivalent to 2%
@@ -64,38 +67,33 @@ export const COLLATER_COVERAGE_RATIO = 150;
  * Minimum contribution
  * We used `2000000000000000000` i.e 2 cUSD as example
  */
-export const MINIMUM_CONTRIBUTION = toHex(buildstring(2, 0, 18)); //
+export const MINIMUM_CONTRIBUTION = 2000000000000000000n;
 
 /**
  * Contribution amount
  */
-export const CONTRIBUTION = toHex(buildstring('5', '0', 22)); 
+export const CONTRIBUTION = 50000000000000000000000n; 
 
 /**
  * Transfer amount: 10,000 Token
  */
-export const AMOUNT = toHex(buildstring('1', '0', 23));
+export const AMOUNT = 100000000000000000000000n;
 
 /**
  * Attorney fee
  */
-export const FEE = toHex(buildstring('1', '0', 16));
+export const FEE = 10000000000000000n;
 
 /**
  * cUSD contract address on Celo testnet
  */
-export const CUSD_ALFAJORES: Address = "0x874069fa1eb16d44d622f2e0ca25eea172369bc1";
-
-/**
- * cUSD contract address on Celo mainnet
- */
-export const CUSD_MAINNET: Address = "0x765de816845861e75a25fca122bb6898b8b1282a";
+export const USD_XFI_TESTNET: Address = "0x874069fa1eb16d44d622f2e0ca25eea172369bc1";
 
 /**
  * Dummy addresses used as signers.
  * You can replace with yours.
  */
-export const LIVE_ACCOUNTS: Addresses = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"];
+export const DUMMY_ADDRESS: Addresses = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"];
 
 /**
  * The number of participants to form a band
@@ -105,12 +103,12 @@ export const QUORUM = 3;
 /**
  * Dummy dev address
  */
-export const DEV: Address = LIVE_ACCOUNTS[0];
+export const DEV: Address = DUMMY_ADDRESS[0];
 
 /**
  * Dummy fee receiver.
  */
-export const FEETO: Address = LIVE_ACCOUNTS[0];
+export const FEETO: Address = DUMMY_ADDRESS[0];
 
 // I created this custom utils for flexiblity working with BigNumber. You're free to improved on it.
 

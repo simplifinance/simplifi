@@ -95,7 +95,7 @@ contract Factory is AbstractFactory {
         routers[_createPool(quorum, durationInHours, colCoverageRatio, amount, asset, participants, _router)] = _router;
         return true;
     }
-
+    
     /**@dev See RouterUpgradeable.sol */
     function joinBand(uint poolId) 
         external 

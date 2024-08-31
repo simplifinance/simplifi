@@ -1,9 +1,8 @@
-import { deployContracts } from "./Deployments"
+import { deployContracts } from "./deployments"
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-import type { Addresses, Balances } from "./types";
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { signAndExecuteTransaction, balanceOf, balances, initiateTransaction, accountBalances,} from "./Index";
+import { signAndExecuteTransaction, balanceOf, balances, initiateTransaction, accountBalances,} from "./tokenUtils";
   import { 
     compareEqualString,
     reduce,
@@ -14,8 +13,10 @@ import { signAndExecuteTransaction, balanceOf, balances, initiateTransaction, ac
     buildstring,
     sumToString,
     VALUE_TO_SEND,
-    formatAddr
-  } from "./Utils";
+    formatAddr,
+    ONE_THOUSAND_TOKEN,
+    ONE_TOKEN
+  } from "./utilities";
 import { toBigInt } from "ethers";
 
 describe("RouterUpgradeable", function () {
@@ -69,7 +70,6 @@ describe("RouterUpgradeable", function () {
       
       const { signer1, signer2, signer3, deployer, alc3 } = signers;
       let reqId = 0;
-      const amount = toHex(buildstring('1', '0', 22));
       const initBal_distributor = await balanceOf(token, formatAddr(initTokenReceiverAddr));
       const initBal_receiver = await balanceOf(token, formatAddr(alc3.address));
       
@@ -80,7 +80,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer1,
-        amount,
+        amount: ONE_THOUSAND_TOKEN,
         trxnType: 0,
         callback: () => {
           reqId ++;
@@ -90,8 +90,8 @@ describe("RouterUpgradeable", function () {
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
       const alcInfo_sender = await accountBalances(token, formatAddr(initTokenReceiverAddr));
       const alcInfo_receiver = await token.accountBalances(formatAddr(alc3.address));
-      compareEqualString(bn(alcInfo_sender[0]).toString(), reduce(initBal_distributor, amount).toString());
-      compareEqualString(bn(alcInfo_receiver[0]).toString(), sumToString(initBal_receiver, amount));
+      compareEqualString(bn(alcInfo_sender[0]).toString(), reduce(initBal_distributor, ONE_THOUSAND_TOKEN).toString());
+      compareEqualString(bn(alcInfo_receiver[0]).toString(), sumToString(initBal_receiver, ONE_THOUSAND_TOKEN));
     });
 
     it("it should initiate and execute to transfer network asset", async () => {
@@ -105,7 +105,6 @@ describe("RouterUpgradeable", function () {
       const { signer1, signer2, signer3, deployer, alc3 } = signers;
       let reqId = 0;
       // const amountSentToDistributor = toHex(buildstring('2', '0', 18));
-      const amount = toHex(buildstring('1', '0', 18));
       await initTokenReceiver.deposit({value: VALUE_TO_SEND});
       const initBal_distributor = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       expect(initBal_distributor).to.be.equal(VALUE_TO_SEND);
@@ -119,7 +118,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer1,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 1,
         callback: () => {
           reqId ++;
@@ -129,8 +128,8 @@ describe("RouterUpgradeable", function () {
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
       const balSenderAfter = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       const balReceiverAfter = await ethers.provider.getBalance(formatAddr(alc3.address));
-      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, amount).toString());
-      compareEqualString(bn(balReceiverAfter).toString(), sumToString(initBal_receiver, amount));
+      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, ONE_TOKEN).toString());
+      compareEqualString(bn(balReceiverAfter).toString(), sumToString(initBal_receiver, ONE_TOKEN));
     });
     
     it("Should add new signer successfully", async () => {
@@ -144,8 +143,6 @@ describe("RouterUpgradeable", function () {
       const { signer1, signer2, signer3, deployer, alc3 } = signers;
       
       let reqId = 0;
-      // const amountSentToDistributor = toHex(buildstring('2', '0', 18));
-      const amount = toHex(buildstring('1', '0', 18));
       await initTokenReceiver.deposit({value: VALUE_TO_SEND});
       const initBal_distributor = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       expect(initBal_distributor).to.be.equal(VALUE_TO_SEND);
@@ -159,7 +156,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer1,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 2,
         callback: () => {
           reqId ++;
@@ -179,7 +176,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: alc3,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 1,
         callback: () => {
           reqId ++;
@@ -189,7 +186,7 @@ describe("RouterUpgradeable", function () {
       await signAndExecuteTransaction({reqId, signers: Array.from([signer2, signer3]), initTokenReceiver});
       const balSenderAfter = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       const balReceiverAfter = await ethers.provider.getBalance(formatAddr(alc3.address));
-      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, amount).toString());
+      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, ONE_TOKEN).toString());
       expect(balReceiverAfter).to.be.gt(initBal_receiver);
     });
 
@@ -203,8 +200,6 @@ describe("RouterUpgradeable", function () {
       
       const { signer1, signer2, signer3, deployer, alc3 } = signers;
       let reqId = 0;
-      // const amountSentToDistributor = toHex(buildstring('2', '0', 18));
-      const amount = toHex(buildstring('1', '0', 18));
       await initTokenReceiver.deposit({value: VALUE_TO_SEND});
       const initBal_distributor = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       expect(initBal_distributor).to.be.equal(VALUE_TO_SEND);
@@ -216,7 +211,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer1,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 2,
         callback: () => {
           reqId ++;
@@ -235,7 +230,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer2,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 3,
         callback: () => {
           reqId ++;
@@ -246,7 +241,7 @@ describe("RouterUpgradeable", function () {
 
       // We can now test to be sure that the new alc3 cannot make sign any transaction
       await initTokenReceiver.connect(deployer).setToken(tokenAddr);
-      await expect(initTokenReceiver.connect(alc3).initiateTransaction(alc3.address, amount, 0, 1))
+      await expect(initTokenReceiver.connect(alc3).initiateTransaction(alc3.address, ONE_TOKEN, 0, 1))
       .to.revertedWith("Not a signer");
     });
 
@@ -260,8 +255,6 @@ describe("RouterUpgradeable", function () {
       
       const { signer1, signer2, signer3, deployer, alc3 } = signers;
       let reqId = 0;
-      // const amountSentToDistributor = toHex(buildstring('2', '0', 18));
-      const amount = toHex(buildstring('1', '0', 18));
       await initTokenReceiver.deposit({value: VALUE_TO_SEND});
       const initBal_distributor = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       expect(initBal_distributor).to.be.equal(VALUE_TO_SEND);
@@ -293,7 +286,7 @@ describe("RouterUpgradeable", function () {
         recipient: formatAddr(alc3.address),
         deployer,
         from: signer2,
-        amount,
+        amount: ONE_TOKEN,
         trxnType: 1,
         callback: () => {
           reqId ++;
@@ -303,7 +296,7 @@ describe("RouterUpgradeable", function () {
 
       const balSenderAfter = await ethers.provider.getBalance(formatAddr(initTokenReceiverAddr));
       const balReceiverAfter = await ethers.provider.getBalance(formatAddr(alc3.address));
-      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, amount).toString());
+      compareEqualString(bn(balSenderAfter).toString(), reduce(initBal_distributor, ONE_TOKEN).toString());
       expect(balReceiverAfter).to.be.gt(initBal_receiver);
     });                                 
   });                                           

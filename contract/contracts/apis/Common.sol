@@ -25,15 +25,18 @@ interface Common {
    *  @param hasGH : Whether an user/current msg.sender has received or not.
    *  @param id : Address of the last recipient.  
    */
-  struct StrategyInfo {
-    bool isMember;
-    bool isAdmin;
+  struct Contributor {
     uint payDate;
     uint turnTime;
     uint owings;
     uint colBals;
     bool hasGH;
     address id;
+  }
+
+  struct Rank {
+    bool admin;
+    bool member;
   }
 
   /**
@@ -54,7 +57,7 @@ interface Common {
     @dev Structured data types to convey parameters to avoid Stack too deep error.
     @param quorum : The maximum number of users that can form a contribution group.
     @param duration : The number of days the contribution contract will expires.
-    @param ccr : Collateral Coverate Ratio : The ratio of collateral a member must hold 
+    @param colCoverage : Collateral Coverate Ratio : The ratio of collateral a member must hold 
                   in order to be able to get financed.
     @param value : The total value of pooled fund.
     @param members : List of members in a group.
@@ -64,10 +67,11 @@ interface Common {
   struct CreatePoolParam {
     uint quorum;
     uint duration;
-    uint ccr; 
-    uint value;
+    uint colCoverage; 
+    uint unitContribution;
     address[] members;
     address asset;
+    // address strategy;
   }
 
   /**
@@ -85,14 +89,14 @@ interface Common {
    *  @param quorum : The maximum number of users that can form a contribution group.
    *  @param selector : This is like the hand or ticker of a clock that is used to select
    *                    the next participant to get finance.
-   *  @param ccr : Collateral Coverate Ratio : The ratio of collateral a member must hold 
+   *  @param colCoverage : Collateral Coverate Ratio : The ratio of collateral a member must hold 
                   in order to be able to get financed.
       @param duration : The number of days the contribution contract will expires.
    */
   struct Uints {
     uint quorum;
     uint selector;
-    uint ccr; // colCoverageRatio
+    uint colCoverage; // colCoverageRatio
     uint duration;
   }
   
@@ -105,6 +109,8 @@ interface Common {
   struct Addresses {
     address asset;
     address lastPaid;
+    address strategy;
+    address admin;
   }
 
   /**
@@ -123,57 +129,54 @@ interface Common {
     uint colBalInToken;
   }
 
-  struct Strategy {
-    address active;
-    address deactivated;
-  }
-
   struct LiquidateParam {
-    uint poolId;
+    uint epochId;
     bool isPermissionLess;
     function (uint, FuncTag) internal lock;
     function (uint, FuncTag) internal unlock;
-    function (address) internal view returns(address) getStrategy;
+    function (address) internal returns(address) getStrategy;
   }
   
   struct AddTobandParam {
-    uint poolId;
+    uint epochId;
     bool isPermissioned;
-    function (address) internal view returns(address) getStrategy;
+    // function (address) internal returns(address) getStrategy;
     function (uint, FuncTag) internal lock;
     function (uint, FuncTag) internal unlock;
   }
 
-  struct CreatePoolReturnValueParam {
+  struct CreatePoolReturnValue {
     Pool pool; 
-    StrategyInfo info; 
-    uint poolId;
-    uint16 pos;
+    Contributor contributor; 
+    uint epochId;
+    uint16 spot;
   }
 
   struct PaybackParam {
-    uint poolId;
+    uint epochId;
     address strategy;
     address colBalRecipient;
-    StrategyInfo expInfo;
+    Contributor contributor;
     function (uint, FuncTag) internal lock;
     function (uint, FuncTag) internal unlock;
   }
 
   struct UpdateMemberDataParam {
     address expected;
-    uint poolId; 
+    uint epochId; 
     uint owings;
     uint fee;
     Pool pool;
     function () internal returns(uint) getPriceInUSD;
-    function (address) internal view returns(address) getStrategy;
+    function (address) internal returns(address) getStrategy;
   }
 
   struct CreatePermissionedPoolInputParam {
     CreatePoolParam cpp;
-    function (address) internal view returns(address) getStrategy;
+    function (address) internal returns(address) getStrategy;
     function (uint, FuncTag) internal _unlock;
   }
+
+  error UpdateStrategyError();
 
 }
