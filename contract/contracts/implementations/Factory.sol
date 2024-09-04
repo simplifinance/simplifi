@@ -4,11 +4,12 @@ pragma solidity 0.8.24;
 
 import { AbstractFactory } from "../abstracts/AbstractFactory.sol";
 
-/**@title Factory : Main contract
- * A multi peer-to-peer lending and borrowing structure where two or more people form a synergy to provide financial support
-  to one another. In Simplifi protocol, we redefined this pattern of lending and borrowing to remove inherent constraints
-  and barriers to financial inclusion. Our permissionless model allows anyone to create a community of fundraisers for the 
-  purpose of supporting one another. 
+/** @title Factory : Main contract
+ *  A multi p2p lending and borrowing structure where two or more people form a synergy to provide liquidity support
+    to one another. In Simplifi protocol, we redefined this pattern of lending and borrowing to remove inherent constraints
+    and barriers to financial inclusion. Our permissionless model allows anyone to create a pool of liquuidity providers and 
+    borrowers where liquidities form a synergy of liquidity that rotates round the providers within a short period of time in
+    form of borrowed funds thereby removing strict rules. 
   
   Two options are available to users of Simplifi:
     1). Permissionless community/band: 
@@ -118,6 +119,10 @@ contract Factory is AbstractFactory {
     */
     function getRouterWithPoolId(uint poolId) external view returns(string memory) {
         return routers[poolId] == Router.PERMISSIONLESS ? "PERMISSIONLESS" : "PERMISSIONED";
+    }
+
+    function enquireLiquidation(Data storage self, uint epochId) external view returns (Common.Liquidation memory _liq, bool defaulted) {
+        return _enquireLiquidation(self, epochId);
     }
 
 }

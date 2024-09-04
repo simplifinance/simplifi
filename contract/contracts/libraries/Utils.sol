@@ -30,29 +30,29 @@ library Utils {
         require(!condition, errorMessage);
     }
 
-    /**Calculate the % over the principal amount such as makerRate
-        for instance, if:
-        makerRate = 1020, 
-
-        Note: We restrict denominator to 4 figure i.e max is 9999 (denom/).
-        This enables us peg the numerator to 1000 (/num),
-        where a 100% of @param value : will always be 2000.
-        Ex:
-        Passing 1000 as the denominator is 0%.
-        1500 = 50%.
-
-        The computation will always preserve the result in the original decimals or 
-        denomination of the value i.e if value is 5000 in 9 decimals, and denomator
-        is 1500 which is 50%, result will be calculated as :
-        result = ((5000000000000 * 1500) / 1000) - 5000000000000
-        result = 2500000000000
-
+    /**     @dev Calculation of percentage.
+        *   This is how we calculate percentage to arrive at expected value with 
+        *   100% precision.
+        *   We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
+        *   her interest rate to 0.05%, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
+        *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
+        *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
+        *   The minimum interest rate to set is 0.01% if interest must be set at least.
+        *   @notice To reiterate, user must multiply their interest rate by 100 before giving as input. 
+        *   @param value : The principal value on which the interest is based. Value should be in decimals.
+        *   @param denom : Interest rate. 
     */
-    function mulDivOp(uint256 value, uint16 denominator) internal pure returns (uint _return) {
-        uint16 numerator = 1000; 
-        if(denominator >= 10000) revert InvalidDenominator("Denominator should be less than 10000");
-        if(value == 0 || denominator == 0 || denominator == numerator || uint(denominator).mod(numerator) == 0) return 0;
-        _return = value.mul(denominator).div(numerator).sub(value);
+    function getPercentage(uint256 value, uint16 denom) internal pure returns (uint _return) {
+        uint16 base = _getBase(); 
+        if(denom == 0) return 0;
+        _return = value.mul(denom).div(base);
+    }
+
+    /**
+     * Simplifi protocol percentage base
+     */
+    function _getBase() internal pure returns(uint16 base) {
+        base = 10000;
     }
     
     function _decimals(address asset) internal view returns(uint8 decimals) {
@@ -69,40 +69,86 @@ library Utils {
 
     /**
      * @dev Computes collateral on the requested loan amount
-     * @param token : Collaterized asset 
-     * @param strategy : Strategy account 
-     * @param ccr : Collateral ratio 
-     * @param assetPriceInUSDWithDecimals : Asset Price in USD denominated in decimals
-     * @param loanRequestInUSDWithDecimals : Total requested contribution in USD
+     * @param loanBaseDecimals : Decimals of asset used as contribution. USDT for instance is 18.
+     * @param ccr : Collateral ratio. Must be multiply by 100 before parsing as input i.e if raw ccr
+     *              is 1.3, it should be rendered as 1.2 * 100 = 120.
+     * @param xfiUSDPriceInDecimals : Price of XFI in the right decimal.
+     * @param loanReqInDecimals : Total requested contribution in USD
+     * @param actualColInXFI : Amount sent in XFI as collateral.
+     * @notice Based on Simplifi mvp, loans are collaterized in XFI until we add more pairs
+     *         in the future.
+     * Example: Alice, Bob and Joe formed a band to contribute $100 each where duration is for 
+     * 10 days each. Alice being the admin set ccr to 1.5 equivalent to 150% of the total sum 
+     * contribution of $300. If the price of XFI as at the time of GF is $0.5/XFI, where XFI decimals
+     * is in 18, we calculate the required XFI to stake as follows:   
+     *  
+     *                    totalContribution *  (10** XFIdecimals)   |                 raw ccr
+     *   totalLoanInXFI = --------------------------------------    |    actualCCR = (1.5 * 100) * 100 = 1500
+     *                        (price * XFIdecimals)                n|
      * 
-     * Note: `ccr` should be in 3 figure and greater than type(uint8).max
+     *                     totalLoanInXFI * actualCCR
+     *        XFINeeded = ----------------------------
+     *                             _getBase()
+     * 
+     *  Therefore, Alice is required to stake 900XFI to GF $300 for 10 days.
+     *   
      */
     function computeCollateral(
-        address token,
-        address strategy,
-        uint ccr,
-        uint assetPriceInUSDWithDecimals,
-        uint loanRequestInUSDWithDecimals
-    ) internal view returns(uint256 expColInToken) {
-        require(ccr < 1000, "Utils: CCR should be 3 figure");
-        uint priceMantissa = 10**12;
-        uint256 actualColInToken = getCollateralBalance(token, strategy);
-        uint actualLoan;
-        actualLoan = ccr == 0? loanRequestInUSDWithDecimals : ccr.mul(loanRequestInUSDWithDecimals).div(100);
-        expColInToken = actualLoan.mul(assetPriceInUSDWithDecimals).div(priceMantissa);
-        if(actualColInToken < expColInToken) revert InsufficientCollateral(actualColInToken, expColInToken);
-        // assertTrue(actualColInToken >= expColInToken,"Insufficient collaterized token");
+        uint actualColInXFI,
+        uint8 loanBaseDecimals,
+        uint24 ccr,
+        uint xfiUSDPriceInDecimals,
+        uint loanReqInDecimals
+    ) 
+        internal
+        pure 
+        returns(uint256 expColInXFI) 
+    {
+        uint8 mantissa = 100;
+        if(ccr < mantissa) revert Common.CollateralCoverageCannotGoBelow_100(ccr);
+        uint48 _ccr = uint48(uint(ccr).mul(100));
+        uint totalLoanInXFI = loanReqInDecimals.mul(10**loanBaseDecimals).div(xfiUSDPriceInDecimals).div(loanBaseDecimals);
+        expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
+        require(actualColInXFI >= expColInXFI, "Insufficient XFI");
     }
 
     /**
         @dev Computes maker fee.
         @param makerRate : The amount of fee (in %) charged by the platform
-            Note : Maker rate must be in denomination of 1000 e.g 1010, 1100 etc.
-        See `mulDivOp` above
-        Note: @param amount should already be in destination asset denomination.
+            Note : Raw rate must multiply by 100 to get the expected value i.e
+            if maker rate is 0.1%, it should be parsed as 0.1 * 100 = 10.
+            See `getPercentage()`.
+        @param amount should be in decimals.
     */
-    function computeFee(uint amount, uint16 makerRate) internal pure returns (uint mFee) {
-        mFee = mulDivOp(amount, makerRate);
+    function computeFee(
+        uint amount, 
+        uint16 makerRate
+    ) 
+        internal 
+        pure 
+        returns (uint mFee) 
+    {
+        mFee = getPercentage(amount, makerRate);
+    }
+
+    /**
+     * @dev Compute interest based on specified rate.
+     * @param rate : Interest rate.
+     * @param principal : Total expected contribution.
+     * @param durationInHour : Duration of loan. To be specified in hours.
+     */
+    function computeInterests(
+        uint principal,
+        uint16 rate,
+        uint16 durationInHour
+    )
+        internal 
+        pure 
+        returns(Common.InterestReturn memory _itr) 
+    {
+        _itr.durInSec = durationInHour * 1 hours;
+        _itr.fullInterest = getPercentage(principal, rate);
+        _itr.intPerSec = _itr.fullInterest.div(_itr.durInSec);
     }
 
     function notZeroAddress(address target) internal pure {

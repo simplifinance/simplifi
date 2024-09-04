@@ -2,20 +2,59 @@
 
 pragma solidity 0.8.24;
 
+import { Common } from "./Common.sol";
+
 interface IStrategy {
   error ContractBalanceTooLow();
+  error InsufficientNativeBalanceInContract(uint);
+
+  
+  /**
+   * @dev Add contributor to the list
+   * @param user : Contributor address
+   * @param epochId : Epoch Id
+   */
+  function addUp(
+    address user,
+    uint epochId
+  ) 
+    external
+    returns(bool);
 
   /**
-   * @dev Utility to activate members
+   * @dev Map assetInUse to epoch Id in Strategy.
    * @param epochId: Epoch Id otherwise known as pool Id.
-   * @param user: User address different from msg.sender.
    * @param assetInUse: Contract address of the ERC20 token the contribution is based on.
    * @return success
    */
-  function activateMember(
+  function mapAsset(
     uint epochId, 
-    address user, 
     address assetInUse
+  ) 
+    external 
+    returns(bool success);
+
+  /**
+   * @dev Utility to activate claim for a contributor.
+   * @param epochId: Epoch Id otherwise known as pool Id.
+   * @param claim: withdrawable amount.
+   * @param fee: Amount charged as fee.
+   * @param user: User address.
+   * @param feeTo: Fee receiver.
+   * @param txType : The type of transaction to perform in the call.
+   *                Can be either ERC20 or native transaction.
+  *  @param allHasGF : A boolean flag indicating whether the epoch should end or not.
+   * @return success
+   */
+  function setClaim(
+    uint claim,
+    uint fee,
+    uint credit,
+    uint epochId,
+    address user,
+    address feeTo,
+    bool allHasGF,
+    Common.TransactionType txType
   ) 
     external 
     returns(bool success);
@@ -25,18 +64,28 @@ interface IStrategy {
    * @param epochId: Epoch Id otherwise known as pool Id.
    * @return Withdrawable (type Uint256)
    */
-  function claimable(uint epochId) 
+  function claimableXFI(
+    uint epochId
+  ) 
     external 
     view  
     returns(uint256);
 
   /**
    * @dev Utility to claim any withdrawable fund. 
-   * @param epochId: Epoch Id otherwise known as pool Id.
    * @return success
    */
-  function claim(uint epochId) 
+  function claimNativeCoin(
+    uint epochId
+  ) 
     external 
     returns(bool success);
 
+  function swapProvider(
+    uint epochId, 
+    address newProv, 
+    address oldProv
+  ) 
+    external 
+    returns(bool);
 }

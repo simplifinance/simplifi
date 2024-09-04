@@ -1,209 +1,20 @@
-// pragma solidity 0.8.24;
-
-// import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
-// import { ITrustee } from "../../apis/ITrustee.sol";
-// import { ISmartStrategyAdmin } from "../../apis/ISmartStrategyAdmin.sol";
-// import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-
-// contract Trustee is ITrustee, Ownable {
-//   using SafeCallERC20 for IERC20;
-
-//   error InvalidAddress(address);
-//   error NotABeneficiary(address);
-//   error NotPermitted();
-//   error OnlyDev();
-
-//   /**
-//    * @dev Storage for beneficiary data
-//    */
-//   struct Beneficiary {
-//     uint size;
-//     uint256 claimable;
-//     address asset;
-//     mapping(address => bool) isStrategy;
-//   }
-
-//   /// Total fee generated to date.
-//   uint256 private accumulatedFee;
-
-//   address public feeTo;
-
-//   /**
-//    * @dev Strategy Admin
-//    */
-//   ISmartStrategyAdmin public strategyAdmin;
-
-//   /**
-//    * @dev Beneficiaries
-//    */
-//   mapping(uint => Beneficiary) private beneficiaries;
-
-//   address public router;
-  
-//   modifier isBeneficiary(uint epochId) {
-//     address strategy = _getStrategy(_msgSender());
-//     if(!beneficiaries[epochId].isStrategy[strategy]) {
-//       revert NotABeneficiary(strategy);
-//     }
-//     _;
-//   }
-
-//   /**
-//    * @dev NotPermitted function
-//    */
-//   modifier onlyRouter {
-//     address _routers = router;
-//     address caller = _msgSender();
-//     require(_routers != address(0), "Router not set");
-//     require(caller == _routers, "NA");
-//     _;
-//   }
-
-//   receive() external payable {
-//     if(_getStrategy(_msgSender()) == address(0)) {
-//       (bool _s,) = feeTo.call{value: msg.value}("");
-//       require(_s);
-//     }
-//   }
-
-//   /**
-//    * @dev Initializes state variables.
-//    * OnlyOwner function.
-//    */
-//   constructor () Ownable(_msgSender()) {}
-  
-//   /**
-//    * @dev Get strategy
-//   */
-//   function _getStrategy(address target) internal view returns(address) {
-//     return ISmartStrategyAdmin(strategyAdmin).getStrategy(target);
-//   }
-
-//   function setAddresses(address _router, ISmartStrategyAdmin _strategyAdmin, address _feeTo) public onlyOwner {
-//     router = _router; 
-//     feeTo = _feeTo;
-//     if(address(_strategyAdmin) != address(0)) strategyAdmin = _strategyAdmin;
-//   }
-
-//   /**
-//    * @dev Registers beneficiaries.
-//    * OnlyOwner function
-//    */
-//   function registerBeneficiaries(
-//     address[] memory strategies,
-//     uint256 amount, 
-//     uint epochId,
-//     address asset
-//   ) external onlyRouter returns(bool){
-//     uint size = strategies.length;
-//     beneficiaries[epochId].claimable = amount;
-//     beneficiaries[epochId].asset = asset;
-//     beneficiaries[epochId].size = size;
-    
-//     for(uint8 i = 0; i < size; i++) {
-//       beneficiaries[epochId].isStrategy[strategies[i]] = true;
-//     }
-
-//     return true;
-//   }
-
-//   /**
-//    * @dev Transfer asset to strategy.
-//    * Function is called when a participant want to get finance or a 
-//    * band is cancelled.
-//    * @param asset: Asset to transfer. This function is agnostic to any 
-//    * ERC20 standard asset.
-//    * @param strategy: Recipient.
-//    * @param amount : Value to transfer.
-//    */
-//   function transferOut(
-//     address asset, 
-//     address strategy, 
-//     uint256 amount,
-//     uint fee
-//   ) external onlyRouter returns(bool) {
-//     if(fee > 0) {
-//       unchecked {
-//         accumulatedFee += fee;
-//       }
-//       _transfer(feeTo, asset, fee);
-//     }
-//     _transfer(strategy, asset, amount);
-//     return true;
-//   }
-
-//   /**
-//    * @dev Accumulated Withdraw fee
-//    * OnlyOwner function.
-//    */
-//   function withdrawFee(address asset, address to) public onlyOwner {
-//     uint _fee = accumulatedFee;
-//     require(_fee > 0, "Nothing to withdraw");
-//     accumulatedFee = 0;
-
-//    _transfer(to, asset, _fee);
-//   }
-
-//   function _transfer(address to, address asset, uint256 amount) private {
-//     IERC20(asset).safeTransfer(to, amount);
-//   }
-
-//   /**
-//    * @dev Check if user have funds to claim
-//    */
-//   function claimable(uint epochId) public view override  returns(uint256) {
-//     return beneficiaries[epochId].claimable;
-//   }
-
-//   function claimContribution(uint epochId) public payable override isBeneficiary(epochId) returns(bool) {
-//     address strategy = _getStrategy(_msgSender());
-//     beneficiaries[epochId].isStrategy[strategy] = false;
-//     beneficiaries[epochId].size --;
-//     address asset = beneficiaries[epochId].asset;
-//     uint256 amount = beneficiaries[epochId].claimable;
-//     if(beneficiaries[epochId].size == 0) beneficiaries[epochId].claimable = 0;
-//     require(IERC20(asset).transfer(strategy, amount), "Transfer failed");
-
-//     return true;
-//   }
-
-//   /**
-//    * @dev Reads accumulated fee
-//    */
-//   function getAccumulatedFee() public view onlyOwner returns(uint256) {
-//     return accumulatedFee;
-//   }
-// }
-
-
-
-
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.24;
 
 import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { IStrategy } from "../../apis/IStrategy.sol";
+import { Common } from "../../apis/Common.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract Strategy is IStrategy, Ownable, ReentrancyGuard {
-  // using SafeCallERC20 for IERC20;
-
-  struct Member {
-    uint withdrawable;
-    address user;
-    bool hasClaim;
-  }
 
   /**
-   * @dev Mapping of epochId to Members
-   * Supplying a epochId will return the list of members for that specific
-   * pool. 
-   * @notice Each pool id must be unique to one another. There should not be 
-   * 2 identical pool ids.
+   * @dev Approvals in native coin i.e XFI
+   * mapping of providera to balances.
    */
-  mapping(uint => mapping (address => Member)) private members;
+  mapping(address => mapping (uint => uint)) private nativeApprovals;
 
   /**
    * @dev mapping of epoch Id to assets.
@@ -214,181 +25,212 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
    */
   mapping (uint => address) public assets;
 
-  /// Total fee generated to date.
-  // uint256 private accumulatedFee;
-
-  // address public feeTo;
+  /**
+   * @notice Mapping of epoches to list of contributors.
+   */
+  mapping (uint => address[]) public contributors;
 
   /**
-   * @dev Strategy Admin
+   * @notice Every loan repayment is recorded here
+   * Mapping of epochId to credit balances.
+   * Using this method to track amortization records will enables us 
+   * to properly account for loans and interests payments from all 
+   * contributors in an epoch. 
    */
-  // ISmartStrategyAdmin public strategyAdmin;
-
-  /**
-   * @dev Beneficiaries
-   */
-  // mapping(uint => Beneficiary) private beneficiaries;
-
-  // address public router;
-  
-  // modifier isBeneficiary(uint epochId) {
-  //   // address strategy = _getStrategy(_msgSender());
-  //   if(!beneficiaries[epochId].isStrategy[strategy]) {
-  //     revert NotABeneficiary(strategy);
-  //   }
-  //   _;
-  // }
-
-  // /**
-  //  * @dev NotPermitted function
-  //  */
-  // modifier onlyRouter {
-  //   address _routers = router;
-  //   address caller = _msgSender();
-  //   require(_routers != address(0), "Router not set");
-  //   require(caller == _routers, "NA");
-  //   _;
-  // }
+  mapping (uint => uint) public credits;
 
   receive() external payable onlyOwner {}
-    // if(_getStrategy(_msgSender()) == address(0)) {
-    //   (bool _s,) = feeTo.call{value: msg.value}("");
-    //   require(_s);
-    // }
-  // }
 
   /**
    * @dev Initializes state variables.
    * OnlyOwner function.
    */
   constructor (address factory) Ownable(factory) {}
-  
-  function activateMember(uint epochId, address user, address assetInUse) external onlyOwner returns(bool) {
-    assets[epochId] = assetInUse;
-    members[epochId][user] = Member({
-      user: user,
-      withdrawable: 0,
-      hasClaim: false
-    });
+
+  /**
+   * @dev Implementation of IStrategy.addUp
+   * See IStrategy.addUp for doc
+  */
+  function addUp(
+    address user,
+    uint epochId
+  ) 
+    external
+    onlyOwner
+    returns(bool)
+  {
+    contributors[epochId].push(user);
     return true;
-  }
-  // /**
-  //  * @dev Get strategy
-  // */
-  // function _getStrategy(address target) internal view returns(address) {
-  //   return ISmartStrategyAdmin(strategyAdmin).getStrategy(target);
-  // }
-
-  // function setAddresses(address _router, ISmartStrategyAdmin _strategyAdmin, address _feeTo) public onlyOwner {
-  //   router = _router; 
-  //   feeTo = _feeTo;
-  //   if(address(_strategyAdmin) != address(0)) strategyAdmin = _strategyAdmin;
-  // }
-
-  // /**
-  //  * @dev Registers beneficiaries.
-  //  * OnlyOwner function
-  //  */
-  // function registerBeneficiaries(
-  //   address[] memory strategies,
-  //   uint256 amount, 
-  //   uint epochId,
-  //   address asset
-  // ) external onlyRouter returns(bool){
-  //   uint size = strategies.length;
-  //   beneficiaries[epochId].claimable = amount;
-  //   beneficiaries[epochId].asset = asset;
-  //   beneficiaries[epochId].size = size;
-    
-  //   for(uint8 i = 0; i < size; i++) {
-  //     beneficiaries[epochId].isStrategy[strategies[i]] = true;
-  //   }
-
-  //   return true;
-  // }
-
-  // /**
-  //  * @dev Transfer asset to strategy.
-  //  * Function is called when a participant want to get finance or a 
-  //  * band is cancelled.
-  //  * @param asset: Asset to transfer. This function is agnostic to any 
-  //  * ERC20 standard asset.
-  //  * @param strategy: Recipient.
-  //  * @param amount : Value to transfer.
-  //  */
-  // function transferOut(
-  //   address asset, 
-  //   address strategy, 
-  //   uint256 amount,
-  //   uint fee
-  // ) external onlyRouter returns(bool) {
-  //   if(fee > 0) {
-  //     unchecked {
-  //       accumulatedFee += fee;
-  //     }
-  //     _transfer(feeTo, asset, fee);
-  //   }
-  //   _transfer(strategy, asset, amount);
-  //   return true;
-  // }
-
-  // /**
-  //  * @dev Accumulated Withdraw fee
-  //  * OnlyOwner function.
-  //  */
-  // function withdrawFee(address asset, address to) public onlyOwner {
-  //   uint _fee = accumulatedFee;
-  //   require(_fee > 0, "Nothing to withdraw");
-  //   accumulatedFee = 0;
-
-  //  _transfer(to, asset, _fee);
-  // }
-
-  function _transfer(address to, address asset, uint256 amount) private {
-    require(IERC20(asset).transfer(to, amount), "Transfer failed");
   }
 
   /**
-   * @dev Members of bands registered in this strategy can enquire if they 
-   * have claims.
+   * @dev Implementation of IStrategy.mapAsset
+   * See IStrategy.mapAsset for doc
    */
-  function claimable(uint epochId) external view  returns(uint256) {
-    return members[epochId][_msgSender()].withdrawable;
-  }
-
-  function claim(uint epochId) 
-    external 
-    nonReentrant 
+  function mapAsset(
+    uint epochId, 
+    address assetInUse
+  ) 
+    external
+    onlyOwner
     returns(bool) 
   {
-    address sender = _msgSender();
-    Member memory _m = members[epochId][sender];
-    address assetInUse = assets[epochId];
-    require(_m.hasClaim, "No claim");
-    if(IERC20(assetInUse).balanceOf(address(this)) < _m.withdrawable) {
-      revert ContractBalanceTooLow();
-    }
-    members[epochId][sender] = Member({user: sender, hasClaim: false, withdrawable: 0});
-    _transfer(sender, assetInUse, _m.withdrawable);
+    assets[epochId] = assetInUse;
     return true;
   }
 
-  // function claimContribution(uint epochId) public payable override isBeneficiary(epochId) returns(bool) {
-  //   address strategy = _getStrategy(_msgSender());
-  //   beneficiaries[epochId].isStrategy[strategy] = false;
-  //   beneficiaries[epochId].size --;
-  //   address asset = beneficiaries[epochId].asset;
-  //   uint256 amount = beneficiaries[epochId].claimable;
-  //   if(beneficiaries[epochId].size == 0) beneficiaries[epochId].claimable = 0;
-  //   require(IERC20(asset).transfer(strategy, amount), "Transfer failed");
+  /**
+   * @notice Return outstanding allowance
+   * @param asset : Asset in use
+   * @param user : provider
+   */
+  function _prevAllowance(
+    address asset, 
+    address user
+  ) 
+    internal 
+    view returns(uint allowance) 
+  {
+    allowance = IERC20(asset).allowance(address(this), user);
+  }
+  
+  /**
+   * @dev Implementation of IStrategy.setClaim
+   * See IStrategy.setClaim for doc.
+   * @notice 'credit' should only be set if borrower is returning the borrowed fund.
+  */ 
+  function setClaim(
+    uint claim,
+    uint fee,
+    uint credit,
+    uint epochId,
+    address user,
+    address feeTo, 
+    bool allHasGF,
+    Common.TransactionType txType
+  ) 
+    external 
+    onlyOwner 
+    returns(bool) 
+  {
+    address asset = assets[epochId];
+    if(txType == Common.TransactionType.ERC20) {
+      uint actualClaim = claim > fee? claim - fee : claim;
+      _setAllowance(user, asset, actualClaim);
+      if(fee > 0) {
+        IERC20(asset).transfer(feeTo, fee);
+      }
+    } else {
+      nativeApprovals[user][epochId] += claim;
+      if(allHasGF) {
+        _roundUp(epochId, assets[epochId]);
+      }
+      if(credit > 0) credits[epochId] += credit;
+    }
+    return true;
+  }
 
-  //   return true;
-  // }
+  /**
+   * @notice Closes the current epoch and set claims for all contributors 
+   *          of this epoch.
+   * @param epochId : Epoch Id.
+   * @param asset : Asset in use
+   */
+  function _roundUp(
+    uint epochId,
+    address asset
+  ) 
+    private 
+  {
+    credits[epochId] = 0;
+    address[] memory provs = contributors[epochId];
+    uint allowance = credits[epochId] / provs.length;
+    for(uint i = 0; i < provs.length; i++){
+      _setAllowance(provs[i], asset, allowance);
+    }
+  }
 
-  // /**
-  //  * @dev Reads accumulated fee
-  //  */
-  // function getAccumulatedFee() public view onlyOwner returns(uint256) {
-  //   return accumulatedFee;
-  // }
+  /**
+   * @dev Approve spender contributor 'to' to spend from contract's balance
+   * @param to : Contributor
+   * @param asset : Currency in use
+   * @param amount : Value
+   */
+  function _setAllowance(
+    address to, 
+    address asset, 
+    uint256 amount
+  ) 
+    private 
+  {
+    uint prevAllow = _prevAllowance(asset, to);
+    IERC20(asset).approve(to, prevAllow > 0? amount + prevAllow : amount);
+  }
+
+  /**
+   * @dev Claims of bands registered in this strategy can enquire if they 
+   * have claims.
+   */
+  function claimableXFI(
+    uint epochId
+  ) 
+    external 
+    view  
+    returns(uint256) 
+  {
+    return nativeApprovals[_msgSender()][epochId];
+  }
+
+  /**
+   *  @dev Contributor can claim native coin i. XFI.
+   * We need this function when contributors want to reclaim 
+   * their collateral balances. 
+   */
+  function claimNativeCoin(
+    uint epochId
+  ) 
+    external 
+    nonReentrant 
+    returns(bool success) 
+  {
+    address sender = _msgSender();
+    uint balance = nativeApprovals[sender][epochId];
+    nativeApprovals[sender][epochId] = 0;
+    require(balance > 0, "No claim");
+    if(address(this).balance == 0) {
+      revert InsufficientNativeBalanceInContract(address(this).balance);
+    }
+    (bool sent,) = sender.call{value: balance}("");
+    require(sent,"Op failed");
+    return sent;
+  }
+
+  /**
+   * @dev Swaps addresses.
+   * @param epochId : EpochId.
+   * @param newProv : New address.
+   * @param oldProv : Old address.
+   */
+  function swapProvider(
+    uint epochId, 
+    address newProv, 
+    address oldProv
+  ) 
+    external 
+    returns(bool success) 
+  {
+    address[] memory addrs = contributors[epochId]; 
+    uint slot;
+    for(uint i = 0; i < addrs.length; i++) {
+      if(addrs[i] == oldProv) {
+        slot = i;
+        success = true;
+      }
+    }
+    if(success) {
+      contributors[epochId][slot] = newProv;
+    }
+    return success;
+  }
+
 }

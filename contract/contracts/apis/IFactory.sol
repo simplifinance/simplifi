@@ -8,12 +8,13 @@ interface IFactory is Common {
   error InsufficientFund();
   error AllMemberIsPaid();
   error QuorumIsInvalid();
+  error OwnershipManagerIsNotSet();
 
-  event BandCreated(uint poolId, Common.Pool pool, Common.StrategyInfo info, uint16 position);
-  event NewMemberAdded(uint poolId, Common.StrategyInfo info);
-  event GetFinanced(uint poolId, Common.StrategyInfo info);
-  event Payback(uint poolId, Common.StrategyInfo info);
-  event Liquidated(uint poolId, Common.StrategyInfo info);
+  event BandCreated(CreatePoolReturnValue);
+  event NewMemberAdded(CommonEventData);
+  event GetFinanced(CommonEventData);
+  event Payback(CommonEventData);
+  event Liquidated(CommonEventData);
   event Cancellation(uint poolId);
 
   event RoundUp(uint, Pool);
@@ -21,15 +22,28 @@ interface IFactory is Common {
 
   enum Router { PERMISSIONLESS, PERMISSIONED }
 
-  function getRouterWithPoolId(uint poolId) external view returns(string memory);
-  function currentPoolId() external view returns(uint);
-    function createPermissionlessPool(
+  function getRouterWithPoolId(
+    uint poolId
+  ) 
+    external 
+    view 
+    returns(string memory);
+  
+  function epoches() 
+    external 
+    view 
+    returns(uint);
+
+  function createPermissionlessPool(
     uint8 quorum, 
     uint8 durationInHours, 
     uint16 colCoverageRatio, 
     uint amount,
     address asset
-  ) external payable returns(bool);
+  ) 
+    external 
+    payable 
+    returns(bool);
 
   function createPermissionedPool(
     uint8 durationInHours, 
@@ -37,20 +51,57 @@ interface IFactory is Common {
     uint amount,
     address asset,
     address[] memory participants
-  ) external payable returns(bool);
+  ) 
+    external 
+    returns(bool);
 
-  function payback(uint poolId) external payable returns(bool);
-  function joinBand(uint poolId) external payable returns(bool);
-  function liquidate(uint poolId) external payable returns(bool);
-  function removeBand(uint poolId) external payable returns(bool);
-  function getFinance(uint poolId) external payable returns(bool);
-  function getPoolData(uint poolId) external view returns(Pool memory);
-  function enquireLiquidation(uint poolId) external view returns(Liquidation memory);
+  function payback(
+    uint poolId
+  ) 
+    external 
+    returns(bool);
 
+  function joinBand(
+    uint poolId
+  ) 
+    external 
+    returns(bool);
+
+  function liquidate(
+    uint poolId
+  ) 
+    external 
+    returns(bool);
+
+  function removeBand(
+    uint poolId
+  ) 
+    external 
+    returns(bool);
+
+  function getFinance(
+    uint poolId
+  ) 
+    external 
+    payable returns(bool);
+
+  function getPoolData(
+    uint poolId
+  ) 
+    external 
+    view returns(Pool memory);
+
+  function enquireLiquidation(
+    uint poolId
+  ) 
+    external 
+    view returns(Common.Contributor memory); 
+ 
   struct ContractData {
     address feeTo;
-    address token;
     address assetAdmin;
     uint16 makerRate;
+    address strategyManager;
+    address ownershipManager;
   }
 }

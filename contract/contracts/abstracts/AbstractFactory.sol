@@ -8,18 +8,17 @@ import { Utils } from "../libraries/Utils.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { Ownable } from "../implementations/Ownable.sol";
+import { Pausable } from "../implementations/Pausable.sol";
 
-/**@title Abstract Router Contract
- * This is not deployable since marked abstract.
+/**@title Abstract Factory contract
+ * Non deployable.
 */
 
 abstract contract AbstractFactory is
     IFactory,
     FuncHandler,
-    Pausable,
-    Ownable
+    Pausable
 {
     using Utils for bool;
     using FactoryLib for Data;
@@ -32,247 +31,275 @@ abstract contract AbstractFactory is
     // Minimum amount that can be contributed
     uint public minContribution;
 
-    ISmartStrategyAdmin public strategyAdmin;
+    /**
+     * @dev Only owner.
+     * @notice Be sure ownerShipManager contract is updated.
+    */
+    modifier onlyOwner {
+        address owMgr = data.pData.ownershipManager;
+        if(owMgr == address(0)) revert OwnershipManagerIsNotSet();
+        require(IOwnable(data.pData.ownershipManager).isOwner(_msgSender()), "ABFactory: Not permited");
+        _;
+    }
 
     /**
      * @dev Only supported assets are allowed.
-     * Note: Asset must be supported by the asset contract.
+     * Note: Asset must be supported by the AssetClass contract.
      * @param _asset : Input asset contract address
      */
     modifier onlySupportedAsset(address _asset) {
-        if (!IAssetClass(data.pData.assetAdmin).isSupportedAsset(_asset)) {
+        if (!IAssetClass(data.pData.assetClass).isSupportedAsset(_asset)) {
             revert IAssetClass.UnSupportedAsset(_asset);
         }
         _;
     }
-
+    
+    /**
+     * See _setUp() for doc
+     */
     constructor(
-        uint16 makerRate,
-        uint _minContribution,
-        address _token,
-        address _feeTo,
-        address _assetAdmin,
-        address _strategyAdmin,
-        address _trustee
-    ) Ownable(_msgSender()) {
-        _RouterInitSetUp(makerRate, _minContribution, 1e17 wei, _token, _feeTo, _assetAdmin, _strategyAdmin,_trustee);
+        uint16 serviceRate,
+        uint minContribution,
+        uint setUpFee,
+        address feeTo,
+        address assetClass,
+        address strategyManager,
+        address strategyManager,
+        address ownerShipManager
+    ) {
+        _setUp(serviceRate, _minContribution, 1e17 wei, _token, _feeTo, _assetClass, _strategyManager,_trustee);
     }
 
-    /** @dev Can be used to perform upgrade by simply resetting the state variables.
-     * @notice The new contracts must be compaitble with the previous interfaces
-     *
-     * @param _token : Token contract
-     * @param _minContribution : Minimum contribution amount.
-     * @param _feeTo : Account to receive fees.
-     * @param _assetAdmin : Asset admin contract.
-     * @param _strategyAdmin : Strategy admin contract.
+    /** @dev See _setUp() for doc.
      */
     function performSetUp(
-        uint16 makerRate,
-        uint _minContribution,
-        uint _bandCreationFee,
-        address _token,
-        address _feeTo,
-        address _assetAdmin,
-        address _strategyAdmin,
-        address _trustee
+        uint16 serviceRate,
+        uint minContribution,
+        uint setUpFee,
+        address feeTo,
+        address assetClass,
+        address strategyManager,
+        address ownershipManager,
     ) public onlyOwner {
-        _RouterInitSetUp(makerRate, _minContribution, _bandCreationFee, _token, _feeTo, _assetAdmin, _strategyAdmin,_trustee);
-    }
-
-    function _RouterInitSetUp(
-        uint16 makerRate,
-        uint _minContribution,
-        uint _bandCreationFee,
-        address _token,
-        address _feeTo,
-        address _assetAdmin,
-        address _strategyAdmin,
-        address _trustee
-    ) private {
-        data.pData.token = _token;
-        data.pData.feeTo = _feeTo;
-        minContribution = _minContribution;
-        data.pData = ContractData(_feeTo, _token, _assetAdmin, makerRate);
-        strategyAdmin = ISmartStrategyAdmin(_strategyAdmin);
-        creationFee = _bandCreationFee;
-        data.trustee = _trustee;
+        _setUp(serviceRate, minContribution, setUpFee, feeTo, assetClass, strategyManager, ownershipManager);
     }
 
     /**
-     * @dev Get strategy
-     * @param user : User account
-     * @notice If there is no associated strategy to user, we will deploy a new instance 
-     * for them. 
+     * @dev Can be used to initialize and reinitialized state variables.
+     * @notice Only address with owner role can call. Check Ownable.sol to see 
+     * how we manage ownership (different from OZ pattern). 
+     * @param serviceRate : Platform fee
+     * @param minContribution : Minimum acceptable unit in liquidity pool.
+     * @param setUpFee : Amount charged for setting up a liquidity pool.
+     * @param feeTo : Fee recipient.
+     * @param assetClass : Asset manager contract.
+     * @param strategyManager : Strategy manager contract.
+     * @param ownerShipManager : Ownership Manager contract.
      */
-    function _getStrategy(address user) internal returns (address _smartStrategy) {
-        _smartStrategy = ISmartStrategyAdmin(strategyAdmin).getStrategy(user);
-        if(_smartStrategy == address(0)) {
-            _smartStrategy = ISmartStrategyAdmin(strategyAdmin).createStrategy(user);
-        }
+    function _setUp(
+        uint16 serviceRate,
+        uint minContribution,
+        uint setUpFee,
+        address feeTo,
+        address assetClass,
+        address strategyManager,
+        address ownerShipManager
+    ) private {
+        minContribution = minContribution;
+        data.pData = ContractData(feeTo, assetClass, serviceRate, strategyManager, ownerShipManager);
+        creationFee = setUpFee;
     }
 
     /**
-    @dev Launche a new pool. Based on router, it could be permissioned or permissionkless.
-      @param quorum - Required number of participants to form a band. 
-      @param durationInHours - The maximum time limit (from when the turn time begins) with which a participant
-                                will take custody of the loan before repayment.
-      @param colCoverageRatio - Collateral factor - determinant of the amount of collateral to require of gFer.
-                                This is expressed as a multiple index of total loanable amount.
-      @param amount - Unit contribution.
-      @param asset - address of the ERC20 standard asset to use.
-      Note: asset must be supported by digesu.
-  */
+    @dev Launch a liquidity pool. Based on router, it could be permissioned or permissionless.
+      @param intRate : Rate of interest to charge on loans.
+      @param quorum: The Required number of contributors to form a band. 
+      @param durationInHours: The maximum time limit (from when turn time begins) with which a contributor
+                            will take custody of the loan before repayment. Should be specified in hours.
+      @param colCoverage - Collateral factor - Collateral determinant for contributors to borrow.
+                            This is expressed as a multiplier index in the total loanable amount.
+      @param unitLiquidity - Unit contribution.
+      @param liquidAsset - Liquidity asset. This will often be an ERC20 compatible asset.
+      @param contributors : Array contributors addresses
+      @param router : We use this to determine which pool to launch. Router can either be permissioned
+                    or permissionless.
+        - asset must be supported by AssetClass.sol
+    */
     function _createPool(
+        uint16 intRate,
         uint8 quorum,
-        uint8 durationInHours,
-        uint16 colCoverageRatio,
-        uint amount,
-        address asset,
-        address[] memory participants,
-        Router _router
+        uint16 durationInHours,
+        uint24 colCoverage,
+        uint unitLiquidity,
+        address liquidAsset,
+        address[] memory contributors,
+        Router router
     )
         internal 
         whenNotPaused
         onlySupportedAsset(asset)
         returns (uint)
     {
-        bool isPermissionless = _router == Router.PERMISSIONLESS;
-        isPermissionless? require(quorum > 0, "Router: Quorum is invalid") : require(participants.length > 1, "Min of 2 members");
-        CreatePoolReturnValueParam memory crp = !isPermissionless ? data
+        bool isPermissionless = router == Router.PERMISSIONLESS;
+        isPermissionless? require(quorum > 0, "Router: Quorum is invalid") : require(contributors.length > 1, "Min of 2 members");
+        CreatePoolParam memory cpp = 
+            CreatePoolParam(
+                {
+                    intRate: intRate,
+                    quorum: quorum,
+                    duration: durationInHours,
+                    colCoverage: colCoverage, 
+                    unitContribution: unitLiquidity,
+                    members: contributors,
+                    asset: liquidAsset
+                }
+            );
+        CreatePermissionedPoolParam memory cpi = ;
+        CreatePoolReturnValue memory crp = !isPermissionless ? data
             .createPermissionedPool(
-               CreatePermissionedPoolInputParam(
-                 CreatePoolParam(
-                    quorum,
-                    durationInHours,
-                    colCoverageRatio,
-                    amount,
-                    participants,
-                    asset
-                ),
-                _getStrategy,
-                _unlockFunction
-               )
-            ) : data.createPermissionlessPool(CreatePoolParam(quorum, durationInHours, colCoverageRatio, amount, participants, asset ), _getStrategy, _unlockFunction);
-
-        emit BandCreated(crp.poolId, crp.pool, crp.info, crp.pos);
-        return crp.poolId;
+                CreatePermissionedPoolParam(
+                    cpp, 
+                    _unlockFunction
+                )
+            ) : data.createPermissionlessPool(cpp, _unlockFunction);
+        emit BandCreated(crp);
+        return crp.epochId;
     }
 
-    function currentPoolId() external view returns(uint) {
-        return data._getPoolCount();
+    /** @dev Return current epoch. 
+     * This is also total epoches generated to date 
+    */
+    function epoches() 
+        external 
+        view 
+        returns(uint)
+    {
+        return data._getEpoches();
     }
 
     /**
-    @dev Updates minimum amount contribution amount
-      Note: Only Owner function.
-    @param newAmount : Minimum contribution amount
+        *   @dev Updates minimum liquidity of a pool.
+        *   Note: Only Owner function.
+        *   @param minLiquidity : Minimum contribution.
   */
-    function updateMinContributionAmount(uint256 newAmount) public onlyOwner {
-        minContribution = newAmount;
+    function setMinimumLiquidityUnit(
+        uint256 minLiquidity
+    ) 
+        public 
+        onlyOwner 
+    {
+        data.pData.minContribution = minLiquidity;
     }
 
-    /**@dev Add new member.
-      @param poolId : Band index.
+    /**@dev Add contributor.
+      @param epochId : Epoch id.
       @param isPermissioned : Whether pool is permissioned or not
    */
-    function _joinBand(
-        uint poolId,
+    function _joinEpoch(
+        uint epochId,
         bool isPermissioned
     )
         internal
-        virtual
         returns(bool)
     {
-        (, StrategyInfo memory info) = data.addToBand(
-            AddTobandParam(
-                poolId,
-                isPermissioned,
-                _getStrategy,
-                _lockFunction,
-                _unlockFunction
+        emit NewMemberAdded(
+            data.addToBand(
+                AddTobandParam(
+                    epochId,
+                    isPermissioned,
+                    _lockFunction,
+                    _unlockFunction
+                )
             )
         );
-        emit NewMemberAdded(poolId, info);
-
         return true;
     }
 
-    /**@dev Members of a pool can pick up the contributed fund when certain coditions are met.
-      @param poolId : Band's Id which caller belong to.
+    /**@dev Providers borrow from their pool provided the citeria are met.
+      @param epochId : Epoh Id user wants to borrow from. 
+      @notice Users can be members of multiple epoches. This enlarges the
+      volume of funds they can access. 
+
+      - This is a payable function since borrowers are required to stake XFI
+      before they can access funds in epoches.
+      - The contract must be in a usable state i.e not paused.
+      - For the selected epoch, the getFinance() must already be unlocked. Unlocking 
+      is automated soon as the required quorum for the epoch is achieved i.e the 
+      numbers of providers equals the set quorum.
 
   */
     function getFinance(
-        uint poolId
+        uint epochId,
+        uin16 daysOfUseInHr
     )
         external
         payable
         whenNotPaused
-        checkFunctionPass(poolId, FuncTag.GET)
+        checkFunctionPass(epochId, FuncTag.GET)
         returns (bool)
     {
-        StrategyInfo memory info = data.getFinance(poolId, _lockFunction, _unlockFunction, _getStrategy, _getPriceInUSD);
-        emit GetFinanced(poolId, info);
-
+        emit GetFinanced(
+            data.getFinance(
+                epochId, 
+                msg.value,
+                daysOfUseInHr,
+                _lockFunction, 
+                _unlockFunction, 
+                _getXFIPriceInUSD
+            )
+        );
         return true;
     }
 
     /**
-    @dev Utility to payback borrowed fund.
-      @param poolId : Pool number.
-     See FactoryLib._payback().
+    @dev Return borrowed fund.
+      @param epochId : Pool number.
+     See FactoryLib.payback().
    */
     function payback(
-        uint poolId
+        uint epochId
     )
         external
-        payable
         whenNotPaused
-        checkFunctionPass(poolId, FuncTag.PAYBACK)
+        checkFunctionPass(epochId, FuncTag.PAYBACK)
         returns (bool)
     {
-        address strategy = _getStrategy(_msgSender());
-        StrategyInfo memory info = FactoryLib._getStrategyInfo(
-            data.strategies,
-            poolId,
-            FactoryLib._getPosition(data.positions, strategy, poolId)
+        emit Payback(
+            data.payback(
+                PaybackParam(
+                    epochId,
+                    _msgSender(),
+                    _lockFunction,
+                    _unlockFunction
+                )
+            )
         );
-        info = data.payback(
-           PaybackParam(
-             poolId,
-            strategy,
-            strategy,
-            info,
-            _lockFunction,
-            _unlockFunction
-           )
-        );
-
-        emit Payback(poolId, info);
         return true;
     }
 
     /**
   @dev Liquidate defaulter.
-    Note: The expected repayment time for last paid participant must have passed.
+    Note: The expected repayment time for last paid contributor must have passed.
     See FactoryLib.liquidate() for more details.
+    @param epochId : Epoch Id
   */
     function liquidate(
-        uint poolId
-    ) external payable whenNotPaused returns (bool) {
-        Def memory _d = FactoryLib._def();
-        StrategyInfo memory info = data.liquidate(
-          LiquidateParam(
-            poolId,
-            _d.f,
-            _lockFunction,
-            _unlockFunction,
-            _getStrategy
-          )
+        uint epochId
+    ) 
+        external 
+        whenNotPaused 
+        returns (bool) 
+    {
+        emit Liquidated(
+            data.liquidate(
+                LiquidateParam(
+                    epochId,
+                    _d.f,
+                    _lockFunction,
+                    _unlockFunction
+                )
+            )
         );
-
-        emit Liquidated(poolId, info);
-
         return true;
     }
 
@@ -280,51 +307,64 @@ abstract contract AbstractFactory is
      * @dev See FactoryLib.enquireLiquidation
      */
     function enquireLiquidation(
-        uint poolId
-    ) external view returns (Liquidation memory) {
-        (Liquidation memory _liquidated,) = data.enquireLiquidation(poolId);
-        return _liquidated;
-    }
-
-    ///@dev Pauses contract
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    ///@dev Unpauses contract
-    function unpause() public onlyOwner {
-        _unpause();
+        uint epochId
+    ) 
+        external 
+        view 
+        returns (Liquidation memory, bool) 
+    {
+        return data.enquireLiquidation(epochId);
     }
 
     /**
      * @dev Set state variables.
      * @param token : Platform token.
-     * @param assetAdmin : AssetAdmin contract.
-     * @param makerRate : fee in %.
+     * @param assetClass : AssetAdmin contract.
+     * @param serviceRate : fee in %.
+     * - Only-owner function.
      */
-    function setVariables(
+    function setContractData(
         address token,
         address trustee,
-        address assetAdmin,
-        uint16 makerRate,
+        address assetClass,
+        uint16 serviceRate,
         uint256 _creationFee
-    ) public onlyOwner {
-        data.setContractData(token, trustee, assetAdmin, makerRate);
-        if(_creationFee > 0) {
+    ) public {
+        if(creationFee == 0) {
             creationFee = _creationFee;
         }
+        return data.setContractData(token, trustee, assetClass, serviceRate);
     }
 
     /**
      * @dev See FactoryLib._cancelBand()
      */
-    function removeBand(
-        uint poolId
-    ) external payable whenNotPaused returns (bool) {
-        Def memory _d = FactoryLib._def();
-        data.cancelBand(poolId, _d.f, _getStrategy);
+    function removePermissionedPool(
+        uint epochId
+    ) 
+        external 
+        whenNotPaused 
+        returns (bool)
+    {
+        data.cancelBand(epochId, FactoryLib._def().f);
+        emit Cancellation(epochId);
 
-        emit Cancellation(poolId);
+        return true;
+    }
+
+    /**
+     * @dev See FactoryLib._cancelBand()
+     */
+    function removePermissionLessPool(
+        uint epochId
+    ) 
+        external 
+        whenNotPaused 
+        returns (bool)
+    {
+        data.cancelBand(epochId, FactoryLib._def().t);
+
+        emit Cancellation(epochId);
 
         return true;
     }
@@ -332,19 +372,32 @@ abstract contract AbstractFactory is
     /**
      * @dev Return total pool created to date
      */
-    function totalPool() public view returns (uint) {
+    function totalPool() 
+        public 
+        view returns (uint) 
+    {
         return data._getPoolCount();
     }
 
-    function getPoolData(uint poolId) external view returns(Pool memory) {
-        return data._fetchPoolData(poolId);
+    function getPoolData(
+        uint epochId
+    ) 
+        external 
+        view 
+        returns(Pool memory) 
+    {
+        return data._fetchPoolData(epochId);
     }
 
     /**
      * @dev Get price of SIMT in USD.
      * @notice from price oracle
      */
-    function _getPriceInUSD() internal pure returns (uint _price) {
+    function _getXFIPriceInUSD() 
+        internal 
+        pure 
+        returns (uint _price) 
+    {
         _price = 50000000000; // ================================================> We use oracle here
     }
 }
