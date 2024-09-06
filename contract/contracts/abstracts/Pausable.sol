@@ -2,8 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { MsgSender, Ownable } from "./Ownable.sol";
-import { IOwnable } from "../apis/IOwnable.sol";
+import { OnlyOwner } from "./OnlyOwner.sol";
 
 /**
  * @dev Contract module which allows children to implement an emergency stop
@@ -17,10 +16,8 @@ import { IOwnable } from "../apis/IOwnable.sol";
  * We use part of the Openzeppelin Pausable contract to supplement our strategy.
  * Thanks to the OZ team.
  */
-abstract contract Pausable is MsgSender {
+abstract contract Pausable is OnlyOwner {
     bool private _paused;
-
-    address public ownershipManager;
 
     /**
      * @dev Emitted when the pause is triggered by `account`.
@@ -45,9 +42,10 @@ abstract contract Pausable is MsgSender {
     /**
      * @dev Initializes the contract in unpaused state.
      */
-    constructor(address _ownershipManager) {
+    constructor(
+        address _ownershipManager
+    ) OnlyOwner(_ownershipManager) {
         _paused = false;
-        ownershipManager = _ownershipManager;
     }
 
     /**
@@ -71,14 +69,6 @@ abstract contract Pausable is MsgSender {
      */
     modifier whenPaused() {
         _requirePaused();
-        _;
-    }
-
-    /**
-     * @dev Only address with ower role can call.
-     */
-    modifier onlyOwner {
-        require(IOwnable(ownershipManager).isOwner(_msgSender()), "Pausable: Not Authorized");
         _;
     }
 
@@ -114,8 +104,12 @@ abstract contract Pausable is MsgSender {
      * Only owner role can call.
      * - The contract must not be paused.
      */
-    function pause() public onlyOwner whenNotPaused {
-        _paused = true;
+    function pause() 
+        public 
+        onlyOwner("Pausable: OnlyOwner can pause") 
+        whenNotPaused 
+    {
+        _paused = true; 
         emit Paused(_msgSender());
     }
 
@@ -126,7 +120,11 @@ abstract contract Pausable is MsgSender {
      * - Only owner role can call.
      * - The contract must be paused.
      */
-    function unpause() public onlyOwner whenPaused {
+    function unpause() 
+        public 
+        onlyOwner("Pausable: OnlyOwner can unpause") 
+        whenPaused 
+    {
         _paused = false;
         emit Unpaused(_msgSender());
     }

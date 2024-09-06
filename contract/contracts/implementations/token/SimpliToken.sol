@@ -3,7 +3,6 @@
 pragma solidity 0.8.24;
 
 import { ERC20Abstract } from "./ERC20Abstract.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 
 /*
     @title QToken is the native token of the Simplifinance platform.
@@ -18,11 +17,12 @@ contract SimpliToken is ERC20Abstract {
     event Locked(address from, uint256 amount);
     event UnLocked(address from, uint256 amount);
 
-    constructor(
+    constructor( 
         address attorney_,
         address reserve_,
-        address initTokenReceiver
-    ) ERC20Abstract(attorney_, reserve_, initTokenReceiver) { }
+        address initTokenReceiver,
+        address _ownershipMgr
+    ) ERC20Abstract(attorney_, reserve_, initTokenReceiver, _ownershipMgr) { }
 
     ///@dev Contract accepts no platform coin
     receive() external payable {
@@ -69,14 +69,6 @@ contract SimpliToken is ERC20Abstract {
             _transfer(_msgSender(), to, amount);
         }
         return true;
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
     }
 
     /**

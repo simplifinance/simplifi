@@ -5,13 +5,12 @@ pragma solidity 0.8.24;
 import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { IStrategy } from "../../apis/IStrategy.sol";
 import { Common } from "../../apis/Common.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract Strategy is IStrategy, Ownable, ReentrancyGuard {
-
+contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
   /**
-   * @dev Approvals in native coin i.e XFI
+   * @dev Approvals in native coin i.e XFI 
    * mapping of providera to balances.
    */
   mapping(address => mapping (uint => uint)) private nativeApprovals;
@@ -39,13 +38,19 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
    */
   mapping (uint => uint) public credits;
 
-  receive() external payable onlyOwner {}
-
   /**
    * @dev Initializes state variables.
    * OnlyOwner function.
    */
-  constructor (address factory) Ownable(factory) {}
+  constructor (
+    address _ownershipManager
+  )
+    OnlyOwner(_ownershipManager)  
+  {
+    ownershipManager = _ownershipManager;
+  }
+
+  receive() external payable onlyOwner("Not allowed") {}
 
   /**
    * @dev Implementation of IStrategy.addUp
@@ -56,7 +61,7 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
     uint epochId
   ) 
     external
-    onlyOwner
+    onlyOwner("Strategy - addUp: Not permitted")
     returns(bool)
   {
     contributors[epochId].push(user);
@@ -72,7 +77,7 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
     address assetInUse
   ) 
     external
-    onlyOwner
+    onlyOwner("Strategy - mapAsset: Not permitted")
     returns(bool) 
   {
     assets[epochId] = assetInUse;
@@ -110,7 +115,7 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
     Common.TransactionType txType
   ) 
     external 
-    onlyOwner 
+    onlyOwner("Strategy - setClaim: Not permitted")
     returns(bool) 
   {
     address asset = assets[epochId];
@@ -217,6 +222,7 @@ contract Strategy is IStrategy, Ownable, ReentrancyGuard {
     address oldProv
   ) 
     external 
+    onlyOwner("Strategy - swapProvider: Not permitted")
     returns(bool success) 
   {
     address[] memory addrs = contributors[epochId]; 

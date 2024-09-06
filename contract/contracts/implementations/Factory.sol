@@ -5,124 +5,146 @@ pragma solidity 0.8.24;
 import { AbstractFactory } from "../abstracts/AbstractFactory.sol";
 
 /** @title Factory : Main contract
- *  A multi p2p lending and borrowing structure where two or more people form a synergy to provide liquidity support
-    to one another. In Simplifi protocol, we redefined this pattern of lending and borrowing to remove inherent constraints
-    and barriers to financial inclusion. Our permissionless model allows anyone to create a pool of liquuidity providers and 
-    borrowers where liquidities form a synergy of liquidity that rotates round the providers within a short period of time in
-    form of borrowed funds thereby removing strict rules. 
-  
-  Two options are available to users of Simplifi:
-    1). Permissionless community/band: 
-        When an user create a band to fund-raise, anyone anywhere around the globe is free to join the clan. This is otherwise 
-        known as public band. No restriction to whoever can join but the maximum number of any band (whether permissioned or otherwise) 
-        cannot exceed 255.
-
-    2). Permissioned community:
-        Creator of this type of band are required to mention their clan whilst setting up. Their members are known to thenm 
-        even before the band is created. The predefined members can later confirm their participation by deposit an amount 
-        specified by the creator.
-     
-    For both types, the pooled funds moves from one participant to another in a rotational order until the last participants is
-    fulfilled. It is worth to note that this type of loan do not attract interest since the participants act as both lender and borrower.
-    However, maker fee is charged on the total borrowed fund.
-    Participants can borrow against:
-        - platform currency
-        - Native chain currency e.g XFI
-        - ERC20 tokens.
+ *  @author Simplifinance - (Bobeu) 
+ *  @notice 
+ *  A multi p2p lending and borrowing structure where liquidity providers are borrowers. We bring together users form different 
+ * parts of the world to form a liquidity synergy, where the pooled fund moved round them from the first to the last on the list
+ * in form of borrowed fund.The permissionless model allows users to create liquidity pool for anyone to participate while the 
+ * permissioned structure restricts participation only to the known members known as band.
 */
 
 contract Factory is AbstractFactory {
-    mapping(uint => Router)public routers;
+    mapping(uint => Router) public routers;
 
   /** @dev Initializes state variables.
-    * @param _makerRate : Platform fee in %
-    * @param _token : Token contract
-    * @param _minContribution : Minimum contribution amount.
-    * @param _feeTo : Account to receive fees.
-    * @param _assetAdmin : Asset admin contract.
-    * @param _strategyAdmin : Strategy admin contract.
-    * @param _trustee : Trustee contract.
+    * @param serviceRate : Platform fee in %
+    * @param minContribution : Minimum contribution amount.
+    * @param setUpFee : Amount to charge for setting a liquidity pool.
+    * @param feeTo : Account to receive fees.
+    * @param assetClass : Asset manager contract.
+    * @param strategyManager : Strategy manager contract.
+    * @param ownerShipManager : Accessibility manager contract
     */
     constructor(
-        uint16 _makerRate,
-        uint _minContribution,
-        address _token,
-        address _feeTo,
-        address _assetAdmin,
-        address _strategyAdmin,
-        address _trustee
+        uint16 serviceRate,
+        uint minContribution,
+        uint setUpFee,
+        address feeTo,
+        address assetClass,
+        address strategyManager,
+        address ownerShipManager
     ) AbstractFactory(
-        _makerRate,
-        _minContribution,
-        _token,
-        _feeTo,
-        _assetAdmin,
-        _strategyAdmin,
-        _trustee
+        serviceRate,
+        minContribution,
+        setUpFee,
+        feeTo,
+        assetClass,
+        strategyManager,
+        ownerShipManager
     ) { }
 
-    ///@dev Fallback
-    receive() external payable {}
-
     /**@dev Create permissioned pool
-        See RouterUpgradeable.sol for more details
+        See AbstractFactory.sol 
      */
     function createPermissionedPool(
-        uint8 durationInHours,
-        uint16 colCoverageRatio,
-        uint amount,
-        address asset,
-        address[] memory participants
-    ) external payable returns(bool) {
-        require(participants.length > 1, "Router: Invalid array");
-        Router _router = Router.PERMISSIONED;
-        routers[_createPool(0, durationInHours, colCoverageRatio, amount, asset, participants, _router)] = _router;
+        uint16 intRate,
+        uint16 durationInHours,
+        uint24 colCoverage,
+        uint unitLiquidity,
+        address liquidAsset,
+        address[] memory contributors
+    ) 
+        external 
+        returns(bool) 
+    {
+        Router router = Router.PERMISSIONED;
+        uint quorum = contributors.length;
+        routers[
+            _createPool(
+                intRate,
+                uint8(quorum),
+                durationInHours,
+                colCoverage,
+                unitLiquidity,
+                liquidAsset,
+                contributors,
+                router
+            )
+        ] = router;
         return true;
     }
 
     /**@dev Create permissionless
-        See RouterUpgradeable.sol for more details
+        See AbstractFactory.sol
     */
     function createPermissionlessPool(
+        uint16 intRate,
         uint8 quorum,
-        uint8 durationInHours,
-        uint16 colCoverageRatio,
-        uint amount,
-        address asset
-    ) external payable returns(bool) {
-        address[] memory participants = new address[](1);
-        participants[0] = _msgSender();
+        uint16 durationInHours,
+        uint24 colCoverage,
+        uint unitLiquidity,
+        address liquidAsset
+    ) 
+        external 
+        returns(bool) 
+    {
         Router _router = Router.PERMISSIONLESS;
-        routers[_createPool(quorum, durationInHours, colCoverageRatio, amount, asset, participants, _router)] = _router;
+        address[] memory contributors = new address[](1);
+        contributors[0] = _msgSender();
+        routers[
+            _createPool(
+                intRate,
+                quorum,
+                durationInHours,
+                colCoverage,
+                unitLiquidity,
+                liquidAsset,
+                contributors,
+                _router
+            )
+        ] = _router;
+        return true;
+    }
+
+    /**
+     * @dev Remove liquidity pool
+     * @param epochId : Epoch/Poool id
+     */
+    function removeLiquidityPool(
+        uint epochId
+    )
+        external
+        validateEpochId(epochId)
+        returns(bool)
+    {
+        _removeLiquidityPool(epochId, routers[epochId] == Router.PERMISSIONLESS);
         return true;
     }
     
-    /**@dev See RouterUpgradeable.sol */
-    function joinBand(uint poolId) 
+    /**@dev See AbstractFactory.sol */
+    function joinAPool(
+        uint epochId
+    ) 
         external 
-        payable
-        checkFunctionPass(poolId, FuncTag.JOIN) 
         whenNotPaused
+        validateEpochId(epochId)
+        checkFunctionPass(epochId, FuncTag.JOIN) 
         returns(bool) 
     {
-        return _joinBand(poolId, routers[poolId] == Router.PERMISSIONED);
+        return _joinEpoch(epochId, routers[epochId] == Router.PERMISSIONED);
     }
 
-    function withdraw(address to, uint amount) public onlyOwner {
-        uint256 balance = address(this).balance;
-        require(balance >= amount, "RouterLib: InsufficientFund");
-        (bool done, ) = to.call{value: amount}("");
-        require(done);
-    }
-
-    /**@dev Return the router that a poolId belongs to. 
+    /**@dev Return the router for an epochId. 
     */
-    function getRouterWithPoolId(uint poolId) external view returns(string memory) {
-        return routers[poolId] == Router.PERMISSIONLESS ? "PERMISSIONLESS" : "PERMISSIONED";
-    }
-
-    function enquireLiquidation(Data storage self, uint epochId) external view returns (Common.Liquidation memory _liq, bool defaulted) {
-        return _enquireLiquidation(self, epochId);
+    function getRouter(
+        uint epochId
+    ) 
+        external 
+        view 
+        validateEpochId(epochId)
+        returns(string memory) 
+    {
+        return routers[epochId] == Router.PERMISSIONLESS ? "PERMISSIONLESS" : "PERMISSIONED";
     }
 
 }

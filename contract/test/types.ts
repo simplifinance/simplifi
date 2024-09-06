@@ -1,7 +1,7 @@
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { ContractTransactionResponse, ethers } from "ethers";
 import { Hex, Address as ContractAddress } from "viem";
-import type { AssetClass, Attorney, Factory, Reserve, SimpliToken, SmartStrategyAdmin, TestUSDT, TokenDistributor, Trustee } from "../typechain-types";
+import type { AssetClass, Attorney, Factory, OwnerShip, SimpliToken, StrategyManager, TestAsset, TokenDistributor, Strategy } from "../typechain-types";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -41,14 +41,14 @@ export interface CreateRouterParam {
   amount: bigint;
   asset: Address;
   participants: Addresses;
-  contract: FactoryReturnType;
+  contract: FactoryContract;
   creator: Signer;
 }
 
 export interface FunctionParam {
-  poolId: number; 
+  epochId: number; 
   from: Signer;
-  factory: FactoryReturnType;
+  factory: FactoryContract;
   account?: Address;
 }
 
@@ -60,152 +60,84 @@ export interface Liquidation {
   colBalInToken: BigNumber;
 }
 
-export type Protected = [bigint, Address];
-export type Balances = [bigint, Protected];
-
-// export type PromiProtected = Promise<Protected>;
-
-export interface InitTrxnParam {
-  initTokenReceiver: TokenDistributorReturnType;
-  tokenAddr: Address;
-  recipient: Address;
-  deployer: Signer;
-  from: Signer;
-  amount: bigint;
-  trxnType: number;
-  callback: () => void;
-}
-
-export interface BatchParam {
-  token:  SimpliTokenReturnType;
-  alc1: Signer;
-  tos: Addresses;
-  amounts: Array<Hex>;
-}
-
-export interface ReduceAllowanceParam {
-  token:  SimpliTokenReturnType; 
-  alc1: Signer; 
-  alc2: Address;
-  value: bigint;
-}
-
-export interface UnlockTokenParam {
-  token: SimpliTokenReturnType; 
-  alc1: Signer; 
-  value: bigint;
-}
-
-export interface LockTokenParam {
-  token:  SimpliTokenReturnType;
-  alc1: Signer; 
-  alc3: Address;
-  value: bigint;
-}
-
-export interface GetAllowanceParam {
-  token:  SimpliTokenReturnType;
-  alc1: Address; 
-  alc2: Address;
-}
-
-export interface ApproveParam {
-  token: SimpliTokenReturnType; 
-  alc1: Signer; 
-  alc2: Address; 
-  value: bigint;
-}
-
-export interface TrxFrmParam {
-  token: SimpliTokenReturnType; 
-  alc2: Signer; 
-  alc1: Address;
-  alc3: Address;
-  value: bigint;
-}
-
-export interface SignTx {
-  initTokenReceiver: TokenDistributorReturnType;
-  signers: Array<Signer>; 
-  reqId: number;
-}
-
-export interface PublicBandParam {
-  factory: FactoryReturnType;
-  signer: Signer;
+export interface PermissionLessBandParam {
+  intRate: number;
   quorum : number;
+  colCoverage: number;
   durationInHours: number;
-  colCoverageRatio: number;
-  amount: bigint;
-  asset: Address;
+  unitLiquidity: bigint;
+  asset: TestAssetContract;
+  factory: FactoryContract;
+  signer: Signer;
 }
 
-export interface PrivateBandParam {
-  factory: FactoryReturnType;
+export interface RemoveLiquidityParam {
+  factory: FactoryContract;
   signer: Signer;
+  epochId: bigint;
+}
+
+export interface PermissionedBandParam {
+  factory: FactoryContract;
+  signer: Signer;
+  intRate: number;
   durationInHours: number;
-  colCoverageRatio: number;
-  amount: bigint;
-  asset: Address;
-  participants: Addresses;
+  colCoverage: number;
+  unitLiquidity: bigint;
+  asset: TestAssetContract;
+  contributors: Addresses;
 }
 
 export interface BandParam {
-  poolId: number;
-  factory: FactoryReturnType;
+  epochId: number;
+  useDaysOfChoice: number;
+  factory: FactoryContract;
   signer: Signer;
 }
 
 export interface SetVariableParam {
-  factory: FactoryReturnType;
+  factory: FactoryContract;
   signer: Signer;
   feeTo: Address;
-  token: Address;
-  trustee: Address;
-  assetAdmin: Address;
+  assetMgr: Address;
   makerRate: number;
   creationFee: bigint;
 }
 
 export interface FundAccountParam {
-  initTokenReceiver: TokenDistributorReturnType;
-  token: SimpliTokenReturnType;
-  testUSD: TestUSDTReturnType;
-  tokenAddr: Address;
-  recipient: Address;
-  deployer: Signer;
-  signer1: Signer;
-  signer2: Signer;
-  signer3: Signer;
-}
-
-// export interface CreateStrategyParam {
-//   strategyAdmin: SmartStrategyAdminReturnType;
-//   signers: SignersArr;
-//   callback: () => void;
-// }
-
-export interface FundStrategyParam {
-  tUSD: TestUSDTReturnType | SimpliTokenReturnType;
-  recipients: Addresses;
-  froms: SignersArr;
+  asset: TestAssetContract;
+  testAssetAddr?: Address;
+  recipients: Address[];
+  sender: Signer;
   amount: bigint;
-  operation: string;
 }
 
 export interface JoinABandParam {
-  factory: FactoryReturnType;
+  testAsset: TestAssetContract;
+  factory: FactoryContract;
+  factoryAddr: Address;
   signers: SignersArr;
-  poolId: number;
+  deployer: Signer;
+  epochId: bigint;
+  contribution: bigint;
+}
+
+export interface LiquidateParam extends BandParam {
+  debt: bigint;
+  asset: TestAssetContract;
+  deployer: Signer;
+}
+
+export interface PaybackParam extends LiquidateParam {
+  asset: TestAssetContract;
 }
 
 export interface GetPaidParam {
-  factory: FactoryReturnType;
+  factory: FactoryContract;
   signers: SignersArr;
-  poolId: number;
+  epochId: number;
   runPayback: boolean;
-  token: SimpliTokenReturnType;
-  tcUSD: TestUSDTReturnType;
+  tcUSD: TestAssetContract;
   signerAddrs: Addresses;
   strategies: Addresses;
   trusteeAddr: Address;
@@ -218,43 +150,27 @@ export interface GetPaidResultParam {
   usdAfter: BigIntArray;
 }
 
-export type FactoryReturnType = Factory & {
+export type FactoryContract = Factory & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type TokenReturnType = SimpliToken & {
+export type AssetManagerContract = AssetClass & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type AssetClassReturnType = AssetClass & {
+export type TestAssetContract = TestAsset & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type TestUSDTReturnType = TestUSDT & {
+export type StrategyManagerContract = StrategyManager & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type SmartStrategyAdminReturnType = SmartStrategyAdmin & {
+export type StrategyContract = Strategy & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type SimpliTokenReturnType = SimpliToken & {
-  deploymentTransaction(): ContractTransactionResponse;
-};
-
-export type TokenDistributorReturnType = TokenDistributor & {
-  deploymentTransaction(): ContractTransactionResponse;
-};
-
-export type TrusteeReturnType = Trustee & {
-  deploymentTransaction(): ContractTransactionResponse;
-};
-
-export type AttorneyReturnType = Attorney & {
-  deploymentTransaction(): ContractTransactionResponse;
-};
-
-export type ReserveReturnType = Reserve & {
+export type OwnershipManagerContract = OwnerShip & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 

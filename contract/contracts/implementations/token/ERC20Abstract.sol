@@ -6,9 +6,7 @@ pragma solidity 0.8.24;
 import { Lib } from "../../libraries/Lib.sol";
 import { CallContext } from "./CallContext.sol";
 import { IERC20 } from "../../apis/IERC20.sol";
-import { Context } from "@openzeppelin/contracts/utils/Context.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
+import { Pausable } from "../../abstracts/Pausable.sol";
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -65,7 +63,7 @@ import { Pausable } from "@openzeppelin/contracts/utils/Pausable.sol";
         The `panicWithdraw` method resides in the Attorney contract. It unlocks all balances in the locked ledger and are sent to the `escape` account provided the  
         an address was initially set.
  */
-abstract contract ERC20Abstract is Context, CallContext, IERC20, Pausable, Ownable {
+abstract contract ERC20Abstract is CallContext, IERC20, Pausable {
   using Lib for *;
 
   TokenInfo private tokenInfo;
@@ -82,8 +80,12 @@ abstract contract ERC20Abstract is Context, CallContext, IERC20, Pausable, Ownab
   constructor(
     address attorney_,
     address reserve_,
-    address initTokenReceiver
-  ) Ownable(msg.sender) toggleFunc(Internal.LOCK) {
+    address initTokenReceiver,
+    address _ownershipManager
+  ) 
+    Pausable(_ownershipManager)
+    toggleFunc(Internal.LOCK) 
+  {
     attorney_.cannotBeEmptyAddress();
     tokenInfo = TokenInfo(18, 0, "Simplfinance Token", "SFT", attorney_);
     _mint(initTokenReceiver, 1_000_000_000*(10**18));
@@ -499,7 +501,7 @@ abstract contract ERC20Abstract is Context, CallContext, IERC20, Pausable, Ownab
    * @dev Replaces the attorney account. Only authorized owner account can perform
    * this action.
    */
-  function setAttorney(address newAttorney) public onlyOwner {
+  function setAttorney(address newAttorney) public onlyOwner("Token: setAttorney: Not permitted") {
     newAttorney.cannotBeEmptyAddress();
     tokenInfo.attorney = newAttorney;
   }

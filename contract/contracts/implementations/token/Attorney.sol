@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { Pausable } from "../../abstracts/Pausable.sol";
 import { Lib } from "../../libraries/Lib.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
 import { IERC20 } from "../../apis/IERC20.sol";
@@ -15,7 +15,7 @@ import { IERC20 } from "../../apis/IERC20.sol";
  * escape address. 
  */
 
-contract Attorney is Ownable {
+contract Attorney is Pausable {
   using Lib for *;
   using SafeERC20 for IERC20;
 
@@ -23,22 +23,31 @@ contract Attorney is Ownable {
 
   uint public fee;
 
-  address private devAddress;
+  address private feeTo;
 
   IERC20 public token;
 
   receive() external payable {
-    (bool _s,) = devAddress.call{value: msg.value}("");
+    (bool _s,) = feeTo.call{value: msg.value}("");
     require(_s);
   }
 
-  constructor(uint _fee, address _dev) Ownable(msg.sender) {
-    _dev.cannotBeEmptyAddress();
+  constructor(
+    uint _fee, 
+    address _feeTo,
+    address _ownershipManager
+  ) 
+    Pausable(_ownershipManager) 
+  {
+    _feeTo.cannotBeEmptyAddress();
     fee = _fee;
-    devAddress = _dev;
+    feeTo = _feeTo;
   }
 
-  function setToken(IERC20 _token) public onlyOwner {
+  function setToken(IERC20 _token) 
+    public 
+    onlyOwner("Attorney: setToken Not Permitted")
+  {
     address(_token).cannotBeEmptyAddress();
     token = _token;
   }
@@ -47,19 +56,25 @@ contract Attorney is Ownable {
     Token balances is sent to address specified as an escape address.
     Note: Owner must invoke this method from the escape address
    */
-  function panicUnlock(address accountToRetrieve) public payable {
+  function panicUnlock(
+    address accountToRetrieve
+  ) 
+    public 
+    payable 
+    whenNotPaused
+  {
     IERC20.Balances memory _b = IERC20(token).accountBalances(accountToRetrieve);
     require(_b.locked.value > 0, "No lock detected");
     if(_msgSender() != _b.locked.escapeTo) revert CallNotFromEscapeAccount();
     uint msgValue = msg.value;
     msgValue.mustBeAbove(fee);
-    (bool _s,) = devAddress.call{value: msgValue}("");
+    (bool _s,) = feeTo.call{value: msgValue}("");
     require(_s);
     token.safePanicUnlock(accountToRetrieve, _b);
   }
 
   function setFee(uint newFee) public {
-    if(_msgSender() == devAddress) {
+    if(_msgSender() == feeTo) {
       fee = newFee;
     }
   }

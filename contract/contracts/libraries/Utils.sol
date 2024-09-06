@@ -69,12 +69,12 @@ library Utils {
 
     /**
      * @dev Computes collateral on the requested loan amount
-     * @param loanBaseDecimals : Decimals of asset used as contribution. USDT for instance is 18.
+     * @param xfiBaseDecimals : Decimals on which XFI is based e.g 18. USDT for instance is 18.
      * @param ccr : Collateral ratio. Must be multiply by 100 before parsing as input i.e if raw ccr
-     *              is 1.3, it should be rendered as 1.2 * 100 = 120.
+     *              is 1.2, it should be rendered as 1.2 * 100 = 120.
      * @param xfiUSDPriceInDecimals : Price of XFI in the right decimal.
      * @param loanReqInDecimals : Total requested contribution in USD
-     * @param actualColInXFI : Amount sent in XFI as collateral.
+     * @param amountOfXFISent : Amount sent in XFI as collateral.
      * @notice Based on Simplifi mvp, loans are collaterized in XFI until we add more pairs
      *         in the future.
      * Example: Alice, Bob and Joe formed a band to contribute $100 each where duration is for 
@@ -84,7 +84,7 @@ library Utils {
      *  
      *                    totalContribution *  (10** XFIdecimals)   |                 raw ccr
      *   totalLoanInXFI = --------------------------------------    |    actualCCR = (1.5 * 100) * 100 = 1500
-     *                        (price * XFIdecimals)                n|
+     *                        (xfiPriceIndecimals)                  |
      * 
      *                     totalLoanInXFI * actualCCR
      *        XFINeeded = ----------------------------
@@ -94,11 +94,12 @@ library Utils {
      *   
      */
     function computeCollateral(
-        uint actualColInXFI,
-        uint8 loanBaseDecimals,
+        uint amountOfXFISent,
+        uint8 xfiBaseDecimals,
         uint24 ccr,
         uint xfiUSDPriceInDecimals,
-        uint loanReqInDecimals
+        uint loanReqInDecimals,
+        bool performCheck
     ) 
         internal
         pure 
@@ -107,9 +108,11 @@ library Utils {
         uint8 mantissa = 100;
         if(ccr < mantissa) revert Common.CollateralCoverageCannotGoBelow_100(ccr);
         uint48 _ccr = uint48(uint(ccr).mul(100));
-        uint totalLoanInXFI = loanReqInDecimals.mul(10**loanBaseDecimals).div(xfiUSDPriceInDecimals).div(loanBaseDecimals);
+        uint totalLoanInXFI = loanReqInDecimals.mul(10**xfiBaseDecimals).div(xfiUSDPriceInDecimals);
         expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
-        require(actualColInXFI >= expColInXFI, "Insufficient XFI");
+        if(performCheck) {
+            require(amountOfXFISent >= expColInXFI, "Insufficient XFI");
+        }
     }
 
     /**
@@ -148,7 +151,10 @@ library Utils {
     {
         _itr.durInSec = durationInHour * 1 hours;
         _itr.fullInterest = getPercentage(principal, rate);
-        _itr.intPerSec = _itr.fullInterest.div(_itr.durInSec);
+        // if(_itr.durInSec < _itr.fullInterest) revert("Here"); 
+        if(_itr.fullInterest > 0) {
+            _itr.intPerSec = _itr.fullInterest / uint256(_itr.durInSec);
+        }
     }
 
     function notZeroAddress(address target) internal pure {

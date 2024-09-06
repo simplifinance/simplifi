@@ -3,11 +3,11 @@
 pragma solidity 0.8.24;
 
 /**
- * @title IOwnable 
- * Interface of the Ownable contract
+ * @title IOwnerShip 
+ * Interface of the OwnerShip contract
  * @author Simplifi (Bobeu)
  */
-interface IOwnable {
+interface IOwnerShip {
     function addNewOwner(
         address newOwner
     ) 

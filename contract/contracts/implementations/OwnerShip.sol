@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { IOwnable } from "../apis/IOwnable.sol";
+import { IOwnerShip } from "../apis/IOwnerShip.sol";
 /**
  * @title MsgSender 
  * @author Simplifi (Bobeu)
@@ -15,11 +15,11 @@ abstract contract MsgSender {
 }
 
 /**
- * @title Ownable 
+ * @title OwnerShip 
  * @author Simplifi (Bobeu)
  * @notice Standalone contract for managing ownership in Simplifi protocol.
  */
-contract Ownable is IOwnable, MsgSender{
+contract OwnerShip is IOwnerShip, MsgSender{
     /**
      * @notice Number of owners.
      */
@@ -71,7 +71,7 @@ contract Ownable is IOwnable, MsgSender{
     ) 
         private 
     {
-        require(target != address(0), "Simplifi Ownable: 'target' parameter is empty");
+        require(target != address(0), "Simplifi OwnerShip: 'target' parameter is empty");
         add? (_isOwner[target] = true, ownersCount ++) : (_isOwner[target] = false, ownersCount --);
     }
 

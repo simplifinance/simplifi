@@ -2,11 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { OnlyOwner } from "../abstracts/OnlyOwner.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 
-contract AssetClass is IAssetClass, Ownable {
+contract AssetClass is IAssetClass, OnlyOwner {
   address[] private assets;
+
   /**
    * @dev Mapping assets address to bool i.e Assets must be contract account
    * and must be supported
@@ -23,18 +24,36 @@ contract AssetClass is IAssetClass, Ownable {
     _;
   }
 
-  constructor(address _asset) Ownable(_msgSender()) {
+  /**
+   * @dev Initialize state variables
+   * @param _asset : Initial supported asset
+   */
+  constructor(
+    address _asset,
+    address _ownershipMgr
+  ) 
+    OnlyOwner(_ownershipMgr) 
+  {
     if(_asset != address(0)) {
       _supportAsset(_asset);
     }
   }
+
+  // fallback(bytes calldata data) external returns(bytes memory) {
+  //   return "Function not found";
+  // }
 
   /**
    * @dev Support a new asset
    * Note: OnlyOwner action
    * @param _asset : Asset to add to list of supported asset
    */
-  function supportAsset(address _asset) public onlyOwner {
+  function supportAsset(
+    address _asset
+  ) 
+    public 
+    onlyOwner("AssetClass - supportAsset: Not permitted")
+  {
     if(!listed[_asset]){
       listed[_asset] = true;
       assets.push(_asset);
@@ -53,7 +72,12 @@ contract AssetClass is IAssetClass, Ownable {
    * Note: Only-owner action
    * @param newAsset : Removes an asset from the list of supported asset
    */
-  function unsupportAsset(address newAsset) public onlyOwner {
+  function unsupportAsset(
+    address newAsset
+  ) 
+    public 
+    onlyOwner("AssetClass - unsupportAsset: Not permitted")
+  {
     supportedAssets[newAsset] = false;
   }
 

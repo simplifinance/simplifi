@@ -2,14 +2,11 @@
 
 pragma solidity 0.8.24;
 
-import { FactoryLib, Data, Def } from "../libraries/FactoryLib.sol";
+import { FactoryLib, Data } from "../libraries/FactoryLib.sol";
 import { FuncHandler } from "../peripherals/FuncHandler.sol";
-import { Utils } from "../libraries/Utils.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
-import { ISmartStrategyAdmin } from "../apis/ISmartStrategyAdmin.sol";
-import { Ownable } from "../implementations/Ownable.sol";
-import { Pausable } from "../implementations/Pausable.sol";
+import { Pausable } from "./Pausable.sol";
 
 /**@title Abstract Factory contract
  * Non deployable.
@@ -20,7 +17,6 @@ abstract contract AbstractFactory is
     FuncHandler,
     Pausable
 {
-    using Utils for bool;
     using FactoryLib for Data;
 
     Data private data;
@@ -31,14 +27,8 @@ abstract contract AbstractFactory is
     // Minimum amount that can be contributed
     uint public minContribution;
 
-    /**
-     * @dev Only owner.
-     * @notice Be sure ownerShipManager contract is updated.
-    */
-    modifier onlyOwner {
-        address owMgr = data.pData.ownershipManager;
-        if(owMgr == address(0)) revert OwnershipManagerIsNotSet();
-        require(IOwnable(data.pData.ownershipManager).isOwner(_msgSender()), "ABFactory: Not permited");
+    modifier validateEpochId(uint epochId) {
+        data.verifyEpochId(epochId);
         _;
     }
 
@@ -48,7 +38,7 @@ abstract contract AbstractFactory is
      * @param _asset : Input asset contract address
      */
     modifier onlySupportedAsset(address _asset) {
-        if (!IAssetClass(data.pData.assetClass).isSupportedAsset(_asset)) {
+        if (!IAssetClass(data.pData.assetAdmin).isSupportedAsset(_asset)) {
             revert IAssetClass.UnSupportedAsset(_asset);
         }
         _;
@@ -59,29 +49,56 @@ abstract contract AbstractFactory is
      */
     constructor(
         uint16 serviceRate,
-        uint minContribution,
+        uint _minContribution,
         uint setUpFee,
         address feeTo,
         address assetClass,
         address strategyManager,
-        address strategyManager,
-        address ownerShipManager
-    ) {
-        _setUp(serviceRate, _minContribution, 1e17 wei, _token, _feeTo, _assetClass, _strategyManager,_trustee);
+        address _ownershipManager
+    ) Pausable(_ownershipManager){
+        _setUp(
+            serviceRate, 
+            _minContribution, 
+            setUpFee, 
+            feeTo, 
+            assetClass, 
+            strategyManager
+        );
     }
+
+    ///@dev Fallback
+    receive() external payable {}
+
+    function withdrawXFI(
+        uint value
+    )
+        public
+        onlyOwner("Factory - withdrawXFI not permitted")
+    {
+        require(value > 0 && address(this).balance >= value, "Value is 0 || 0 balalnce");
+        (bool success,) = data.pData.feeTo.call{value: value}('');
+        require(success,"Withdrawal Failed");
+    }
+
 
     /** @dev See _setUp() for doc.
      */
     function performSetUp(
         uint16 serviceRate,
-        uint minContribution,
+        uint _minContribution,
         uint setUpFee,
         address feeTo,
         address assetClass,
-        address strategyManager,
-        address ownershipManager,
-    ) public onlyOwner {
-        _setUp(serviceRate, minContribution, setUpFee, feeTo, assetClass, strategyManager, ownershipManager);
+        address strategyManager
+    ) public onlyOwner("Factory - performSetUp not permitted") {
+        _setUp(
+            serviceRate, 
+            _minContribution, 
+            setUpFee, 
+            feeTo, 
+            assetClass, 
+            strategyManager
+        );
     }
 
     /**
@@ -89,24 +106,22 @@ abstract contract AbstractFactory is
      * @notice Only address with owner role can call. Check Ownable.sol to see 
      * how we manage ownership (different from OZ pattern). 
      * @param serviceRate : Platform fee
-     * @param minContribution : Minimum acceptable unit in liquidity pool.
+     * @param _minContribution : Minimum acceptable unit in liquidity pool.
      * @param setUpFee : Amount charged for setting up a liquidity pool.
      * @param feeTo : Fee recipient.
      * @param assetClass : Asset manager contract.
      * @param strategyManager : Strategy manager contract.
-     * @param ownerShipManager : Ownership Manager contract.
      */
     function _setUp(
         uint16 serviceRate,
-        uint minContribution,
+        uint _minContribution,
         uint setUpFee,
         address feeTo,
         address assetClass,
-        address strategyManager,
-        address ownerShipManager
+        address strategyManager
     ) private {
-        minContribution = minContribution;
-        data.pData = ContractData(feeTo, assetClass, serviceRate, strategyManager, ownerShipManager);
+        minContribution = _minContribution;
+        data.pData = ContractData(feeTo, assetClass, serviceRate, strategyManager);
         creationFee = setUpFee;
     }
 
@@ -137,11 +152,11 @@ abstract contract AbstractFactory is
     )
         internal 
         whenNotPaused
-        onlySupportedAsset(asset)
+        onlySupportedAsset(liquidAsset)
         returns (uint)
     {
         bool isPermissionless = router == Router.PERMISSIONLESS;
-        isPermissionless? require(quorum > 0, "Router: Quorum is invalid") : require(contributors.length > 1, "Min of 2 members");
+        isPermissionless? require(quorum > 1, "Router: Quorum is invalid") : require(contributors.length > 1, "Min of 2 members");
         CreatePoolParam memory cpp = 
             CreatePoolParam(
                 {
@@ -154,7 +169,6 @@ abstract contract AbstractFactory is
                     asset: liquidAsset
                 }
             );
-        CreatePermissionedPoolParam memory cpi = ;
         CreatePoolReturnValue memory crp = !isPermissionless ? data
             .createPermissionedPool(
                 CreatePermissionedPoolParam(
@@ -182,13 +196,13 @@ abstract contract AbstractFactory is
         *   Note: Only Owner function.
         *   @param minLiquidity : Minimum contribution.
   */
-    function setMinimumLiquidityUnit(
+    function setMinimumLiquidityPerProvider(
         uint256 minLiquidity
     ) 
         public 
-        onlyOwner 
+        onlyOwner("Factory - setMinimumLiquidityPerProvider not permitted")
     {
-        data.pData.minContribution = minLiquidity;
+        minContribution = minLiquidity;
     }
 
     /**@dev Add contributor.
@@ -215,26 +229,28 @@ abstract contract AbstractFactory is
         return true;
     }
 
-    /**@dev Providers borrow from their pool provided the citeria are met.
-      @param epochId : Epoh Id user wants to borrow from. 
-      @notice Users can be members of multiple epoches. This enlarges the
-      volume of funds they can access. 
+    /** @dev Providers borrow from their pool provided the citeria are met.
+        @param epochId : Epoh Id user wants to borrow from. 
+        @notice Users can be members of multiple epoches. This enlarges the
+        volume of funds they can access. 
 
-      - This is a payable function since borrowers are required to stake XFI
-      before they can access funds in epoches.
-      - The contract must be in a usable state i.e not paused.
-      - For the selected epoch, the getFinance() must already be unlocked. Unlocking 
-      is automated soon as the required quorum for the epoch is achieved i.e the 
-      numbers of providers equals the set quorum.
-
+        - This is a payable function since borrowers are required to stake XFI
+        before they can access funds in epoches.
+        - The contract must be in a usable state i.e not paused.
+        - For the selected epoch, the getFinance() must already be unlocked. Unlocking 
+        is automated soon as the required quorum for the epoch is achieved i.e the 
+        numbers of providers equals the set quorum.
+        @param daysOfUseInHr : The time in hours the borrower wishes to retain the loan
+        before paying back.
   */
     function getFinance(
         uint epochId,
-        uin16 daysOfUseInHr
+        uint8 daysOfUseInHr
     )
         external
         payable
         whenNotPaused
+        validateEpochId(epochId)
         checkFunctionPass(epochId, FuncTag.GET)
         returns (bool)
     {
@@ -261,6 +277,7 @@ abstract contract AbstractFactory is
     )
         external
         whenNotPaused
+        validateEpochId(epochId)
         checkFunctionPass(epochId, FuncTag.PAYBACK)
         returns (bool)
     {
@@ -288,13 +305,13 @@ abstract contract AbstractFactory is
     ) 
         external 
         whenNotPaused 
+        validateEpochId(epochId)
         returns (bool) 
     {
         emit Liquidated(
             data.liquidate(
                 LiquidateParam(
                     epochId,
-                    _d.f,
                     _lockFunction,
                     _unlockFunction
                 )
@@ -309,61 +326,123 @@ abstract contract AbstractFactory is
     function enquireLiquidation(
         uint epochId
     ) 
-        external 
+        external
         view 
-        returns (Liquidation memory, bool) 
+        validateEpochId(epochId)
+        returns (Contributor memory, bool, uint) 
     {
-        return data.enquireLiquidation(epochId);
+        return data._enquireLiquidation(epochId);
+    }
+
+    /**
+     * @dev Returns collaterl quote for the epoch.
+     * @param epochId : EpochId
+     * @return collateral Collateral
+     * @return colCoverage Collateral coverage
+     */
+    function getCollaterlQuote(
+        uint epochId
+    )
+        external
+        view
+        validateEpochId(epochId)
+        returns(uint collateral, uint24 colCoverage)
+    {
+        Pool memory pool = data._fetchPoolData(epochId);
+        (collateral, colCoverage) = (FactoryLib._computeCollateral(
+            pool.uint256s.currentPool,
+            0,
+            uint24(pool.uints.colCoverage),
+            _getXFIPriceInUSD()
+        ), uint24(pool.uints.colCoverage));
+        return (collateral, colCoverage);
+
+    }
+
+    /**
+     * Returns the current debt of target user.
+     * @param epochId : Epoch Id
+     * @param target : Target user.
+     */
+    function getCurrentDebt(
+        uint epochId,
+        address target
+    ) 
+        external
+        view 
+        validateEpochId(epochId)
+        returns (uint) 
+    {
+        return data._getCurrentDebt(epochId, target);
+    }
+
+    /**
+     * @dev Returns the profile of user
+     * @param epochId : Epoch Id
+     * @param user : User
+     */
+    function getProfile(
+        uint epochId,
+        address user
+    )
+        external
+        view
+        returns(ContributorData memory) 
+    {
+        return data._getProfile(epochId, user);
     }
 
     /**
      * @dev Set state variables.
-     * @param token : Platform token.
-     * @param assetClass : AssetAdmin contract.
+     * @param feeTo : Fee receiver.
+     * @param assetAdmin : AssetAdmin contract.
      * @param serviceRate : fee in %.
      * - Only-owner function.
      */
     function setContractData(
-        address token,
-        address trustee,
-        address assetClass,
+        address feeTo,
+        address assetAdmin,
         uint16 serviceRate,
         uint256 _creationFee
-    ) public {
+    ) 
+        public
+        onlyOwner("Factory - setContractData not permitted")
+        returns(bool)
+    {
         if(creationFee == 0) {
             creationFee = _creationFee;
         }
-        return data.setContractData(token, trustee, assetClass, serviceRate);
+        return data.setContractData(assetAdmin, feeTo, serviceRate);
+    }
+
+    /**
+     * @dev Returns both ERC20 and Native balances locked in an epoch
+     * @param epochId : Epoch Id
+     */
+    function getBalances(
+        uint epochId
+    )   
+        external
+        view
+        validateEpochId(epochId)
+        returns(Balances memory)
+    {
+        return data._getBalancesOfStrategy(epochId);
     }
 
     /**
      * @dev See FactoryLib._cancelBand()
      */
-    function removePermissionedPool(
-        uint epochId
+    function _removeLiquidityPool(
+        uint epochId,
+        bool isPermissionLess
     ) 
-        external 
+        internal 
         whenNotPaused 
+        validateEpochId(epochId)
         returns (bool)
     {
-        data.cancelBand(epochId, FactoryLib._def().f);
-        emit Cancellation(epochId);
-
-        return true;
-    }
-
-    /**
-     * @dev See FactoryLib._cancelBand()
-     */
-    function removePermissionLessPool(
-        uint epochId
-    ) 
-        external 
-        whenNotPaused 
-        returns (bool)
-    {
-        data.cancelBand(epochId, FactoryLib._def().t);
-
+        data.cancelBand(epochId, isPermissionLess);
         emit Cancellation(epochId);
 
         return true;
@@ -376,18 +455,41 @@ abstract contract AbstractFactory is
         public 
         view returns (uint) 
     {
-        return data._getPoolCount();
+        return data._getEpoches();
     }
-
+    
+    /**
+     * @dev Returns a single pool for 'epochId'
+     * @param epochId : Epoch id.
+     */
     function getPoolData(
         uint epochId
     ) 
         external 
         view 
+        validateEpochId(epochId)
         returns(Pool memory) 
     {
         return data._fetchPoolData(epochId);
     }
+
+    /**@dev Returns pool from all epoched array */
+    function getPoolFromAllEpoches() 
+        public
+        view 
+        returns(Pool[] memory pools) 
+    {
+        return data.fetchPools();
+    }
+
+    function getContractData()
+        public
+        view
+        returns(ContractData memory result)
+    {
+        result = data.pData; 
+    }
+    
 
     /**
      * @dev Get price of SIMT in USD.

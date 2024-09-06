@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Lib } from "../../libraries/Lib.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
@@ -27,7 +27,7 @@ import { IERC20 } from "../../apis/IERC20.sol";
  * Same functionalities can be used to add and remove a new signer, and change quorum. 
  */
 contract TokenDistributor is 
-    Ownable,
+    OnlyOwner,
     ReentrancyGuard
 {
     using Lib for *;
@@ -131,7 +131,13 @@ contract TokenDistributor is
         signed[caller][reqId] = true;
     }
 
-    constructor(address[] memory _signers, uint8 _quorum) Ownable(msg.sender) {
+    constructor(
+        address _ownershipManager,
+        address[] memory _signers, 
+        uint8 _quorum
+    ) 
+        OnlyOwner(_ownershipManager) 
+    {
         uint size = _signers.length;
         quorum = _quorum;
         if(size > 0) {
@@ -143,7 +149,10 @@ contract TokenDistributor is
 
     receive() external payable {}
 
-    function setToken(IERC20 newToken) public onlyOwner {
+    function setToken(IERC20 newToken) 
+        public 
+        onlyOwner("TokenDistributor - setToken: Not permitted")
+    {
         address(newToken).cannotBeEmptyAddress();
         token = newToken;
     }

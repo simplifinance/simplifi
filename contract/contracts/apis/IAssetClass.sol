@@ -6,5 +6,9 @@ interface IAssetClass {
   error UnSupportedAsset(address);
   error Locked();
   
-  function isSupportedAsset(address _asset) external view returns(bool);
+  function isSupportedAsset(
+    address _asset
+  ) 
+    external 
+    view returns(bool);
 }

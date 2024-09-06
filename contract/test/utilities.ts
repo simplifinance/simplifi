@@ -7,7 +7,7 @@ import { expect } from "chai";
 
 export const bigintToStr = (x:bigint) => x.toString();
 export const toHex = (x: any) => Web3.utils.numberToHex(x);
-export const buildstring = (affx: any, start: any, times: number) => `${affx}${`${start}`.repeat(times)}`;
+export const buildstring = (affx: string, start: string, times: number) => `${affx}${`${start}`.repeat(times)}`;
 export const formatAddr = (x: string | (Address | undefined)) : Address => {
   if(!x || x === "") return `0x${'0'.repeat(40)}`;
   return `0x${x.substring(2, 42)}`;
@@ -21,9 +21,9 @@ export const convertStringsToAddresses = (args: string[]) => {
   return returnArr;
 }
 export const DECIMALS = 18;
-export const SYMBOL = "SFT";
-export const NAME = "Simplifinance Token";
-export const TOTALSUPPLY = buildstring('1', '0', 27);
+export const SYMBOL = "CTRIB";
+export const NAME = "Test Asset";
+export const TOTALSUPPLY = buildstring('1', '0', 24);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
 export const TEN_THOUSAND_TOKEN = 10000000000000000000000n;
 export const ONE_THOUSAND_TOKEN = 1000000000000000000000n;
@@ -35,16 +35,25 @@ export const VALUE_TO_SEND = ethers.parseEther("2.0");
 export const AMOUNT_SENT_TO_ACCOUNT_ONE = 300000000000000000000000n; //300,000 token
 export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = 100000000000000000000000n; // 100,000 token
 export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = 100000000000000000000000n; // 100,000 token
-
-// /**
-//  * Zero address i.e `0x${'0'.repeat(40)}`
-//  */
-// export const ZERO_ADDRESS = buildstring("0x", "0", 40);
+export const ZERO_ADDRESS = buildstring('0x', '0', 40);
+export const ZERO = 0n;
 
 /**
- * Maker rate. 1020 equivalent to 2%
+ * Wraps `arg` into a big number
+ * @param arg : Parameter of type, to be wrapped into Bignumber
+ * @returns : BigNumber instance
  */
-export const MAKER_RATE = 1020;
+export const bn = (arg: any): BigNumber => {
+  const big = new BigNumber(arg);
+  return big;
+};
+
+/**
+ * Maker or service rate. 0.1 * 100 equivalent to 0.1%
+*/
+export const MAKER_RATE = 10;
+
+export const INTEREST_RATE = 50; // 0.5%
 
 /**
  * Duration for which the funds are used. Example if set 24
@@ -53,40 +62,33 @@ export const MAKER_RATE = 1020;
  * In the contract, we check that this parameter is not zero, but
  * we may have to deactivate the check to allow us test the designated 
  * function
- */
+*/
 export const DURATION_IN_HOURS = 0;
+export const DURATION_IN_SECS = bn(DURATION_IN_HOURS).times(60).times(60).toString();
 
 /**
- * As an example, we set the collateral ratio to 50%
- * i.e Participants must deposit collateral in SFT in the 
- * value 1.5 * totalContribution.
- */
+ * As an example, we set the collateral ratio to 50% i.e 1.5
+ * i.e Participants must deposit collateral in XFI in the 
+ * value 1.5 * 100 * totalContribution.
+*/
 export const COLLATER_COVERAGE_RATIO = 150;
 
 /**
- * Minimum contribution
- * We used `2000000000000000000` i.e 2 cUSD as example
- */
-export const MINIMUM_CONTRIBUTION = 2000000000000000000n;
+ * Minimum contribution 2XFI
+*/
+export const MINIMUM_LIQUIDITY = 2000000000000000000n;
 
 /**
- * Contribution amount
- */
-export const CONTRIBUTION = 50000000000000000000000n; 
+ * Contribution amount 5000
+*/
+export const UNIT_LIQUIDITY = 5000000000000000000000n; 
+export const TOTAL_LIQUIDITY = 15000000000000000000000n; 
 
 /**
  * Transfer amount: 10,000 Token
  */
-export const AMOUNT = 100000000000000000000000n;
-
-/**
- * Attorney fee
- */
-export const FEE = 10000000000000000n;
-
-/**
- * cUSD contract address on Celo testnet
- */
+export const AMOUNT = 10000000000000000000000n;
+export const FEE = 10000000000000000n; //0.01
 export const USD_XFI_TESTNET: Address = "0x874069fa1eb16d44d622f2e0ca25eea172369bc1";
 
 /**
@@ -110,8 +112,6 @@ export const DEV: Address = DUMMY_ADDRESS[0];
  */
 export const FEETO: Address = DUMMY_ADDRESS[0];
 
-// I created this custom utils for flexiblity working with BigNumber. You're free to improved on it.
-
 /**
  * Test that arg0 is true
  * @param arg0 : Parameter that evaluate to true
@@ -129,16 +129,6 @@ export function assertTrue(arg0: boolean, errorMessage?: string) {
 export function assertFalse(arg0: boolean, errorMessage?: string) {
   if (arg0) throw new Error(errorMessage);
 }
-
-/**
- * Wraps `arg` into a big number
- * @param arg : Parameter of type, to be wrapped into Bignumber
- * @returns : BigNumber instance
- */
-export const bn = (arg: any): BigNumber => {
-  const big = new BigNumber(arg);
-  return big;
-};
 
 /**
  * Accept input of type BigNumber, formats to a number.

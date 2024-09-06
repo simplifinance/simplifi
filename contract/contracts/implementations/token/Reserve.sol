@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
 import { Lib } from "../../libraries/Lib.sol";
 import { IERC20 } from "../../apis/IERC20.sol";
@@ -11,7 +11,7 @@ import { IERC20 } from "../../apis/IERC20.sol";
  * @dev Total supply is minted to this contract and is controlled by an owner address
  * expected to be a multisig account.
  */
-contract Reserve is Ownable {
+contract Reserve is OnlyOwner {
   using Lib for *;
   using SafeERC20 for IERC20;
 
@@ -22,30 +22,32 @@ contract Reserve is Ownable {
     revert("NA");
   } 
 
-  constructor() Ownable(msg.sender) { }
+  constructor( 
+    address _ownershipManager
+  ) OnlyOwner(_ownershipManager) { }
 
-  function setToken(IERC20 newToken) public onlyOwner {
+  function setToken(IERC20 newToken) public onlyOwner("Reserve: setToken: Not permitted") {
     address(newToken).cannotBeEmptyAddress();
     token = newToken;
   }
 
   ///@dev Transfer Token to @param account : Token recipient
-  function transferToken(address account, uint amount) public onlyOwner {
+  function transferToken(address account, uint amount) public onlyOwner("Reserve: batchTransferToken: Not permitted") {
     token.safeTransfer(account, amount);
   }
 
   ///@dev Batch tranfer: Sends token to many addresses
-  function batchTransfer(address[] memory accounts, uint256[] memory amounts) public onlyOwner {
+  function batchTransfer(address[] memory accounts, uint256[] memory amounts) public onlyOwner("Reserve: batchTransfer: Not permitted") {
     token.safeBatchTransfer(accounts, amounts);
   }
 
   ///@dev Locks certain amount i.e Move from private ledger to the regular balance
-  function lockToken(address _routeTo, uint256 amount) public onlyOwner {
+  function lockToken(address _routeTo, uint256 amount) public onlyOwner("Reserve: lockToken: Not permitted") {
     token.safeLock(_routeTo, amount);
   }
 
   ///@dev Unlocks certain amount i.e Move from private ledger to the regular balance
-  function unlockToken(uint256 amount) public onlyOwner {
+  function unlockToken(uint256 amount) public onlyOwner("Reserve: unlockToken: Not permitted") {
     token.safeUnlock(amount);
   }
 

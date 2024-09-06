@@ -184,6 +184,17 @@ interface Common {
     Pool pool;
   }
 
+  struct ContributorData {
+    Contributor cData;
+    Rank rank;
+    uint8 slot;
+  }
+
+  struct Balances {
+    uint xfi;
+    uint erc20;
+  }
+
   error UpdateStrategyError();
   error CollateralCoverageCannotGoBelow_100(uint24 ccr);
 
