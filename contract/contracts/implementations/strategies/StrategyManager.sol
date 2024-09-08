@@ -3,7 +3,8 @@
 pragma solidity 0.8.24;
 
 import { IStrategyManager } from "../../apis/IStrategyManager.sol";
-import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
+import { Strategy } from "./Strategy.sol";
+// import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
 import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 
 /**@title SmartStrategyAdmin: A standalone contract that manages strategy creation, 
@@ -12,14 +13,14 @@ import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
    Author: Simplifinance
  */
 contract StrategyManager is IStrategyManager, OnlyOwner {
-  using Clones for address;
+  // using Clones for address;
 
   // Strategy count 
   uint public totalStrategies;
 
   /* @notice A deployed instance of the SmartStrategy contract
    */
-  address public instance;
+  // address public instance;
 
   // /// @notice Address that can perform upgrade to deployed instance
   // address public admin;
@@ -27,7 +28,7 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
 /**
  * @dev List of Strategies and their keys 
  */
-  Strategy[] private strategies;
+  StrategyData[] private strategies;
 
  /**
  * @dev Mapping of addresses to strategies.
@@ -36,12 +37,12 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
   mapping(address => address) private strategyMap;
 
   constructor (
-    address _instance,
+    // address _instance,
     address _ownershipManager
   ) 
     OnlyOwner(_ownershipManager) 
   {
-    instance = _instance;
+    // instance = _instance;
   }
 
   receive() 
@@ -106,21 +107,22 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
     returns(address strategy) 
   {
     totalStrategies ++;
-    address ssi = instance;
-    strategy = ssi.cloneDeterministic(keccak256(abi.encodePacked(totalStrategies, caller)));
+    // address ssi = instance;
+    // strategy = ssi.cloneDeterministic(keccak256(abi.encodePacked(totalStrategies, caller)));
+    strategy = address(new Strategy(ownershipManager));
     _updateStrategy(caller, strategy);
   }
 
-  //Set new instance address : onlyOwner function
-  function setInstance(
-    address newInstance
-  ) 
-    public
-    onlyOwner("Strategy - setInstance: Not permitted")
-  {
-    if(newInstance == address(0)) revert ZeroAddress(newInstance);
-    instance = newInstance;
-  }
+  // //Set new instance address : onlyOwner function
+  // function setInstance(
+  //   address newInstance
+  // ) 
+  //   public
+  //   onlyOwner("Strategy - setInstance: Not permitted")
+  // {
+  //   if(newInstance == address(0)) revert ZeroAddress(newInstance);
+  //   instance = newInstance;
+  // }
 
   /**
    * Update storage with the new Strategy instance : {internal}

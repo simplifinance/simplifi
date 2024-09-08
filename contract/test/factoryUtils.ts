@@ -3,7 +3,7 @@ import type {
   Address, 
   Addresses,
   BandParam, 
-  ContractResponse, 
+  // ContractResponse, 
   FundAccountParam, 
   JoinABandParam, 
   LiquidateParam, 
@@ -14,9 +14,12 @@ import type {
   TestAssetContract, 
   AssetManagerContract, 
   PaybackParam, 
-  RemoveLiquidityParam } from "./types";
+  RemoveLiquidityParam, 
+  GetFinanceParam,
+  FactoryTxReturn,
+  FactoryContract, } from "./types";
 
-import { formatAddr, } from "./utilities";
+import { bn, formatAddr, } from "./utilities";
 import { Common } from "../typechain-types/contracts/apis/IFactory";
 
 /**
@@ -27,14 +30,17 @@ import { Common } from "../typechain-types/contracts/apis/IFactory";
 export async function createPermissionlessPool (
   x: PermissionLessBandParam
 ) 
-  : Promise<{
-    pool: Common.PoolStructOutput;
-    epochId: bigint;
-    balances: Common.BalancesStructOutput;
-    profile: Common.ContributorDataStructOutput;
-  }> 
+  : Promise<FactoryTxReturn> 
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
+
+  await transferAsset({
+    amount: x.unitLiquidity,
+    asset: x.asset,
+    recipients: [formatAddr(x.signer.address)],
+    sender: x.deployer
+  });
+
   await approve({
     owner: x.signer,
     amount: x.unitLiquidity,
@@ -64,14 +70,17 @@ export async function createPermissionlessPool (
 export async function createPermissionedPool(
   x: PermissionedBandParam
 ) 
-  : Promise<{
-    pool: Common.PoolStructOutput;
-    epochId: bigint;
-    balances: Common.BalancesStructOutput;
-    profile: Common.ContributorDataStructOutput;
-  }>
+  : Promise<FactoryTxReturn>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
+
+  await transferAsset({
+    amount: x.unitLiquidity,
+    asset: x.asset,
+    recipients: x.contributors,
+    sender: x.deployer
+  });
+
   await approve({
     owner: x.signer,
     amount: x.unitLiquidity,
@@ -99,31 +108,25 @@ export async function createPermissionedPool(
  * @returns ContractResponse
  */
 export async function getFinance(
-  x: BandParam
+  x: GetFinanceParam
 )
- : Promise<{
-  pool: Common.PoolStructOutput;
-  balances: Common.BalancesStructOutput;
-  profile: Common.ContributorDataStructOutput;
- }>
+ : Promise<FactoryTxReturn>
 {
-  const factoryAddr = await x.factory.getAddress();
-  const getCol = x.factory.getCollaterlQuote(x.epochId);
+  // const factoryAddr = await x.factory.getAddress();
+  const getCol = await x.factory.getCollaterlQuote(x.epochId);
   console.log("GetQuote", getCol);
-  await x.factory.connect(x.signer).getFinance(
+  // let txReturn : GetFinanceReturn = [];
+  const signer = x.signers[0];
+  await x.factory.connect(signer).getFinance(
     x.epochId,
-    x.useDaysOfChoice,
-    {value: (await getCol).collateral}
+    x.hrsOfUse_choice!,
+    {value: getCol.collateral}
   );
-
   const balances = await x.factory.getBalances(x.epochId);
   const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, factoryAddr);
-  return {
-    pool,
-    balances,
-    profile
-  }
+  const profile = await x.factory.getProfile(x.epochId, signer.address);
+
+  return { balances, pool, profile, epochId: x.epochId };
 }
 
 /**
@@ -141,20 +144,26 @@ export async function payback(
  }>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
-  const debt = await x.factory.getCurrentDebt(x.epochId, x.signer.address);
-  await transferAsset({
-    amount: debt,
-    asset: x.asset,
-    recipients: [formatAddr(x.signer.address)],
-    sender: x.deployer
-  });
+  const signer = x.signers[0];
+  const debt = await x.factory.getCurrentDebt(x.epochId, signer.address);
+  // console.log(`GetCurrentDebt: ${debt}\n Calculated debt: ${x.debt}`);
+  const bal = await x.asset.balanceOf(signer.address);
+  if(bn(x.debt).gt(bn(bal))){
+    await transferAsset({
+      amount: BigInt(bn(x.debt).minus(bn(bal)).toString()),
+      asset: x.asset,
+      recipients: [formatAddr(signer.address)],
+      sender: x.deployer
+    });
+  }
   await approve({
-    owner: x.signer,
-    amount: x.debt,
+    owner: signer,
+    amount: x.debt!,
     spender: factoryAddr,
     testAsset: x.asset
   });
-  await x.factory.connect(x.signer).payback(x.epochId);
+  console.log("Allowance", await x.asset.allowance(signer.address, factoryAddr));
+  await x.factory.connect(signer).payback(x.epochId);
   const balances = await x.factory.getBalances(x.epochId);
   const pool = await x.factory.getPoolData(x.epochId);
   const profile = await x.factory.getProfile(x.epochId, factoryAddr);
@@ -181,33 +190,31 @@ export async function approve(
 export async function liquidate(
   x: LiquidateParam
 ) 
-  : Promise<{
-      pool: Common.PoolStructOutput;
-      balances: Common.BalancesStructOutput;
-      profile: Common.ContributorDataStructOutput;
-  }>
+  : Promise<FactoryTxReturn>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
+  const signer = x.signers[0];
   await transferAsset({
-    amount: x.debt,
+    amount: x.debt!,
     asset: x.asset,
-    recipients: [formatAddr(x.signer.address)],
+    recipients: [formatAddr(signer.address)],
     sender: x.deployer
   });
   await approve({
-    owner: x.signer,
-    amount: x.debt,
+    owner: signer,
+    amount: x.debt!,
     spender: factoryAddr,
     testAsset: x.asset
   });
-  await x.factory.connect(x.signer).liquidate(x.epochId);
+  await x.factory.connect(signer).liquidate(x.epochId);
   const balances = await x.factory.getBalances(x.epochId);
   const pool = await x.factory.getPoolData(x.epochId);
   const profile = await x.factory.getProfile(x.epochId, factoryAddr);
   return {
     pool,
     balances,
-    profile
+    profile,
+    epochId: x.epochId
   }
 }
 
@@ -221,7 +228,7 @@ export async function enquireLiquidation(
 ) 
   : Promise<[Common.ContributorStructOutput, boolean, bigint]> 
 {
-  return await x.factory.connect(x.signer).enquireLiquidation(x.epochId);
+  return await x.factory.connect(x.signers[0]).enquireLiquidation(x.epochId);
 }
 
 /**
@@ -231,13 +238,8 @@ export async function enquireLiquidation(
  * @returns ContractResponse
  */
 
-export const setSupportedToken = async(
-  assetMgr: AssetManagerContract,
-  asset: Address
-) 
-  : ContractResponse => 
-{
-  return assetMgr.supportAsset(asset);
+export const setSupportedToken = async(assetMgr: AssetManagerContract, asset: Address) => {
+  assetMgr.supportAsset(asset);
 }
 
 /**
@@ -247,10 +249,35 @@ export const setSupportedToken = async(
  * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
  */
 export async function transferAsset(x: FundAccountParam) : Null {
-  let reqId = 0;
   for(let i = 0; i < x.recipients.length; i++) {
     x.asset.connect(x.sender).transfer(formatAddr(x.recipients[i]), x.amount);
   }
+}
+
+/**
+ * @dev Claim CTRIB tokens as loan after getFinance successful.
+ * 
+ * @param x : Parameters 
+ * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
+ */
+export async function withdraw(
+  x: 
+  {
+    owner: Address,
+    asset: TestAssetContract,
+    factory: FactoryContract,
+    spender: Signer,
+    epochId: bigint,
+    value: bigint
+  }
+) : Promise<{balancesInStrategy: Common.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
+{
+  const { asset, owner, factory, spender, epochId, value } = x;
+  const signerBalB4 = await asset.balanceOf(spender.address);
+  await asset.connect(spender).transferFrom(owner, spender.address, value);
+  const balancesInStrategy = await factory.getBalances(epochId);
+  const signerBalAfter = await asset.balanceOf(spender.address);
+  return { balancesInStrategy, signerBalAfter, signerBalB4 };
 }
 
 export async function removeLiquidityPool(x: RemoveLiquidityParam) {

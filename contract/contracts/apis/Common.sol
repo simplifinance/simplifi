@@ -112,6 +112,7 @@ interface Common {
     uint selector;
     uint colCoverage;
     uint duration;
+    uint intRate;
   }
   
   /**
@@ -157,7 +158,7 @@ interface Common {
   }
 
   struct UpdateMemberDataParam {
-    uint48 durOfChoice;
+    uint24 durOfChoice;
     address expected;
     uint epochId; 
     uint fee;
@@ -174,7 +175,7 @@ interface Common {
   struct InterestReturn {
     uint fullInterest;
     uint intPerSec;
-    uint48 durInSec;
+    uint intPerChoiceOfDur;
   }
 
   struct CommonEventData {

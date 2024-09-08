@@ -122,6 +122,12 @@ interface IFactory is Common {
     external
     view
     returns(Balances memory);
+
+  function withdrawCollateral(
+    uint epochId
+  )
+    external
+    returns(bool);
  
   struct ContractData {
     address feeTo;

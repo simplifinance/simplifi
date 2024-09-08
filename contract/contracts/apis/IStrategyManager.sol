@@ -26,7 +26,7 @@ interface IStrategyManager {
    * key: user address { EOA }
    * value: Strategy { Contract } 
    */
-  struct Strategy {
+  struct StrategyData {
     address key;
     address value;
   }

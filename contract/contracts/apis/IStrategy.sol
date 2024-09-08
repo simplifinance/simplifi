@@ -44,7 +44,7 @@ interface IStrategy {
    * @param txType : The type of transaction to perform in the call.
    *                Can be either ERC20 or native transaction.
   *  @param allHasGF : A boolean flag indicating whether the epoch should end or not.
-   * @return success
+   * @return actualClaim
    */
   function setClaim(
     uint claim,
@@ -56,30 +56,9 @@ interface IStrategy {
     bool allHasGF,
     Common.TransactionType txType
   ) 
-    external 
-    returns(bool success);
-
-  /**
-   * @dev Utility to check for claimable. 
-   * @param epochId: Epoch Id otherwise known as pool Id.
-   * @return Withdrawable (type Uint256)
-   */
-  function claimableXFI(
-    uint epochId
-  ) 
-    external 
-    view  
-    returns(uint256);
-
-  /**
-   * @dev Utility to claim any withdrawable fund. 
-   * @return success
-   */
-  function claimNativeCoin(
-    uint epochId
-  ) 
-    external 
-    returns(bool success);
+    external
+    payable
+    returns(uint actualClaim);
 
   function swapProvider(
     uint epochId, 
@@ -87,5 +66,12 @@ interface IStrategy {
     address oldProv
   ) 
     external 
+    returns(bool);
+
+  function withdraw(
+    uint epochId,
+    address user
+  )
+    external
     returns(bool);
 }

@@ -38,18 +38,32 @@ library Utils {
         *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
         *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
         *   The minimum interest rate to set is 0.01% if interest must be set at least.
-        *   @notice To reiterate, user must multiply their interest rate by 100 before giving as input. 
-        *   @param value : The principal value on which the interest is based. Value should be in decimals.
-        *   @param denom : Interest rate. 
+        *   @notice To reiterate, raw interest must be multiplied by 100 before giving as input. 
+        *   @param principal : The principal value on which the interest is based. Value should be in decimals.
+        *   @param interest : Interest rate. 
+        *   
+        *   Rules
+        *   -----
+        *   - Principal cannot be less than base.
+        *   - Interest cannot be greater than (2 ^ 16) - 1
     */
-    function getPercentage(uint256 value, uint16 denom) internal pure returns (uint _return) {
+    function _getPercentage(
+        uint principal, 
+        uint16 interest
+    )
+        internal 
+        pure 
+        returns (uint _return) 
+    {
         uint16 base = _getBase(); 
-        if(denom == 0) return 0;
-        _return = value.mul(denom).div(base);
+        if(interest == 0 || principal == 0) return 0;
+        assertTrue(interest < type(uint16).max, "Interest overflow");
+        assertTrue(principal > base, "Principal should be greater than 10000");
+        _return = principal.mul(interest).div(base);
     }
 
     /**
-     * Simplifi protocol percentage base
+     * Percentage base
      */
     function _getBase() internal pure returns(uint16 base) {
         base = 10000;
@@ -57,14 +71,6 @@ library Utils {
     
     function _decimals(address asset) internal view returns(uint8 decimals) {
         decimals = IERC20Metadata(asset).decimals();
-    }
-    /**
-     * @dev Fetches collateral balance
-     * @param token : token contract
-     * @param strategy: strategy contract 
-     */
-    function getCollateralBalance(address token, address strategy) internal view returns(uint256 bal) {
-        bal = IERC20Metadata(token).balanceOf(strategy);
     }
 
     /**
@@ -111,7 +117,7 @@ library Utils {
         uint totalLoanInXFI = loanReqInDecimals.mul(10**xfiBaseDecimals).div(xfiUSDPriceInDecimals);
         expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
         if(performCheck) {
-            require(amountOfXFISent >= expColInXFI, "Insufficient XFI");
+            assertTrue(amountOfXFISent >= expColInXFI, "Insufficient XFI");
         }
     }
 
@@ -120,7 +126,7 @@ library Utils {
         @param makerRate : The amount of fee (in %) charged by the platform
             Note : Raw rate must multiply by 100 to get the expected value i.e
             if maker rate is 0.1%, it should be parsed as 0.1 * 100 = 10.
-            See `getPercentage()`.
+            See `_getPercentage()`.
         @param amount should be in decimals.
     */
     function computeFee(
@@ -131,30 +137,44 @@ library Utils {
         pure 
         returns (uint mFee) 
     {
-        mFee = getPercentage(amount, makerRate);
+        mFee = _getPercentage(amount, makerRate);
     }
 
     /**
      * @dev Compute interest based on specified rate.
      * @param rate : Interest rate.
      * @param principal : Total expected contribution.
-     * @param durationInHour : Duration of loan. To be specified in hours.
+     * @param durOfChoiceInSec : Duration of loan. To be specified in hours.
+     * 
+     * Rules
+     * -----
+     * - Duration cannot exceed 30days i.e 2592000 seconds uint24 seconds
      */
-    function computeInterests(
+    function computeInterestsBasedOnDuration(
         uint principal,
         uint16 rate,
-        uint16 durationInHour
+        uint24 fullDurationInSec,
+        uint24 durOfChoiceInSec
     )
         internal 
         pure 
         returns(Common.InterestReturn memory _itr) 
     {
-        _itr.durInSec = durationInHour * 1 hours;
-        _itr.fullInterest = getPercentage(principal, rate);
-        // if(_itr.durInSec < _itr.fullInterest) revert("Here"); 
-        if(_itr.fullInterest > 0) {
-            _itr.intPerSec = _itr.fullInterest / uint256(_itr.durInSec);
+        Common.InterestReturn memory it;
+        assertTrue_2(fullDurationInSec <= _maxDurationInSec(), durOfChoiceInSec <= fullDurationInSec, "Utils: FullDur or DurOfChoice oerflow");
+        it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
+        if(it.fullInterest > 0) {
+            it.intPerSec = it.fullInterest.mul(1).div(fullDurationInSec);
+            it.intPerChoiceOfDur = fullDurationInSec > durOfChoiceInSec? it.fullInterest.mul(durOfChoiceInSec).div(fullDurationInSec) : it.fullInterest;
         }
+        _itr = it; 
+    }
+
+    /**
+     * @dev Max duration : 30Days, presented in seconds
+     */
+    function _maxDurationInSec() internal pure returns(uint24 max) {
+        max = 2592000;
     }
 
     function notZeroAddress(address target) internal pure {

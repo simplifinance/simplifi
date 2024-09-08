@@ -5,6 +5,8 @@ import BigNumber from "bignumber.js";
 import { Hex } from "viem";
 import { expect } from "chai";
 
+export const locker = { LOCKED: "LOCKED", UNLOCKED: "UNLOCKED" };
+export enum FuncTag { JOIN, GET, PAYBACK, COMPLETE };
 export const bigintToStr = (x:bigint) => x.toString();
 export const toHex = (x: any) => Web3.utils.numberToHex(x);
 export const buildstring = (affx: string, start: string, times: number) => `${affx}${`${start}`.repeat(times)}`;
@@ -63,7 +65,9 @@ export const INTEREST_RATE = 50; // 0.5%
  * we may have to deactivate the check to allow us test the designated 
  * function
 */
-export const DURATION_IN_HOURS = 0;
+export const DURATION_IN_HOURS = 24;
+export const DURATION_OF_CHOICE_IN_HR = 6;
+export const DURATION_OF_CHOICE_IN_SECS = bn(DURATION_OF_CHOICE_IN_HR).times(60).times(60).toNumber();
 export const DURATION_IN_SECS = bn(DURATION_IN_HOURS).times(60).times(60).toString();
 
 /**
@@ -74,15 +78,15 @@ export const DURATION_IN_SECS = bn(DURATION_IN_HOURS).times(60).times(60).toStri
 export const COLLATER_COVERAGE_RATIO = 150;
 
 /**
- * Minimum contribution 2XFI
+ * Minimum contribution 2USD
 */
 export const MINIMUM_LIQUIDITY = 2000000000000000000n;
 
 /**
- * Contribution amount 5000
+ * Contribution amount $5USD
 */
-export const UNIT_LIQUIDITY = 5000000000000000000000n; 
-export const TOTAL_LIQUIDITY = 15000000000000000000000n; 
+export const UNIT_LIQUIDITY = 5000000000000000000n; 
+export const TOTAL_LIQUIDITY = 15000000000000000000n; 
 
 /**
  * Transfer amount: 10,000 Token
@@ -177,6 +181,17 @@ export const sumToNumber = (a: StrBigHex, b: StrBigHex) : number => formatToNumb
  * @returns string
  */
 export const sumToString = (a: StrBigHex, b: StrBigHex) : string => bn(a).plus(bn(b)).toString();
+
+/**
+ * @dev Return the mul of 'a' and 'b'
+ * @param a : Param of type StrBigHex
+ * @param b : Param of type StrBigHex
+ * @returns string
+ */
+export const mulToString = (a: StrBigHex, b: StrBigHex) : string => {
+  if(bn(a).isZero() || bn(b).isZero()) return bn(0).toString();
+  return bn(a).times(bn(b)).toString();
+}
 
 /**
  * @dev Return the result of subtracting 'b' from 'a'

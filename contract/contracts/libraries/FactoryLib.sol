@@ -88,6 +88,7 @@ library FactoryLib {
     _updateAssetInStrategy(strategy, pool.addrs.asset, epochId);
     _withdrawAllowance(user, cpp.asset, cpp.unitContribution, strategy);
     _pushToStorage(self.poolArr, pool);
+    // require(self.poolArr.length > 0, "Hereeeee");
   }
 
   function _def()
@@ -110,17 +111,17 @@ library FactoryLib {
    * @dev Check that user has given enough approval to spend from their balances
    * @param user : Caller.
    * @param assetInUse : ERC20 currency address to use as contribution base.
-   * @param unitContribution : Contribution per user.
+   * @param value : Contribution per user.
    */
   function _validateAllowance(
     address user, 
     address assetInUse, 
-    uint unitContribution
+    uint value
   ) 
     internal 
     view 
   {
-    require(IERC20(assetInUse).allowance(user, address(this)) >= unitContribution, "FactoryLib: Insufficient allowance");
+    // require(IERC20(assetInUse).allowance(user, address(this)) >= value, "FactoryLib: Insufficient allowance");
   }
 
   /**@notice Send contribution to strategy
@@ -156,11 +157,12 @@ library FactoryLib {
     Def memory _d,
     address strategy
   ) 
-    private 
+    private
   {
-    Common.InterestReturn memory _itr = cpp.unitContribution.mul(cpp.quorum).computeInterests(cpp.intRate, cpp.duration);
+    uint24 durInSec = _convertDurToSec(uint16(cpp.duration));
+    Common.InterestReturn memory _itr = cpp.unitContribution.mul(cpp.quorum).computeInterestsBasedOnDuration(cpp.intRate, durInSec, durInSec);
     self.pools[epochId] = Common.Pool(
-      Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, _itr.durInSec),
+      Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate),
       Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution),
       Common.Addresses(cpp.asset, _d.zeroAddr, strategy, cpp.members[0]),
       _d.zero
@@ -324,8 +326,8 @@ library FactoryLib {
    * @dev Return the length of epochs i.e total epoch to date
    * @param self : Storage of type Data
    */
-  function _getEpoches(Data storage self) internal view returns(uint) {
-    return self.epoches.current();
+  function _getEpoches(Data storage self) internal view returns(uint epoches) {
+    epoches = self.poolArr.length;
   } 
 
   /**
@@ -336,10 +338,10 @@ library FactoryLib {
     Data storage self
   ) 
     internal 
+    view
     returns (uint _return) 
   {
     _return = _getEpoches(self);
-    self.epoches.increment();
   }
 
   /**@dev Ruturn provider's info
@@ -409,7 +411,7 @@ library FactoryLib {
     (
       uint16 slot,
       Common.Contributor memory cbData
-    ) = _addNewContributor(self, cpr.epochId, strategy, _d.t, _d.t);
+    ) = _addNewContributor(self, cpr.epochId, admin, _d.t, _d.t);
     cpr = Common.CreatePoolReturnValue(pool, cbData, epochId, slot);
     // self.pools[epochId].uints.quorum ++;
   }
@@ -440,7 +442,7 @@ library FactoryLib {
     internal
     view
   {
-    require(epochId < self.poolArr.length, "FaactoryLib: Invalid epochId");
+    require(_getEpoches(self) > epochId, "Epoch Id has not begin");
   }
 
   /**@dev Add new contributor to a band.
@@ -619,6 +621,7 @@ library FactoryLib {
     uint epochId,
     uint fee,
     uint debt,
+    uint value,
     address contributor,
     address strategy,
     address feeTo,
@@ -626,9 +629,10 @@ library FactoryLib {
     Common.TransactionType txType
   ) 
     private 
+    returns(uint actualClaim)
   {
-    require(
-      IStrategy(strategy).setClaim(
+    actualClaim = 
+      IStrategy(strategy).setClaim{value: value}(
         amount,
         fee,
         debt,
@@ -637,9 +641,7 @@ library FactoryLib {
         feeTo,
         allHasGF,
         txType
-      ),
-      "FactoryLib: Call to strategy failed"
-    );
+      );
   }
 
   /**@dev Get finance: Sends current total contribution to the 
@@ -674,7 +676,7 @@ library FactoryLib {
     ced = _updateStorageAndCall(
       self,
       Common.UpdateMemberDataParam(
-        _validateDuration(daysOfUseInHr, pool.uints.duration),
+        _convertDurToSec(daysOfUseInHr), 
         self.contributors[epochId][pool.uints.selector].id,
         epochId,
         pool.uint256s.currentPool.computeFee(self.pData.makerRate),
@@ -710,19 +712,16 @@ library FactoryLib {
 
   /**
    * @dev Validates duration selected by this contributor must not exceed the set duration.
-   * @param durInHrs : Contributor's prefered duration specified in hours.
-   * @param expDur : Duration set by the band creator.
+   * @param durInHrs : Duration set in hours.
    */
-  function _validateDuration(
-    uint16 durInHrs, 
-    uint expDur
+  function _convertDurToSec(
+    uint16 durInHrs
   ) 
     internal 
     pure
-    returns(uint48 durOfChoiceInSec) 
+    returns(uint24 durOfChoiceInSec) 
   {
-    durOfChoiceInSec = durInHrs * 1 hours;
-    bool(durOfChoiceInSec <= expDur).assertTrue("Duration exceed maximum");
+    durOfChoiceInSec = uint24(uint(durInHrs).mul(1 hours));
   }
 
   function _computeCollateral(
@@ -793,35 +792,40 @@ library FactoryLib {
     );
     self.pools[arg.epochId].addrs.lastPaid = sender;
     _increaseSelector(self.pools, arg.epochId);
+    // uint curBlock = _now();
     ced.cbData = Common.Contributor({
       durOfChoice: arg.durOfChoice,
-      expInterest: _computeDebt(arg.durOfChoice, uint48(arg.pool.uints.duration), arg.pool.uint256s.currentPool, arg.pool).sub(arg.pool.uint256s.currentPool),
+      expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
       payDate: _now().add(arg.durOfChoice),
       turnTime: _now(),
-      loan: arg.pool.uint256s.currentPool,
+      loan: _setClaim(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,sender, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20),
       colBals: arg.msgValue,
       hasGH: _d.t,
       id: sender
     });
     _setContributorData(self.contributors, ced.cbData, arg.epochId, ced.slot);
-    _setClaim(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0 ,sender, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20);
     ced.pool = _fetchPoolData(self, arg.epochId);
-    (bool sent,) = arg.pool.addrs.strategy.call{value:arg.msgValue}("");
-    sent.assertTrue("XFI sent to strategy failed");
+    // (bool sent,) = arg.pool.addrs.strategy.call{value:arg.msgValue}("");
+    // sent.assertTrue("XFI sent to strategy failed");
   }
 
-  function _computeDebt(
-    uint48 durOfChoice, 
-    uint48 expDur, 
-    uint loan, 
-    Common.Pool memory _p
-  ) 
-    internal 
-    pure 
-    returns(uint debt) 
-  {
-    debt = durOfChoice < expDur? loan.add(_p.uint256s.intPerSec.mul(durOfChoice)) : loan.add(_p.uint256s.fullInterest);
-  }
+  // function _computeDebt(
+  //   Data storage self,
+  //   uint epochId,
+  //   address user,
+  //   uint48 durOfChoice, 
+  //   uint48 expDur, 
+  //   uint loan, 
+  //   uint fullInterest
+  // ) 
+  //   internal 
+  //   pure 
+  //   returns(uint debt) 
+  // {
+  //   Common.Pool mem
+  //   debt = durOfChoice < expDur? _getCurrentDebt(self, epochId, user) : loan.add(fullInterest);
+  //   // debt = durOfChoice < expDur? loan.add(_p.uint256s.intPerSec.mul(durOfChoice)) : loan.add(_p.uint256s.fullInterest);
+  // }
 
   /**@dev Reset pool balances
     @param self: Storage of type mapping
@@ -901,6 +905,7 @@ library FactoryLib {
       pb.epochId,
       0,
       debt,
+      0,
       pb.user,
       _p.addrs.strategy,
       address(0),
@@ -1063,8 +1068,19 @@ library FactoryLib {
     delete self.poolArr[epochId];
     delete self.pools[epochId];
     delete self.contributors[epochId];
-    _setClaim(_p.uint256s.unit, epochId, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20);
+    _setClaim(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20);
     success = epochId;
+  }
+
+  function _withdrawCollateral(
+    Data storage self,
+    uint epochId
+  ) 
+    internal
+  {
+    address user = _msgSender();
+    self.contributors[epochId][_getSlot(self.slots, user, epochId)].colBals = 0;
+    require(IStrategy(_fetchPoolData(self, epochId).addrs.strategy).withdraw(epochId, user), "Withdrawal failed");
   }
 
   /**

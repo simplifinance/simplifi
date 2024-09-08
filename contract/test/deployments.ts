@@ -27,9 +27,9 @@ export async function deployOwnershipManager(deployer: Signer) : Promise<Ownersh
  * @param deployer : Deployer address
  * @returns Contract instance
  */
-export async function deployStrategyManager(ownershipManager: Address, strategyInstance: Address, deployer: Signer) : Promise<StrategyManagerContract> {
+export async function deployStrategyManager(ownershipManager: Address, deployer: Signer) : Promise<StrategyManagerContract> {
   const StrategyAdmin = await ethers.getContractFactory("StrategyManager");
-  return (await StrategyAdmin.connect(deployer).deploy(strategyInstance, ownershipManager)).waitForDeployment();
+  return (await StrategyAdmin.connect(deployer).deploy(ownershipManager)).waitForDeployment();
 }
 
 /**
@@ -108,10 +108,10 @@ export async function deployContracts(getSigners_: () => Signers) {
   const assetMgr = await deployAssetClass(formatAddr(testAssetAddr), formatAddr(ownershipMgrAddr), deployer);
   const assetMgrAddr = await assetMgr.getAddress();
 
-  const strategy = await deployStrategy(formatAddr(ownershipMgrAddr), deployer);
+  // const strategy = await deployStrategy(formatAddr(ownershipMgrAddr), deployer);
   const strategyMgr = await deployStrategyManager(
     formatAddr(ownershipMgrAddr), 
-      formatAddr(strategy),
+      // formatAddr(strategy),
       deployer
   );
   const strategyMgrAddr = await strategyMgr.getAddress();

@@ -1,41 +1,26 @@
-import { 
-  // deploySmartStrategyAdmin, 
-  // deployAssetClass, 
-  // deployAttorney, 
-  // deploySmartStrategy, 
-  // deployInitialTokenReceiver, 
-  // deployLibrary, 
-  // deployReserve, 
-  // deployFactory, 
-  // deployTestAsset, 
-  // deployToken, 
-  // deployTrustee 
-  deployContracts
-} from "./deployments";
-
-import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
-// import { balanceOf, balances,} from "./tokenUtils";
-import type { SignersArr } from "./types";
+import { deployContracts } from "./deployments";
+import { loadFixture, time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
-  import { 
-    compareEqualString,
-    reduce,
-    bn,
-    AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER,
-    UNIT_LIQUIDITY,
-    ZERO_ADDRESS,
-    COLLATER_COVERAGE_RATIO,
-    DURATION_IN_HOURS,
-    QUORUM,
-    FEE,
-    ZERO,
-    INTEREST_RATE,
-    formatAddr,
-    convertStringsToAddresses,
-    DURATION_IN_SECS,
-    TOTAL_LIQUIDITY
-  } from "./utilities";
+import { 
+  bn,
+  UNIT_LIQUIDITY,
+  ZERO_ADDRESS,
+  COLLATER_COVERAGE_RATIO,
+  DURATION_IN_HOURS,
+  QUORUM,
+  ZERO,
+  INTEREST_RATE,
+  formatAddr,
+  DURATION_IN_SECS,
+  TOTAL_LIQUIDITY,
+  mulToString,
+  sumToString,
+  DURATION_OF_CHOICE_IN_HR,
+  DURATION_OF_CHOICE_IN_SECS,
+  FuncTag,
+  locker
+} from "./utilities";
 
 import { 
   createPermissionedPool, 
@@ -49,51 +34,15 @@ import {
   removeLiquidityPool,
   transferAsset,
   setSupportedToken, 
-  getAddressFromSigners
+  getAddressFromSigners,
+  withdraw
 } from "./factoryUtils";
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { toBigInt } from "ethers";
 
 describe("Factory", function () {
+
   async function deployContractsFixcture() {
-    // const [deployer, feeTo, signer1, signer2, signer3] = await ethers.getSignersArr();
-    // const libAddr = await deployLibrary();
-    // const attorney = await deployAttorney(formatAddr(feeTo.address), FEE);
-    // const attorneyAddr = await attorney.getAddress();
-  
-    // const reserve = await deployReserve();
-    // const reserveAddr = await reserve.getAddress();
-    // const tAsset = await deployTestAsset();
-    // const testAssetAddr = await tAsset.getAddress();
-  
-    // const trustee = await deployTrustee();
-    // const trusteeAddr = await trustee.getAddress();
-  
-    // const initTokenReceiver = await deployInitialTokenReceiver(
-    //   Array.from([
-    //     signer1.address, 
-    //     signer2.address, 
-    //     signer3.address
-    //   ]),
-    //   QUORUM
-    // );
-    // const initTokenReceiverAddr = await initTokenReceiver.getAddress();
-  
-    // const token = await deployToken(Array.from([attorneyAddr, reserveAddr, initTokenReceiverAddr]));
-    // const tokenAddr = await token.getAddress();
-  
-    // const assetMgr = await deployAssetClass(testAssetAddr);
-    // const assetMgrAddr = await assetMgr.getAddress();
-  
-    // const strategy = await deploySmartStrategy();
-    // const strategyMgr = await deploySmartStrategyAdmin(tokenAddr, assetMgrAddr, strategy);
-    // const strategyMgrAddr = await strategyMgr.getAddress();
-  
-    // const factory = await deployFactory(tokenAddr, assetMgrAddr, strategyMgrAddr, libAddr, trusteeAddr);
-  
-    // const factoryAddr = await factory.getAddress();
-    // // const permissionlessRouterAddr = await permissionlessRouter.getAddress();
-    // await trustee.setAddresses(factoryAddr, strategyMgrAddr, formatAddr(feeTo.address));
     return { ...await deployContracts(ethers.getSigners) };
   }
   
@@ -102,7 +51,7 @@ describe("Factory", function () {
       const {
         tAsset,
         factory,
-        signers : { signer1 },
+        signers : { signer1, deployer },
       } = await loadFixture(deployContractsFixcture);
     
       const assetAddr = await tAsset.getAddress();
@@ -132,13 +81,14 @@ describe("Factory", function () {
           intRate: INTEREST_RATE,
           quorum: QUORUM,
           signer: signer1,
-          unitLiquidity: UNIT_LIQUIDITY
+          unitLiquidity: UNIT_LIQUIDITY,
+          deployer
         }
       );
 
       // Assertions
       expect(epochId).to.be.equal(0n);
-      expect(strategy).to.be.not(ZERO_ADDRESS, "Strategy was not created");
+      expect(strategy === ZERO_ADDRESS).to.be.false;
       expect(admin).to.be.equal(signer1.address, "Error: Admin is zero address");
       expect(asset).to.be.equal(assetAddr, "Error: Asset was zero address");
       expect(xfi).to.be.equal(ZERO, `Error: xfi balance is ${xfi.toString()}`); // XFI balance in strategy should be zero.
@@ -147,8 +97,9 @@ describe("Factory", function () {
 
       expect(unit).to.be.equal(UNIT_LIQUIDITY);
       expect(currentPool).to.be.equal(UNIT_LIQUIDITY);
-      expect(intPerSec).to.be.equal(ZERO);
-      expect(fullInterest).to.be.equal(ZERO);
+      expect(intPerSec).to.be.greaterThan(ZERO);
+      expect(fullInterest).to.be.greaterThan(ZERO);
+      // console.log(`IntPerSec: ${intPerSec.toString()}\nFullInterest: ${fullInterest.toString()}`)
       expect(quorum).to.be.equal(QUORUM, `Quorum parsed: ${QUORUM.toString()}, Quorum returned: ${quorum.toString()}`);
       expect(colCoverage).to.be.equal(COLLATER_COVERAGE_RATIO);
       expect(duration.toString()).to.be.equal(DURATION_IN_SECS, `Duration ${duration.toString()} was not durationInSec ${DURATION_IN_SECS}`);
@@ -169,7 +120,7 @@ describe("Factory", function () {
       const {
         tAsset,
         factory,
-        signers : { signer1, signer2, signer3 },
+        signers : { signer1, signer2, signer3, deployer },
       } = await loadFixture(deployContractsFixcture);
 
       const assetAddr = await tAsset.getAddress();
@@ -192,13 +143,14 @@ describe("Factory", function () {
           intRate: INTEREST_RATE,
           signer: signer1,
           unitLiquidity: UNIT_LIQUIDITY,
-          contributors: getAddressFromSigners([signer1, signer2, signer3])
+          contributors: getAddressFromSigners([signer1, signer2, signer3]),
+          deployer
         }
       );
 
       // Assertions
       expect(epochId).to.be.equal(0n);
-      expect(strategy).to.be.not(ZERO_ADDRESS, "Strategy was not created");
+      expect(strategy === ZERO_ADDRESS).to.be.false;
       expect(admin).to.be.equal(signer1.address, "Error: Admin is zero address");
       expect(asset).to.be.equal(assetAddr, "Error: Asset was zero address");
       expect(xfi).to.be.equal(ZERO, `Error: xfi balance is ${xfi.toString()}`); // XFI balance in strategy should be zero.
@@ -207,8 +159,10 @@ describe("Factory", function () {
 
       expect(unit).to.be.equal(UNIT_LIQUIDITY);
       expect(currentPool).to.be.equal(UNIT_LIQUIDITY);
-      expect(intPerSec).to.be.equal(ZERO);
-      expect(fullInterest).to.be.equal(ZERO);
+      expect(intPerSec).to.be.greaterThan(ZERO);
+      expect(fullInterest).to.be.greaterThan(ZERO);
+      console.log(`IntPerSec: ${intPerSec.toString()}\nFullInterest: ${fullInterest.toString()}`)
+      expect(quorum).to.be.equal(QUORUM, `Quorum parsed: ${QUORUM.toString()}, Quorum returned: ${quorum.toString()}`);
       expect(quorum).to.be.equal(toBigInt(3), `Quorum parsed: ${QUORUM.toString()}, Quorum returned: ${quorum.toString()}`);
       expect(colCoverage).to.be.equal(COLLATER_COVERAGE_RATIO);
       expect(duration.toString()).to.be.equal(DURATION_IN_SECS, `Duration ${duration.toString()} was not DURATION_IN_SECS ${DURATION_IN_SECS}`);
@@ -248,10 +202,7 @@ describe("Factory", function () {
       const {
         tAsset,
         factory,
-        testAssetAddr,
-        assetMgr,
         signers : { signer1, signer2, signer3, deployer },
-        strategyMgr,
         factoryAddr } = await loadFixture(deployContractsFixcture);
         
         const create = await createPermissionedPool({
@@ -262,7 +213,8 @@ describe("Factory", function () {
           intRate: INTEREST_RATE,
           signer: signer1,
           unitLiquidity: UNIT_LIQUIDITY,
-          contributors: getAddressFromSigners([signer1, signer2, signer3])
+          contributors: getAddressFromSigners([signer1, signer2, signer3]),
+          deployer
         });
 
         const {
@@ -300,10 +252,7 @@ describe("Factory", function () {
       const {
         tAsset,
         factory,
-        testAssetAddr,
-        assetMgr,
         signers : { signer1, signer2, signer3, deployer },
-        strategyMgr,
         factoryAddr } = await loadFixture(deployContractsFixcture);
       
       const create = await createPermissionlessPool(
@@ -315,7 +264,8 @@ describe("Factory", function () {
           intRate: INTEREST_RATE,
           quorum: QUORUM,
           signer: signer1,
-          unitLiquidity: UNIT_LIQUIDITY
+          unitLiquidity: UNIT_LIQUIDITY,
+          deployer
         }
       );
 
@@ -348,8 +298,8 @@ describe("Factory", function () {
 
       const prof2_After = await factory.getProfile(create.epochId, signer2.address);
 
-      expect(currentPool.toString()).to.be.equal(bn(unit).times(2).toString());
-      expect(erc20.toString()).to.be.equal(bn(unit).times(2).toString());
+      expect(sumToString(currentPool, 0)).to.be.equal(mulToString(unit, 2));
+      expect(sumToString(erc20, 0)).to.be.equal(bn(unit).times(2).toString());
       expect(xfi).to.be.equal(ZERO);
       expect(prof2_After.slot).to.be.equal(1n);
       expect(prof2_After.rank.member).to.be.true;
@@ -359,50 +309,199 @@ describe("Factory", function () {
   });
 
   describe("Signer Getfinance", function () {
-    it("Signer1 should get finance successfully from the permissioned community", async function () {
-      // const {
-      //   tAsset,
-      //   factory,
-      //   testAssetAddr,
-      //   assetMgr,
-      //   tokenAddr,
-      //   signers : accounts,
-      //   strategyMgr,
-      //   token,
-      //   trustee,
-      //   initTokenReceiver,
-      //   factoryAddr } = await loadFixture(deployContractsFixcture);
+    it("Signer1 should get finance successfully from the permissioned liquidity pool", async function () {
+      const {
+        tAsset,
+        factory,
+        signers : { signer1, signer2, deployer },
+        factoryAddr } = await loadFixture(deployContractsFixcture);
 
-      // expect(await balFeeTo).to.be.gt(0);
-      // expect(trusteeBalTUSDAfter).to.be.lt(trusteeBalTUSDB4, "Trustee");
-      // expect(strategyBalTUSDAfter).to.be.gt(strategyBalTUSDB4, "Strategy");
-      // expect(trusteeBalTokenAfter).to.be.gt(trusteeBalTokenB4, "Trustee Balb4");
-      // expect(strategyBalTokenAfter).to.be.lt(strategyBalTokenB4, "Trustee Balb4");
+        const create = await createPermissionedPool({
+          asset: tAsset,
+          colCoverage: COLLATER_COVERAGE_RATIO,
+          durationInHours: DURATION_IN_HOURS,
+          factory: factory,
+          intRate: INTEREST_RATE,
+          signer: signer1,
+          unitLiquidity: UNIT_LIQUIDITY,
+          contributors: getAddressFromSigners([signer1, signer2]),
+          deployer
+        });
+
+      const join = await joinEpoch({
+        contribution: create.pool.uint256s.unit,
+        deployer,
+        epochId: create.epochId,
+        factory,
+        factoryAddr: formatAddr(factoryAddr),
+        signers: [signer2],
+        testAsset: tAsset
+      });
+      const turnTime = await time.latest();
+      
+      // Join function should be locked
+      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
+      
+      // GetFinance should be unlocked
+      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.UNLOCKED);
+
+      /**
+       * Collateral required to getFinance;
+       */
+      const quoted = await factory.getCollaterlQuote(create.epochId);
+      const gf = await getFinance({
+        epochId: create.epochId,
+        factory,
+        signers: [signer1],
+        hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
+      });
+      
+      // Join function should remain locked
+      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
+    
+      // GetFinance should be be ulocked
+      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.LOCKED);
+      
+      // Payback should be be ulocked
+      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.UNLOCKED);
+      
+      expect(gf.balances.xfi).to.be.equal(quoted.collateral);
+
+      // ERC20 balances in strategy should remain thesame before claim.
+      expect(gf.balances.erc20).to.be.lt(join.balances.erc20); 
+      expect(gf.pool.uints.selector).to.be.equal(BigInt(1));
+      expect(gf.pool.uints.selector).to.be.greaterThan(join.pool.uints.selector);
+
+      // console.log(`CData: ${gf.profile.cData}`);
+      // console.log(`ColBal: ${gf.profile.cData.colBals.toString()} \nQuoted: ${quoted.collateral}`);
+      expect(bn(gf.profile.cData.colBals).gte(bn((quoted.colCoverage)))).to.be.true;
+      expect(gf.profile.cData.hasGH).to.be.true;
+      expect(gf.profile.rank.admin).to.be.true;
+      expect(gf.profile.rank.member).to.be.true;
+
+      // console.log(`CTurnTime: ${bn(gf.profile.cData.turnTime).toNumber()} \nLTurnTime: ${turnTime}`);
+      expect(bn(gf.profile.cData.turnTime).toNumber()).to.be.gte(turnTime);
+      
+      // console.log(`CPayDate: ${bn(bn(gf.profile.cData.payDate).toNumber()).toNumber()} \nLPayDate: ${turnTime + DURATION_OF_CHOICE_IN_SECS}`);
+      expect(bn(gf.profile.cData.payDate).toNumber()).to.be.gte(turnTime + DURATION_OF_CHOICE_IN_SECS);
+      
+      // console.log(`CurrentPool: ${gf.pool.uint256s.currentPool.toString()} \nLoan: ${gf.profile.cData.loan.toString()}`);
+      expect(gf.pool.uint256s.currentPool).to.be.equal(ZERO);
+      
+      // console.log(`C.ExpInterest: ${gf.profile.cData.expInterest.toString()} \nLInterest: ${mulToString(gf.pool.uint256s.intPerSec, DURATION_OF_CHOICE_IN_SECS)}`);
+      expect(gf.profile.cData.expInterest.toString()).to.be.approximately(mulToString(gf.pool.uint256s.intPerSec, DURATION_OF_CHOICE_IN_SECS), bn('12500000000000000'));
+
+      expect(gf.profile.cData.durOfChoice).to.be.equal(BigInt(DURATION_OF_CHOICE_IN_SECS));
+
+      const { balancesInStrategy, signerBalB4, signerBalAfter} = await withdraw({
+        asset: tAsset,
+        epochId: create.epochId,
+        factory,
+        owner: formatAddr(gf.pool.addrs.strategy),
+        spender: signer1,
+        value: gf.profile.cData.loan
+      });
+      
+      console.log(`signerBalB4: ${signerBalB4.toString()} \nsignerBalAfter: ${signerBalAfter.toString()}\n `);
+      // XFI balances in strategy should remain unchanged
+      expect(balancesInStrategy.xfi).to.be.equal(quoted.collateral);
+      
+      expect(balancesInStrategy.erc20).to.be.equal(ZERO);
+      expect(signerBalAfter).to.be.gt(signerBalB4);
+      expect(signerBalAfter).to.be.gte(gf.profile.cData.loan);
     });
   });
 
   describe("Signer1 Payback", function () {
-    it("Signer1 should get finance and pay back successfully from the permissioned community", async function () {
-      // const {
-      //   tAsset,
-      //   factory,
-      //   testAssetAddr,
-      //   assetMgr,
-      //   tokenAddr,
-      //   signers : accounts,
-      //   strategyMgr,
-      //   token,
-      //   trustee,
-      //   initTokenReceiver,
-      //   factoryAddr } = await loadFixture(deployContractsFixcture);
+    it("Signers should pay back successfully from the permissioned Liquidity Pool", async function () {
+      const {
+        tAsset,
+        factory,
+        signers : { signer1, signer2, deployer },
+        factoryAddr } = await loadFixture(deployContractsFixcture);
 
-      // const { signer1, signer2, signer3, deployer, feeTo } = accounts;
-  
-      // expect(await balFeeTo).to.be.gt(0);
-      // expect(trusteeBalTUSDAfter).to.be.equal(trusteeBalTUSDB4, "Trustee");
-      // expect(strategyBalTUSDAfter).to.be.lt(strategyBalTUSDB4, "Strategy");
-      // expect(trusteeBalTokenAfter).to.be.equal(trusteeBalTokenB4, "Trustee Balb4");
-      // expect(strategyBalTokenAfter).to.be.equal(strategyBalTokenB4, "Trustee Balb4");
+      const signers = [signer1, signer2];
+      const create = await createPermissionedPool({
+        asset: tAsset,
+        colCoverage: COLLATER_COVERAGE_RATIO,
+        durationInHours: DURATION_IN_HOURS,
+        factory: factory,
+        intRate: INTEREST_RATE,
+        signer: signer1,
+        unitLiquidity: UNIT_LIQUIDITY,
+        contributors: getAddressFromSigners(signers),
+        deployer
+      });
+
+      await joinEpoch({
+        contribution: create.pool.uint256s.unit,
+        deployer,
+        epochId: create.epochId,
+        factory,
+        factoryAddr: formatAddr(factoryAddr),
+        signers: [signer2],
+        testAsset: tAsset
+      });
+      const gf = await getFinance({
+        epochId: create.epochId,
+        factory,
+        signers: [signer1],
+        hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
+      });
+      
+      await withdraw({
+        asset: tAsset,
+        epochId: create.epochId,
+        factory,
+        owner: formatAddr(gf.pool.addrs.strategy),
+        spender: signer1,
+        value: gf.profile.cData.loan
+      });
+      
+      /**
+       * We need to fastrack the block time to near the duration of choice of the borrower
+       * to avoid being liquidated.
+       * Note: DURATION_OF_CHOICE_IN_SEC is same as DURATION_OF_CHOICE_IN_HR but we 
+       * reduce DURATION_OF_CHOICE_IN_SEC by 2sec to account for execution time.
+       */
+      const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
+      await time.increaseTo(durOfChoiceInSec);
+      const debtToDate = await factory.getCurrentDebt(create.epochId, signer1.address);
+      // console.log("debtToDate", debtToDate.toString());
+
+      /**
+       * We increase the time to give 3 sec for execution which is why we multiply interest per sec
+       * by the number of seconds we increased by. This is to enable us give enough allowance to the 
+       * factory contract since factory will always reply on the interest up to the current block. 
+       */
+      const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.uint256s.intPerSec).times(bn(3))).toString());
+
+      const pay = await payback({
+        asset: tAsset,
+        deployer,
+        epochId: create.epochId,
+        factory,
+        debt,
+        signers: [signer1]
+      }); 
+
+      expect(pay.profile.cData.colBals).to.be.equal(gf.profile.cData.colBals);
+      expect(pay.balances.xfi).to.be.equal(gf.balances.xfi);
+      const balB4Withdrawal = await signer1.provider.getBalance(signer1.address);
+
+      /**
+       * After payback, borrower can now withdraw collateral from the contract.
+       * Collateral balance after payback should be intact/equal after getFinance.
+       */
+      await factory.connect(signer1).withdrawCollateral(create.epochId);
+      const prof = await factory.getProfile(create.epochId, signer1.address);
+      const balAfterWithdrawal = await signer1.provider.getBalance(signer1.address);
+
+      expect(prof.cData.colBals).to.be.equal(ZERO);
+      expect(await signer1.provider.getBalance(pay.pool.addrs.strategy)).to.be.equal(ZERO);
+      expect(balAfterWithdrawal).to.be.gt(balB4Withdrawal);
+      expect(prof.cData.hasGH).to.be.true;
+      expect((await factory.getProfile(create.epochId, signer2.address)).cData.hasGH).to.be.false;
     });
   });
 

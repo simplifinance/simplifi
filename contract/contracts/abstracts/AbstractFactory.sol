@@ -7,6 +7,7 @@ import { FuncHandler } from "../peripherals/FuncHandler.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 import { Pausable } from "./Pausable.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**@title Abstract Factory contract
  * Non deployable.
@@ -15,7 +16,8 @@ import { Pausable } from "./Pausable.sol";
 abstract contract AbstractFactory is
     IFactory,
     FuncHandler,
-    Pausable
+    Pausable,
+    ReentrancyGuard
 {
     using FactoryLib for Data;
 
@@ -188,7 +190,8 @@ abstract contract AbstractFactory is
         view 
         returns(uint)
     {
-        return data._getEpoches();
+        uint _epoches = data._getEpoches();
+        return _epoches == 0? 0 : _epoches - 1;
     }
 
     /**
@@ -335,6 +338,19 @@ abstract contract AbstractFactory is
     }
 
     /**
+     * @dev Withdraws Collateral balance if any
+     * @param epochId : Epoch Id
+     */
+    function withdrawCollateral(uint epochId)
+        external
+        validateEpochId(epochId)
+        returns(bool)
+    {
+        data._withdrawCollateral(epochId);
+        return true;
+    }
+
+    /**
      * @dev Returns collaterl quote for the epoch.
      * @param epochId : EpochId
      * @return collateral Collateral
@@ -449,16 +465,6 @@ abstract contract AbstractFactory is
     }
 
     /**
-     * @dev Return total pool created to date
-     */
-    function totalPool() 
-        public 
-        view returns (uint) 
-    {
-        return data._getEpoches();
-    }
-    
-    /**
      * @dev Returns a single pool for 'epochId'
      * @param epochId : Epoch id.
      */
@@ -490,16 +496,16 @@ abstract contract AbstractFactory is
         result = data.pData; 
     }
     
-
     /**
      * @dev Get price of SIMT in USD.
      * @notice from price oracle
+     * Assuming the price of XFI is 0.5$
      */
     function _getXFIPriceInUSD() 
         internal 
         pure 
         returns (uint _price) 
     {
-        _price = 50000000000; // ================================================> We use oracle here
+        _price = 500000000000000000; // ================================================> We use oracle here
     }
 }

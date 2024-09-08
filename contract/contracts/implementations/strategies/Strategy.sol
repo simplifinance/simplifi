@@ -6,9 +6,8 @@ import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { IStrategy } from "../../apis/IStrategy.sol";
 import { Common } from "../../apis/Common.sol";
 import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
+contract Strategy is IStrategy, OnlyOwner {
   /**
    * @dev Approvals in native coin i.e XFI 
    * mapping of providera to balances.
@@ -42,15 +41,9 @@ contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
    * @dev Initializes state variables.
    * OnlyOwner function.
    */
-  constructor (
-    address _ownershipManager
-  )
-    OnlyOwner(_ownershipManager)  
-  {
-    ownershipManager = _ownershipManager;
-  }
+  constructor (address _ownershipManager) OnlyOwner(_ownershipManager)  {}
 
-  receive() external payable onlyOwner("Not allowed") {}
+  receive() external payable onlyOwner("Strategy: Not receive() - Not permitted") {}
 
   /**
    * @dev Implementation of IStrategy.addUp
@@ -114,13 +107,14 @@ contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
     bool allHasGF,
     Common.TransactionType txType
   ) 
-    external 
+    external
+    payable
     onlyOwner("Strategy - setClaim: Not permitted")
-    returns(bool) 
+    returns(uint actualClaim)
   {
     address asset = assets[epochId];
     if(txType == Common.TransactionType.ERC20) {
-      uint actualClaim = claim > fee? claim - fee : claim;
+      actualClaim = claim > fee? claim - fee : claim;
       _setAllowance(user, asset, actualClaim);
       if(fee > 0) {
         IERC20(asset).transfer(feeTo, fee);
@@ -132,7 +126,7 @@ contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
       }
       if(credit > 0) credits[epochId] += credit;
     }
-    return true;
+    return actualClaim;
   }
 
   /**
@@ -173,41 +167,26 @@ contract Strategy is IStrategy, OnlyOwner, ReentrancyGuard {
   }
 
   /**
-   * @dev Claims of bands registered in this strategy can enquire if they 
-   * have claims.
+   *  @dev Withdraw Native coin. 
    */
-  function claimableXFI(
-    uint epochId
+  function withdraw(
+    uint epochId,
+    address user
   ) 
     external 
-    view  
-    returns(uint256) 
+    onlyOwner("Strategy: Not Permitted")
+    returns(bool) 
   {
-    return nativeApprovals[_msgSender()][epochId];
-  }
-
-  /**
-   *  @dev Contributor can claim native coin i. XFI.
-   * We need this function when contributors want to reclaim 
-   * their collateral balances. 
-   */
-  function claimNativeCoin(
-    uint epochId
-  ) 
-    external 
-    nonReentrant 
-    returns(bool success) 
-  {
-    address sender = _msgSender();
-    uint balance = nativeApprovals[sender][epochId];
-    nativeApprovals[sender][epochId] = 0;
+    uint balance = nativeApprovals[user][epochId];
+    nativeApprovals[user][epochId] = 0;
     require(balance > 0, "No claim");
     if(address(this).balance == 0) {
       revert InsufficientNativeBalanceInContract(address(this).balance);
     }
-    (bool sent,) = sender.call{value: balance}("");
-    require(sent,"Op failed");
-    return sent;
+    payable(user).transfer(balance);
+    // (bool sent,) = sender.call{value: balance}("");
+    // require(sent,"Op failed");
+    return true;
   }
 
   /**

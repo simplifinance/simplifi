@@ -8,9 +8,7 @@ import { IOwnerShip } from "../apis/IOwnerShip.sol";
 abstract contract OnlyOwner is MsgSender {
     address public ownershipManager;
 
-    constructor(
-        address _ownershipManager
-    )
+    constructor(address _ownershipManager)
     {
         _setOwnershipManager(_ownershipManager);
     }
@@ -23,6 +21,7 @@ abstract contract OnlyOwner is MsgSender {
      */
     modifier onlyOwner(string memory errorMessage) {
         address mgr = ownershipManager;
+        require(mgr != address(0), "OnlyOwner: Manager not set");
         require(IOwnerShip(mgr).isOwner(_msgSender()), errorMessage);
         _;
     }
