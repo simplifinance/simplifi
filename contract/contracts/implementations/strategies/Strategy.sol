@@ -2,12 +2,15 @@
 
 pragma solidity 0.8.24;
 
+import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { IStrategy } from "../../apis/IStrategy.sol";
 import { Common } from "../../apis/Common.sol";
 import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 
 contract Strategy is IStrategy, OnlyOwner {
+  using SafeMath for uint;
+
   /**
    * @dev Approvals in native coin i.e XFI 
    * mapping of providera to balances.
@@ -141,11 +144,14 @@ contract Strategy is IStrategy, OnlyOwner {
   ) 
     private 
   {
-    credits[epochId] = 0;
-    address[] memory provs = contributors[epochId];
-    uint allowance = credits[epochId] / provs.length;
-    for(uint i = 0; i < provs.length; i++){
-      _setAllowance(provs[i], asset, allowance);
+    uint credit = credits[epochId];
+    address[] memory providers = contributors[epochId];
+    credits[epochId] = credit.sub(credit);
+    uint size = providers.length;
+    if(credit < size) revert InsufficientCredit(credit, size);
+    uint allowance = credit.sub(size);
+    for(uint i = 0; i < size; i++){
+      _setAllowance(providers[i], asset, allowance);
     }
   }
 

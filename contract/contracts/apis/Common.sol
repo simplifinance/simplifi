@@ -9,7 +9,7 @@ interface Common {
     JOIN, 
     GET, 
     PAYBACK, 
-    COMPLETE 
+    WITHDRAW
   }
 
   enum TransactionType { NATIVE, ERC20 }

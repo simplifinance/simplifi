@@ -7,7 +7,7 @@ import { Common } from "./Common.sol";
 interface IStrategy {
   error ContractBalanceTooLow();
   error InsufficientNativeBalanceInContract(uint);
-
+  error InsufficientCredit(uint, uint);
   
   /**
    * @dev Add contributor to the list

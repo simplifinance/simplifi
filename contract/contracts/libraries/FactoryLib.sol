@@ -809,24 +809,6 @@ library FactoryLib {
     // sent.assertTrue("XFI sent to strategy failed");
   }
 
-  // function _computeDebt(
-  //   Data storage self,
-  //   uint epochId,
-  //   address user,
-  //   uint48 durOfChoice, 
-  //   uint48 expDur, 
-  //   uint loan, 
-  //   uint fullInterest
-  // ) 
-  //   internal 
-  //   pure 
-  //   returns(uint debt) 
-  // {
-  //   Common.Pool mem
-  //   debt = durOfChoice < expDur? _getCurrentDebt(self, epochId, user) : loan.add(fullInterest);
-  //   // debt = durOfChoice < expDur? loan.add(_p.uint256s.intPerSec.mul(durOfChoice)) : loan.add(_p.uint256s.fullInterest);
-  // }
-
   /**@dev Reset pool balances
     @param self: Storage of type mapping
     @param epochId : Pool index
@@ -881,7 +863,8 @@ library FactoryLib {
   */
   function payback(
     Data storage self,
-    Common.PaybackParam memory pb
+    Common.PaybackParam memory pb,
+    function(address, uint, bool) internal setPermit 
   )
     internal
     returns(Common.CommonEventData memory ced)
@@ -889,9 +872,14 @@ library FactoryLib {
     Common.Pool memory _p = _fetchPoolData(self, pb.epochId);
     uint debt = _getCurrentDebt(self, pb.epochId, pb.user);
     bool(debt > 0).assertTrue("No debt");
-    pb.unlock(pb.epochId, Common.FuncTag.GET);
+    bool allGF = _allHasGF(self.pools, pb.epochId);
     pb.lock(pb.epochId, Common.FuncTag.PAYBACK);
-    _replenishPoolBalance(self.pools, pb.epochId);
+    if(!allGF){
+      _replenishPoolBalance(self.pools, pb.epochId);
+      pb.unlock(pb.epochId, Common.FuncTag.GET);
+    }
+    // pb.unlock(pb.epochId, Common.FuncTag.WITHDRAW);
+    setPermit(pb.user, pb.epochId, _def().t);
     _validateAllowance(pb.user, _p.addrs.asset, debt);
     _withdrawAllowance(pb.user, _p.addrs.asset, debt, _p.addrs.strategy);
     ced = Common.CommonEventData(
@@ -900,6 +888,7 @@ library FactoryLib {
       _getProfile(self, pb.epochId, pb.user).cData,
       _fetchPoolData(self, pb.epochId)
     );
+    
     _setClaim(
       ced.cbData.colBals,
       pb.epochId,
@@ -909,7 +898,7 @@ library FactoryLib {
       pb.user,
       _p.addrs.strategy,
       address(0),
-      _allHasGF(self.pools, pb.epochId),
+      allGF,
       Common.TransactionType.NATIVE
     );
   }
@@ -989,7 +978,8 @@ library FactoryLib {
   */
   function liquidate(
     Data storage self,
-    Common.LiquidateParam memory lp
+    Common.LiquidateParam memory lp,
+    function(address, uint, bool) internal setPermit
   ) 
     internal
     returns (Common.CommonEventData memory ced)
@@ -1007,7 +997,8 @@ library FactoryLib {
         liquidator,
         lp.lock, 
         lp.unlock
-      )
+      ),
+      setPermit
     ); 
   }
 
@@ -1030,8 +1021,8 @@ library FactoryLib {
   {
     Common.Contributor memory newProvData = oldProvData;
     newProvData.id = newProv;
-    newProvData.loan = 0;
-    newProvData.colBals = 0;
+    // newProvData.loan = 0;
+    // newProvData.colBals = 0;
     _setContributorData(self.contributors, newProvData, epochId, oldProvSlot);
     _setSlot(self.slots, newProv, oldProvSlot, epochId);
     self.ranks[epochId][newProv] = oldProvRank;

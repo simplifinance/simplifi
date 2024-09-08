@@ -145,7 +145,7 @@ export async function payback(
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
   const signer = x.signers[0];
-  const debt = await x.factory.getCurrentDebt(x.epochId, signer.address);
+  await x.factory.getCurrentDebt(x.epochId, signer.address);
   // console.log(`GetCurrentDebt: ${debt}\n Calculated debt: ${x.debt}`);
   const bal = await x.asset.balanceOf(signer.address);
   if(bn(x.debt).gt(bn(bal))){
@@ -166,7 +166,7 @@ export async function payback(
   await x.factory.connect(signer).payback(x.epochId);
   const balances = await x.factory.getBalances(x.epochId);
   const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, factoryAddr);
+  const profile = await x.factory.getProfile(x.epochId, signer.address);
   return {
     pool,
     balances,
@@ -190,7 +190,7 @@ export async function approve(
 export async function liquidate(
   x: LiquidateParam
 ) 
-  : Promise<FactoryTxReturn>
+  : Promise<{liq: FactoryTxReturn, balB4Liq: bigint}>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
   const signer = x.signers[0];
@@ -200,6 +200,8 @@ export async function liquidate(
     recipients: [formatAddr(signer.address)],
     sender: x.deployer
   });
+  const balB4Liq = await x.asset.balanceOf(signer.address);
+  console.log(`x.debt: ${x.debt}\nbaa: ${balB4Liq}`);
   await approve({
     owner: signer,
     amount: x.debt!,
@@ -209,12 +211,15 @@ export async function liquidate(
   await x.factory.connect(signer).liquidate(x.epochId);
   const balances = await x.factory.getBalances(x.epochId);
   const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, factoryAddr);
+  const profile = await x.factory.getProfile(x.epochId, signer.address);
   return {
-    pool,
-    balances,
-    profile,
-    epochId: x.epochId
+    liq: {
+      pool,
+      balances,
+      profile,
+      epochId: x.epochId
+    },
+    balB4Liq
   }
 }
 
@@ -228,7 +233,7 @@ export async function enquireLiquidation(
 ) 
   : Promise<[Common.ContributorStructOutput, boolean, bigint]> 
 {
-  return await x.factory.connect(x.signers[0]).enquireLiquidation(x.epochId);
+  return await x.factory.enquireLiquidation(x.epochId);
 }
 
 /**
@@ -249,9 +254,23 @@ export const setSupportedToken = async(assetMgr: AssetManagerContract, asset: Ad
  * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
  */
 export async function transferAsset(x: FundAccountParam) : Null {
+  // x.recipients.forEach(async(addr) => {
+  //   x.asset.connect(x.sender).transfer(formatAddr(addr), x.amount);
+  //   const BalSent = await x.asset.balanceOf(addr);
+  //   console.log(`BalSent: ${BalSent}`);
+  // })
+
   for(let i = 0; i < x.recipients.length; i++) {
     x.asset.connect(x.sender).transfer(formatAddr(x.recipients[i]), x.amount);
+    // const BalSent = await x.asset.balanceOf(x.recipients[i]);
+    // console.log(`BalSent: ${BalSent}`);
   }
+  for(let i = 0; i < x.recipients.length; i++) {
+    const BalSent = await x.asset.balanceOf(x.recipients[i]);
+    console.log(`BalSent: ${BalSent}`);
+  }
+
+  
 }
 
 /**

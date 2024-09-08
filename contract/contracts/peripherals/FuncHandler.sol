@@ -3,12 +3,21 @@
 pragma solidity 0.8.24;
 
 import { Common } from "../apis/Common.sol";
+import { Pausable } from "../abstracts/Pausable.sol";
 
-contract FuncHandler is Common {
+contract FuncHandler is Common, Pausable {
   error FunctionNotCallable(uint8);
   error IndexOutOfBound(uint);
   error FunctionAlreadyUnlocked(FuncTag);
   error FunctionAlreadyLocked(FuncTag);
+
+  /**
+   * @notice Mapping of epochId to permit
+   * Permit is used to give instructions to the child contract who can
+   * withdraw from an epoch.
+   * Only one provider can withdraw at a time in an apoch.
+   */
+  mapping (uint => mapping (address => bool)) public permits;
   
   /**
     @dev Mapping of `epochId` to `functions tags` to bool.
@@ -24,10 +33,33 @@ contract FuncHandler is Common {
       @param epochId - Pool index.
    */
   modifier checkFunctionPass(uint epochId, FuncTag tag) {
-    if(!_getFunctionStatus(epochId, tag)) {
-      revert FunctionNotCallable(uint8(tag));
+    address caller = _msgSender();
+    if(tag != FuncTag.WITHDRAW) {
+      if(!_getFunctionStatus(epochId, tag)) {
+        revert FunctionNotCallable(uint8(tag));
+      }
+    } else {
+      require(permits[epochId][caller], "FuncHandler: Not Permitted");
     }
+    // if(tag == FuncTag.WITHDRAW) {
+    // }
     _;
+    if(tag == FuncTag.WITHDRAW){
+      _setPermit(caller, epochId, false);
+      // _lockFunction(epochId, tag);
+    }
+  }
+
+  constructor(address _ownershipManager) Pausable(_ownershipManager) {}
+
+  function _setPermit(
+    address target, 
+    uint epochId, 
+    bool permit
+  ) 
+    internal 
+  {
+    permits[epochId][target] = permit;
   }
 
   /**

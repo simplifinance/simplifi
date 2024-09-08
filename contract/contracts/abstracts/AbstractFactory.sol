@@ -6,7 +6,6 @@ import { FactoryLib, Data } from "../libraries/FactoryLib.sol";
 import { FuncHandler } from "../peripherals/FuncHandler.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
-import { Pausable } from "./Pausable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**@title Abstract Factory contract
@@ -16,7 +15,6 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 abstract contract AbstractFactory is
     IFactory,
     FuncHandler,
-    Pausable,
     ReentrancyGuard
 {
     using FactoryLib for Data;
@@ -57,7 +55,7 @@ abstract contract AbstractFactory is
         address assetClass,
         address strategyManager,
         address _ownershipManager
-    ) Pausable(_ownershipManager){
+    ) FuncHandler(_ownershipManager){
         _setUp(
             serviceRate, 
             _minContribution, 
@@ -291,7 +289,8 @@ abstract contract AbstractFactory is
                     _msgSender(),
                     _lockFunction,
                     _unlockFunction
-                )
+                ),
+                _setPermit
             )
         );
         return true;
@@ -317,7 +316,8 @@ abstract contract AbstractFactory is
                     epochId,
                     _lockFunction,
                     _unlockFunction
-                )
+                ),
+                _setPermit
             )
         );
         return true;
@@ -344,6 +344,7 @@ abstract contract AbstractFactory is
     function withdrawCollateral(uint epochId)
         external
         validateEpochId(epochId)
+        checkFunctionPass(epochId, FuncTag.WITHDRAW)
         returns(bool)
     {
         data._withdrawCollateral(epochId);
