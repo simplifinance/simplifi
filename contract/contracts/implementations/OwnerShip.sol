@@ -77,18 +77,20 @@ contract OwnerShip is IOwnerShip, MsgSender{
 
     /**
      * @dev Add a new owner address
-     * @param newOwner: New owner
+     * @param newOwners: New owners
      * @notice Only address with owner permission can add another owner.
      */
-    function addNewOwner(
-        address newOwner
+    function setPermission(
+        address[] memory newOwners
     ) 
         external
         onlyOwner
         returns(bool) 
     {
         bool rt = true;
-        _setOwner(newOwner, rt);
+        for(uint r = 0; r < newOwners.length; r++) {
+            _setOwner(newOwners[r], rt);
+        }
         return rt;
     }
 

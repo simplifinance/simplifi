@@ -1,4 +1,3 @@
-// import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { Address, Addresses, NullNoPromise, StrBigHex } from "./types";
 import { ethers, Web3 } from "hardhat";
 import BigNumber from "bignumber.js";
@@ -86,7 +85,7 @@ export const MINIMUM_LIQUIDITY = 2000000000000000000n;
  * Contribution amount $5USD
 */
 export const UNIT_LIQUIDITY = 5000000000000000000n; 
-export const TOTAL_LIQUIDITY = 15000000000000000000n; 
+export const TOTAL_LIQUIDITY = 15000000000000000000n; // unit * 3
 
 /**
  * Transfer amount: 10,000 Token

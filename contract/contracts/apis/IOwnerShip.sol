@@ -8,8 +8,8 @@ pragma solidity 0.8.24;
  * @author Simplifi (Bobeu)
  */
 interface IOwnerShip {
-    function addNewOwner(
-        address newOwner
+    function setPermission(
+        address[] memory newOwners
     ) 
         external
         returns(bool);

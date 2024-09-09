@@ -1,7 +1,6 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
-import { toBigInt } from 'web3-utils';
 
 const CONTEXT = "TEST";
 dotconfig();
@@ -45,21 +44,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`AssertMgr deployed to: ${assertMgr.address}`);
   
   /**
-   * Deploy Strategy Contract
-   */
-  const strategy = await deploy("Strategy", {
-    from: deployer,
-    args: [ownershipManager.address],
-    log: true,
-  });
-  console.log(`strategy deployed to: ${strategy.address}`);
-
-  /**
    * Deploy Strategy Manager
    */
   const strategyManager = await deploy("StrategyManager", {
     from: deployer,
-    args: [strategy.address, ownershipManager.address],
+    args: [ownershipManager.address],
     log: true,
   });
   console.log(`strategyManager deployed to: ${strategyManager.address}`);  
@@ -95,14 +84,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`Factory deployed to: ${factory.address}`);
 
+  await execute("OwnerShip", {from: deployer}, "setPermission", [factory.address, ownershipManager.address]);
   const cData = await read("Factory", "getContractData");
   console.log(cData);
-
-
-  
-
 };
 
 export default func;
 
-func.tags = ["OwnerShip", "TestAsset", "AssetClass", "Strategy", "StrategyManager", "Factory"];
+func.tags = ["OwnerShip", "TestAsset", "AssetClass", "StrategyManager", "Factory"];

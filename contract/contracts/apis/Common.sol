@@ -34,7 +34,7 @@ interface Common {
     uint turnTime;
     uint loan;
     uint colBals;
-    bool hasGH;
+    // bool hasGH;
     address id;
   }
 

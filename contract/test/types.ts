@@ -112,7 +112,7 @@ export interface SetVariableParam {
 export interface FactoryTxReturn {
   pool: Common.PoolStructOutput;
   epochId: bigint;
-  balances: Common.BalancesStructOutput;
+  balances?: Common.BalancesStructOutput;
   profile: Common.ContributorDataStructOutput;
 }
 

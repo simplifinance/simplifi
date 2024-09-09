@@ -37,13 +37,8 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
   mapping(address => address) private strategyMap;
 
   constructor (
-    // address _instance,
     address _ownershipManager
-  ) 
-    OnlyOwner(_ownershipManager) 
-  {
-    // instance = _instance;
-  }
+  ) OnlyOwner(_ownershipManager) {}
 
   receive() 
     external 

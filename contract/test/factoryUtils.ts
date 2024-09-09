@@ -19,8 +19,9 @@ import type {
   FactoryTxReturn,
   FactoryContract, } from "./types";
 
-import { bn, formatAddr, } from "./utilities";
+import { bn, formatAddr, ZERO, } from "./utilities";
 import { Common } from "../typechain-types/contracts/apis/IFactory";
+import { expect } from "chai";
 
 /**
  * @dev Create public pool
@@ -299,9 +300,24 @@ export async function withdraw(
   return { balancesInStrategy, signerBalAfter, signerBalB4 };
 }
 
-export async function removeLiquidityPool(x: RemoveLiquidityParam) {
+export async function removeLiquidityPool(
+  x: RemoveLiquidityParam
+) {
   await x.factory.connect(x.signer).removeLiquidityPool(x.epochId);
-  return await x.factory.getPoolData(x.epochId);
+  /**
+   * Since liquidityPool is removed before this line, uncommenting the next line 
+   * will throw "Error: Transaction reverted: function returned an unexpected amount of data" 
+   * error in contract since the pool is set to default values, strategy address will 
+   * zeroed.
+   */
+  // const balances = await x.factory.getBalances(x.epochId);
+  
+  expect(x.factory.getPoolData(x.epochId)).to.be.revertedWith(
+    "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
+  );
+  expect(x.factory.getPoolData(x.epochId)).to.be.revertedWith(
+    "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
+  );
 }
 
 export function getAddressFromSigners(signers: Signer[]) {

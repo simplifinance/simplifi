@@ -3,7 +3,7 @@
 pragma solidity 0.8.24;
 
 import { OnlyOwner } from "../abstracts/OnlyOwner.sol";
-import { IAssetClass } from "../apis/IAssetClass.sol";
+import { IAssetClass } from "../apis/IAssetClass.sol"; 
 
 contract AssetClass is IAssetClass, OnlyOwner {
   address[] private assets;
@@ -34,9 +34,8 @@ contract AssetClass is IAssetClass, OnlyOwner {
   ) 
     OnlyOwner(_ownershipMgr) 
   {
-    if(_asset != address(0)) {
-      _supportAsset(_asset);
-    }
+    require(_asset != address(0), "Asset cannot be empty");
+    _supportAsset(_asset);
   }
 
   // fallback(bytes calldata data) external returns(bytes memory) {
@@ -54,17 +53,18 @@ contract AssetClass is IAssetClass, OnlyOwner {
     public 
     onlyOwner("AssetClass - supportAsset: Not permitted")
   {
+    _supportAsset(_asset); 
+  }
+
+  function _supportAsset(address _asset) private {
+    
     if(!listed[_asset]){
       listed[_asset] = true;
       assets.push(_asset);
     }
     if(!_isAssetSupported(_asset)){
-      _supportAsset(_asset);
+      supportedAssets[_asset] = true;
     }
-  }
-
-  function _supportAsset(address _asset) private {
-    supportedAssets[_asset] = true;
   }
 
   /**
@@ -88,14 +88,14 @@ contract AssetClass is IAssetClass, OnlyOwner {
   /**
    * @dev Check if an asset is supported
    */
-  function isSupportedAsset(address _asset) external view returns(bool) {
+  function isSupportedAsset(address _asset) public override view returns(bool) {
     return _isAssetSupported(_asset);
   }
 
   /**
    * @dev Returns a list of supported assets
    */
-  function getSupportedAssets() external view returns(address[] memory _assets) {
+  function getSupportedAssets() public view returns(address[] memory _assets) {
     _assets = assets;
     return _assets;
   }

@@ -459,7 +459,12 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (bool)
     {
-        data.cancelBand(epochId, isPermissionLess);
+        data.cancelBand(
+            epochId, 
+            isPermissionLess, 
+            _setPermit, 
+            _lockFunction
+        );
         emit Cancellation(epochId);
 
         return true;

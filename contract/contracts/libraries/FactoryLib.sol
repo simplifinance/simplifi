@@ -473,6 +473,7 @@ library FactoryLib {
     if(_isPoolFilled(newPoolData)) {
       _ab.lock(_ab.epochId, Common.FuncTag.JOIN);
       _ab.unlock(_ab.epochId, Common.FuncTag.GET);
+      _setTurnTime(self, newPoolData.uints.selector, _ab.epochId);
     }
     _validateAllowance(_msgSender(), pool.addrs.asset, pool.uint256s.unit);
     _withdrawAllowance(_msgSender(), pool.addrs.asset, pool.uint256s.unit, pool.addrs.strategy);
@@ -480,6 +481,8 @@ library FactoryLib {
     ced.rank = _getRank(self.ranks, _ab.epochId, _msgSender());
     ced.slot = uint8(_getSlot(self.slots, _msgSender(), _ab.epochId));
   }
+
+  
 
   /**
    * @dev Returns the Rank object of a user.
@@ -565,10 +568,10 @@ library FactoryLib {
     uint epochId
   ) 
     private
-    returns(address contributor)
+    // returns(address contributor)
   {
     self.contributors[epochId][selector].turnTime = _now();
-    contributor = self.contributors[epochId][selector].id;
+    // contributor = self.contributors[epochId][selector].id;
   }
 
   /**@dev Get the slots of contributor on the list
@@ -690,7 +693,7 @@ library FactoryLib {
   /**@dev Increase slot selector
    *  This is a flag we use in selecting the next borrower.
   */
-  function _increaseSelector(
+  function _moveSelectorToTheNext(
     mapping(uint => Common.Pool) storage self, 
     uint epochId
   ) 
@@ -763,6 +766,27 @@ library FactoryLib {
               greater than the duration set by the admin.
       We will also not include the debt for the 'credit' parameter as stated in Strategy.setClaim
       unless borrowers are returning the loan.
+
+      ASSUMPTION 1
+      ------------
+      Assuming 2 providers in a pool, if the first on the list with slot '0' failed to GF within the grace
+      period, the next provider can take over. When this happens, the slots and profile are swapped to 
+      alow the serious one proceed to borrow. Slot 0 becomes 1 vice versa. This allows the defaulted 
+      party another chance to GF since the ticker i.e 'pool.uints.selector' waits for no one. It is always
+      incremented as long at the epoch is active. If the second slot also default, the any party in the pool
+      i.e Provider 1 can step in to GF. 
+
+      ASSUMPTION 2
+      ------------
+      The case above is different where the number of providers exceeds 2. Since the selector goes forward, the 
+      first one the list i.e admin is given priority to proceed to GF even after they defaulted. Since the admin
+      is 0, if they defaulted, slots greater than 0 can step in i.e from 1, 2, to 'n'. Admin slot is swapped for
+      higher slot.
+      If a defaulted slot is swapped for higher one, they have another chance to GF. But if a defaulted slot is 
+      is swapped for the lower one, the only chance available to them is for the next GF to default so they can 
+      hop in. 
+      Irrespective of who defaults, the orderliness is preserved, And the defaulted must wait for the turn of the 
+      new slot assigned to them. 
   */  
   function _updateStorageAndCall(
     Data storage self,
@@ -777,12 +801,14 @@ library FactoryLib {
     Common.ContributorData memory cbt = _getProfile(self, arg.epochId, arg.expected); // Expected contributor
     ced.slot = cbt.slot;
     ced.cbData = cbt.cData;
-    if(_now() > ced.cbData.turnTime + 1 hours){
+    if(_now() > cbt.cData.turnTime + 1 hours){
       if(_msgSender() != arg.expected) {
         sender = _msgSender();
         _mustBeAMember(self, arg.epochId, sender);
-        (ced.cbData, ced.slot) = _swapSlots(self, ced.slot, arg.expected, sender, arg.epochId);
+        ced.slot = _swapSlots(self, cbt.slot, arg.expected, sender, arg.epochId);
       }
+    } else {
+      require(_msgSender() == cbt.cData.id, "Not the expected");
     }
     _computeCollateral(
       arg.pool.uint256s.currentPool,
@@ -791,16 +817,15 @@ library FactoryLib {
       arg.xfiUSDPriceInDecimals
     );
     self.pools[arg.epochId].addrs.lastPaid = sender;
-    _increaseSelector(self.pools, arg.epochId);
-    // uint curBlock = _now();
+    _moveSelectorToTheNext(self.pools, arg.epochId);
     ced.cbData = Common.Contributor({
       durOfChoice: arg.durOfChoice,
       expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
       payDate: _now().add(arg.durOfChoice),
-      turnTime: _now(),
+      turnTime: cbt.cData.turnTime + 1 hours,
       loan: _setClaim(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,sender, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20),
       colBals: arg.msgValue,
-      hasGH: _d.t,
+      // hasGH: _d.t,
       id: sender
     });
     _setContributorData(self.contributors, ced.cbData, arg.epochId, ced.slot);
@@ -847,14 +872,14 @@ library FactoryLib {
   )
     private 
     returns(
-      Common.Contributor memory _actInfo, 
+      // Common.Contributor memory _actInfo, 
       uint8 _actSlot
     ) 
   {
     Common.ContributorData memory cbt = _getProfile(self, epochId, _actContributor);
-    _actInfo = cbt.cData;
     _actSlot = _expSlot;
     self.slots[_expContributor][epochId] = cbt.slot;
+    self.slots[_actContributor][epochId] = _expSlot;
   }
 
   /**@dev Payback borrowed fund.
@@ -877,6 +902,7 @@ library FactoryLib {
     if(!allGF){
       _replenishPoolBalance(self.pools, pb.epochId);
       pb.unlock(pb.epochId, Common.FuncTag.GET);
+      _setTurnTime(self, _p.uints.selector, pb.epochId);
     }
     // pb.unlock(pb.epochId, Common.FuncTag.WITHDRAW);
     setPermit(pb.user, pb.epochId, _def().t);
@@ -1036,11 +1062,15 @@ library FactoryLib {
     @param self : Storage
     @param epochId : Pool Id.
     @param isPermissionLess : Whether band is public or not.
+
+    @notice : Setting the quorum to 0 is an indication that a pool was removed.
   */
   function cancelBand(
     Data storage self,
     uint epochId,
-    bool isPermissionLess
+    bool isPermissionLess,
+    function(address, uint, bool) internal setPermit,
+    function (uint, Common.FuncTag) internal _lock
   ) 
     internal
     returns (uint success)
@@ -1048,7 +1078,7 @@ library FactoryLib {
     require(epochId < self.poolArr.length, "Invalid epoch lId");
     Common.Pool memory _p = _fetchPoolData(self, epochId);
     address creator = _msgSender();
-    _mustBeAMember(self, epochId, creator);
+    _isAdmin(self.ranks, epochId, creator);
     Def memory _d = _def();
     if(isPermissionLess) {
       bool(self.contributors[epochId].length == 1).assertTrue("FactoryLib - Pub: Cannot cancel");
@@ -1057,12 +1087,32 @@ library FactoryLib {
       bool(_p.uint256s.currentPool <= _p.uint256s.unit).assertTrue("FactoryLib - Priv: Cannot cancel");
     }
     delete self.poolArr[epochId];
-    delete self.pools[epochId];
-    delete self.contributors[epochId];
+    Common.Contributor memory newC;
+    self.pools[epochId].uints.quorum = 0;
+    _setContributorData(self.contributors, newC, epochId, _getSlot(self.slots, creator, epochId));
+    _lock(epochId, Common.FuncTag.JOIN);
+    setPermit(creator, epochId, true);
     _setClaim(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20);
     success = epochId;
   }
 
+  function _isAdmin(
+    mapping(uint => mapping (address => Common.Rank)) storage self,
+    uint epochId,
+    address user
+  ) 
+    internal
+    view
+  {
+    require(self[epochId][user].admin, "FactoryLib: Only admin");
+  }
+
+
+  /**
+   * @dev Withdraws collateral
+   * @param self: storage ref.
+   * @param epochId: Epoch Id.
+   */
   function _withdrawCollateral(
     Data storage self,
     uint epochId

@@ -125,11 +125,11 @@ export async function deployContracts(getSigners_: () => Signers) {
   );
 
   const factoryAddr = await factory.getAddress();
-  await ownershipMgr.connect(deployer).addNewOwner(factoryAddr);
-  await ownershipMgr.connect(deployer).addNewOwner(strategyMgrAddr);
-  await assetMgr.connect(deployer).supportAsset(testAssetAddr);
+  await ownershipMgr.connect(deployer).setPermission([factoryAddr, strategyMgrAddr]);
+  const isSupported = await assetMgr.isSupportedAsset(testAssetAddr);
   const isListed = await assetMgr.listed(testAssetAddr);
   expect(isListed).to.be.true;
+  expect(isSupported).to.be.true;
 
   return {
     strategyMgr,
