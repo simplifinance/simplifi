@@ -1,5 +1,5 @@
 import { BigNumber, ethers } from "ethers";
-import type { OxString } from "@/interfaces";
+import type { Address } from "@/interfaces";
 import assert from "assert";
 
 export type UtilsOPeration = "div" | "add" | "sub" | "mul";
@@ -67,7 +67,7 @@ export const powr = (x: number | string, power: number, decimals: number): BigNu
   return BigNumber.from(x).mul(BigNumber.from(BigNumber.from(10).pow(decimals))).mul(BigNumber.from(power));
 } 
 
-export const formatAddr = (x: string | (OxString | undefined)) : OxString => {
+export const formatAddr = (x: string | (Address | undefined)) : Address => {
   if(!x || x === "") return `0x${'0'.repeat(40)}`;
   return `0x${x.substring(2, 42)}`;
 };
@@ -97,4 +97,3 @@ export const classNames = {
   flexCenter: `flex justify-center items-center`,
   flexColAround: `flex flex-col justify-between items-center`, 
 }
-

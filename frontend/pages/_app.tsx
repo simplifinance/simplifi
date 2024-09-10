@@ -1,11 +1,11 @@
 import '../styles/globals.css'
 import React from 'react';
-import NextHead from 'next/head';
 import type { AppProps } from 'next/app';
 import { cookieToInitialState } from 'wagmi';
 import { SimplifiProvider } from '../context';
 import { config } from '@/config';
 import ErrorBoundary from '@/components/ErrorBoundary';
+// import SEOHead from '@/components/SEOHead';
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mounted, setMount] = React.useState(false);
@@ -14,10 +14,8 @@ export default function App({ Component, pageProps }: AppProps) {
   React.useEffect(() => setMount(true), []);
 
   return (
-    <React.Fragment>
-      <NextHead>
-        <title>RandoBet</title>
-      </NextHead>
+    <React.Fragment> 
+      {/* <SEOHead url={undefined} /> */}
       {
         mounted && 
               <ErrorBoundary fallback={<p>Something went wrong</p>}>

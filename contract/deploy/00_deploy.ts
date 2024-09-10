@@ -6,7 +6,7 @@ const CONTEXT = "TEST";
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
-	const {deploy, getNetworkName, execute, read, } = deployments;
+	const {deploy, execute, read, } = deployments;
 	const {deployer} = await getNamedAccounts();
   const serviceRate = 10; // 0.1%
   const minContribution = 1_000_000_000_000_000;

@@ -22,3 +22,20 @@ export const ERROR = [
   "Transaction could not be completed"
 ];
 export const CONFIRMATIONS = 3;
+
+
+export const ACTIVE_CONTENT = [
+  {
+    children: "Home",
+    href: '/'
+  },
+  {
+    children: "Learn",
+    href: '/#learn'
+  },
+  {
+    children: "Community",
+    href: '/#footer'
+  },
+  
+] as const;

@@ -7,15 +7,26 @@ import "@nomiclabs/hardhat-web3";
 import "@nomicfoundation/hardhat-viem";
 
 dotconfig();
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY_CROSS_0xD7c;
 
 const config: HardhatUserConfig = {
   
+  networks: {
+    crossTest: {
+      url: "https://rpc.testnet.ms",
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 4157,
+    },
+    mainnet: {
+      url: "",
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 11111111111111,
+    },
+  },
   namedAccounts: {
     deployer: {
       default: 0,
-      10: `privatekey://${PRIVATE_KEY}`,
-      11: `privatekey://${PRIVATE_KEY}`,
+      4157: `privatekey://${PRIVATE_KEY}`,
     },
   },
 

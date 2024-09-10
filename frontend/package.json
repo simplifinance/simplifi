@@ -1,8 +1,8 @@
 {
-  "name": "randobet",
+  "name": "simplifinance",
   "version": "0.1.0",
-  "repository": "https://github.com/bobeu/randobet.git",
-  "author": "bobeu <bobmatea27@gmail.com>",
+  "repository": "https://github.com/simplifinance",
+  "author": "Simplifi",
   "license": "MIT",
   "private": true,
   "scripts": {
@@ -14,6 +14,10 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@fortawesome/fontawesome-svg-core": "1.2.36",
+    "@fortawesome/free-brands-svg-icons": "5.15.4",
+    "@fortawesome/free-solid-svg-icons": "5.15.4",
+    "@fortawesome/react-fontawesome": "0.1.17",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
     "@tanstack/react-query": "^5.36.0",
@@ -21,19 +25,23 @@
     "@web3modal/wagmi": "4.0.13",
     "ethers": "5.7.2",
     "framer-motion": "^11.1.9",
+    "keen-slider": "6.6.10",
     "next": "14.2.3",
     "react": "^18",
     "react-blockies": "^1.4.1",
     "react-dom": "^18",
     "react-typed": "1.2.0",
+    "styled-components": "^6.1.13",
     "viem": "^2.10.5",
-    "wagmi": "^2.8.7"
+    "wagmi": "^2.8.7",
+    "wowjs": "1.1.3"
   },
   "devDependencies": {
     "@types/node": "^20.12.11",
     "@types/react": "^18.3.2",
     "@types/react-blockies": "^1.4.4",
     "@types/react-dom": "^18",
+    "autoprefixer": "10.4.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
     "postcss": "^8",
