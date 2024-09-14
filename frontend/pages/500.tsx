@@ -1,4 +1,4 @@
-import { fadeStyle } from "@/components/app/transactionStatus/PopUp";
+import { fadeStyle } from "@/components/transactionStatus/PopUp";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 

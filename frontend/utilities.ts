@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import type { Address } from "@/interfaces";
 import assert from "assert";
 
@@ -7,12 +7,12 @@ export const formatValue = (value: string | undefined): string => {
   if(value === "undefined" || value === undefined) {
     return '0';
   } 
-  return ethers.utils.formatEther(value);
+  return ethers.formatEther(value);
 }
 
 export const performBigIntOperation = (args: {op1: bigint[], op1OperationType: UtilsOPeration, op2?: bigint, op2OperationType?: UtilsOPeration}) : BigNumber => {
   const { op1, op1OperationType, op2, op2OperationType} = args;
-  let result = BigNumber.from(0);
+  let result = ethers.BigNumber.from(0);
   switch (op1OperationType) {
     case "add":
       op1.forEach((item) => result = result.add(toBN(item)));

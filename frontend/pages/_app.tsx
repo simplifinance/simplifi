@@ -1,31 +1,50 @@
-import '../styles/globals.css'
 import React from 'react';
+import '../styles/globals.css'
+import NextHead from 'next/head';
 import type { AppProps } from 'next/app';
-import { cookieToInitialState } from 'wagmi';
+import { BrowserRouter } from 'react-router-dom';
 import { SimplifiProvider } from '../context';
-import { config } from '@/config';
 import ErrorBoundary from '@/components/ErrorBoundary';
-// import SEOHead from '@/components/SEOHead';
+import { cookieToInitialState } from 'wagmi';
+// import { ThemeProvider, createTheme } from '@mui/material/styles';
+import SEOHead from '@/components/SEOHead';
+import { config } from '@/config';
+
+// const theme = createTheme();
+const initialState = cookieToInitialState(config);
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [mounted, setMount] = React.useState(false);
-  const initialState = cookieToInitialState(config);
-
+  // let mode = React.useRef({value: 'dark'});
+  const [isMounted, setMount] = React.useState(false);
   React.useEffect(() => setMount(true), []);
 
   return (
-    <React.Fragment> 
-      {/* <SEOHead url={undefined} /> */}
-      {
-        mounted && 
-              <ErrorBoundary fallback={<p>Something went wrong</p>}>
+    <React.Fragment>
+      <SEOHead url={undefined} />
+        {
+          isMounted? 
+            <ErrorBoundary fallback={<p>Something went wrong</p>}>
+              {/* <BrowserRouter> */}
                 <SimplifiProvider initialState={initialState}>
-                    <Component {...pageProps}/>
-                </SimplifiProvider>
-              </ErrorBoundary>
-      }
-    </React.Fragment>
-  );
+                <Component {...pageProps}/>
+              </SimplifiProvider>
+            {/* </BrowserRouter> */}
+          </ErrorBoundary> : null
+        }
+      </React.Fragment>
+    );
 }
 
 
+
+
+// theme={{
+  //   primary: "#6366f1",
+  //   secondary: "#eef2ff",
+  //   text: "#000000",
+  //   textSecondary: "#1f2937",
+  //   textTertiary: "#64748b",
+  //   muted: "#e2e8f0",
+  //   background: "#ffffff",
+  //   error: "#ef4444"
+  // }}
