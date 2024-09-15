@@ -4,10 +4,11 @@ import Box from "@mui/material/Box";
 // import Typography from "@mui/material/Typography";
 import { Input } from "../../Input";
 import Typography from "@mui/material/Typography";
-
-export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity';
+import type { InputSelector } from '@/interfaces';
+import { ReviewInput } from "../ReviewInput";
 
 export const Permissionless = (props: {handleBack: () => void}) => {
+    const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
     const [quorum, setQuorum] = React.useState<string>('');
     const [duration, setDuration] = React.useState<string>('');
     const [ccr, setCollateralCoverage] = React.useState<string>('');
@@ -15,8 +16,10 @@ export const Permissionless = (props: {handleBack: () => void}) => {
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('');
 
     const { handleBack } = props;
-    const onInvalid = (e: React.FormEvent<HTMLInputElement>) => {
-        alert(`Please correct the following feed: ${e.currentTarget.value}`)
+    const toggleModal = () => setModalPopUp(!modalOpen);
+
+    const handleSubmit = () => {
+
     }
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
@@ -91,17 +94,16 @@ export const Permissionless = (props: {handleBack: () => void}) => {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
                                 type: 'number',
                                 placeholder: 'The % of collateral that should be required',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Quorum'),
+                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'CCR'),
                             },
                         ] as const
                     ).map(({ id, type, placeholder, onChange }, i) => (
                         <Stack>
-                            <Typography>{id}</Typography>
+                            <Typography variant="body2">{id}</Typography>
                             <Input 
                                 key={i}
                                 id={id}
                                 onChange={onChange}
-                                onInValid={onInvalid}
                                 type={type}
                                 placeholder={placeholder}
                             />
@@ -111,8 +113,39 @@ export const Permissionless = (props: {handleBack: () => void}) => {
 
             </Box>
             <Box className="flex justify-center">
-                <button className="bg-orange-400 w-[30%] p-4 rounded-lg text-white ">Submit</button>
+                <button onClick={toggleModal} className="bg-orange-400 w-[30%] p-4 rounded-lg text-white ">Submit</button>
             </Box>
+            <ReviewInput 
+                {
+                    ...{
+                        handleModalClose: toggleModal,
+                        modalOpen,
+                        type: 'UnitLiquidity',
+                        values: [
+                            {
+                                title: 'Quorum',
+                                value: quorum
+                            },
+                            {
+                                title: 'Unit Liquidity',
+                                value: unitLiquidity
+                            },
+                            {
+                                title: 'Duration',
+                                value: duration,
+                            },
+                            {
+                                title: 'Int. Rate',
+                                value: interest,
+                            },
+                            {
+                                title: 'Collateral Coverage',
+                                value: ccr,
+                            },
+                        ]
+                    }
+                }
+            />
         </Stack>
     );
 }

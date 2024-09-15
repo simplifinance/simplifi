@@ -1,23 +1,18 @@
 import * as React from 'react';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import Link from 'next/link';
-import { NavLink, Outlet, useNavigate, Link as RDomLink } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import SearchInput from './SearchInput';
 import { ModeSwitch } from './ModeSwitch';
-import { ROUTE_ENUM, flexSpread, flexStart } from '@/constants';
+import { DRAWERWIDTH, ROUTE_ENUM, flexSpread, flexStart } from '@/constants';
 import { Collapsible } from '../Collapsible';
 import { MotionDivWrap } from '../MotionDivWrap';
-import Home from '../topComponents/Dashboard';
-import Invest from '../topComponents/invest';
-import Liquidity from '../topComponents/finance';
-import DigDao from '../topComponents/DigDao';
-import SpeedDoc from '../topComponents/speeddoc';
 import Stack from '@mui/material/Stack';
 import { LiquidityInnerLinkEntry } from '@/interfaces';
+import useLink from './useLink';
 
-const drawerWidth = 240;
 interface AppProps {
   innerlink: LiquidityInnerLinkEntry;
   displayAppScreen: boolean;
@@ -28,7 +23,7 @@ interface AppProps {
 
 export default function App(props: AppProps) {
   const {innerlink, setInnerLink, displayAppScreen, displayLiqChild, setDisplayLiqChild } = props;
-  const [open, setOpen] = React.useState<boolean>(false);
+  // const [open, setOpen] = React.useState<boolean>(false);
   const [lightMode, setMode] = React.useState<boolean>(false);
   const [navActive, setActiveLink] = React.useState<string>('Home');
 
@@ -38,6 +33,7 @@ export default function App(props: AppProps) {
   
   const toggleMode = () => setMode(!lightMode);
   const navigate = useNavigate();
+  const { link, setlink } = useLink();
 
   React.useEffect(() => {
     displayAppScreen? navigate('/dashboard', {replace: true}) : null;
@@ -56,29 +52,32 @@ export default function App(props: AppProps) {
   const DRAWER_CONTENT = [
     {
       path: ROUTE_ENUM.DASHBOARD,
-      component: (linkActive: boolean) => <Collapsible title={'Home'} icon={setIcon(linkActive).dashboard} collapsible={false} linkActive={linkActive} children={undefined} />,
+      component: (linkActive: boolean) => <Collapsible showTitle title={'Home'} icon={setIcon(linkActive).dashboard} collapsible={false} linkActive={linkActive} children={undefined} />,
     },
     {
       path: ROUTE_ENUM.LIQUIDITY,
-      component: (linkActive: boolean) => <Collapsible title={'Liquidity'} icon={setIcon(linkActive).liquidity} collapsible={true} linkActive={linkActive} collapsedClassName='ml-6 mt-4'>
+      component: (linkActive: boolean) => <Collapsible showTitle title={'Liquidity'} icon={setIcon(linkActive).liquidity} collapsible={true} linkActive={linkActive} collapsedClassName='ml-6 mt-4'>
         <Stack className="border-l space-y-2">
           {
             ([
               {
-                path: ROUTE_ENUM.CREATE,
                 name: 'Create'
               },
               {
-                path: ROUTE_ENUM.OPEN,
                 name: 'Open'
               },
               {
-                path: ROUTE_ENUM.CLOSED,
                 name: 'Closed'
               },
-            ] as const).map(({name, path}) => (
+            ] as const).map(({name}) => (
               <button onClick={() => {
                 setInnerLink(name);
+                setlink(
+                  <div className='flex justify-start text-xl font-semibold text-orange-400'>
+                    <h3>{"Liquidity/"}</h3>
+                    <h3 className="text-gray-400">{name}</h3>
+                  </div>
+                );
               }} className={`${innerlink === name && "text-orange-400"}`}>{name}</button>
             ))
           }
@@ -87,15 +86,15 @@ export default function App(props: AppProps) {
     },
     {
       path: ROUTE_ENUM.INVEST,
-      component: (linkActive: boolean) => <Collapsible title={'Invest'} icon={setIcon(linkActive).invest} collapsible={true} linkActive={linkActive} children={undefined} />,
+      component: (linkActive: boolean) => <Collapsible showTitle title={'Invest'} icon={setIcon(linkActive).invest} collapsible={true} linkActive={linkActive} children={undefined} />,
     },
     {
       path: ROUTE_ENUM.DAO,
-      component: (linkActive: boolean) => <Collapsible title={'Dao'} icon={setIcon(linkActive).digdao} collapsible={true} linkActive={linkActive} children={undefined} />,
+      component: (linkActive: boolean) => <Collapsible showTitle title={'Dao'} icon={setIcon(linkActive).digdao} collapsible={true} linkActive={linkActive} children={undefined} />,
     },
     {
       path: ROUTE_ENUM.SPEEDDOC,
-      component: (linkActive: boolean) => <Collapsible title={'SpeedDoc'} icon={setIcon(linkActive).speeddoc} collapsible={false} linkActive={linkActive} children={undefined} />,
+      component: (linkActive: boolean) => <Collapsible showTitle title={'SpeedDoc'} icon={setIcon(linkActive).speeddoc} collapsible={false} linkActive={linkActive} children={undefined} />,
     },
   
   ]  
@@ -104,13 +103,12 @@ export default function App(props: AppProps) {
     <React.Fragment>
       <Drawer
         sx={{
-          width: drawerWidth,
+          width: DRAWERWIDTH,
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: drawerWidth,
+            width: DRAWERWIDTH,
             boxSizing: 'border-box',
             background: '#fff',
-            // borderRight: '4px solid red'
           },
         }}
         variant="permanent"
@@ -122,12 +120,13 @@ export default function App(props: AppProps) {
             <img src="/images/logo.png" alt="Quatre-logo" width={100} height={100} />
           </Link>
         </DrawerHeader>
-        {/* <Divider /> */}
+        
         <List className={`${flexStart} flex-col gap-2`} sx={{marginTop: 6}}>
           {DRAWER_CONTENT.map(({component, path,}) => (
             <NavLink to={path} key={path} style={({isActive}) => {
               isActive? setActiveLink(path) : null;
               (isActive && path === 'Liquidity') && setDisplayLiqChild(false);
+              setlink(<h3 className='text-xl font-semibold text-orange-400'>{path}</h3>);
               return {}
             }} >
               { component(navActive === path ? true : false) }
@@ -137,8 +136,8 @@ export default function App(props: AppProps) {
         {/* <Divider /> */}
       </Drawer>
       <div className='bg-white  p-4'>
-        <nav style={{ width: `calc(100% - ${drawerWidth}px)`, marginLeft: `${drawerWidth}px` }} className={`fixed border-b border-b-gray-300 p-3 pr-12  ${flexSpread}`}>
-          <h1 className='text-xl font-semibold text-gray-400'>Insights</h1>
+        <nav style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} className={`fixed border-b border-b-gray-300 p-3 pr-12  ${flexSpread}`}>
+          { link }
           <div className={`${flexSpread} gap-6`}>
             <button className='p-2 items-center border border-gray-200 rounded'>
               <svg width="24" height="24" viewBox="0 0 21 27" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -148,11 +147,9 @@ export default function App(props: AppProps) {
             </button>
             <SearchInput />
             <ModeSwitch lightMode={lightMode} toggleMode={toggleMode} />
-            {/* <div className={`${flexSpread} gap-5 mb-4`}>
-            </div> */}
           </div>
         </nav>
-        <div style={{ width: `calc(100% - ${drawerWidth}px)`, marginLeft: `${drawerWidth}px` }} className='bg-white h-full overflow-auto mt-16'>
+        <div style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} className='bg-white h-full overflow-auto mt-16'>
           <MotionDivWrap className='w-full bg-transparent' >
             <Outlet />
           </MotionDivWrap>

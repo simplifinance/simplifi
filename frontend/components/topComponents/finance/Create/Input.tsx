@@ -5,21 +5,19 @@ interface InputProps {
     placeholder?: string
     id: string;
     onChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
-    onInValid: (ret: React.FormEvent<HTMLInputElement>) => void
 }
 
 export const Input = (props: InputProps) => {
-    const { type, placeholder, id, onInValid, onChange } = props;
+    const { type, placeholder, id, onChange } = props;
 
     return(
         <input 
             type={type}
             placeholder={placeholder}
-            required
+            required={true}
             id={id}
-            onInvalid={(v) => onInValid}
             onChange={onChange}
-            className="w-full border p-2 rounded-lg "
+            className="w-full border-2 p-2 opacity-70 text-sm bg-gray-100 rounded-lg "
         />
     )
 }
