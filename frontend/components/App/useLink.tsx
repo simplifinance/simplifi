@@ -1,15 +1,13 @@
-import React from "react";
+// import React from "react";
 
-export default function useLink() {
-    const [link, setLink] = React.useState<React.JSX.Element>(
-        <h3 className='text-xl font-semibold text-orange-400'>Dashboard</h3>
-    );
+// export default function useLink() {
+//     const [link, setLink] = React.useState<string>("Dashboard");
 
-    const setlink = (arg: React.JSX.Element) => setLink(arg);
+//     const setlink = (arg: string) => setLink(arg);
 
-    return{
-        link,
-        setlink,
-    }
+//     return{
+//         link,
+//         setlink,
+//     }
 
-}
+// }

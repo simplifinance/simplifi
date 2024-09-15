@@ -11,7 +11,7 @@ import { Collapsible } from '../Collapsible';
 import { MotionDivWrap } from '../MotionDivWrap';
 import Stack from '@mui/material/Stack';
 import { LiquidityInnerLinkEntry } from '@/interfaces';
-import useLink from './useLink';
+// import useLink from './useLink';
 
 interface AppProps {
   innerlink: LiquidityInnerLinkEntry;
@@ -23,17 +23,21 @@ interface AppProps {
 
 export default function App(props: AppProps) {
   const {innerlink, setInnerLink, displayAppScreen, displayLiqChild, setDisplayLiqChild } = props;
-  // const [open, setOpen] = React.useState<boolean>(false);
+  const [breadCrumb, setCrumb] = React.useState<string>("Dashboard");
   const [lightMode, setMode] = React.useState<boolean>(false);
-  const [navActive, setActiveLink] = React.useState<string>('Home');
+  const [navActive, setActiveLink] = React.useState<string>('Dashboard');
 
   React.useEffect(() => {
-    innerlink !== "Dashboard" && !displayLiqChild && setDisplayLiqChild(true);
+    if(innerlink !== "Dashboard") {
+      if(!displayLiqChild) {
+        setDisplayLiqChild(true);
+      }
+    }
   }, [innerlink, displayLiqChild]);
   
   const toggleMode = () => setMode(!lightMode);
   const navigate = useNavigate();
-  const { link, setlink } = useLink();
+  // const { link, setlink } = useLink();
 
   React.useEffect(() => {
     displayAppScreen? navigate('/dashboard', {replace: true}) : null;
@@ -60,24 +64,13 @@ export default function App(props: AppProps) {
         <Stack className="border-l space-y-2">
           {
             ([
-              {
-                name: 'Create'
-              },
-              {
-                name: 'Open'
-              },
-              {
-                name: 'Closed'
-              },
-            ] as const).map(({name}) => (
+              'Create',
+              'Open',
+              'Closed',
+            ] as const).map((name) => (
               <button onClick={() => {
                 setInnerLink(name);
-                setlink(
-                  <div className='flex justify-start text-xl font-semibold text-orange-400'>
-                    <h3>{"Liquidity/"}</h3>
-                    <h3 className="text-gray-400">{name}</h3>
-                  </div>
-                );
+                setCrumb(`Liquidity/${name}`);
               }} className={`${innerlink === name && "text-orange-400"}`}>{name}</button>
             ))
           }
@@ -117,16 +110,23 @@ export default function App(props: AppProps) {
         {/* <Toolbar /> */}
         <DrawerHeader sx={{display:'flex', justifyContent: 'center'}}>
           <Link href="/" passHref>
-            <img src="/images/logo.png" alt="Quatre-logo" width={100} height={100} />
+            <img src="/logoSimplifi.png" alt="Simiplifi-logo" width={100} height={100} />
           </Link>
         </DrawerHeader>
         
         <List className={`${flexStart} flex-col gap-2`} sx={{marginTop: 6}}>
           {DRAWER_CONTENT.map(({component, path,}) => (
             <NavLink to={path} key={path} style={({isActive}) => {
-              isActive? setActiveLink(path) : null;
-              (isActive && path === 'Liquidity') && setDisplayLiqChild(false);
-              setlink(<h3 className='text-xl font-semibold text-orange-400'>{path}</h3>);
+              if(isActive) {
+                const bd = `${path[0].toUpperCase()}${path.substring(1, path.length)}/`;
+                console.log("bd", bd)
+                console.log("path", path)
+                setCrumb(bd);
+                setActiveLink(path);
+                if(path === 'Liquidity'){
+                  setDisplayLiqChild(false);
+                }
+              }
               return {}
             }} >
               { component(navActive === path ? true : false) }
@@ -137,7 +137,7 @@ export default function App(props: AppProps) {
       </Drawer>
       <div className='bg-white  p-4'>
         <nav style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} className={`fixed border-b border-b-gray-300 p-3 pr-12  ${flexSpread}`}>
-          { link }
+          <h3 className='text-lg font-semibold text-orange-400'>{ breadCrumb }</h3>
           <div className={`${flexSpread} gap-6`}>
             <button className='p-2 items-center border border-gray-200 rounded'>
               <svg width="24" height="24" viewBox="0 0 21 27" fill="none" xmlns="http://www.w3.org/2000/svg">

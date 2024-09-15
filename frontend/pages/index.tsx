@@ -1,8 +1,8 @@
 import * as React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import App from "@/components/App";
-import { Routes, Route, useNavigate, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet } from "react-router-dom";
-import { DRAWERWIDTH, ROUTE_ENUM } from "@/constants";
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet } from "react-router-dom";
+import { ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import Liquidity from "@/components/topComponents/finance";
 import Invest from "@/components/topComponents/invest";

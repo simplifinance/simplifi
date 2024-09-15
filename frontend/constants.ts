@@ -25,7 +25,7 @@ export const ROUTE_ENUM = {
   INVEST: 'invest',
   DAO: 'digdao',
   LIQUIDITY: 'liquidity',
-  SPEEDDOC: 'liquidity/speeddoc',
+  SPEEDDOC: 'speeddoc',
   CREATE: 'liquidity/create',
   OPEN: 'liquidity/open',
   CLOSED: 'liquidity/closed'
