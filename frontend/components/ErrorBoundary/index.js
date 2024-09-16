@@ -1,10 +1,8 @@
 import React from "react";
 import { ActionButton } from "../ActionButton";
-import { classNames } from "@/utilities";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-
-const { flexCenter } = classNames;
+import { flexCenter } from "@/constants";
 
 class ErrorBoundary extends React.Component {
     constructor(props) {

@@ -161,7 +161,7 @@ library Utils {
         returns(Common.InterestReturn memory _itr) 
     {
         Common.InterestReturn memory it;
-        assertTrue_2(fullDurationInSec <= _maxDurationInSec(), durOfChoiceInSec <= fullDurationInSec, "Utils: FullDur or DurOfChoice oerflow");
+        assertTrue_2((fullDurationInSec <= _maxDurationInSec() && uint(durOfChoiceInSec).mod(60) == 0), (durOfChoiceInSec <= fullDurationInSec && uint(fullDurationInSec).mod(60) == 0), "Utils: FullDur or DurOfChoice oerflow");
         it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
         if(it.fullInterest > 0) {
             it.intPerSec = it.fullInterest.mul(1).div(fullDurationInSec);

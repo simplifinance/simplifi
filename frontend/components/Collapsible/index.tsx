@@ -1,20 +1,24 @@
 import { Box, Collapse, Stack } from '@mui/material'
 import React from 'react'
 import { flexCenter, flexEnd, flexEven, flexSpread, flexStart } from '@/constants';
+import { NavLink } from 'react-router-dom';
 
-interface CollapsibleProps {
+export interface CollapsibleProps {
   collapsedClassName?: string;
-  icon: React.ReactNode;
-  title: string;
-  linkActive?: boolean;
-  collapsible: boolean;
-  showTitle?: boolean;
-  children: React.ReactNode;
+  parentPath: string;
+  parentLinkActive: boolean;
+  collapsible?: boolean;
+  displayChevron?: boolean;
+  parentTitle: string;
+  setIcon: (arg:string) => React.JSX.Element;
+  // setDisplayLiqChild?: (arg:boolean) => void;
+  setParentActiveLink: (arg:string) => void;
+  children?: React.ReactNode;
 }
 
 interface ChevronProps {
   open: boolean;
-  hideChevron: boolean;
+  hideChevron?: boolean;
 }
 
 export const Chevron = (props: ChevronProps) => {
@@ -40,27 +44,45 @@ export const Chevron = (props: ChevronProps) => {
 
 export const Collapsible = (props: CollapsibleProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { title, collapsedClassName, showTitle, icon, collapsible, linkActive, children } = props;
-  // width: '70%',
-  // borderRadius: '14px',
-  // background: 'rgba(94, 90, 86, 0.9)'
+  const { 
+    collapsedClassName, 
+    parentPath, 
+    parentLinkActive,
+    parentTitle,
+    collapsible,
+    displayChevron,
+    setIcon,
+    setParentActiveLink,
+    children } = props;
+
   return (
-    <React.Fragment>
-      <Stack>
-          {
-            (showTitle && showTitle) && 
-              <div className={`${linkActive? 'bg-orange-400 rounded-xl' : ''}`}>
-                <div className={`w-[180px] ${flexStart} gap-3 p-3 ml-3 ${linkActive? 'bg-yellow-100 rounded-r-xl' : ''}`}>
-                  {icon}
-                  <div onClick={() => setOpen(!open)} className={`${flexSpread} text-lg ${linkActive? '': 'text-gray-400'} gap-2 cursor-pointer p-1 rounded`}>
-                    <h1 className={`text-xl font-`}>{ title }</h1>
-                    <Chevron open={open} hideChevron={!collapsible} />
-                  </div> 
-                </div>
-              </div>
-          }
-          { collapsible? <Collapse in={open} timeout="auto" unmountOnExit className={collapsedClassName || 'w-full'}>{ children }</Collapse> : null }
-        </Stack>
-    </React.Fragment>
+    <Stack>
+      <NavLink onClick={() => setOpen(!open)} to={parentPath} style={({isActive}) => {
+        if(isActive) {
+          setParentActiveLink(parentPath);
+        }
+        return {}
+        }} 
+      >
+        <div className={`${parentLinkActive? 'bg-orange-400 rounded-xl' : ''}`}>
+          <div className={`w-[180px] ${flexStart} gap-3 p-3 ml-3 ${parentLinkActive? 'bg-yellow-100 rounded-r-xl' : ''}`}>
+            { setIcon(parentPath) }
+            <div onClick={() => setOpen(!open)} className={`${flexSpread} text-lg ${parentLinkActive? '': 'text-gray-400'} gap-2 cursor-pointer p-1 rounded`}>
+              <h1 className={`text-xl font-`}>{ parentTitle }</h1>
+              {
+                displayChevron && 
+                  <Chevron open={open} />
+              }
+            </div> 
+          </div>
+        </div>
+      </NavLink>
+      {
+        collapsible && 
+          <Collapse in={open} timeout="auto" unmountOnExit className={collapsedClassName || 'w-full'}>
+            { children && children }
+          </Collapse>
+      }
+    </Stack>
   )
 }

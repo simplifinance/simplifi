@@ -7,7 +7,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
-
+export type VoidFunc = () => void;
 export enum FuncTag { 
     JOIN, 
     GET, 
@@ -15,7 +15,7 @@ export enum FuncTag {
     WITHDRAW
 }
 
-export type LiquidityPool = Common.PoolStructOutput;
+export type LiquidityPool = Common.PoolStruct;
 export type Pools = Readonly<LiquidityPool[]>;
-export type Provider = Common.ContributorStructOutput;
-export type Profile = Common.ContributorDataStructOutput;
+export type Provider = Common.ContributorStruct;
+export type Profile = Common.ContributorDataStruct;

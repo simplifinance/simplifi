@@ -55,6 +55,7 @@ interface Common {
     Uint256s uint256s;
     Addresses addrs;
     uint allGh;
+    bool isPermissionless;
   }
 
   /**

@@ -9,6 +9,9 @@ import Invest from "@/components/topComponents/invest";
 import SpeedDoc from "@/components/topComponents/speeddoc";
 import SimpliDao from "@/components/SimpliDao";
 import { LiquidityInnerLinkEntry } from "@/interfaces";
+import { Create } from "@/components/topComponents/finance/Create";
+import { Open } from "@/components/topComponents/finance/Open";
+import { Closed } from "@/components/topComponents/finance/Closed";
 // import { Create } from "@/components/topComponents/finance/Create";
 // import { Open } from "@/components/topComponents/finance/Open";
 // import Closed from "@/components/Finance/closed";
@@ -26,7 +29,11 @@ export default function Home(): React.ReactElement {
     createRoutesFromElements(
       <Route path="/" element={<App {...{setInnerLink, innerlink, displayAppScreen, displayLiqChild, setDisplayLiqChild }} />} >
         <Route path={ROUTE_ENUM.DASHBOARD} element={<Dashboard />} />
-        <Route path={ROUTE_ENUM.LIQUIDITY} element={<Liquidity elementId={innerlink} displayChild={displayLiqChild} />} />
+        <Route path={ROUTE_ENUM.LIQUIDITY} element={<Liquidity />}>
+          <Route path={ROUTE_ENUM.CREATE} element={<Create />} />
+          <Route path={ROUTE_ENUM.OPEN} element={<Open />} />
+          <Route path={ROUTE_ENUM.CLOSED} element={<Closed />} />
+        </Route>
         <Route path={ROUTE_ENUM.INVEST} element={<Invest />} />
         <Route path={ROUTE_ENUM.DAO} element={<SimpliDao />} />
         <Route path={ROUTE_ENUM.SPEEDDOC} element={<SpeedDoc />} />

@@ -1,16 +1,17 @@
-import { ethers } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import type { Address } from "@/interfaces";
 import assert from "assert";
 
+export const BigNumber = ethers.BigNumber;
 export type UtilsOPeration = "div" | "add" | "sub" | "mul";
 export const formatValue = (value: string | undefined): string => {
   if(value === "undefined" || value === undefined) {
     return '0';
   } 
-  return ethers.formatEther(value);
+  return ethers.utils.formatEther(value);
 }
 
-export const performBigIntOperation = (args: {op1: bigint[], op1OperationType: UtilsOPeration, op2?: bigint, op2OperationType?: UtilsOPeration}) : BigNumber => {
+export const performBigIntOperation = (args: {op1: bigint[], op1OperationType: UtilsOPeration, op2?: bigint, op2OperationType?: UtilsOPeration}) : ethers.BigNumber => {
   const { op1, op1OperationType, op2, op2OperationType} = args;
   let result = ethers.BigNumber.from(0);
   switch (op1OperationType) {
@@ -63,7 +64,7 @@ export const performBigIntOperation = (args: {op1: bigint[], op1OperationType: U
 export const str = (arg: string | undefined) => String(arg);
 export const num = (arg: number | undefined) => Number(arg);
 
-export const powr = (x: number | string, power: number, decimals: number): BigNumber => {
+export const powr = (x: number | string, power: number, decimals: number): ethers.BigNumber => {
   return BigNumber.from(x).mul(BigNumber.from(BigNumber.from(10).pow(decimals))).mul(BigNumber.from(power));
 } 
 
@@ -76,24 +77,16 @@ export const errorBubble = (message?: string) => {
   throw new Error(message || "Chain Not Detected");
 }
 
-export const toBigInt = (x: string | number | BigNumber | bigint | undefined) : bigint => {
+export const toBigInt = (x: string | number | ethers.BigNumber | bigint | undefined) : bigint => {
   if(!x) return 0n;
   return BigNumber.from(x).toBigInt();
 } 
 
-export const toBN = (x: bigint | string | number) => {
+export const toBN = (x: bigint | string | number | BigNumberish) => {
   return BigNumber.from(x);
 }
 
-export const classNames = {
-  flexBetween: `flex justify-between items-center`,
-  flexAround: `flex justify-around items-center`,
-  flexStart: `flex justify-start items-center`,
-  flexEnd: `flex justify-end items-center`,
-  flexColBetween: `flex flex-col justify-between items-center`,
-  flexColCenter: `flex flex-col justify-center items-center`,
-  flexColStart: `flex flex-col justify-between items-center`,
-  flexColEnd: `flex flex-col justify-end items-center`,
-  flexCenter: `flex justify-center items-center`,
-  flexColAround: `flex flex-col justify-between items-center`, 
+export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
+  var newDate = new Date(toBN(onchainUnixTime).toNumber());
+  return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
 }

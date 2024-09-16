@@ -74,7 +74,8 @@ library FactoryLib {
     function (uint, Common.FuncTag) internal _unlock,
     address strategy,
     address user,
-    uint epochId
+    uint epochId,
+    bool isPermissionless
   ) 
     private 
     returns(Common.Pool memory pool) 
@@ -82,7 +83,7 @@ library FactoryLib {
     Def memory _d = _def();
     // Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration < type(uint8).max, "Invalid duration"); // Please uncomment this line after you have completed the testing.
     _validateAllowance(user, cpp.asset, cpp.unitContribution);
-    _updatePoolSlot(self, epochId, cpp, _d, strategy);
+    _updatePoolSlot(self, epochId, cpp, _d, strategy, isPermissionless);
     _unlock(epochId, Common.FuncTag.JOIN);
     pool = _fetchPoolData(self, epochId);
     _updateAssetInStrategy(strategy, pool.addrs.asset, epochId);
@@ -155,7 +156,8 @@ library FactoryLib {
     uint epochId, 
     Common.CreatePoolParam memory cpp,
     Def memory _d,
-    address strategy
+    address strategy,
+    bool isPermissionless
   ) 
     private
   {
@@ -165,7 +167,8 @@ library FactoryLib {
       Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate),
       Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution),
       Common.Addresses(cpp.asset, _d.zeroAddr, strategy, cpp.members[0]),
-      _d.zero
+      _d.zero,
+      isPermissionless
     );
   }
 
@@ -212,7 +215,7 @@ library FactoryLib {
     address strategy = _fetchAndValidateStrategy(admin, self.pData.strategyManager);
     for(uint i = _d.zero; i < cpi.cpp.members.length; i++) {
       if(i == _d.zero) {
-          Common.Pool memory pool = _createPool(self, cpi.cpp, cpi._unlock, strategy, admin, epochId);
+          Common.Pool memory pool = _createPool(self, cpi.cpp, cpi._unlock, strategy, admin, epochId, _d.f);
         (
           uint slot,
           Common.Contributor memory cbData
@@ -407,7 +410,7 @@ library FactoryLib {
     address strategy = _fetchAndValidateStrategy(admin, self.pData.strategyManager);
     self.amountExist[cpp.unitContribution].assertFalse("Amount exist");
     self.amountExist[cpp.unitContribution] = _d.t;
-    Common.Pool memory pool = _createPool(self, cpp, _unlock, strategy, admin, epochId);
+    Common.Pool memory pool = _createPool(self, cpp, _unlock, strategy, admin, epochId, _d.t);
     (
       uint16 slot,
       Common.Contributor memory cbData

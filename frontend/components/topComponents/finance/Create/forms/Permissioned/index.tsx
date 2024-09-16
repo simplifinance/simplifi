@@ -61,7 +61,7 @@ export const Permissioned = (props: {handleBack: () => void}) => {
                     </button>
                 </div>
                 <div className="w-full text-center text-xl font-semibold">
-                    <h3>Add Permissionless Pool</h3>
+                    <h3>Add Permissioned Pool</h3>
                 </div>
             </Box>
 
