@@ -65,7 +65,8 @@ export const POOL_MOCK : LiquidityPool = {
     unit: 0n,
     currentPool: 0n,
     fullInterest: 0n,
-    intPerSec: 0n
+    intPerSec: 0n,
+    epochId: 0n
   },
   uints: {
     intRate: 0n,
@@ -90,7 +91,8 @@ export const POOLS_MOCK : LiquidityPool[] = [
       unit: 200000000000000000000n,
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
-      intPerSec: 55555555555555n
+      intPerSec: 55555555555555n,
+      epochId: 0n
     },
     uints: {
       intRate: 1n,
@@ -113,7 +115,8 @@ export const POOLS_MOCK : LiquidityPool[] = [
       unit: 200000000000000000000n,
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
-      intPerSec: 55555555555555n
+      intPerSec: 55555555555555n,
+      epochId: 0n
     },
     uints: {
       intRate: 1n,
@@ -136,7 +139,8 @@ export const POOLS_MOCK : LiquidityPool[] = [
       unit: 200000000000000000000n,
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
-      intPerSec: 55555555555555n
+      intPerSec: 55555555555555n,
+      epochId: 0n
     },
     uints: {
       intRate: 1n,
@@ -159,7 +163,8 @@ export const POOLS_MOCK : LiquidityPool[] = [
       unit: 200000000000000000000n,
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
-      intPerSec: 55555555555555n
+      intPerSec: 55555555555555n,
+      epochId: 0n
     },
     uints: {
       intRate: 1n,

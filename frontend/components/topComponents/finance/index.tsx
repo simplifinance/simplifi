@@ -27,7 +27,7 @@ const Liquidity : React.FC<{setstate: (arg: TrxnResult) => void}> = ({setstate})
           const pools = await getEpoches({
             config
           });
-          setstate({pools, profile: PROFILE_MOCK});
+          setstate({profile: PROFILE_MOCK, pools});
         }
         fetchData();
       }

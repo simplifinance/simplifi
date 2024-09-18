@@ -86,14 +86,6 @@ const Dashboard = ({pools} : {pools:Pools}) => {
           }
         </Grid>
       </Box>
-
-      {/* <Grid className=''>
-        <Grid >
-          <Grid item container xs={12} sx={{display: 'flex', justifyContent: 'end'}}>
-          </Grid>
-
-        </Grid>
-      </Grid> */}
     </Stack>
   )
 }

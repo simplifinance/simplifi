@@ -165,7 +165,7 @@ library FactoryLib {
     Common.InterestReturn memory _itr = cpp.unitContribution.mul(cpp.quorum).computeInterestsBasedOnDuration(cpp.intRate, durInSec, durInSec);
     self.pools[epochId] = Common.Pool(
       Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate),
-      Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution),
+      Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution, epochId),
       Common.Addresses(cpp.asset, _d.zeroAddr, strategy, cpp.members[0]),
       _d.zero,
       isPermissionless
@@ -295,7 +295,7 @@ library FactoryLib {
 
   /**@dev Push a new contributor to storage.
     @param self : Storage of type mapping
-    @param cbData : Common.Contributor.
+    @param cbData : Common.Contributor. 
     @param epochId : Pool id
    */
   function _addContributor(

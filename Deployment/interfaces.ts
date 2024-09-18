@@ -1,4 +1,4 @@
-import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common } from "./typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 export type WagmiConfig = import("wagmi").Config;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";

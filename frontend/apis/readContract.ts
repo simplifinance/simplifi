@@ -5,6 +5,7 @@ import { getFactoryAddress } from "./factory/contractAddress";
 const address = getFactoryAddress();
 
 export async function getProfile({config, epochId, account} : {config: WagmiConfig, epochId: bigint, account: Address}) {
+  console.log("EpochId", epochId);
   return await read(config, {
     abi: profileAbi,
     address, 
@@ -189,6 +190,11 @@ const getPoolsAbi = [
               {
                 "internalType": "uint256",
                 "name": "currentPool",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "epochId",
                 "type": "uint256"
               }
             ],

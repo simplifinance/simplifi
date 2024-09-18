@@ -8,7 +8,7 @@ import { formatEther, parseEther } from "viem";
 
 interface DisplayProfileProps {
     profile: Profile;
-    epochId: number;
+    epochId: bigint;
     toggleProfileModal: VoidFunc;
     profileModalOpen: boolean;
 }
@@ -49,7 +49,7 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
             <Container maxWidth="sm" className="space-y-2">
                 <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                     <Box className={`w-full ${flexSpread}`}>
-                        <h3>{`Profile at Epoch Id ${epochId}`}</h3>
+                        <h3>{`Profile at Epoch Id ${epochId.toString()}`}</h3>
                         <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={toggleProfileModal}>Close</button>
                     </Box> 
                     {

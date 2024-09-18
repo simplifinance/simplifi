@@ -149,7 +149,7 @@
       ]
     },
     "Factory": {
-      "address": "0xd35809a0e021407Cb9B4FFa7C9adC08166107305",
+      "address": "0x82263AF611A7E1bb11aB15722d3Da5cD9B2a86B8",
       "abi": [
         {
           "inputs": [
@@ -357,6 +357,11 @@
                         {
                           "internalType": "uint256",
                           "name": "currentPool",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "epochId",
                           "type": "uint256"
                         }
                       ],
@@ -605,6 +610,11 @@
                           "internalType": "uint256",
                           "name": "currentPool",
                           "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "epochId",
+                          "type": "uint256"
                         }
                       ],
                       "internalType": "struct Common.Uint256s",
@@ -787,6 +797,11 @@
                           "internalType": "uint256",
                           "name": "currentPool",
                           "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "epochId",
+                          "type": "uint256"
                         }
                       ],
                       "internalType": "struct Common.Uint256s",
@@ -968,6 +983,11 @@
                         {
                           "internalType": "uint256",
                           "name": "currentPool",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "epochId",
                           "type": "uint256"
                         }
                       ],
@@ -1164,6 +1184,11 @@
                           "internalType": "uint256",
                           "name": "currentPool",
                           "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "epochId",
+                          "type": "uint256"
                         }
                       ],
                       "internalType": "struct Common.Uint256s",
@@ -1304,6 +1329,11 @@
                     {
                       "internalType": "uint256",
                       "name": "currentPool",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "epochId",
                       "type": "uint256"
                     }
                   ],
@@ -1754,6 +1784,11 @@
                       "internalType": "uint256",
                       "name": "currentPool",
                       "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "epochId",
+                      "type": "uint256"
                     }
                   ],
                   "internalType": "struct Common.Uint256s",
@@ -1864,6 +1899,11 @@
                     {
                       "internalType": "uint256",
                       "name": "currentPool",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "epochId",
                       "type": "uint256"
                     }
                   ],
@@ -2365,7 +2405,7 @@
       ]
     },
     "FactoryLib": {
-      "address": "0x308C6E16F08fB8f86252fE7222c76078D096A5a2",
+      "address": "0xe87a05c8f11999EDA2cfB10f347ca7da94D34e58",
       "abi": [
         {
           "anonymous": false,
@@ -2430,6 +2470,11 @@
                     {
                       "internalType": "uint256",
                       "name": "currentPool",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "epochId",
                       "type": "uint256"
                     }
                   ],
@@ -2618,7 +2663,7 @@
       ]
     },
     "StrategyManager": {
-      "address": "0xf06dEA060647FFb3e50247FFdCB3d7616F37aDce",
+      "address": "0x8B024493A376A38455d3caAfF2b7D77C3Bf9B2c6",
       "abi": [
         {
           "inputs": [

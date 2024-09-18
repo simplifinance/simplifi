@@ -62,7 +62,10 @@ export const Closed : React.FC<{pools: Pools}> = ({pools}) => {
                 className='w-full rounded-md flex flex-col justify-start items-center  text-stone-300 cursor-pointer' 
                 // onClick={handleBoardClick} 
               >
-                <PoolColumn {...{epochId, pool }} />
+                {
+                  toBN(pool.uints.quorum.toString()).isZero() && 
+                    <PoolColumn {...{epochId, pool }} />
+                }
               </motion.button>
             ))
           }

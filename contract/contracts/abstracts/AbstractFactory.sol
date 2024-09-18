@@ -404,6 +404,7 @@ abstract contract AbstractFactory is
     )
         external
         view
+        validateEpochId(epochId)
         returns(ContributorData memory) 
     {
         return data._getProfile(epochId, user);

@@ -133,27 +133,17 @@ describe("Factory", function () {
         }
       );
 
-      const prof2_before = await factory.getProfile(create.epochId, signer2.address);
+      // const prof2_before = await factory.getProfile(create.epochId, signer2.address);
       
       const {
         balances: { erc20, xfi }, 
         pool: { 
-          addrs: { strategy, lastPaid, asset, admin }, 
-          allGh, 
-          uint256s: { currentPool, unit, fullInterest, intPerSec }, 
-          uints: { quorum, colCoverage, duration, selector }
+          uint256s: { currentPool, unit }, 
         },
-        profile: { 
-          cData: {
-            colBals, id, turnTime, durOfChoice, expInterest, loan, payDate
-          },
-          rank,
-          slot
-        }
       } = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],

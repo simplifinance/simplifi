@@ -21,7 +21,6 @@ import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
 
 interface PoolColumnProps {
     pool: LiquidityPool;
-    epochId: number;
 }
 
 type TxnType = 'Add Liquidity' | 'Liquidate' | 'Borrow' | 'Payback'
@@ -37,12 +36,11 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
     const {
         pool: {
-          uint256s: { unit, currentPool, intPerSec, fullInterest },
+          uint256s: { unit, currentPool, intPerSec, fullInterest, epochId: epochId_, },
           uints: { intRate, quorum, duration, colCoverage },
           addrs: { admin, asset },
           isPermissionless
         },
-        epochId: epochId_,
     } = props;
 
     const epochId = toBigInt(epochId_); 
@@ -54,7 +52,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
     const formattedDuration = toBN(duration.toString()).div(toBN(3600)).toNumber();
 
     const column_content = Array.from([
-      epochId_,
+      epochId_.toString(),
       quorum.toString(),
       formattedUnit,
       intPercent,
@@ -112,7 +110,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
     }
 
     const handleTransact = async() => {
-        console.log("EpochId", epochId_)
+        console.log("EpochId", epochId)
         const amountToApprove = getAmountToApprove();
         if(txnType === 'Add Liquidity' || txnType === 'Payback' || txnType === 'Liquidate') {
             console.log("txnType", txnType)
@@ -191,7 +189,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                             </Box>
                             <Box className={`${flexSpread}`}>
                                 <h3>Collateral index</h3>
-                                <h3>{`${toBN(colCoverage.toString()).div(toBN(100)).toString()}`}</h3>
+                                <h3>{`${toBN(colCoverage.toString()).div(toBN(100)).toNumber()}`}</h3>
                             </Box>
                             {
                                 txnType === 'Borrow' &&
@@ -209,7 +207,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                                     className="w-full bg-orangec p-4 rounded-lg text-white hover:bg-opacity-70"
                                     onClick={handleTransact}
                                 >
-                                    { txnType}
+                                    { txnType.toString()}
                                 </button>
                                 <button 
                                     className="w-full text-orangec border border-orangec p-4 rounded-lg hover:bg-yellow-100"
@@ -226,7 +224,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 {
                     ...{
                         profile,
-                        epochId: epochId_,
+                        epochId,
                         profileModalOpen,
                         toggleProfileModal,
                     }

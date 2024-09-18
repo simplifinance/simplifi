@@ -54,16 +54,18 @@ export const Open : React.FC<{pools: Pools}> = ({pools}) => {
         {/* Table Body */}
         <Grid container xs>
           {
-            pools.map((pool: LiquidityPool, epochId: number) => (
+            pools.map((pool: LiquidityPool, i) => (
               <motion.button
-                key={epochId}
+                key={i}
                 initial={{opacity: 0}}
                 animate={{opacity: [0, 1]}}
-                transition={{duration: '0.5', delay: epochId/pools.length}}
+                transition={{duration: '0.5', delay: i/pools.length}}
                 className='w-full rounded-md flex flex-col justify-start items-center  text-stone-300 cursor-pointer' 
-                // onClick={handleBoardClick} 
               >
-                <PoolColumn {...{epochId, pool }} />
+                {
+                  !toBN(pool.uints.quorum.toString()).isZero() && 
+                    <PoolColumn {...{ pool }} />
+                }
               </motion.button>
             ))
           }

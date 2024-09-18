@@ -96,6 +96,7 @@ interface Common {
     uint intPerSec;
     uint256 unit;
     uint256 currentPool;
+    uint epochId;
   }
 
   /**

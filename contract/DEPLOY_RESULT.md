@@ -57,3 +57,34 @@ Factory deployed to: 0xd35809a0e021407Cb9B4FFa7C9adC08166107305
 ]
 Done in 35.33s.
 ```
+
+```
+  C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-testnet
+  yarn run v1.22.22
+  $ hardhat deploy --network crossTest --export deployments/contracts.json
+  Nothing to compile
+  No need to generate any newer typings.
+  reusing "OwnerShip" at 0xe09e23F8a8032BB39326098802c970f9b48D726C
+  OwnershipManager deployed to: 0xe09e23F8a8032BB39326098802c970f9b48D726C
+  reusing "TestAsset" at 0xb28721f7b977D64F9401161EA91bC25D59F25308
+  Test Asset deployed to: 0xb28721f7b977D64F9401161EA91bC25D59F25308
+  reusing "AssetClass" at 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+  AssertMgr deployed to: 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+  deploying "StrategyManager" (tx: 0x1fe133fe8ad9f0050d28c640ccb02d94624291590dcbc2622147aad23f64367f)...: deployed at 0x8B024493A376A38455d3caAfF2b7D77C3Bf9B2c6 with 1450230 gas
+  strategyManager deployed to: 0x8B024493A376A38455d3caAfF2b7D77C3Bf9B2c6
+  deploying "FactoryLib" (tx: 0x50414ab361810e6efae5b567d946e43f40d4233a91e70cd0f0ceabc2d015cd21)...: deployed at 0xe87a05c8f11999EDA2cfB10f347ca7da94D34e58 with 72281 gas
+  factoryLib deployed to: 0xe87a05c8f11999EDA2cfB10f347ca7da94D34e58
+  deploying "Factory" (tx: 0xd0025d9c4e2c03e9a11da9033686523f82ef10f832a994110a2db8e045a408e8)...: deployed at 0x82263AF611A7E1bb11aB15722d3Da5cD9B2a86B8 with 4645769 gas
+  Factory deployed to: 0x82263AF611A7E1bb11aB15722d3Da5cD9B2a86B8
+  [
+    '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+    '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+    10,
+    '0x8B024493A376A38455d3caAfF2b7D77C3Bf9B2c6',
+    feeTo: '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+    assetAdmin: '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+    makerRate: 10,
+    strategyManager: '0x8B024493A376A38455d3caAfF2b7D77C3Bf9B2c6'
+  ]
+  Done in 76.76s.
+```
