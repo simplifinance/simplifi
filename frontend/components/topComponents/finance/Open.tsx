@@ -2,7 +2,7 @@ import React from "react";
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { Pools } from '@/interfaces';
+import { LiquidityPool, Pools } from '@/interfaces';
 import { motion } from 'framer-motion';
 import { POOL_HEADER_CONTENT, POOLS_MOCK } from "@/constants";
 import { PoolColumn } from "./PoolColumn";
@@ -11,7 +11,7 @@ import { toBN } from "@/utilities";
 
 const extractOpenPools = (pools: Pools) => {
   let open : number = 0;
-  pools.forEach((pool) => {
+  pools.forEach((pool: LiquidityPool) => {
     const expectedAmt = toBN(pool.uint256s.unit).mul(toBN(pool.uints.quorum));
     if(toBN(pool.uints.quorum).gt(0) && expectedAmt.gt(toBN(pool.uint256s.currentPool))) {
       open ++;

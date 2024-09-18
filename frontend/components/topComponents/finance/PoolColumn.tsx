@@ -1,14 +1,13 @@
 import React from "react";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { Chevron } from "@/components/Collapsible";
 import { PopUp } from "@/components/transactionStatus/PopUp";
 import { LiquidityPool, Profile, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
 import { formatAddr, toBigInt, toBN } from "@/utilities";
-import { Grid, Container, Stack, Box, Collapse } from "@mui/material";
-import { formatEther, parseEther } from "viem";
+import { Grid, Container, Stack, Box, } from "@mui/material";
+import { formatEther } from "viem";
 import { flexSpread, PROFILE_MOCK } from "@/constants";
 import { DisplayProfile } from "./DisplayProfile";
-import { getContractData, getProfile } from "@/apis/readContract";
+import { getProfile } from "@/apis/readContract";
 import { useAccount, useConfig } from "wagmi";
 import { addToPool } from "@/apis/factory/addToPool";
 import { getFinance } from "@/apis/factory/getFinance";

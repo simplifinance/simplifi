@@ -2,7 +2,7 @@ import React from "react";
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { Pools } from '@/interfaces';
+import { LiquidityPool, Pools } from '@/interfaces';
 import { motion } from 'framer-motion';
 import { POOL_HEADER_CONTENT } from "@/constants";
 import { PoolColumn } from "./PoolColumn";
@@ -11,7 +11,7 @@ import { BigNumber } from "ethers";
 
 const extractClosedPools = (pools: Pools) => {
   let closed : number = 0;
-  pools.forEach((pool) => {
+  pools.forEach((pool: LiquidityPool) => {
     if(toBN(pool.uints.quorum).isZero()) {
       closed ++;
     }
