@@ -11,8 +11,8 @@ import { toBN } from "@/utilities";
 const extractOpenPools = (pools: Pools) => {
   let open : number = 0;
   pools.forEach((pool: LiquidityPool) => {
-    const expectedAmt = toBN(pool.uint256s.unit).mul(toBN(pool.uints.quorum));
-    if(toBN(pool.uints.quorum).gt(0) && expectedAmt.gt(toBN(pool.uint256s.currentPool))) {
+    const expectedAmt = toBN(pool.uint256s.unit.toString()).times(toBN(pool.uints.quorum.toString()));
+    if(toBN(pool.uints.quorum.toString()).gt(0) && expectedAmt.gt(toBN(pool.uint256s.currentPool.toString()))) {
       open ++;
     }
   });

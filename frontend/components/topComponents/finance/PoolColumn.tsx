@@ -9,15 +9,15 @@ import { flexSpread, PROFILE_MOCK } from "@/constants";
 import { DisplayProfile } from "./DisplayProfile";
 import { getProfile } from "@/apis/readContract";
 import { useAccount, useConfig } from "wagmi";
-import { addToPool } from "@/apis/factory/addToPool";
-import { getFinance } from "@/apis/factory/getFinance";
-import { payback } from "@/apis/factory/payback";
-import { liquidate } from "@/apis/factory/liquidate";
+// import { addToPool } from "@/apis/factory/addToPool";
+// import { getFinance } from "@/apis/factory/getFinance";
+// import { payback } from "@/apis/factory/payback";
+// import { liquidate } from "@/apis/factory/liquidate";
 import { Input } from "./Create/Input";
 import Notification from "@/components/Notification";
 import { approve } from "@/apis/testToken/approve";
-import { BigNumber } from "ethers";
-import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
+import BigNumber from "bignumber.js";
+// import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
 
 interface PoolColumnProps {
     pool: LiquidityPool;
@@ -47,11 +47,11 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
     const epochId = toBigInt(epochId_); 
     const { rank: { member }, cData: { loan }} = profile;
-    const expectedPoolAmt = toBN(unit).mul(toBN(quorum)).toBigInt();
-    const formattedUnit = formatEther(toBN(unit).toBigInt());
-    const currentProviders = toBN(currentPool).div(toBN(unit)).toString();
-    const intPercent = toBN(intRate).div(toBN(100)).toString();
-    const formattedDuration = toBN(duration).div(toBN(3600)).toNumber();
+    const expectedPoolAmt = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
+    const formattedUnit =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
+    const currentProviders = toBN(currentPool.toString()).div(toBN(unit.toString())).toString();
+    const intPercent = toBN(intRate.toString()).div(toBN(100)).toString();
+    const formattedDuration = toBN(duration.toString()).div(toBN(3600)).toNumber();
 
     const column_content = Array.from([
       epochId_,
@@ -64,7 +64,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
       isPermissionless? "Permissionless" : "Permissioned"
     ]);
 
-    const txnType : TxnType = `${(!member && toBN(currentPool).lt(toBN(expectedPoolAmt)))? 'Add Liquidity' : expectedPoolAmt === currentPool? 'Borrow' : toBN(loan).gt(0)? 'Payback' : 'Liquidate'}`;
+    const txnType : TxnType = `${(!member && toBN(currentPool.toString()).lt(toBN(expectedPoolAmt.toString())))? 'Add Liquidity' : expectedPoolAmt === currentPool? 'Borrow' : toBN(loan.toString()).gt(0)? 'Payback' : 'Liquidate'}`;
     const gridSize = 12/column_content.length;
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
@@ -96,19 +96,19 @@ export const PoolColumn = (props: PoolColumnProps) => {
         let amtToApprove : BigNumber = toBN(0);
         switch (txnType) {
             case 'Add Liquidity':
-                amtToApprove = toBN(unit);
+                amtToApprove = toBN(unit.toString());
                 break;
             case 'Payback':
-                amtToApprove = toBN(loan).add(toBN(loan).div(toBN(2)));
+                amtToApprove = toBN(loan.toString()).plus(toBN(loan.toString()).div(toBN(2)));
                 break;
             case 'Liquidate':
-                amtToApprove = toBN(unit).mul(toBN(quorum).add(toBN(1)));
+                amtToApprove = toBN(unit.toString()).times(toBN(quorum.toString()).plus(toBN(1)));
                 break;
         
             default:
                 break;
             }
-        return amtToApprove.toBigInt();
+        return toBigInt(amtToApprove.toString());
     }
 
     const handleTransact = async() => {
@@ -183,15 +183,15 @@ export const PoolColumn = (props: PoolColumnProps) => {
                             </Box>
                             <Box className={`${flexSpread}`}>
                                 <h3>Interest per sec</h3>
-                                <h3>{`${formatEther(toBN(intPerSec).toBigInt())} USDT`}</h3>
+                                <h3>{`${formatEther(toBigInt(toBN(intPerSec.toString()).toString()))} USDT`}</h3>
                             </Box>
                             <Box className={`${flexSpread}`}>
                                 <h3>Full interest</h3>
-                                <h3>{`${formatEther(toBN(fullInterest).toBigInt())} USDT`}</h3>
+                                <h3>{`${formatEther(toBigInt(toBN(fullInterest.toString()).toString()))} USDT`}</h3>
                             </Box>
                             <Box className={`${flexSpread}`}>
                                 <h3>Collateral index</h3>
-                                <h3>{`${toBN(colCoverage).div(toBN(100)).toString()}`}</h3>
+                                <h3>{`${toBN(colCoverage.toString()).div(toBN(100)).toString()}`}</h3>
                             </Box>
                             {
                                 txnType === 'Borrow' &&

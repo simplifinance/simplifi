@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import Blockies from "react-blockies";
-
+import { zeroAddress } from "viem";
 
 interface BlockieProp {
   account: string;
@@ -12,7 +12,7 @@ export const Blockie = (props: BlockieProp) => {
 
   return (
     <Blockies
-      seed={account?.toLowerCase() || ethers.constants.AddressZero}
+      seed={account?.toLowerCase() || zeroAddress}
       size={size || 4}
       scale={3}
     />

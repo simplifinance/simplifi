@@ -11,7 +11,7 @@ import { toBN } from "@/utilities";
 const extractClosedPools = (pools: Pools) => {
   let closed : number = 0;
   pools.forEach((pool: LiquidityPool) => {
-    if(toBN(pool.uints.quorum).isZero()) {
+    if(toBN(pool.uints.quorum.toString()).isZero()) {
       closed ++;
     }
   });

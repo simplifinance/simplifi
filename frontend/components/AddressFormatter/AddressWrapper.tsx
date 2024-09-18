@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { getEllipsisTxt } from "./stringFormatter";
 import { Blockie } from "./Blockie";
-import { ethers } from "ethers";
+import { zeroAddress } from "viem";
 
 const wrapToText = (arg: string | undefined) => String(arg);
 
@@ -36,7 +36,7 @@ const AddressWrapper = (props: AddressProps ) => {
   return (
     <div className="flex justify-start items-center gap-2">
       <span ><Blockie account={wrapToText(account)} size={size} /></span> 
-      <a href={`https://xfiscan.com/address/${account}`} rel="noreferrer" target="_blank">{size ? getEllipsisTxt(wrapToText(account || ethers.constants.AddressZero), size) : account}</a>
+      <a href={`https://xfiscan.com/address/${account}`} rel="noreferrer" target="_blank">{size ? getEllipsisTxt(wrapToText(account || zeroAddress), size) : account}</a>
       <span className="" >{(isClicked ? display && <Check /> : props?.display && <Copy />)}</span>
     </div>
   );

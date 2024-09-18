@@ -3,7 +3,7 @@ import { Box, Container, Stack, } from "@mui/material";
 import { PopUp } from "./Create/forms/transactionStatus/PopUp";
 import { flexSpread } from "@/constants";
 import { useAccount } from "wagmi";
-import { getTimeFromEpoch, toBN } from "@/utilities";
+import { getTimeFromEpoch, toBigInt, toBN } from "@/utilities";
 import { formatEther, parseEther } from "viem";
 
 interface DisplayProfileProps {
@@ -38,7 +38,7 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
         profileModalOpen
     } = props;
 
-    const formattedDurOfChoice = toBN(durOfChoice).div(toBN(3600)).toNumber()
+    const formattedDurOfChoice = toBN(durOfChoice.toString()).div(toBN(3600)).toNumber()
 
     const removeLiquidityPool = async() => {
 
@@ -61,11 +61,11 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
                                 </Box>
                                 <Box className={`${flexSpread}`}>
                                     <h3>Loan</h3>
-                                    <h3>{formatEther(toBN(loan).toBigInt())}</h3>
+                                    <h3>{formatEther(toBigInt(toBN(loan.toString()).toString()))}</h3>
                                 </Box>
                                 <Box className={`${flexSpread}`}>
                                     <h3>Collateral Reserve</h3>
-                                    <h3>{formatEther(toBN(colBals).toBigInt())}</h3>
+                                    <h3>{formatEther(toBigInt(toBN(colBals.toString()).toString()))}</h3>
                                 </Box>
                                 <Box className={`${flexSpread}`}>
                                     <h3>Duration Of Choice</h3>
@@ -73,7 +73,7 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
                                 </Box>
                                 <Box className={`${flexSpread}`}>
                                     <h3>Interest You Will Pay</h3>
-                                    <h3>{`${formatEther(toBN(expInterest).toBigInt())} USDT`}</h3>
+                                    <h3>{`${formatEther(toBigInt(toBN(expInterest.toString()).toString()))} USDT`}</h3>
                                 </Box>
                                 <Box className={`${flexSpread}`}>
                                     <h3>Pay Date</h3>

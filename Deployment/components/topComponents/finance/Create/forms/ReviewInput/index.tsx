@@ -9,7 +9,7 @@ import { Address, InputSelector, TransactionCallback, TransactionCallbackArg, Tr
 import { Chevron } from "@/components/Collapsible";
 import { createPermissionedLiquidityPool } from "@/apis/factory/createPermissionedLiquidityPool";
 import { useAccount, useConfig } from "wagmi";
-import { formatAddr, toBN } from "@/utilities";
+import { formatAddr, toBigInt, toBN } from "@/utilities";
 import { createPermissionlessLiquidityPool } from "@/apis/factory/createPermissionless";
 import { Approval } from "../Approval";
 import Notification from "@/components/Notification";
@@ -32,7 +32,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const unitLiquidity = toBN(values[1].value).toBigInt();
+    const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();

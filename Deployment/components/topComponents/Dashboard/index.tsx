@@ -4,8 +4,8 @@ import Grid from '@mui/material/Grid';
 import React from 'react'
 import Image from 'next/image';
 import { LiquidityPool, Pools } from '@/interfaces';
-import { BigNumber } from 'ethers';
-import { toBN } from '@/utilities';
+import { BigNumber } from  'bignumber.js';
+import { toBN, toBigInt } from '@/utilities';
 import { formatEther } from 'viem';
 
 const extractValues = (pools: Pools ) => {
@@ -13,13 +13,13 @@ const extractValues = (pools: Pools ) => {
   let permissioned : BigNumber = toBN(0);
   let permissionless : BigNumber = toBN(0);
   pools.forEach((pool: LiquidityPool) => {
-    tvl.add(toBN(pool.uint256s.currentPool));
-    pool.isPermissionless? permissionless.add(toBN(1)) : permissioned.add(toBN(1));
+    tvl.plus(toBN(pool.uint256s.currentPool.toString()));
+    pool.isPermissionless? permissionless.plus(toBN(1)) : permissioned.plus(toBN(1));
   })
   return {
     permissioned: permissioned.toNumber(),
     permissionless: permissionless.toNumber(),
-    tvl: formatEther(tvl.toBigInt())
+    tvl: formatEther(toBigInt(tvl.toString()))
   };
 }
 
