@@ -15,6 +15,9 @@ import { payback } from "@/apis/factory/payback";
 import { liquidate } from "@/apis/factory/liquidate";
 import { Input } from "./Create/Input";
 import Notification from "@/components/Notification";
+import { approve } from "@/apis/testToken/approve";
+import { BigNumber } from "ethers";
+import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
 
 interface PoolColumnProps {
     pool: LiquidityPool;
@@ -89,13 +92,42 @@ export const PoolColumn = (props: PoolColumnProps) => {
         setProfileOpen(!profileModalOpen)
     }
 
+    const getAmountToApprove = () => {
+        let amtToApprove : BigNumber = toBN(0);
+        switch (txnType) {
+            case 'Add Liquidity':
+                amtToApprove = toBN(unit);
+                break;
+            case 'Payback':
+                amtToApprove = toBN(loan).add(toBN(loan).div(toBN(2)));
+                break;
+            case 'Liquidate':
+                amtToApprove = toBN(unit).mul(toBN(quorum).add(toBN(1)));
+                break;
+        
+            default:
+                break;
+            }
+        return amtToApprove.toBigInt();
+    }
+
     const handleTransact = async() => {
+        const amountToApprove = getAmountToApprove();
+        if(txnType === 'Add Liquidity' || txnType === 'Payback' || txnType === 'Liquidate') {
+            await approve({
+                account,
+                config,
+                callback,
+                amountToApprove
+            });
+        }
         switch (txnType) {
             case 'Add Liquidity':
                 await addToPool({account, config, epochId, callback});
                 break;
             case 'Borrow':
-                await getFinance({account, config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
+                const collateral = await getCollateralQuote({config, epochId});
+                await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
                 break;
             case 'Payback':
                 await payback({account, config, epochId, callback});

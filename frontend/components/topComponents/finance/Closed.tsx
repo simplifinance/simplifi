@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import { POOL_HEADER_CONTENT } from "@/constants";
 import { PoolColumn } from "./PoolColumn";
 import { toBN } from "@/utilities";
-import { BigNumber } from "ethers";
 
 const extractClosedPools = (pools: Pools) => {
   let closed : number = 0;
@@ -44,7 +43,7 @@ export const Closed : React.FC<{pools: Pools}> = ({pools}) => {
         {/* Table Head */}
         <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
           {
-            POOL_HEADER_CONTENT.map((text) => (
+            POOL_HEADER_CONTENT.map((text: string) => (
               <Grid item xs={gridSize} key={text}>
                 <h3 className='text-white font-black text-center'>{text}</h3>
               </Grid>
@@ -54,7 +53,7 @@ export const Closed : React.FC<{pools: Pools}> = ({pools}) => {
         {/* Table Body */}
         <Grid container xs>
           {
-            pools.map((pool, epochId) => (
+            pools.map((pool: LiquidityPool, epochId: number) => (
               <motion.button
                 key={epochId}
                 initial={{opacity: 0}}

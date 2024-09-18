@@ -15,7 +15,7 @@ const SelectPooType = (options: {handleSelected: (arg: PoolType) => void, handle
             <h1 className="text-2xl font-semibold text-black text-opacity-70">Select the type of liquidity pool</h1>
             <Stack className="space-y-6">
                 {
-                    poolType.map((item) => (
+                    poolType.map((item: PoolType) => (
                         <button 
                             key={item}
                             className={`w-full border uppercase border-gray-300 p-4 rounded-lg ${selected === item? 'bg-yellow-200 ' : 'bg-gray-50'}`}

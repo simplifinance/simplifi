@@ -4,7 +4,7 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../waitForConfirmation";
 
 export const getFinance = async(args: GetFinanceParam ) => {
-  const { epochId, daysOfUseInHr, config, callback, account } = args;
+  const { epochId, daysOfUseInHr, config, callback, account, value } = args;
   const address = getFactoryAddress();
   if(config) {
     try {
@@ -13,7 +13,8 @@ export const getFinance = async(args: GetFinanceParam ) => {
         account,
         abi: setForwarderAbi,
         functionName: "getFinance",
-        args: [epochId, daysOfUseInHr]
+        args: [epochId, daysOfUseInHr],
+        value
       });
       callback?.({message: "Initiating borrowing", txDone: false});
       const hash = await writeContract(config, request );

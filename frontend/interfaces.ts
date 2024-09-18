@@ -73,6 +73,7 @@ export interface CommonParam extends Config {
 
 export interface GetFinanceParam extends CommonParam {
   daysOfUseInHr: number;
+  value: bigint;
 }
 
 // export type Theme = {
