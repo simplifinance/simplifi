@@ -3,17 +3,16 @@ import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
 import React from 'react'
 import Image from 'next/image';
-import { Pools } from '@/interfaces';
+import { LiquidityPool, Pools } from '@/interfaces';
 import { BigNumber } from 'ethers';
 import { toBN } from '@/utilities';
 import { formatEther } from 'viem';
-import { Common } from '../../../../contract/typechain-types/contracts/apis/IFactory';
 
 const extractValues = (pools: Pools ) => {
   let tvl : BigNumber = toBN(0);
   let permissioned : BigNumber = toBN(0);
   let permissionless : BigNumber = toBN(0);
-  pools.forEach((pool: Common.PoolStruct) => {
+  pools.forEach((pool: LiquidityPool) => {
     tvl.add(toBN(pool.uint256s.currentPool));
     pool.isPermissionless? permissionless.add(toBN(1)) : permissioned.add(toBN(1));
   })

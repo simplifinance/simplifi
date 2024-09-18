@@ -21,7 +21,6 @@ export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
 export type Message = "Preparing trxn" | "Creating Liquidity Pool" | "Completing Trxn" | "Approval Completed" | "Transaction Completed" | "Adding provider" | "Initiating borrowing" | "Paying back loan" | "Liquidating In Progress" | "Removing Pool" | "Withdrawing Collateral" | "Approving Factory" | "Transaction reverted" | "Transaction Failed" | "Transaction Completed" | "Approval Failed" | TxnStatus;
-
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
