@@ -72,3 +72,5 @@ export const Closed : React.FC<{pools: Pools}> = ({pools}) => {
     </Stack>
   );
 }
+
+// https://website-ui-beta.vercel.app/

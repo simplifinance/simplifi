@@ -30,14 +30,14 @@ LinearProgressWithLabel.propTypes = {
 export default function TransactionProgressBar({inProgress}) {
   const [progress, setProgress] = React.useState(40);
 
-  React.useEffect(() => {
-    // const timer = setInterval(() => {
-      setProgress(inProgress);
-    // }, 800);
-    // return () => {
-    //   clearInterval(timer);
-    // };
-  }, [setProgress]);
+  // React.useEffect(() => {
+  //   const timer = setInterval(() => {
+  //     setProgress(inProgress);
+  //   }, 800);
+  //   return () => {
+  //     clearInterval(timer);
+  //   };
+  // }, [inProgress]);
 
   return (
     <Box sx={{ width: '100%' }}>
