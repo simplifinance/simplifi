@@ -1,21 +1,72 @@
-import { flexStart } from '@/constants';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
 import React from 'react'
 import Image from 'next/image';
+import { Pools } from '@/interfaces';
+import { BigNumber } from 'ethers';
+import { toBN } from '@/utilities';
+import { formatEther } from 'viem';
 
-const Dashboard = () => {
+const extractValues = (pools: Pools ) => {
+  let tvl : BigNumber = toBN(0);
+  let permissioned : BigNumber = toBN(0);
+  let permissionless : BigNumber = toBN(0);
+  pools.forEach((pool) => {
+    tvl.add(toBN(pool.uint256s.currentPool));
+    pool.isPermissionless? permissionless.add(toBN(1)) : permissioned.add(toBN(1));
+  })
+  return {
+    permissioned: permissioned.toNumber(),
+    permissionless: permissionless.toNumber(),
+    tvl: formatEther(tvl.toBigInt())
+  };
+}
+
+const Dashboard = ({pools} : {pools:Pools}) => {
+
+  const { tvl, permissioned, permissionless } = extractValues(pools);
+
+  const dashboardInfo = [
+    {
+      title: 'TVL',
+      value: tvl,
+      icon: '/TVL.svg'
+    },
+    {
+      title: 'COLLATERAL',
+      value: 'XFI',
+       icon: '/TVL.svg'
+    },
+    {
+      title: 'NETWORK',
+      value: 'CROSSFI',
+      icon: '/TVL.svg'
+    },
+    {
+      title: 'PROPOSALS',
+      value: 'COMING SOON ...',
+      icon: '/PROPOSAL.svg'
+    },
+    {
+      title: 'PERMISSIONLESS',
+      value: permissionless,
+      icon: '/OPENED.svg'
+    },
+    {
+      title: 'PERMISSIONED',
+      value: permissioned,
+      icon: '/CLOSED.svg'
+    },
+  ];
+
   return (
     <Stack className="space-y-10">
-      <Box>
-        <button className='w-[30%] float-end bg-orange-400 rounded-lg p-4 text-white cursor-pointer hover:shadow-sm hover:shadow-gray-600'>ConnectWallet</button>
-      </Box>
-      <Box>
-        <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 justify-between gap-12' >
+      <Box className="w-full">
+        <Grid container xs={12} spacing={4}  >
           {
-            dashboardInfo.map((item, i) => (
-              <div>
+            dashboardInfo.map((item) => (
+              <Grid item xs={12} md={4} key={item.title}>
                 <div className={`w-full bg-orange-400 rounded-lg p-8 text-white flex justify-start gap-4`}>
                   <div>
                     <Image 
@@ -25,15 +76,15 @@ const Dashboard = () => {
                       height={50}
                     />
                   </div>
-                  <Stack>
-                    <h3 className='font-semibold'>{ item.title }</h3>
-                    <h1 className='text-2xl font-bold'>{ item.value() }</h1>
+                  <Stack >
+                    <h3 className='text-2xl font-bold'>{ item.title }</h3>
+                    <h1 className='font-semibold text-lg'>{ item.value }</h1>
                   </Stack>
                 </div>
-              </div>
+              </Grid>
             ))
           }
-        </div>
+        </Grid>
       </Box>
 
       {/* <Grid className=''>
@@ -48,36 +99,3 @@ const Dashboard = () => {
 }
 
 export default Dashboard;
-
-const dashboardInfo = [
-  {
-    title: 'TVL',
-    value: (param: string = '$450,000') => param,
-    icon: '/TVL.svg'
-  },
-  {
-    title: 'CURRENCY',
-    value: (param: string = 'XFI') => param,
-     icon: '/TVL.svg'
-  },
-  {
-    title: 'NETWORK',
-    value: (param: string = 'CROSSFI') => param,
-    icon: '/TVL.svg'
-  },
-  {
-    title: 'PROPOSALS',
-    value: (param: number = 120) => param,
-    icon: '/PROPOSAL.svg'
-  },
-  {
-    title: 'PERMISSIONLESS POOL',
-    value: (param: number = 10) => param,
-    icon: '/OPENED.svg'
-  },
-  {
-    title: 'PERMISSIONED POOL',
-    value: (param: number = 20) => param,
-    icon: '/CLOSED.svg'
-  },
-]

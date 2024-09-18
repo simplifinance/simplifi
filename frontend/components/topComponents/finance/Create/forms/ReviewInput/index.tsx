@@ -5,24 +5,79 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { InputSelector } from "@/interfaces";
+import { Address, InputSelector, TransactionCallback, TransactionCallbackArg, TrxnResult } from "@/interfaces";
 import { Chevron } from "@/components/Collapsible";
+import { createPermissionedLiquidityPool } from "@/apis/factory/createPermissionedLiquidityPool";
+import { useAccount, useConfig } from "wagmi";
+import { formatAddr, toBN } from "@/utilities";
+import { createPermissionlessLiquidityPool } from "@/apis/factory/createPermissionless";
+import { Approval } from "../Approval";
+import Notification from "@/components/Notification";
+import { parseEther } from "viem";
 
 interface ReviewInputProps {
     values: {title: string, value: string}[];
     type: InputSelector;
-    participants?: string[];
+    participants?: Address[];
     modalOpen: boolean;
     handleModalClose: () => void;
 }
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
+    const [message, setMessage] = React.useState<string>('');
+    const [continueExec, setContinuation] = React.useState<boolean>(false);
+    const [approvalModalOpen, setApprovalModal] = React.useState<boolean>(false);
+    
     const { modalOpen, values, participants, type, handleModalClose } = props;
+    const account = formatAddr(useAccount().address);
+    const config = useConfig();
+    const unitLiquidity = toBN(values[1].value).toBigInt();
+    const colCoverage = toBN(values[4].value).toNumber();
+    const intRate = toBN(values[3].value).toNumber();
+    const durationInHours = toBN(values[2].value).toNumber();
 
-    console.log("Props", props);
-    const handleTransact = async() => {
+    const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
+        if(arg.txDone) handleModalClose();
+        if(arg?.message) setMessage(arg.message);
+        // if(arg?.result) setstate(arg.result);
+        console.log("Arg result", arg?.result);
+    }
 
+    const toggleApprovalModal = (continueExec: boolean) => {
+        setApprovalModal(false);
+        setContinuation(true);
+    };
+
+    const handleCreatePool = async() => {
+        const isPermissioned = type === "address";
+        if(isPermissioned) {
+            await createPermissionedLiquidityPool(
+                {
+                    account,
+                    colCoverage,
+                    config,
+                    contributors: participants!,
+                    durationInHours,
+                    intRate,
+                    unitLiquidity: parseEther(unitLiquidity.toString()),
+                    callback
+                }
+            )
+        } else {
+            await createPermissionlessLiquidityPool(
+                {
+                    account,
+                    colCoverage,
+                    config,
+                    quorum: toBN(values[0].value).toNumber(),
+                    durationInHours,
+                    intRate,
+                    unitLiquidity: parseEther(unitLiquidity.toString()),
+                    callback
+                }
+            );
+        }
     }
 
     React.useEffect(() => {
@@ -34,7 +89,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
             <Container maxWidth="sm" className="space-y-4">
                 <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                     <Box className="w-full">
-                        <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={handleModalClose}>Close</button>
+                        <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={() => handleModalClose()}>Close</button>
                     </Box> 
                     <Stack className="space-y-4">
                         {
@@ -72,18 +127,33 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                 )
                             })
                         }
-                        <button 
-                            className="bg-orange-400 p-4 rounded-lg text-white"
-                            onClick={handleTransact}
-                        >
-                            Transact
-                        </button>
+                        <Box className="w-full flex justify-between items-center">
+                            <button
+                                disabled={!continueExec}
+                                className={`w-full p-4 rounded-lg ${continueExec? "bg-orange-400" : "bg-gray-100"} text-white`}
+                                onClick={handleCreatePool}
+                            >
+                                Transact
+                            </button>
+                            <button
+                                disabled={approvalModalOpen || continueExec}
+                                className={`w-full p-4 rounded-lg ${approvalModalOpen || continueExec? "bg-gray-100" : "bg-orange-400"} text-white`}
+                                onClick={() => setApprovalModal(true)}
+                            >
+                                Show Approval
+                            </button>
+                        </Box>
                     </Stack> 
                 </Stack>
+                <Approval {
+                    ...{
+                        amountToApprove: unitLiquidity,
+                        handleModalClose: toggleApprovalModal,
+                        modalOpen: approvalModalOpen,
+                    }
+                }/>
+                <Notification message={message} />
             </Container>
         </PopUp>
     );
 }
-
-
-// 0x12345678910abcdefghi00000000000000000000

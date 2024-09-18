@@ -7,36 +7,42 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from './SearchInput';
 import { ModeSwitch } from './ModeSwitch';
 import { DRAWERWIDTH, ROUTE_ENUM, flexSpread, flexStart } from '@/constants';
-import { Chevron, Collapsible } from '../Collapsible';
+import { Collapsible } from '../Collapsible';
 import { MotionDivWrap } from '../MotionDivWrap';
 import Stack from '@mui/material/Stack';
-import { LiquidityInnerLinkEntry } from '@/interfaces';
-import Collapse from '@mui/material/Collapse';
-// import useLink from './useLink';
+import Box from '@mui/material/Box';
+import { ConnectWallet } from '../ConnectWallet';
+import { useAccount } from 'wagmi';
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface AppProps {
-  innerlink: LiquidityInnerLinkEntry;
   displayAppScreen: boolean;
-  displayLiqChild: boolean;
-  setDisplayLiqChild: (arg: boolean) => void;
-  setInnerLink: (arg: LiquidityInnerLinkEntry) => void;
 }
 
 export default function App(props: AppProps) {
   const [lightMode, setMode] = React.useState<boolean>(false);
+  const [modalOpen, setPopUp] = React.useState<boolean>(false);
   const [parentLinkActive, setParentActiveLink] = React.useState<string>('Dashboard');
   
-  const { displayAppScreen, setDisplayLiqChild } = props;
+  const { displayAppScreen } = props;
   
   const toggleMode = () => setMode(!lightMode);
   const navigate = useNavigate();
   const location = useLocation().pathname;
-  // const { link, setlink } = useLink();
+  const { isConnected } = useAccount();
+
+  const handleModalClose = () => setPopUp(false);
 
   React.useEffect(() => {
-    displayAppScreen? navigate('/dashboard', {replace: true}) : null;
-  }, [displayAppScreen])
+    if(displayAppScreen && !isConnected) {
+      navigate('/dashboard', {replace: true});
+      setPopUp(true);
+    }
 
+    if(displayAppScreen && isConnected) {
+      navigate('/dashboard', {replace: true});
+    }
+  }, [displayAppScreen, isConnected, modalOpen]);
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -54,8 +60,6 @@ export default function App(props: AppProps) {
       parentPath: ROUTE_ENUM.DASHBOARD,
       children: undefined,
       displayChevron: false
-      // component: () => <Collapse in={open} timeout="auto" unmountOnExit className='w-full'><></></Collapse>,
-      // component: (activeLink: string) => ,
     },
     {
       parentTitle: 'Liquidity',
@@ -139,6 +143,7 @@ export default function App(props: AppProps) {
         <List className={`${flexStart} flex-col gap-2`} sx={{marginTop: 6}}>
           {DRAWER_CONTENT.map(({collapsible, parentPath, parentTitle, displayChevron, children }) => (
             <Collapsible 
+              key={parentTitle}
               {
                 ...{
                   setParentActiveLink,
@@ -156,8 +161,8 @@ export default function App(props: AppProps) {
         </List>
         {/* <Divider /> */}
       </Drawer>
-      <div className='bg-white  p-4'>
-        <nav style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} className={`fixed border-b border-b-gray-300 p-3 pr-12  ${flexSpread}`}>
+      <div className='bg-white p-4'>
+        <nav style={{ width: `calc(100% - ${DRAWERWIDTH}px)`,  marginLeft: `${DRAWERWIDTH}px` }} className={`sticky border-b border-b-gray-300 py-2 px-4  ${flexSpread}`}>
           <h3 className='text-lg font-semibold text-orange-400'>{ `${location[1]?.toUpperCase()}${location?.substring(2, location.length)}` }</h3>
           <div className={`${flexSpread} gap-6`}>
             <button className='p-2 items-center border border-gray-200 rounded'>
@@ -170,12 +175,20 @@ export default function App(props: AppProps) {
             <ModeSwitch lightMode={lightMode} toggleMode={toggleMode} />
           </div>
         </nav>
-        <div style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} className='bg-white h-full overflow-auto mt-16'>
-          <MotionDivWrap className='w-full bg-transparent' >
-            <Outlet />
-          </MotionDivWrap>
-        </div>
+        <MotionDivWrap className={`w-full h-[480px] bg-transparent ${location === '/dashboard'? "overflow-hidden" : "overflow-auto mt-4"} space-y-8`} style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} >
+          <Box className="flex justify-end" >
+            { isConnected && <ConnectButton 
+                accountStatus={{
+                  smallScreen: 'avatar',
+                  largeScreen: 'full',
+                }}
+              />
+            }
+          </Box>
+          <Outlet />
+        </MotionDivWrap>
       </div>
+      <ConnectWallet {...{handleModalClose, modalOpen}} />
     </React.Fragment>
   );
 } 
@@ -191,10 +204,10 @@ const setIcon = (selector: string) => {
     // 'liquidity': 
       <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.86719 21.4849H22.1359V14.6631L2.86719 21.4849ZM3.8724 19.6292L11.6797 11.8229L14.3401 14.4834L22.1359 6.68753V12.4459L3.8724 19.6292ZM16.3333 6.68701H22.1359H16.3333Z" fill="#B1B1B1"/>
-        <path d="M16.3333 6.68701H22.1359M2.86719 21.4849H22.1359V14.6631L2.86719 21.4849ZM3.8724 19.6292L11.6797 11.8229L14.3401 14.4834L22.1359 6.68753V12.4459L3.8724 19.6292Z" stroke="#B1B1B1" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8.56588 6.45947H3.99922C3.37186 6.45947 2.86328 6.96805 2.86328 7.59541V11.2392C2.86328 11.8665 3.37186 12.3751 3.99922 12.3751H8.56588C9.19324 12.3751 9.70182 11.8665 9.70182 11.2392V7.59541C9.70182 6.96805 9.19324 6.45947 8.56588 6.45947Z" stroke="#B1B1B1" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M2.86328 10.403H8.10651M4.45807 8.43115H9.7013H4.45807Z" stroke="#B1B1B1" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M6.27865 5.4318C6.80792 5.4318 7.23698 5.00274 7.23698 4.47347C7.23698 3.9442 6.80792 3.51514 6.27865 3.51514C5.74937 3.51514 5.32031 3.9442 5.32031 4.47347C5.32031 5.00274 5.74937 5.4318 6.27865 5.4318Z" stroke="#B1B1B1" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M16.3333 6.68701H22.1359M2.86719 21.4849H22.1359V14.6631L2.86719 21.4849ZM3.8724 19.6292L11.6797 11.8229L14.3401 14.4834L22.1359 6.68753V12.4459L3.8724 19.6292Z" stroke="#B1B1B1" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M8.56588 6.45947H3.99922C3.37186 6.45947 2.86328 6.96805 2.86328 7.59541V11.2392C2.86328 11.8665 3.37186 12.3751 3.99922 12.3751H8.56588C9.19324 12.3751 9.70182 11.8665 9.70182 11.2392V7.59541C9.70182 6.96805 9.19324 6.45947 8.56588 6.45947Z" stroke="#B1B1B1" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M2.86328 10.403H8.10651M4.45807 8.43115H9.7013H4.45807Z" stroke="#B1B1B1" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M6.27865 5.4318C6.80792 5.4318 7.23698 5.00274 7.23698 4.47347C7.23698 3.9442 6.80792 3.51514 6.27865 3.51514C5.74937 3.51514 5.32031 3.9442 5.32031 4.47347C5.32031 5.00274 5.74937 5.4318 6.27865 5.4318Z" stroke="#B1B1B1" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>,
     // 'invest': 
         <svg width="21" height="22" viewBox="0 0 21 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -206,7 +219,7 @@ const setIcon = (selector: string) => {
       </svg>,
     // 'speeddoc': 
       <svg width="23" height="24" viewBox="0 0 23 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M1.91797 6C1.91797 6 3.35547 4 6.70964 4C10.0638 4 11.5013 6 11.5013 6V20C11.5013 20 10.0638 19 6.70964 19C3.35547 19 1.91797 20 1.91797 20V6ZM11.5013 6C11.5013 6 12.9388 4 16.293 4C19.6471 4 21.0846 6 21.0846 6V20C21.0846 20 19.6471 19 16.293 19C12.9388 19 11.5013 20 11.5013 20V6Z" fill="#B1B1B1" stroke="#B1B1B1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M1.91797 6C1.91797 6 3.35547 4 6.70964 4C10.0638 4 11.5013 6 11.5013 6V20C11.5013 20 10.0638 19 6.70964 19C3.35547 19 1.91797 20 1.91797 20V6ZM11.5013 6C11.5013 6 12.9388 4 16.293 4C19.6471 4 21.0846 6 21.0846 6V20C21.0846 20 19.6471 19 16.293 19C12.9388 19 11.5013 20 11.5013 20V6Z" fill="#B1B1B1" stroke="#B1B1B1" stroke-width="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
   ]
   return icons[iconsUrl.indexOf(selector)];

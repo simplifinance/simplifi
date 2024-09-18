@@ -6,14 +6,22 @@ import { Pools } from '@/interfaces';
 import { motion } from 'framer-motion';
 import { POOL_HEADER_CONTENT, POOLS_MOCK } from "@/constants";
 import { PoolColumn } from "./PoolColumn";
+import { BigNumber } from "ethers";
+import { toBN } from "@/utilities";
 
-export const Open : React.FC<{}> = () => {
-  const [pools, setPools] = React.useState<Pools>(POOLS_MOCK);
+const extractOpenPools = (pools: Pools) => {
+  let open : BigNumber = toBN(0);
+  pools.forEach((pool) => {
+    const expectedAmt = toBN(pool.uint256s.currentPool).mul(toBN(pool.uints.quorum));
+    if(toBN(pool.uints.quorum).gt(0) && expectedAmt.gt(toBN(pool.uint256s.currentPool))) {
+      open.add(toBN(1));
+    }
+  });
+  return open.toNumber();
+}
+
+export const Open : React.FC<{pools: Pools}> = ({pools}) => {
   const gridSize = 12/POOL_HEADER_CONTENT.length;
-
-  // const handleClick = () => {
-
-  // }
 
   return(
     <Stack className='space-y-6 mt-4'>
@@ -21,9 +29,15 @@ export const Open : React.FC<{}> = () => {
         <div className='w-[30%] '>
           <button className='w-full py-8 text-xl font-black text-orange-400 text-left'>Liquidity Pool</button>
         </div>
-        <div className='w-[70%] flex justify-between items-center gap-10 text-lg text-white'>
-          <button className='w-full bg-orange-400 rounded-lg p-8'>Total Pool</button>
-          <button className='w-full bg-orange-400 rounded-lg p-8'>Account</button>
+        <div className='w-[70%] text-2xl font-bold  flex justify-between items-center gap-10 text-white'>
+          <div className='w-full bg-orange-400 rounded-lg p-8'>
+            <h3 >Total Pool</h3>
+            <h3>{pools.length}</h3>
+          </div>
+          <div className='w-full bg-orange-400 rounded-lg p-8'>
+            <h3 >Total Open</h3>
+            <h3>{extractOpenPools(pools)}</h3>
+          </div>
         </div>
       </Box>
 

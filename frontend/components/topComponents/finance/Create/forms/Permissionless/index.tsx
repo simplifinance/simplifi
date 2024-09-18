@@ -1,7 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
-// import Typography from "@mui/material/Typography";
 import { Input } from "../../Input";
 import Typography from "@mui/material/Typography";
 import type { InputSelector } from '@/interfaces';
@@ -9,22 +8,18 @@ import { ReviewInput } from "../ReviewInput";
 
 export const Permissionless = (props: {handleBack: () => void}) => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
-    const [quorum, setQuorum] = React.useState<string>('');
-    const [duration, setDuration] = React.useState<string>('');
-    const [ccr, setCollateralCoverage] = React.useState<string>('');
-    const [interest, setInterest] = React.useState<string>('');
-    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('');
+    const [quorum, setQuorum] = React.useState<string>('0');
+    const [duration, setDuration] = React.useState<string>('0');
+    const [ccr, setCollateralCoverage] = React.useState<string>('0');
+    const [interest, setInterest] = React.useState<string>('0');
+    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
 
     const { handleBack } = props;
     const toggleModal = () => setModalPopUp(!modalOpen);
-
-    const handleSubmit = () => {
-
-    }
-
+    
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
         e.preventDefault();
-        const value = e.currentTarget.value;
+        const value = e.currentTarget.value === ''? '0' : e.currentTarget.value;
         switch (tag) {
             case 'Quorum':
                 setQuorum(value);
@@ -98,7 +93,7 @@ export const Permissionless = (props: {handleBack: () => void}) => {
                             },
                         ] as const
                     ).map(({ id, type, placeholder, onChange }, i) => (
-                        <Stack>
+                        <Stack key={id}>
                             <Typography variant="body2">{id}</Typography>
                             <Input 
                                 key={i}

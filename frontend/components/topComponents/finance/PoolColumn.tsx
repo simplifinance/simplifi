@@ -2,48 +2,57 @@ import React from "react";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
 import { Chevron } from "@/components/Collapsible";
 import { PopUp } from "@/components/transactionStatus/PopUp";
-import { LiquidityPool, Profile } from "@/interfaces";
-import { toBN } from "@/utilities";
+import { LiquidityPool, Profile, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
+import { formatAddr, toBigInt, toBN } from "@/utilities";
 import { Grid, Container, Stack, Box, Collapse } from "@mui/material";
 import { formatEther, parseEther } from "viem";
 import { flexSpread, PROFILE_MOCK } from "@/constants";
 import { DisplayProfile } from "./DisplayProfile";
+import { getContractData, getProfile } from "@/apis/readContract";
+import { useAccount, useConfig } from "wagmi";
+import { addToPool } from "@/apis/factory/addToPool";
+import { getFinance } from "@/apis/factory/getFinance";
+import { payback } from "@/apis/factory/payback";
+import { liquidate } from "@/apis/factory/liquidate";
+import { Input } from "./Create/Input";
+import Notification from "@/components/Notification";
 
 interface PoolColumnProps {
     pool: LiquidityPool;
     epochId: number;
-    // handleClick: (arg: {pool: LiquidityPool, epochId: number}) => void;
-  }
+}
+
+type TxnType = 'Add Liquidity' | 'Liquidate' | 'Borrow' | 'Payback'
   
 export const PoolColumn = (props: PoolColumnProps) => {
     const [modalOpen, setOpen] = React.useState<boolean>(false);
+    const [preferredDur, setPreferredDur] = React.useState<string>('0');
+    const [message, setMessage] = React.useState<string>('');
     const [profile, setProfile] = React.useState<Profile>(PROFILE_MOCK);
     const [profileModalOpen, setProfileOpen] = React.useState<boolean>(false);
-  
-    const toggleModal = () => setOpen(!modalOpen);
-    const toggleProfileModal = async() => {
+    const account = formatAddr(useAccount().address);
+    const config = useConfig();
 
-        setProfileOpen(!profileModalOpen)
-    }
-  
     const {
-      pool: {
-        uint256s: { unit, currentPool, intPerSec, fullInterest },
-        uints: { intRate, quorum, duration, colCoverage },
-        addrs: { admin, asset },
-        isPermissionless
-      },
-      epochId,
-    //   handleClick
+        pool: {
+          uint256s: { unit, currentPool, intPerSec, fullInterest },
+          uints: { intRate, quorum, duration, colCoverage },
+          addrs: { admin, asset },
+          isPermissionless
+        },
+        epochId: epochId_,
     } = props;
-    
+
+    const epochId = toBigInt(epochId_); 
+    const { rank: { member }, cData: { loan }} = profile;
+    const expectedPoolAmt = toBN(unit).mul(toBN(quorum)).toBigInt();
     const formattedUnit = formatEther(toBN(unit).toBigInt());
     const currentProviders = toBN(currentPool).div(toBN(unit)).toString();
     const intPercent = toBN(intRate).div(toBN(100)).toString();
     const formattedDuration = toBN(duration).div(toBN(3600)).toNumber();
 
     const column_content = Array.from([
-      epochId,
+      epochId_,
       quorum.toString(),
       formattedUnit,
       intPercent,
@@ -52,8 +61,55 @@ export const PoolColumn = (props: PoolColumnProps) => {
       currentProviders,
       isPermissionless? "Permissionless" : "Permissioned"
     ]);
-  
+
+    const txnType : TxnType = `${(!member && toBN(currentPool).lt(toBN(expectedPoolAmt)))? 'Add Liquidity' : expectedPoolAmt === currentPool? 'Borrow' : toBN(loan).gt(0)? 'Payback' : 'Liquidate'}`;
     const gridSize = 12/column_content.length;
+
+    const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
+        if(arg?.message) setMessage(arg.message);
+        console.log("Arg: ", arg)
+    }
+
+    const handleSetDur = (e:React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
+        setPreferredDur(e.currentTarget.value);
+    }
+
+    const toggleModal = async() => {
+        setOpen(!modalOpen)
+        const result = await getProfile({
+            account,
+            config,
+            epochId
+        });
+        console.log("Result", result);
+        setProfile(result);
+    };
+    const toggleProfileModal = async() => {
+        
+        setProfileOpen(!profileModalOpen)
+    }
+
+    const handleTransact = async() => {
+        switch (txnType) {
+            case 'Add Liquidity':
+                await addToPool({account, config, epochId, callback});
+                break;
+            case 'Borrow':
+                await getFinance({account, config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
+                break;
+            case 'Payback':
+                await payback({account, config, epochId, callback});
+                break;
+            case 'Liquidate':
+                await liquidate({account, config, epochId, callback});
+                break;
+        
+            default:
+                break;
+        }
+    }
+    
     return(
         <React.Fragment>
             {/* <Grid container xs className="hover:bg-gray-100 p-4 cursor-pointer" onClick={() => handleClick({pool: props.pool, epochId})} > */}
@@ -71,7 +127,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 <Container maxWidth="sm" className="space-y-2">
                     <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                         <Box className={`w-full ${flexSpread}`}>
-                            <h3 className={`text-xl font-black text-orange-400`}>{`Pool ${formattedUnit} at Epoch Id ${epochId}`}</h3>
+                            <h3 className={`text-xl font-black text-orange-400`}>{`Pool ${formattedUnit} at Epoch Id ${epochId_}`}</h3>
                             <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={toggleModal}>Close</button>
                         </Box> 
 
@@ -104,18 +160,29 @@ export const PoolColumn = (props: PoolColumnProps) => {
                                 <h3>Collateral index</h3>
                                 <h3>{`${toBN(colCoverage).div(toBN(100)).toString()}`}</h3>
                             </Box>
+                            {
+                                txnType === 'Borrow' &&
+                                    <Box className="w-full">
+                                        <Input 
+                                            id="Borrow"
+                                            onChange={handleSetDur}
+                                            type="number"
+                                            placeholder="Specify your preferred duration"
+                                        />
+                                    </Box>
+                            }
                             <Box className={`${flexSpread} gap-4 `}>
                                 <button 
                                     className="w-full bg-orange-400 p-4 rounded-lg text-white hover:bg-opacity-70"
-                                    // onClick={handleTransact}
+                                    onClick={handleTransact}
                                 >
-                                    Transact
+                                    { txnType}
                                 </button>
                                 <button 
                                     className="w-full text-orange-400 border border-orange-400 p-4 rounded-lg hover:bg-yellow-100"
                                     onClick={toggleProfileModal}
                                 >
-                                    Profile
+                                    View Profile
                                 </button>
                             </Box>
                         </Stack> 
@@ -126,32 +193,15 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 {
                     ...{
                         profile,
-                        epochId,
+                        epochId: epochId_,
                         profileModalOpen,
                         toggleProfileModal,
                     }
 
                 }
             />
+            <Notification message={message} />
         </React.Fragment>
     )
 }
   
-
-
-{/* <Collapse in={open} timeout="auto" unmountOnExit className="">
-                                              <div className="p-2 rounded-lg bg-gray-100">
-                                                  {
-                                                      participants?.map((address, i) => (
-                                                          <div key={address} className="flex justify-between items-center" >
-                                                              <h3 >{ i + 1 }</h3>
-                                                              <AddressWrapper 
-                                                                  account={address}
-                                                                  display
-                                                                  size={4}
-                                                              />
-                                                          </div>
-                                                      ))                                                        
-                                                  }
-                                              </div>
-                                          </Collapse> */}

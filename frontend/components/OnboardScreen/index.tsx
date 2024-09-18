@@ -4,12 +4,9 @@ import { MotionDivWrap } from '../MotionDivWrap';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
 import { flexCenter } from '@/constants';
-// import { useNavigate } from 'react-router-dom';
 
 export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen : () => void}) {
   const [displaySwipeable, activateSwipeable] = React.useState<boolean>(false);
-  // const [index, setIndex] = React.useState<number>(0);
-  // const navigate = useNavigate();
   const AutoSwipeableViews = autoPlay(SwipeableViews);
 
   React.useEffect(() => {
@@ -26,14 +23,11 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
       {
         !displaySwipeable? 
           <MotionDivWrap className='flex justify-center items-center rounded-3xl' >
-            <Image src="/LogoFinal.svg" alt="QuatreLogo" height={300} width={300} />
+            <Image src="/logoSimplifi.png" alt="SimplifiLogo" height={300} width={300} />
           </MotionDivWrap> 
             : 
           <MotionDivWrap className='bg-white '>
             <div className='w-full h-full flex flex-col justify-center items-center space-y-8'>
-              {/* <div className='flex justify-end py-2'>
-                <button onClick={exitOnboardScreen} className='bg-stone-900 bg-opacity-50 p-3 rounded-2xl hover:bg-opacity-70 '>skip</button>
-              </div> */}
               <AutoSwipeableViews>
                 {
                   SWIPEABLE_CONTENTS.map((item, i) => (
@@ -43,8 +37,6 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
                         <h1 className='text-lg font-bold'>{item.title}</h1>
                         <p className='text-center text-gray-400'>{item.description}</p>
                       </div>
-                      {/* <div className={`${flexCenter} flex-col leading-8 my-4 `}>
-                      </div> */}
                     </div>
                   ))
                 }

@@ -1,7 +1,8 @@
 import { Box, Collapse, Stack } from '@mui/material'
 import React from 'react'
-import { flexCenter, flexEnd, flexEven, flexSpread, flexStart } from '@/constants';
-import { NavLink } from 'react-router-dom';
+import { flexCenter, flexEnd, flexEven, flexSpread, flexStart, ROUTE_ENUM } from '@/constants';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 
 export interface CollapsibleProps {
   collapsedClassName?: string;
@@ -11,7 +12,6 @@ export interface CollapsibleProps {
   displayChevron?: boolean;
   parentTitle: string;
   setIcon: (arg:string) => React.JSX.Element;
-  // setDisplayLiqChild?: (arg:boolean) => void;
   setParentActiveLink: (arg:string) => void;
   children?: React.ReactNode;
 }

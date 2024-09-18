@@ -4,17 +4,23 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { Pools } from '@/interfaces';
 import { motion } from 'framer-motion';
-import { POOL_HEADER_CONTENT, POOLS_MOCK } from "@/constants";
-import { PopUp } from "./Create/forms/transactionStatus/PopUp";
+import { POOL_HEADER_CONTENT } from "@/constants";
 import { PoolColumn } from "./PoolColumn";
+import { toBN } from "@/utilities";
+import { BigNumber } from "ethers";
 
-export const Closed : React.FC<{}> = () => {
-  const [pools, setPools] = React.useState<Pools>(POOLS_MOCK);
+const extractClosedPools = (pools: Pools) => {
+  let closed : BigNumber = toBN(0);
+  pools.forEach((pool) => {
+    if(toBN(pool.uints.quorum).isZero()) {
+      closed.add(toBN(1));
+    }
+  });
+  return closed.toNumber();
+}
+
+export const Closed : React.FC<{pools: Pools}> = ({pools}) => {
   const gridSize = 12/POOL_HEADER_CONTENT.length;
-
-  // const handleClick = () => {
-
-  // }
 
   return(
     <Stack className='space-y-6 mt-4'>
@@ -22,9 +28,15 @@ export const Closed : React.FC<{}> = () => {
         <div className='w-[30%] '>
           <button className='w-full py-8 text-xl font-black text-orange-400 text-left'>Liquidity Pool</button>
         </div>
-        <div className='w-[70%] flex justify-between items-center gap-10 text-lg text-white'>
-          <button className='w-full bg-orange-400 rounded-lg p-8'>Total Pool</button>
-          <button className='w-full bg-orange-400 rounded-lg p-8'>Account</button>
+        <div className='w-[70%] text-2xl font-bold flex justify-between items-center gap-10 text-white'>
+          <div className='w-full bg-orange-400 rounded-lg p-8'>
+            <h3 >Total Pool</h3>
+            <h3>{pools.length}</h3>
+          </div>
+          <div className='w-full bg-orange-400 rounded-lg p-8'>
+            <h3 >Total Closed</h3>
+            <h3>{extractClosedPools(pools)}</h3>
+          </div>
         </div>
       </Box>
 

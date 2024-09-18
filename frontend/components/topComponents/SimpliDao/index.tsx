@@ -1,6 +1,6 @@
 import React from "react";
 import { Container, Grid, Box, Typography, Modal } from "@mui/material";
-import ProgressBar from "../customProgress/ProgressBar";
+import ProgressBar from "../../customProgress/ProgressBar";
 
 // const style = {
 //   position: "absolute",

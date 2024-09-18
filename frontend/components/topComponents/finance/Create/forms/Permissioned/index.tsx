@@ -3,34 +3,52 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { Input } from "../../Input";
 import Typography from "@mui/material/Typography";
-import type { InputSelector } from '@/interfaces';
+import type { Address, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
+import { formatAddr } from "@/utilities";
+import { useAccount } from "wagmi";
+import Notification from "@/components/Notification";
+import { zeroAddress } from "viem";
 
 export const Permissioned = (props: {handleBack: () => void}) => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
-    const [participants, setParticipant] = React.useState<string[]>([]);
-    const [duration, setDuration] = React.useState<string>('');
-    const [ccr, setCollateralCoverage] = React.useState<string>('');
-    const [interest, setInterest] = React.useState<string>('');
-    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('');
+    const [participants, setParticipant] = React.useState<Address[]>([]);
+    const [duration, setDuration] = React.useState<string>('0');
+    const [ccr, setCollateralCoverage] = React.useState<string>('0');
+    const [interest, setInterest] = React.useState<string>('0');
+    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
+    const [message, setMessage] = React.useState<string>('');
 
+    const account = formatAddr(useAccount().address);
     const { handleBack } = props;
     const toggleModal = () => setModalPopUp(!modalOpen);
 
-    const handleSubmit = () => {
-
-    }
-
+    /**
+     * If user is creating a permissioned pool, we ensure the user's address is 
+     * the first on the list. This is necessary to avoid the contract from reverting.
+     * @param e : Input event value
+     * @param tag : Type of operation to perform on the incoming input value
+     */
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
         e.preventDefault();
-        const value = e.currentTarget.value;
+        const value = e.currentTarget.value === ''? '0' : e.currentTarget.value;
         switch (tag) {
             case 'address':
-                setParticipant((copy) => {
-                    value.length == 42 && copy?.push(value);
-                    return copy;
-                });
-                console.log("Part", participants)
+                let copy = participants;
+                const formattedValue = formatAddr(value);
+                if(copy.length === 0) {
+                    copy.push(account);
+                }
+                if(account !== zeroAddress) {
+                    if(value.length === 42) {
+                        if(!copy.includes(formattedValue)){
+                            copy.push(formattedValue);
+                            setParticipant(copy);
+                            setMessage(`${formattedValue} was added`);
+                        }
+                    }
+                }
+
                 break;
             case 'Duration':
                 setDuration(value);
@@ -101,7 +119,7 @@ export const Permissioned = (props: {handleBack: () => void}) => {
                             },
                         ] as const
                     ).map(({ id, type, placeholder,  onChange }, i) => (
-                        <Stack>
+                        <Stack key={id}>
                             <Typography variant="body2">{id}</Typography>
                             <Input 
                                 key={i}
@@ -150,6 +168,7 @@ export const Permissioned = (props: {handleBack: () => void}) => {
                     }
                 }
             />
+            <Notification message={message} />
         </Stack>
     );
 }

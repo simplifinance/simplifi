@@ -28,3 +28,32 @@
     ]
     Done in 59.87s.
 ```
+
+```
+    $ hardhat deploy --network crossTest --export deployments/contracts.json
+Nothing to compile
+No need to generate any newer typings.
+reusing "OwnerShip" at 0xe09e23F8a8032BB39326098802c970f9b48D726C
+OwnershipManager deployed to: 0xe09e23F8a8032BB39326098802c970f9b48D726C
+reusing "TestAsset" at 0xb28721f7b977D64F9401161EA91bC25D59F25308
+Test Asset deployed to: 0xb28721f7b977D64F9401161EA91bC25D59F25308
+reusing "AssetClass" at 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+AssertMgr deployed to: 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+deploying "StrategyManager" (tx: 0x7370f0cd31f77cb874cba99a96d00a6305d4c78bc617d4f043feca33aa7dc167)...: deployed at 0xf06dEA060647FFb3e50247FFdCB3d7616F37aDce with 1450230 gas
+strategyManager deployed to: 0xf06dEA060647FFb3e50247FFdCB3d7616F37aDce
+deploying "FactoryLib" (tx: 0xe9969829503adf4061ac8dd81f9704415c0ecdb401c4f1525aa06f4170e5e173)...: deployed at 0x308C6E16F08fB8f86252fE7222c76078D096A5a2 with 72281 gas
+factoryLib deployed to: 0x308C6E16F08fB8f86252fE7222c76078D096A5a2
+deploying "Factory" (tx: 0x928bd386e7ad4ff97d1066b3217899a4627dad5b6fe03b4efc71400d7eba59e7)...: deployed at 0xd35809a0e021407Cb9B4FFa7C9adC08166107305 with 4622019 gas
+Factory deployed to: 0xd35809a0e021407Cb9B4FFa7C9adC08166107305
+[
+  '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+  '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+  10,
+  '0xf06dEA060647FFb3e50247FFdCB3d7616F37aDce',
+  feeTo: '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+  assetAdmin: '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+  makerRate: 10,
+  strategyManager: '0xf06dEA060647FFb3e50247FFdCB3d7616F37aDce'
+]
+Done in 35.33s.
+```
