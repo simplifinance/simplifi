@@ -9,15 +9,15 @@ import { flexSpread, PROFILE_MOCK } from "@/constants";
 import { DisplayProfile } from "./DisplayProfile";
 import { getProfile } from "@/apis/readContract";
 import { useAccount, useConfig } from "wagmi";
-// import { addToPool } from "@/apis/factory/addToPool";
-// import { getFinance } from "@/apis/factory/getFinance";
-// import { payback } from "@/apis/factory/payback";
-// import { liquidate } from "@/apis/factory/liquidate";
+import { addToPool } from "@/apis/factory/addToPool";
+import { getFinance } from "@/apis/factory/getFinance";
+import { payback } from "@/apis/factory/payback";
+import { liquidate } from "@/apis/factory/liquidate";
 import { Input } from "./Create/Input";
 import Notification from "@/components/Notification";
 import { approve } from "@/apis/testToken/approve";
 import BigNumber from "bignumber.js";
-// import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
+import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
 
 interface PoolColumnProps {
     pool: LiquidityPool;
@@ -123,24 +123,24 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 amountToApprove
             });
         }
-        // switch (txnType) {
-        //     case 'Add Liquidity':
-        //         await addToPool({account, config, epochId, callback});
-        //         break;
-        //     case 'Borrow':
-        //         const collateral = await getCollateralQuote({config, epochId});
-        //         await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
-        //         break;
-        //     case 'Payback':
-        //         await payback({account, config, epochId, callback});
-        //         break;
-        //     case 'Liquidate':
-        //         await liquidate({account, config, epochId, callback});
-        //         break;
+        switch (txnType) {
+            case 'Add Liquidity':
+                await addToPool({account, config, epochId, callback});
+                break;
+            case 'Borrow':
+                const collateral = await getCollateralQuote({config, epochId});
+                await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
+                break;
+            case 'Payback':
+                await payback({account, config, epochId, callback});
+                break;
+            case 'Liquidate':
+                await liquidate({account, config, epochId, callback});
+                break;
         
-        //     default:
-        //         break;
-        // }
+            default:
+                break;
+        }
     }
     
     return(
