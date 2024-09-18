@@ -112,8 +112,10 @@ export const PoolColumn = (props: PoolColumnProps) => {
     }
 
     const handleTransact = async() => {
+        console.log("EpochId", epochId_)
         const amountToApprove = getAmountToApprove();
         if(txnType === 'Add Liquidity' || txnType === 'Payback' || txnType === 'Liquidate') {
+            console.log("txnType", txnType)
             await approve({
                 account,
                 config,
@@ -121,24 +123,24 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 amountToApprove
             });
         }
-        switch (txnType) {
-            case 'Add Liquidity':
-                await addToPool({account, config, epochId, callback});
-                break;
-            case 'Borrow':
-                const collateral = await getCollateralQuote({config, epochId});
-                await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
-                break;
-            case 'Payback':
-                await payback({account, config, epochId, callback});
-                break;
-            case 'Liquidate':
-                await liquidate({account, config, epochId, callback});
-                break;
+        // switch (txnType) {
+        //     case 'Add Liquidity':
+        //         await addToPool({account, config, epochId, callback});
+        //         break;
+        //     case 'Borrow':
+        //         const collateral = await getCollateralQuote({config, epochId});
+        //         await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
+        //         break;
+        //     case 'Payback':
+        //         await payback({account, config, epochId, callback});
+        //         break;
+        //     case 'Liquidate':
+        //         await liquidate({account, config, epochId, callback});
+        //         break;
         
-            default:
-                break;
-        }
+        //     default:
+        //         break;
+        // }
     }
     
     return(
