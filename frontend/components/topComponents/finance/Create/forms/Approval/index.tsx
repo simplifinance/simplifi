@@ -46,7 +46,7 @@ export const Approval = (props: ApprovalProps) => {
                 <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                     <Box className="w-full flex justify-between items-center">
                         <h3>Approve Factory</h3>
-                        <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={() => handleModalClose(false)}>Close</button>
+                        <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={() => handleModalClose(false)}>Close</button>
                     </Box> 
                     <Stack className="space-y-4">
                         <Box className="flex justify-between items-center ">
@@ -58,7 +58,7 @@ export const Approval = (props: ApprovalProps) => {
                             <h3>{`${amountToApprove.toString()} USDT`}</h3>
                         </Box>
                         <button 
-                            className="bg-orange-400 p-4 rounded-lg text-white"
+                            className="bg-orangec p-4 rounded-lg text-white"
                             onClick={handleApprovalTransaction}
                         >
                             Approve

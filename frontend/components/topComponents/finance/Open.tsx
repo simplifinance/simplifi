@@ -10,14 +10,14 @@ import { BigNumber } from "ethers";
 import { toBN } from "@/utilities";
 
 const extractOpenPools = (pools: Pools) => {
-  let open : BigNumber = toBN(0);
+  let open : number = 0;
   pools.forEach((pool) => {
-    const expectedAmt = toBN(pool.uint256s.currentPool).mul(toBN(pool.uints.quorum));
+    const expectedAmt = toBN(pool.uint256s.unit).mul(toBN(pool.uints.quorum));
     if(toBN(pool.uints.quorum).gt(0) && expectedAmt.gt(toBN(pool.uint256s.currentPool))) {
-      open.add(toBN(1));
+      open ++;
     }
   });
-  return open.toNumber();
+  return open;
 }
 
 export const Open : React.FC<{pools: Pools}> = ({pools}) => {
@@ -27,14 +27,14 @@ export const Open : React.FC<{pools: Pools}> = ({pools}) => {
     <Stack className='space-y-6 mt-4'>
       <Box className="w-full flex ">
         <div className='w-[30%] '>
-          <button className='w-full py-8 text-xl font-black text-orange-400 text-left'>Liquidity Pool</button>
+          <button className='w-full py-8 text-xl font-black text-orangec text-left'>Liquidity Pool</button>
         </div>
         <div className='w-[70%] text-2xl font-bold  flex justify-between items-center gap-10 text-white'>
-          <div className='w-full bg-orange-400 rounded-lg p-8'>
+          <div className='w-full bg-orangec rounded-lg p-8'>
             <h3 >Total Pool</h3>
             <h3>{pools.length}</h3>
           </div>
-          <div className='w-full bg-orange-400 rounded-lg p-8'>
+          <div className='w-full bg-orangec rounded-lg p-8'>
             <h3 >Total Open</h3>
             <h3>{extractOpenPools(pools)}</h3>
           </div>
@@ -43,10 +43,10 @@ export const Open : React.FC<{pools: Pools}> = ({pools}) => {
 
       <Grid container xs>
         {/* Table Head */}
-        <Grid item container xs={12} className='bg-orange-400 rounded-t-lg p-4'>
+        <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
           {
             POOL_HEADER_CONTENT.map((text) => (
-              <Grid item xs={gridSize}>
+              <Grid item key={text} xs={gridSize}>
                 <h3 className='text-white font-black text-center'>{text}</h3>
               </Grid>
             ))

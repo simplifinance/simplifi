@@ -82,14 +82,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     React.useEffect(() => {
         if(!values) handleModalClose();
-    },[values]);
+    },[values, handleModalClose]);
 
     return(
         <PopUp { ...{modalOpen, handleModalClose } } > 
             <Container maxWidth="sm" className="space-y-4">
                 <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                     <Box className="w-full">
-                        <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={() => handleModalClose()}>Close</button>
+                        <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={() => handleModalClose()}>Close</button>
                     </Box> 
                     <Stack className="space-y-4">
                         {
@@ -130,14 +130,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
                         <Box className="w-full flex justify-between items-center">
                             <button
                                 disabled={!continueExec}
-                                className={`w-full p-4 rounded-lg ${continueExec? "bg-orange-400" : "bg-gray-100"} text-white`}
+                                className={`w-full p-4 rounded-lg ${continueExec? "bg-orangec" : "bg-gray-100"} text-white`}
                                 onClick={handleCreatePool}
                             >
                                 Transact
                             </button>
                             <button
                                 disabled={approvalModalOpen || continueExec}
-                                className={`w-full p-4 rounded-lg ${approvalModalOpen || continueExec? "bg-gray-100" : "bg-orange-400"} text-white`}
+                                className={`w-full p-4 rounded-lg ${approvalModalOpen || continueExec? "bg-gray-100" : "bg-orangec"} text-white`}
                                 onClick={() => setApprovalModal(true)}
                             >
                                 Show Approval

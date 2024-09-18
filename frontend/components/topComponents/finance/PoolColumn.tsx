@@ -56,8 +56,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
       quorum.toString(),
       formattedUnit,
       intPercent,
-      <AddressWrapper account={admin.toString()} size={4} display/>,
-      <AddressWrapper account={asset.toString()} size={4} display/>,
+      <AddressWrapper account={admin.toString()} size={4} display key={4}/>,
+      <AddressWrapper account={asset.toString()} size={4} display key={5}/>,
       currentProviders,
       isPermissionless? "Permissionless" : "Permissioned"
     ]);
@@ -127,8 +127,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 <Container maxWidth="sm" className="space-y-2">
                     <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                         <Box className={`w-full ${flexSpread}`}>
-                            <h3 className={`text-xl font-black text-orange-400`}>{`Pool ${formattedUnit} at Epoch Id ${epochId_}`}</h3>
-                            <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={toggleModal}>Close</button>
+                            <h3 className={`text-xl font-black text-orangec`}>{`Pool ${formattedUnit} at Epoch Id ${epochId_}`}</h3>
+                            <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={toggleModal}>Close</button>
                         </Box> 
 
                         <Stack className="space-y-4">
@@ -173,13 +173,13 @@ export const PoolColumn = (props: PoolColumnProps) => {
                             }
                             <Box className={`${flexSpread} gap-4 `}>
                                 <button 
-                                    className="w-full bg-orange-400 p-4 rounded-lg text-white hover:bg-opacity-70"
+                                    className="w-full bg-orangec p-4 rounded-lg text-white hover:bg-opacity-70"
                                     onClick={handleTransact}
                                 >
                                     { txnType}
                                 </button>
                                 <button 
-                                    className="w-full text-orange-400 border border-orange-400 p-4 rounded-lg hover:bg-yellow-100"
+                                    className="w-full text-orangec border border-orangec p-4 rounded-lg hover:bg-yellow-100"
                                     onClick={toggleProfileModal}
                                 >
                                     View Profile

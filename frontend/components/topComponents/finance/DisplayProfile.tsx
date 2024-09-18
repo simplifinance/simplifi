@@ -50,7 +50,7 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
                 <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
                     <Box className={`w-full ${flexSpread}`}>
                         <h3>{`Profile at Epoch Id ${epochId}`}</h3>
-                        <button className="w-[20%] float-end text-white bg-orange-400 p-2 rounded-lg" onClick={toggleProfileModal}>Close</button>
+                        <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={toggleProfileModal}>Close</button>
                     </Box> 
                     {
                         (address?.toLowerCase() === id.toString().toLowerCase())?
@@ -83,7 +83,7 @@ export const DisplayProfile = (props: DisplayProfileProps) => {
                                     {
                                         isAdmin && 
                                             <button 
-                                                className="w-full text-orange-400 border border-orange-400 p-4 rounded-lg"
+                                                className="w-full text-orangec border border-orangec p-4 rounded-lg"
                                                 onClick={removeLiquidityPool}
                                             >
                                                 RemoveLP

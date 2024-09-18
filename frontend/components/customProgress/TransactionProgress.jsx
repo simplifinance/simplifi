@@ -37,7 +37,7 @@ export default function TransactionProgressBar({inProgress}) {
     // return () => {
     //   clearInterval(timer);
     // };
-  }, []);
+  }, [setProgress]);
 
   return (
     <Box sx={{ width: '100%' }}>

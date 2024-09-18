@@ -67,7 +67,7 @@ const Dashboard = ({pools} : {pools:Pools}) => {
           {
             dashboardInfo.map((item) => (
               <Grid item xs={12} md={4} key={item.title}>
-                <div className={`w-full bg-orange-400 rounded-lg p-8 text-white flex justify-start gap-4`}>
+                <div className={`w-full bg-orangec rounded-lg p-8 text-white flex justify-start gap-4`}>
                   <div>
                     <Image 
                       alt={item.title}

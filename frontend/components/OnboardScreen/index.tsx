@@ -19,7 +19,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
   }, []);
 
   return (
-    <div className='flex justify-center bg-black items-center h-full py-[50px]'>
+    <div className='flex justify-center bg-green1 items-center h-full py-[50px]'>
       {
         !displaySwipeable? 
           <MotionDivWrap className='flex justify-center items-center rounded-3xl' >
@@ -41,7 +41,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
                   ))
                 }
               </AutoSwipeableViews>
-              <button onClick={exitOnboardScreen} className='w-[70%] h-16 bg-orange-500 rounded-full text-white font-semibold'>Get Started</button>
+              <button onClick={exitOnboardScreen} className='w-[70%] h-16 bg-orangec rounded-full text-white font-semibold'>Get Started</button>
             </div>
           </MotionDivWrap>
       }

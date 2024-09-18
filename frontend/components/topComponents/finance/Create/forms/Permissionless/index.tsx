@@ -108,7 +108,7 @@ export const Permissionless = (props: {handleBack: () => void}) => {
 
             </Box>
             <Box className="flex justify-center">
-                <button onClick={toggleModal} className="bg-orange-400 w-[30%] p-4 rounded-lg text-white ">Submit</button>
+                <button onClick={toggleModal} className="bg-orangec w-[30%] p-4 rounded-lg text-white ">Submit</button>
             </Box>
             <ReviewInput 
                 {

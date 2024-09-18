@@ -36,7 +36,7 @@ const Liquidity : React.FC<{setstate: (arg: TrxnResult) => void}> = ({setstate})
       clearTimeout(50000);
       ctrl.abort();
     };
-  }, [isConnected, connector]);
+  }, [isConnected, connector, config, setstate]);
 
   return (
     <Box className="h-screen">

@@ -17,6 +17,7 @@ const SelectPooType = (options: {handleSelected: (arg: PoolType) => void, handle
                 {
                     poolType.map((item) => (
                         <button 
+                            key={item}
                             className={`w-full border uppercase border-gray-300 p-4 rounded-lg ${selected === item? 'bg-yellow-200 ' : 'bg-gray-50'}`}
                             onClick={() => handleSelected(item)}    
                         >
@@ -26,7 +27,7 @@ const SelectPooType = (options: {handleSelected: (arg: PoolType) => void, handle
                 }
             </Stack>
             <div>
-                <button onClick={handleNext} className="w-[30%] bg-orange-400 p-4 rounded-lg text-white font-semibold">
+                <button onClick={handleNext} className="w-[30%] bg-orangec p-4 rounded-lg text-white font-semibold">
                     Next
                 </button>
             </div>
