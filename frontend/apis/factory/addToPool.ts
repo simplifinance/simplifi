@@ -11,7 +11,7 @@ export const addToPool = async(args: CommonParam ) => {
       const { request } = await simulateContract(config, {
         address,
         account,
-        abi: setForwarderAbi,
+        abi: addToPoolAbi,
         functionName: "joinAPool",
         args: [epochId]
       });
@@ -25,7 +25,7 @@ export const addToPool = async(args: CommonParam ) => {
   }
 }
 
-const setForwarderAbi = [
+const addToPoolAbi = [
   {
     "inputs": [
       {

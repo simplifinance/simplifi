@@ -23,19 +23,13 @@ export async function getEpoches({config} : {config: WagmiConfig}) {
   });
 }
 
-export async function getContractData(
-  arg: {
-    config: WagmiConfig, 
-    account: Address, 
-    epochId: bigint
-  }
-) : Promise<TrxnResult> 
+export async function getContractData(arg: {config: WagmiConfig}) : Promise<TrxnResult> 
 {
-  const { config, account, epochId } = arg;
+  const { config } = arg;
   
-  const profile = await getProfile({epochId, account, config});
+  // const profile = await getProfile({epochId, account, config});
   const pools = await getEpoches({config});
-  return { pools, profile }
+  return { pools }
 }
 
 const profileAbi = [
@@ -142,6 +136,18 @@ const getPoolsAbi = [
             "components": [
               {
                 "internalType": "uint256",
+                "name": "_value",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Counters.Counter",
+            "name": "userCount",
+            "type": "tuple"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
                 "name": "quorum",
                 "type": "uint256"
               },
@@ -238,6 +244,82 @@ const getPoolsAbi = [
             "internalType": "bool",
             "name": "isPermissionless",
             "type": "bool"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "durOfChoice",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "expInterest",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "payDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "turnTime",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "loan",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "colBals",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "id",
+                    "type": "address"
+                  }
+                ],
+                "internalType": "struct Common.Contributor",
+                "name": "cData",
+                "type": "tuple"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "bool",
+                    "name": "admin",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "member",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct Common.Rank",
+                "name": "rank",
+                "type": "tuple"
+              },
+              {
+                "internalType": "uint8",
+                "name": "slot",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct Common.ContributorData[]",
+            "name": "cData",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "enum Common.FuncTag",
+            "name": "stage",
+            "type": "uint8"
           }
         ],
         "internalType": "struct Common.Pool[]",

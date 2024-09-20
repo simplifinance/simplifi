@@ -35,12 +35,12 @@ export const ROUTE_ENUM = {
 export const POOL_HEADER_CONTENT = ([
   'Epoch ID',
   'Quorum',
-  'Unit Liquidity',
+  'Liquidity/head',
   'Int.Rate',
-  'Initiator',
-  'Asset',
-  'Current Fill',
+  'Pair',
+  'Fill',
   'Type',
+  'Action'
 ] as const);
 
 export const PROFILE_MOCK : Profile = {
@@ -66,20 +66,25 @@ export const POOL_MOCK : LiquidityPool = {
     currentPool: 0n,
     fullInterest: 0n,
     intPerSec: 0n,
-    epochId: 0n
+    epochId: 0n,
   },
+  stage: 0n,
+  userCount: {
+    _value: 0n
+  },
+  cData: [{...PROFILE_MOCK}],
   uints: {
     intRate: 0n,
     quorum: 0n,
     selector: 0n,
     colCoverage: 0n,
-    duration: 0n
+    duration: 0n,
   },
   addrs: {
     lastPaid: zeroAddress,
     admin: zeroAddress,
     asset: zeroAddress,
-    strategy: zeroAddress
+    strategy: zeroAddress,
   },
   isPermissionless: false,
   allGh: 0n
@@ -108,7 +113,12 @@ export const POOLS_MOCK : LiquidityPool[] = [
       strategy: zeroAddress
     },
     isPermissionless: true,
-    allGh: 0n
+    allGh: 0n,
+    cData: [{...PROFILE_MOCK}],
+    stage: 0n,
+    userCount: {
+      _value: 0n
+    }
   },
   {
     uint256s: {
@@ -132,7 +142,12 @@ export const POOLS_MOCK : LiquidityPool[] = [
       strategy: zeroAddress
     },
     isPermissionless: true,
-    allGh: 0n
+    allGh: 0n,
+    cData: [{...PROFILE_MOCK}],
+    stage: 0n,
+    userCount: {
+      _value: 0n
+    }
   },
   {
     uint256s: {
@@ -140,7 +155,12 @@ export const POOLS_MOCK : LiquidityPool[] = [
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
       intPerSec: 55555555555555n,
-      epochId: 0n
+      epochId: 0n,
+    },
+    cData: [{...PROFILE_MOCK}],
+    stage: 0n,
+    userCount: {
+      _value: 3n
     },
     uints: {
       intRate: 1n,
@@ -164,7 +184,12 @@ export const POOLS_MOCK : LiquidityPool[] = [
       currentPool: 200000000000000000000n,
       fullInterest: 20000000000000000n,
       intPerSec: 55555555555555n,
-      epochId: 0n
+      epochId: 0n,
+    },
+    cData: [{...PROFILE_MOCK}],
+    stage: 0n,
+    userCount: {
+      _value: 0n
     },
     uints: {
       intRate: 1n,

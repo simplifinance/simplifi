@@ -15,7 +15,7 @@ export const createPermissionlessLiquidityPool = async(param: CreatePermissionLe
       const { request } = await simulateContract(config, {
         address,
         account,
-        abi: createPermissionedLiquidityPoolAbi,
+        abi: createPermissionlessLiquidityPoolAbi,
         functionName: "createPermissionlessPool",
         args: [intRate, quorum, durationInHours, colCoverage, unitLiquidity, tokenAddr],
       });
@@ -30,7 +30,7 @@ export const createPermissionlessLiquidityPool = async(param: CreatePermissionLe
 
 }
 
-const createPermissionedLiquidityPoolAbi = [
+const createPermissionlessLiquidityPoolAbi = [
   {
     "inputs": [
       {

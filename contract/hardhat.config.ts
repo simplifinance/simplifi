@@ -42,16 +42,17 @@ const config: HardhatUserConfig = {
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
     },
-    mainnet: {
-      url: "",
+    tester: {
+      url: "https://alfajores-forno.celo-testnet.org",
       accounts: [`${PRIVATE_KEY}`],
-      chainId: 11111111111111,
+      chainId: 44787
     },
   },
   namedAccounts: {
     deployer: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
+      44787: `privatekey://${PRIVATE_KEY}`,
     },
   },
 

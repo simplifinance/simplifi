@@ -128,7 +128,6 @@ contract Factory is AbstractFactory {
         external 
         whenNotPaused
         validateEpochId(epochId)
-        checkFunctionPass(epochId, FuncTag.JOIN) 
         returns(bool) 
     {
         return _joinEpoch(epochId, routers[epochId] == Router.PERMISSIONED);

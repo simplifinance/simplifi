@@ -22,6 +22,7 @@ import type {
 import { bn, formatAddr, ZERO, } from "./utilities";
 import { Common } from "../typechain-types/contracts/apis/IFactory";
 import { expect } from "chai";
+import { toBigInt } from "ethers";
 
 /**
  * @dev Create public pool
@@ -56,7 +57,8 @@ export async function createPermissionlessPool (
     x.unitLiquidity,
     x.asset
   );
-  const epochId = await x.factory.epoches();
+  const epochId = toBigInt(bn(await x.factory.epoches()).minus(1).toString());
+  // console.log("EpochId..........", epochId)
   const balances = await x.factory.getBalances(epochId);
   const pool = await x.factory.getPoolData(epochId);
   const profile = await x.factory.getProfile(epochId, x.signer.address);
@@ -96,7 +98,7 @@ export async function createPermissionedPool(
     x.asset, 
     x.contributors
   );
-  const epochId = await x.factory.epoches();
+  const epochId = toBigInt(bn(await x.factory.epoches()).minus(1).toString());
   const balances = await x.factory.getBalances(epochId);
   const pool = await x.factory.getPoolData(epochId);
   const profile = await x.factory.getProfile(epochId, x.signer.address);
@@ -232,7 +234,7 @@ export async function liquidate(
 export async function enquireLiquidation(
   x: BandParam
 ) 
-  : Promise<[Common.ContributorStructOutput, boolean, bigint]> 
+  : Promise<[Common.ContributorDataStructOutput, boolean, bigint]> 
 {
   return await x.factory.enquireLiquidation(x.epochId);
 }

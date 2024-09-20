@@ -170,15 +170,11 @@ abstract contract AbstractFactory is
                 }
             );
         CreatePoolReturnValue memory crp = !isPermissionless ? data
-            .createPermissionedPool(
-                CreatePermissionedPoolParam(
-                    cpp, 
-                    _unlockFunction
-                )
-            ) : data.createPermissionlessPool(cpp, _unlockFunction);
+            .createPermissionedPool(cpp)
+                : data.createPermissionlessPool(cpp);
         emit BandCreated(crp);
-        return crp.epochId;
-    }
+        return crp.pool.uint256s.epochId;
+    } 
 
     /** @dev Return current epoch. 
      * This is also total epoches generated to date 
@@ -188,8 +184,8 @@ abstract contract AbstractFactory is
         view 
         returns(uint)
     {
-        uint _epoches = data._getEpoches();
-        return _epoches == 0? 0 : _epoches - 1;
+        return data._getEpoches();
+        // return _epoches == 0? 0 : _epoches - 1;
     }
 
     /**
@@ -221,9 +217,7 @@ abstract contract AbstractFactory is
             data.addToBand(
                 AddTobandParam(
                     epochId,
-                    isPermissioned,
-                    _lockFunction,
-                    _unlockFunction
+                    isPermissioned
                 )
             )
         );
@@ -252,7 +246,6 @@ abstract contract AbstractFactory is
         payable
         whenNotPaused
         validateEpochId(epochId)
-        checkFunctionPass(epochId, FuncTag.GET)
         returns (bool)
     {
         emit GetFinanced(
@@ -260,8 +253,6 @@ abstract contract AbstractFactory is
                 epochId, 
                 msg.value,
                 daysOfUseInHr,
-                _lockFunction, 
-                _unlockFunction, 
                 _getXFIPriceInUSD
             )
         );
@@ -279,16 +270,13 @@ abstract contract AbstractFactory is
         external
         whenNotPaused
         validateEpochId(epochId)
-        checkFunctionPass(epochId, FuncTag.PAYBACK)
         returns (bool)
     {
         emit Payback(
             data.payback(
                 PaybackParam(
                     epochId,
-                    _msgSender(),
-                    _lockFunction,
-                    _unlockFunction
+                    _msgSender()
                 ),
                 _setPermit
             )
@@ -311,14 +299,7 @@ abstract contract AbstractFactory is
         returns (bool) 
     {
         emit Liquidated(
-            data.liquidate(
-                LiquidateParam(
-                    epochId,
-                    _lockFunction,
-                    _unlockFunction
-                ),
-                _setPermit
-            )
+            data.liquidate(epochId, _setPermit)
         );
         return true;
     }
@@ -332,7 +313,7 @@ abstract contract AbstractFactory is
         external
         view 
         validateEpochId(epochId)
-        returns (Contributor memory, bool, uint) 
+        returns (ContributorData memory, bool, uint) 
     {
         return data._enquireLiquidation(epochId);
     }
@@ -344,7 +325,7 @@ abstract contract AbstractFactory is
     function withdrawCollateral(uint epochId)
         external
         validateEpochId(epochId)
-        checkFunctionPass(epochId, FuncTag.WITHDRAW)
+        checkPermit(epochId, FuncTag.WITHDRAW)
         returns(bool)
     {
         data._withdrawCollateral(epochId);
@@ -365,7 +346,7 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns(uint collateral, uint24 colCoverage)
     {
-        Pool memory pool = data._fetchPoolData(epochId);
+        Pool memory pool = data._fetchPool(epochId);
         (collateral, colCoverage) = (FactoryLib._computeCollateral(
             pool.uint256s.currentPool,
             0,
@@ -390,7 +371,7 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (uint) 
     {
-        return data._getCurrentDebt(epochId, target);
+        return data._getCurrentDebt(epochId, target).debt;
     }
 
     /**
@@ -407,7 +388,7 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns(ContributorData memory) 
     {
-        return data._getProfile(epochId, user);
+        return data.getProfile(user, epochId);
     }
 
     /**
@@ -462,9 +443,8 @@ abstract contract AbstractFactory is
     {
         data.cancelBand(
             epochId, 
-            isPermissionLess, 
-            _setPermit, 
-            _lockFunction
+            isPermissionLess,
+            _setPermit
         );
         emit Cancellation(epochId);
 
@@ -483,7 +463,7 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns(Pool memory) 
     {
-        return data._fetchPoolData(epochId);
+        return data._fetchPool(epochId);
     }
 
     /**@dev Returns pool from all epoched array */

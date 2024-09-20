@@ -2,13 +2,13 @@ import React from 'react';
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Box from '@mui/material/Box';
 import { getEpoches } from '@/apis/readContract';
-import { PROFILE_MOCK } from '@/constants';
 import { useAccount, useConfig } from 'wagmi';
-import { TrxnResult } from '@/interfaces';
+import { StorageContext } from '@/components/StateContextProvider';
 
-const Liquidity : React.FC<{setstate: (arg: TrxnResult) => void}> = ({setstate}) => {
+const Liquidity : React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setstate } = React.useContext(StorageContext);
 
   React.useEffect(() => {
     if(location.pathname === '/liquidity'){
@@ -27,13 +27,13 @@ const Liquidity : React.FC<{setstate: (arg: TrxnResult) => void}> = ({setstate})
           const pools = await getEpoches({
             config
           });
-          setstate({profile: PROFILE_MOCK, pools});
+          setstate({pools});
         }
         fetchData();
       }
-    }, 5000);
+    }, 100000);
     return () => {
-      clearTimeout(50000);
+      clearTimeout(100000);
       ctrl.abort();
     };
   }, [isConnected, connector, config, setstate]);

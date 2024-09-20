@@ -32,9 +32,8 @@ import {
   withdraw,
   removeLiquidityPool
 } from "./factoryUtils";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
+// import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { ZeroAddress } from "ethers";
-import { zeroAddress } from "viem";
 
 describe("Factory", function () {
 
@@ -116,7 +115,7 @@ describe("Factory", function () {
       const {
         tAsset,
         factory,
-        signers : { signer1, signer2, signer3, deployer },
+        signers : { signer1, signer2, deployer },
         factoryAddr } = await loadFixture(deployContractsFixcture);
       
       const create = await createPermissionlessPool(
@@ -133,7 +132,7 @@ describe("Factory", function () {
         }
       );
 
-      // const prof2_before = await factory.getProfile(create.epochId, signer2.address);
+      // const prof2_before = await factory.getProfile(create.pool.uint256s.epochId, signer2.address);
       
       const {
         balances: { erc20, xfi }, 
@@ -150,7 +149,7 @@ describe("Factory", function () {
         testAsset: tAsset
       });
 
-      const prof2_After = await factory.getProfile(create.epochId, signer2.address);
+      const prof2_After = await factory.getProfile(create.pool.uint256s.epochId, signer2.address);
 
       expect(sumToString(currentPool, 0)).to.be.equal(mulToString(unit, 2));
       expect(sumToString(erc20, 0)).to.be.equal(bn(unit).times(2).toString());
@@ -176,17 +175,17 @@ describe("Factory", function () {
           durationInHours: DURATION_IN_HOURS,
           factory: factory,
           intRate: INTEREST_RATE,
-          quorum: QUORUM - 1,
+          quorum: QUORUM - 1, // 2 participants
           signer: signer1,
           unitLiquidity: UNIT_LIQUIDITY,
           deployer
         }
       );
 
-      const join = await joinEpoch({
+      await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -197,7 +196,7 @@ describe("Factory", function () {
        * Signer1 borrow and paback.
        */
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer1],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -205,7 +204,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
@@ -220,7 +219,7 @@ describe("Factory", function () {
        */
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
-      const debtToDate = await factory.getCurrentDebt(create.epochId, signer1.address);
+      const debtToDate = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer1.address);
       // console.log("debtToDate", debtToDate.toString());
 
       /**
@@ -232,18 +231,18 @@ describe("Factory", function () {
       const pay = await payback({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         debt,
         signers: [signer1]
       }); 
 
-      // const profB4 = await factory.getProfile(create.epochId, signer1.address);
+      // const profB4 = await factory.getProfile(create.pool.uint256s.epochId, signer1.address);
       // Before withdrawing collateral, the balance should be intact.
       expect(pay.profile.cData.colBals).to.be.equal(gf.profile.cData.colBals);
 
-      await factory.connect(signer1).withdrawCollateral(create.epochId);
-      const prof = await factory.getProfile(create.epochId, signer1.address);
+      await factory.connect(signer1).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof = await factory.getProfile(create.pool.uint256s.epochId, signer1.address);
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof.cData.colBals).to.be.equal(ZERO);
@@ -252,7 +251,7 @@ describe("Factory", function () {
        * Signer2 Borrow and payback
        */
       const gf_2 = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer2],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -260,7 +259,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
@@ -269,7 +268,7 @@ describe("Factory", function () {
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await factory.getCurrentDebt(create.epochId, signer2.address);
+      const debtToDate_2 = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer2.address);
       // console.log("debtToDate", debtToDate.toString());
 
       /**
@@ -281,7 +280,7 @@ describe("Factory", function () {
       const pay_2 = await payback({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         debt: debt_2,
         signers: [signer2]
@@ -291,9 +290,9 @@ describe("Factory", function () {
       // console.log(`Left: ${pay_2.profile.cData.colBals}\nRight: ${gf_2.profile.cData.colBals}`);
       expect(pay_2.profile.cData.colBals).to.be.equal(gf_2.profile.cData.colBals);
 
-      // await factory.connect(signer1).withdrawCollateral(create.epochId); // If uncomment execution should fail.
-      await factory.connect(signer2).withdrawCollateral(create.epochId);
-      const prof_2 = await factory.getProfile(create.epochId, signer2.address);
+      // await factory.connect(signer1).withdrawCollateral(create.pool.uint256s.epochId); // If uncomment execution should fail.
+      await factory.connect(signer2).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof_2 = await factory.getProfile(create.pool.uint256s.epochId, signer2.address);
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof_2.cData.colBals).to.be.equal(ZERO);
@@ -303,10 +302,7 @@ describe("Factory", function () {
        * All functions related to the epochId should not work
        */
       expect(pay_2.pool.uint256s.currentPool).to.be.equal(ZERO);
-
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.LOCKED);
+     
     });
 
     it("PermissionLess: Enquiring liquidation should return empty profile", async function () {
@@ -334,7 +330,7 @@ describe("Factory", function () {
       await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -342,7 +338,7 @@ describe("Factory", function () {
       });
 
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer1],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -350,7 +346,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
@@ -365,11 +361,11 @@ describe("Factory", function () {
        * When the paydate is yet to come, enquiry should return nothing
        */
       const [profile, isDefaulted, value] = await enquireLiquidation({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: []
       });
-      expect(profile.id).to.be.equal(ZeroAddress);
+      expect(profile.cData.id).to.be.equal(ZeroAddress);
       expect(isDefaulted).to.be.false;
       expect(value).to.be.eq(ZERO);
     });
@@ -399,7 +395,7 @@ describe("Factory", function () {
       await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -407,7 +403,7 @@ describe("Factory", function () {
       });
 
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer1],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -415,7 +411,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
@@ -429,16 +425,16 @@ describe("Factory", function () {
       /**
        * When the paydate has passed, enquiry should return defaulter's profile.
       */
-      const debtToDate = await factory.getCurrentDebt(create.epochId, signer1.address);
+      const debtToDate = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer1.address);
       const [prof, defaulted, val] = await enquireLiquidation({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: []
       });
-      // const [prof, defaulted, val] = await factory.enquireLiquidation(create.epochId);
+      // const [prof, defaulted, val] = await factory.enquireLiquidation(create.pool.uint256s.epochId);
       console.log(`DebtTodate: ${debtToDate.toString()}\nFromLiq: ${val.toString()}`);
       
-      expect(prof.id).to.be.equal(signer1.address);
+      expect(prof.cData.id).to.be.equal(signer1.address);
       expect(defaulted).to.be.true;
       expect(val).to.be.gte(debtToDate);     
     });
@@ -474,7 +470,7 @@ describe("Factory", function () {
       const join = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -482,7 +478,7 @@ describe("Factory", function () {
       });
 
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer1],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -490,7 +486,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
@@ -501,13 +497,13 @@ describe("Factory", function () {
       const future = BigInt((await time.latest()) + DURATION_OF_CHOICE_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
 
-      const debtToDate = await factory.getCurrentDebt(create.epochId, signer1.address);
+      const debtToDate = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer1.address);
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.uint256s.intPerSec).times(bn(ONE_HOUR_ONE_MINUTE + 3))).toString());
-      const def = await factory.getProfile(create.epochId, signer1.address);
+      const def = await factory.getProfile(create.pool.uint256s.epochId, signer1.address);
       const { liq: { balances: bal, pool: pl, profile: pr }, balB4Liq } = await liquidate({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer3],
         debt: debt,
@@ -529,8 +525,8 @@ describe("Factory", function () {
       expect(pr.cData.colBals).to.be.equal(gf.profile.cData.colBals);
 
       const xfiB4Withdrawal = await signer3.provider.getBalance(signer3.address);
-      await factory.connect(signer3).withdrawCollateral(create.epochId);
-      const prof_3 = await factory.getProfile(create.epochId, signer3.address);
+      await factory.connect(signer3).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof_3 = await factory.getProfile(create.pool.uint256s.epochId, signer3.address);
 
       const balAfterWithdrawal = await tAsset.balanceOf(signer3.address);
       expect(balAfterWithdrawal).to.be.lt(balB4Liq);
@@ -540,9 +536,6 @@ describe("Factory", function () {
       expect(prof_3.cData.colBals).to.be.equal(ZERO);
       expect(pl.uint256s.currentPool).to.be.equal(join.pool.uint256s.currentPool);
 
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.UNLOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.LOCKED);
     });
 
     it("PermissionLess: Process should go as intended after liquidation", async function () {
@@ -566,10 +559,10 @@ describe("Factory", function () {
         }
       );
 
-      const join = await joinEpoch({
+      await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -577,7 +570,7 @@ describe("Factory", function () {
       });
 
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer1],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -585,7 +578,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
@@ -596,20 +589,20 @@ describe("Factory", function () {
       const future = BigInt((await time.latest()) + DURATION_OF_CHOICE_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
 
-      const debtToDate = await factory.getCurrentDebt(create.epochId, signer1.address);
+      const debtToDate = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer1.address);
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.uint256s.intPerSec).times(bn(ONE_HOUR_ONE_MINUTE + 3))).toString());
-      const def = await factory.getProfile(create.epochId, signer1.address);
+      const def = await factory.getProfile(create.pool.uint256s.epochId, signer1.address);
       const { liq: { balances: bal, pool: pl, profile: pr }, balB4Liq } = await liquidate({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer3],
         debt: debt,
       });
 
       const gf_2 = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer2],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -617,7 +610,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
@@ -626,12 +619,12 @@ describe("Factory", function () {
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await factory.getCurrentDebt(create.epochId, signer2.address);
+      const debtToDate_2 = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer2.address);
       const debt_2 = BigInt(bn(debtToDate_2).plus(bn(gf_2.pool.uint256s.intPerSec).times(bn(3))).toString());
       const pay_2 = await payback({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         debt: debt_2,
         signers: [signer2]
@@ -640,9 +633,9 @@ describe("Factory", function () {
       // Before withdrawing collateral, the balance should be intact.
       expect(pay_2.profile.cData.colBals).to.be.equal(gf_2.profile.cData.colBals);
 
-      // await factory.connect(signer1).withdrawCollateral(create.epochId); // If uncomment execution should fail.
-      await factory.connect(signer2).withdrawCollateral(create.epochId);
-      const prof_2 = await factory.getProfile(create.epochId, signer2.address);
+      // await factory.connect(signer1).withdrawCollateral(create.pool.uint256s.epochId); // If uncomment execution should fail.
+      await factory.connect(signer2).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof_2 = await factory.getProfile(create.pool.uint256s.epochId, signer2.address);
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof_2.cData.colBals).to.be.equal(ZERO);
@@ -652,9 +645,7 @@ describe("Factory", function () {
        * All functions related to the epochId should not work
        */
       expect(pay_2.pool.uint256s.currentPool).to.be.equal(ZERO);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.LOCKED);
+      // expect(await factory.isFunctionCallable(create.pool.uint256s.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
     });
 
     it("PermissionLess: Should swap provider if they delay to GF", async function () {
@@ -682,7 +673,7 @@ describe("Factory", function () {
       const join = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer2],
@@ -692,7 +683,7 @@ describe("Factory", function () {
       const join_3 = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         factoryAddr: formatAddr(factoryAddr),
         signers: [signer3],
@@ -703,7 +694,7 @@ describe("Factory", function () {
        * Uncomment this line before the GF time elapses should revert the transaction.
        */
       // const gf = await getFinance({
-      //   epochId: create.epochId,
+      //   epochId: create.pool.uint256s.epochId,
       //   factory,
       //   signers: [signer3],
       //   hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -723,7 +714,7 @@ describe("Factory", function () {
        * Signer1 borrow and paback.
        */
       const gf = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer3],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -731,7 +722,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer3,
@@ -747,7 +738,7 @@ describe("Factory", function () {
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
       // await time.increaseTo(durOfChoiceInSec);
-      const debtToDate = await factory.getCurrentDebt(create.epochId, signer3.address);
+      const debtToDate = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer3.address);
       // console.log("debtToDate", debtToDate.toString());
 
       /**
@@ -762,18 +753,18 @@ describe("Factory", function () {
       const pay = await payback({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         debt,
         signers: [signer3]
       }); 
 
-      // const profB4 = await factory.getProfile(create.epochId, signer3.address);
+      // const profB4 = await factory.getProfile(create.pool.uint256s.epochId, signer3.address);
       // Before withdrawing collateral, the balance should be intact.
       expect(pay.profile.cData.colBals).to.be.equal(gf.profile.cData.colBals);
 
-      await factory.connect(signer3).withdrawCollateral(create.epochId);
-      const prof = await factory.getProfile(create.epochId, signer3.address);
+      await factory.connect(signer3).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof = await factory.getProfile(create.pool.uint256s.epochId, signer3.address);
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof.cData.colBals).to.be.equal(ZERO);
@@ -782,7 +773,7 @@ describe("Factory", function () {
        * Signer2 Borrow and payback
        */
       const gf_2 = await getFinance({
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         signers: [signer2],
         hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
@@ -790,7 +781,7 @@ describe("Factory", function () {
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
@@ -799,7 +790,7 @@ describe("Factory", function () {
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await factory.getCurrentDebt(create.epochId, signer2.address);
+      const debtToDate_2 = await factory.getCurrentDebt(create.pool.uint256s.epochId, signer2.address);
       // console.log("debtToDate", debtToDate.toString());
 
       /**
@@ -811,7 +802,7 @@ describe("Factory", function () {
       const pay_2 = await payback({
         asset: tAsset,
         deployer,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         debt: debt_2,
         signers: [signer2]
@@ -820,15 +811,11 @@ describe("Factory", function () {
       // console.log(`Left: ${pay_2.profile.cData.colBals}\nRight: ${gf_2.profile.cData.colBals}`);
       expect(pay_2.profile.cData.colBals).to.be.equal(gf_2.profile.cData.colBals);
 
-      await factory.connect(signer2).withdrawCollateral(create.epochId);
-      const prof_2 = await factory.getProfile(create.epochId, signer2.address);
+      await factory.connect(signer2).withdrawCollateral(create.pool.uint256s.epochId);
+      const prof_2 = await factory.getProfile(create.pool.uint256s.epochId, signer2.address);
 
       expect(prof_2.cData.colBals).to.be.equal(ZERO);
       expect(pay_2.pool.uint256s.currentPool).to.be.equal(join_3.pool.uint256s.currentPool);
-
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.UNLOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.LOCKED);
     });
     
     it("PermissionLess: Should cancel band successfully", async function () {
@@ -855,7 +842,7 @@ describe("Factory", function () {
       
       await removeLiquidityPool({
         factory,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         signer: signer1
       });
       
@@ -867,11 +854,11 @@ describe("Factory", function () {
       /**
        * This is an indication that a pool was removed.
        */
-      expect((await factory.getPoolData(create.epochId)).uints.quorum).to.be.equal(ZERO);
+      expect((await factory.getPoolData(create.pool.uint256s.epochId)).uints.quorum).to.be.equal(ZERO);
       
       await withdraw({
         asset: tAsset,
-        epochId: create.epochId,
+        epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(create.pool.addrs.strategy),
         spender: signer1,
@@ -880,17 +867,14 @@ describe("Factory", function () {
       /**
        * Calling withdraw collateral should fail if uncommented.
        */
-      // await factory.connect(signer1).withdrawCollateral(create.epochId);
+      // await factory.connect(signer1).withdrawCollateral(create.pool.uint256s.epochId);
       const signerBalAfterWithdrawal = await tAsset.balanceOf(signer1.address);
-      const { erc20 } = await factory.getBalances(create.epochId);
+      const { erc20 } = await factory.getBalances(create.pool.uint256s.epochId);
       
       // Balances after withdrawal
       expect(erc20).to.be.equal(ZERO);
       expect(signerBalAfterWithdrawal).to.be.gt(signerBalAfterRemoval);
 
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.JOIN)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.GET)).to.be.equal(locker.LOCKED);
-      expect(await factory.isFunctionCallable(create.epochId, FuncTag.PAYBACK)).to.be.equal(locker.LOCKED);
     });
 
   });

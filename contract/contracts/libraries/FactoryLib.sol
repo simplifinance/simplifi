@@ -30,16 +30,11 @@ struct Data {
   /**Mapping of contribution amount to bool indicating if they exit or not */
   mapping(uint256 => bool) amountExist; 
 
-  /**Mapping of slots to Profiles */
-  mapping(uint => Common.Contributor[]) contributors;
-
   /**Mapping of contributors addresses to epochid to slot */
   mapping(address => mapping(uint => uint)) slots;
 
-  /**Mapping of epochId to contributors addresses to ranks */
-  mapping(uint => mapping (address => Common.Rank)) ranks;
-
-  Common.Pool[] poolArr;
+  Common.Pool[] poolArr;// For testing only. For better optimization, it will 
+                        // removed before going on live network
 }
 
 struct Def {
@@ -62,34 +57,28 @@ library FactoryLib {
    * @param self: Storage of type `Data`
    * @param cpp: This is a struct of data much like an object. We use it to compress a few parameters
    *              instead of overloading _createPool.
-   * @param epochId: Pool we are currently dealing with.
-   * @param _unlock: Function as parameter. It should unlock a function with related `Common.FuncTag'
-   *                 when invoked.
    * @notice We first check that the duraetion given by the admin should not be zero.
    * Note: `.assertChained3` is simply making tripple boolean checks.
    */
   function _createPool(
     Data storage self,
     Common.CreatePoolParam memory cpp,
-    function (uint, Common.FuncTag) internal _unlock,
     address strategy,
     address user,
-    uint epochId,
     bool isPermissionless
   ) 
     private 
     returns(Common.Pool memory pool) 
   {
     Def memory _d = _def();
-    // Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration < type(uint8).max, "Invalid duration"); // Please uncomment this line after you have completed the testing.
+    uint epochId = _generateEpochId(self);
+    Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
     _validateAllowance(user, cpp.asset, cpp.unitContribution);
-    _updatePoolSlot(self, epochId, cpp, _d, strategy, isPermissionless);
-    _unlock(epochId, Common.FuncTag.JOIN);
-    pool = _fetchPoolData(self, epochId);
-    _updateAssetInStrategy(strategy, pool.addrs.asset, epochId);
+    _updatePoolSlot(self.poolArr, cpp, _d, strategy, isPermissionless, epochId);
+    // _setNextStage(self.poolArr, epochId, Common.FuncTag.JOIN);
+    pool = _fetchPool(self, epochId);
+    _updateAssetInStrategy(strategy, cpp.asset, epochId);
     _withdrawAllowance(user, cpp.asset, cpp.unitContribution, strategy);
-    _pushToStorage(self.poolArr, pool);
-    // require(self.poolArr.length > 0, "Hereeeee");
   }
 
   function _def()
@@ -122,7 +111,7 @@ library FactoryLib {
     internal 
     view 
   {
-    // require(IERC20(assetInUse).allowance(user, address(this)) >= value, "FactoryLib: Insufficient allowance");
+    require(IERC20(assetInUse).allowance(user, address(this)) >= value, "FactoryLib: Insufficient allowance");
   }
 
   /**@notice Send contribution to strategy
@@ -152,29 +141,33 @@ library FactoryLib {
    * @param _d: Default literal values i.e True, False, 0, 1 and address(0) 
    */
   function _updatePoolSlot(
-    Data storage self,
-    uint epochId, 
+    Common.Pool[] storage self,
     Common.CreatePoolParam memory cpp,
     Def memory _d,
     address strategy,
-    bool isPermissionless
+    bool isPermissionless,
+    uint epochId
   ) 
     private
   {
     uint24 durInSec = _convertDurToSec(uint16(cpp.duration));
     Common.InterestReturn memory _itr = cpp.unitContribution.mul(cpp.quorum).computeInterestsBasedOnDuration(cpp.intRate, durInSec, durInSec);
-    self.pools[epochId] = Common.Pool(
-      Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate),
-      Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution, epochId),
-      Common.Addresses(cpp.asset, _d.zeroAddr, strategy, cpp.members[0]),
-      _d.zero,
-      isPermissionless
+    self[epochId].uints = Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate);
+    self[epochId].uint256s = Common.Uint256s(_itr.fullInterest, _itr.intPerSec, cpp.unitContribution, cpp.unitContribution, epochId);
+    self[epochId].addrs = Common.Addresses(cpp.asset, _d.zeroAddr, strategy, cpp.members[0]);
+    self[epochId].isPermissionless = isPermissionless;
+    self[epochId].cData.push(
+      Common.ContributorData(
+        Common.Contributor(0, 0, 0, 0, 0, 0, cpp.members[0]),
+        Common.Rank(true, true),
+        0
+      )
     );
   }
 
   ///@dev Returns all uint256s related data in pool at epochId.
-  function _fetchPoolData(Data storage self, uint epochId) internal view returns (Common.Pool memory _return) {
-    _return = self.pools[epochId];
+  function _fetchPool(Data storage self, uint epochId) internal view returns (Common.Pool memory _return) {
+    _return = self.poolArr[epochId];
   }
 
   /**
@@ -195,7 +188,7 @@ library FactoryLib {
 
   /**@dev Create permissioned band
    * @param self: Storage of type `Data`.
-   * @param cpi : Parameter struct
+   * @param cpp : Parameter struct
    * Note: Each of the addresses on the members array must an Account instance. Participants must already own an
    * account before now otherwise, execution will not pass.
    * - Admin cannot replicate themselves in a band.
@@ -204,29 +197,24 @@ library FactoryLib {
    */
   function createPermissionedPool(
     Data storage self,
-    Common.CreatePermissionedPoolParam memory cpi
+    Common.CreatePoolParam memory cpp
   ) 
     internal
     returns (Common.CreatePoolReturnValue memory cpr) 
   {
     Def memory _d = _def();
-    uint epochId = _generateEpochId(self);
-    address admin = cpi.cpp.members[0];
+    address admin = cpp.members[0];
     address strategy = _fetchAndValidateStrategy(admin, self.pData.strategyManager);
-    for(uint i = _d.zero; i < cpi.cpp.members.length; i++) {
+    for(uint i = _d.zero; i < cpp.members.length; i++) {
       if(i == _d.zero) {
-          Common.Pool memory pool = _createPool(self, cpi.cpp, cpi._unlock, strategy, admin, epochId, _d.f);
-        (
-          uint slot,
-          Common.Contributor memory cbData
-        ) = _addNewContributor(self, cpr.epochId, admin, _d.t, _d.t);
-        cpr = Common.CreatePoolReturnValue(pool, cbData, epochId, uint16(slot));
+          cpr.pool = _createPool(self, cpp, strategy, admin, _d.f);
+          cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t);
       } else {
-        address contributor = cpi.cpp.members[i];
+        address contributor = cpp.members[i];
         bool(contributor != admin).assertTrue("Admin spotted twice");
-        _addNewContributor(self, cpr.epochId, contributor, _d.f, _d.t);
-      }
-      // self.pools[cpr.epochId].uints.quorum ++;
+        _addNewContributor(self, cpr.pool.uint256s.epochId, contributor, _d.f, _d.t);
+        cpr.pool = _fetchPool(self, cpr.pool.uint256s.epochId); 
+      } 
     }
   }
 
@@ -278,59 +266,79 @@ library FactoryLib {
     uint epochId, 
     address contributor,
     bool isAdmin,
-    bool isMember                                                                                                                                                                                     
+    bool isMember                                                                                                                                                                                
   ) 
     private 
     returns(
-      uint8 slot,
-      Common.Contributor memory cbData
+      Common.ContributorData memory cData
     )
   {
-    slot = _generateSlot(self.contributors, epochId);
-    _setSlot(self.slots, contributor, slot, epochId);
-    self.ranks[epochId][contributor] = Common.Rank({admin: isAdmin, member: isMember});
-    cbData.id = contributor;
-    _addContributor(self.contributors, cbData, epochId);
+    self.poolArr[epochId].cData.push();
+    uint8 slot = uint8(self.poolArr[epochId].userCount.current());
+    self.poolArr[epochId].userCount.increment();
+    cData = _addContributor(self, slot, Common.Rank({admin: isAdmin, member: isMember}), contributor, epochId);
   }
 
   /**@dev Push a new contributor to storage.
-    @param self : Storage of type mapping
-    @param cbData : Common.Contributor. 
-    @param epochId : Pool id
+    @param self : Storage of type Common.ContributorData array
+    @param rank : User's rank
+    @param slot : User's slot
+    @param contributor : Caller's address
    */
   function _addContributor(
-    mapping(uint => Common.Contributor[]) storage self, 
-    Common.Contributor memory cbData, 
+    Data storage self, 
+    uint8 slot,
+    Common.Rank memory rank,
+    address contributor,
     uint epochId
   ) 
     private 
+    returns (Common.ContributorData memory cData)
   {
-    self[epochId].push(cbData);
+    _setSlotAndRank(self.poolArr[epochId].cData, slot, rank, contributor);
+    self.slots[contributor][epochId] = slot;
+    cData = _getProfile(self, slot, epochId);
   }
 
   /**@dev Update contributor's data
     @param self : Storage of type mapping
     @param cbData : Contributor struct containing updated data
-    @param epochId : Pool id
+    @param rank :  User rank of type Common.Rank.
     @param slot : Position of Contributor in the list
    */
   function _setContributorData(
-    mapping(uint => Common.Contributor[]) storage self, 
-    Common.Contributor memory cbData, 
-    uint epochId, 
-    uint16 slot
+    Common.ContributorData[] storage self, 
+    Common.Contributor memory cbData,
+    Common.Rank memory rank,
+    uint16 slot 
   )
     private 
   {
-    self[epochId][slot] = cbData;
+    self[slot] = Common.ContributorData(
+      {
+        cData: Common.Contributor(
+          {
+            durOfChoice: cbData.durOfChoice,
+            expInterest: cbData.expInterest,
+            payDate: cbData.payDate,
+            turnTime: cbData.turnTime,
+            loan: cbData.loan,
+            colBals: cbData.colBals,
+            id: cbData.id
+          }
+        ),
+        rank: rank,
+        slot: uint8(slot)
+      }
+    );
   }
 
   /**
    * @dev Return the length of epochs i.e total epoch to date
    * @param self : Storage of type Data
    */
-  function _getEpoches(Data storage self) internal view returns(uint epoches) {
-    epoches = self.poolArr.length;
+  function _getEpoches(Data storage self) internal view returns(uint epoch) {
+    epoch = self.epoches.current();
   } 
 
   /**
@@ -341,82 +349,49 @@ library FactoryLib {
     Data storage self
   ) 
     internal 
-    view
     returns (uint _return) 
   {
+    self.poolArr.push();
     _return = _getEpoches(self);
+    self.epoches.increment();
   }
 
   /**@dev Ruturn provider's info
-    @param self : Storage of type mapping
-    @param epochId : Epoch id
-    @param user : User 
+    @param self : Storage of type Common.ContributorData
    */
   function _getProfile(
-    Data storage self, 
-    uint epochId, 
-    address user
+    Data storage self,
+    uint slot,
+    uint epochId
   ) 
     internal 
     view 
     returns(Common.ContributorData memory cbt) 
   {
-    uint8 slot = _getSlot(self.slots, user, epochId);
-    cbt = Common.ContributorData({
-      slot: slot,
-      cData: self.contributors[epochId][slot],
-      rank: _getRank(self.ranks, epochId, user)
-    });
-  }
-
-  /**@dev Get the slots of strategy on the list
-    @param self : Storage of type mapping
-    @param epochId : Pool Id
-    Note: To avoid irregularity in accessing Strategy array 
-      `_generateSlot` must be invoked before adding a new data 
-      to the contributors array.
-   */
-  function _generateSlot(
-    mapping(uint => Common.Contributor[]) storage self, 
-    uint epochId
-  ) 
-    internal 
-    view 
-    returns(uint8 _return) 
-  {
-    _return = uint8(self[epochId].length);
+    cbt = self.poolArr[epochId].cData[slot];
   }
 
   /**@dev Creates a new permissionless community i.e public
    * @param self: Storage of type `Data`
    * @param cpp: This is a data struct. We use it to compress a few parameters
    *              instead of overloading _createPool.
-   * @param _unlock: Function as parameter. It should unlock a function with related `Common.FuncTag'
-   *                 when invoked.
    * Note: Only in private bands we mandated the selected contribution value does not exist.
    *       This is to ensure orderliness in the system, timeliness, and efficiency.
    */
   function createPermissionlessPool( 
     Data storage self, 
-    Common.CreatePoolParam memory cpp,
-    function (uint, Common.FuncTag) internal _unlock
+    Common.CreatePoolParam memory cpp
   )
     internal
     returns (Common.CreatePoolReturnValue memory cpr)
   {
     Def memory _d = _def();
-    uint epochId = _generateEpochId(self);
     address admin = cpp.members[0];
     address strategy = _fetchAndValidateStrategy(admin, self.pData.strategyManager);
     self.amountExist[cpp.unitContribution].assertFalse("Amount exist");
     self.amountExist[cpp.unitContribution] = _d.t;
-    Common.Pool memory pool = _createPool(self, cpp, _unlock, strategy, admin, epochId, _d.t);
-    (
-      uint16 slot,
-      Common.Contributor memory cbData
-    ) = _addNewContributor(self, cpr.epochId, admin, _d.t, _d.t);
-    cpr = Common.CreatePoolReturnValue(pool, cbData, epochId, slot);
-    // self.pools[epochId].uints.quorum ++;
+    cpr.pool = _createPool(self, cpp, strategy, admin, _d.t);
+    cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t);
   }
 
   /** 
@@ -445,7 +420,7 @@ library FactoryLib {
     internal
     view
   {
-    require(_getEpoches(self) > epochId, "Epoch Id has not begin");
+    require(epochId < _getEpoches(self), "Epoch Id has not begin");
   }
 
   /**@dev Add new contributor to a band.
@@ -462,44 +437,37 @@ library FactoryLib {
       Common.CommonEventData memory ced
     ) 
   {
-    Common.Pool memory pool = _fetchPoolData(self, _ab.epochId);
+    ced.pool = _fetchPool(self, _ab.epochId);
+    _validateStage(ced.pool.stage, Common.FuncTag.JOIN, "Add Liquidity not ready");
     Def memory _d = _def();
     if(_ab.isPermissioned) {
-      ced.cbData = _mustBeAMember(self, _ab.epochId, _msgSender());
+      _mustBeAMember(self, _ab.epochId, _msgSender());
     } else {
-      Utils.assertTrue(_getCurrentProvidersSize(self.contributors, _ab.epochId) < pool.uints.quorum, "Pub filled");
-      ced.cbData = _mustNotBeAMember(self, _ab.epochId, _msgSender());
+      Utils.assertTrue(_getUserCount(self.poolArr[_ab.epochId]) < ced.pool.uints.quorum, "Pub filled");
+      _mustNotBeAMember(self, _ab.epochId, _msgSender());
       _addNewContributor(self, _ab.epochId, _msgSender(), _d.f, _d.t);
     }
-    self.pools[_ab.epochId].uint256s.currentPool += pool.uint256s.unit;
-    Common.Pool memory newPoolData = _fetchPoolData(self, _ab.epochId);
-    if(_isPoolFilled(newPoolData)) {
-      _ab.lock(_ab.epochId, Common.FuncTag.JOIN);
-      _ab.unlock(_ab.epochId, Common.FuncTag.GET);
-      _setTurnTime(self, newPoolData.uints.selector, _ab.epochId);
+    self.poolArr[_ab.epochId].uint256s.currentPool += ced.pool.uint256s.unit;
+    ced.pool = _fetchPool(self, _ab.epochId);
+    if(_isPoolFilled(self.poolArr[_ab.epochId], _ab.isPermissioned)) {
+      _setTurnTime(self, ced.pool.uints.selector, _ab.epochId);
+      _setNextStage(self.poolArr, _ab.epochId, Common.FuncTag.GET);
     }
-    _validateAllowance(_msgSender(), pool.addrs.asset, pool.uint256s.unit);
-    _withdrawAllowance(_msgSender(), pool.addrs.asset, pool.uint256s.unit, pool.addrs.strategy);
-    ced.pool = newPoolData;
-    ced.rank = _getRank(self.ranks, _ab.epochId, _msgSender());
-    ced.slot = uint8(_getSlot(self.slots, _msgSender(), _ab.epochId));
+    _validateAllowance(_msgSender(), ced.pool.addrs.asset, ced.pool.uint256s.unit);
+    _withdrawAllowance(_msgSender(), ced.pool.addrs.asset, ced.pool.uint256s.unit, ced.pool.addrs.strategy);
+    addContributorToStrategy(_msgSender(), ced.pool.addrs.strategy, _ab.epochId); 
+    ced.pool = _fetchPool(self, _ab.epochId);
   }
 
-  
-
   /**
-   * @dev Returns the Rank object of a user.
+   * @dev Validate stage for invoked function.
    */
-  function _getRank(
-    mapping(uint => mapping (address => Common.Rank)) storage self, 
-    uint epochId, 
-    address user
-  ) 
-    internal 
-    view 
-    returns(Common.Rank memory _rank) 
-  {
-    _rank = self[epochId][user];
+  function _validateStage(
+    Common.FuncTag expected, 
+    Common.FuncTag actual, 
+    string memory errorMessage
+  ) internal pure {
+    (expected == actual).assertTrue(errorMessage);
   }
 
   /**
@@ -515,16 +483,19 @@ library FactoryLib {
   ) 
     internal 
     view 
-    returns(Common.Contributor memory cbData) 
   {
-    cbData = self.contributors[epochId][_getSlot(self.slots, contributor, epochId)];
-    self.ranks[epochId][contributor].member.assertTrue("Not A Member");
+    Common.Pool memory pool = _fetchPool(self, epochId);
+    uint8 slot = _getSlot(self.slots, contributor, epochId);
+    slot == 0? 
+      bool(contributor == pool.addrs.admin).assertTrue("Admin cannot liquidate")
+        : 
+          _getProfile(self, slot, epochId).rank.member.assertTrue("Not a member");
   }
 
-  /**@dev Return number of members already in the pool
+  /**@dev Return number of members already in the pool 
    */
-  function _getCurrentProvidersSize(mapping(uint => Common.Contributor[]) storage self, uint epochId) internal view returns(uint _return) {
-    _return = self[epochId].length;
+  function _getUserCount(Common.Pool storage self) internal view returns(uint _return) {
+    _return = self.userCount.current();
   }
 
 
@@ -541,23 +512,26 @@ library FactoryLib {
   ) 
     internal 
     view 
-    returns(Common.Contributor memory cbData) 
   {
-    cbData = self.contributors[epochId][_getSlot(self.slots, contributor, epochId)];
-    self.ranks[epochId][contributor].member.assertFalse("Contributor is a member");
+    Common.Pool memory pool = _fetchPool(self, epochId);
+    uint8 slot = _getSlot(self.slots, contributor, epochId);
+    slot == 0? 
+      bool(contributor != pool.addrs.admin).assertTrue("Admin cannot liquidate")
+        : 
+          require(false, "Not permitted");
   }
 
   /**@dev Check if pool is filled
     * @dev Msg.sender must not be a member of the band at epoch Id before now.
-    * @param pool: Pool struct
+    * @param self: Pool struct
   */
-  function _isPoolFilled(Common.Pool memory pool) 
+  function _isPoolFilled(Common.Pool storage self, bool isPermissioned) 
     internal 
-    pure
+    view
     returns(bool filled) 
   {
-    uint expectedLiq = pool.uint256s.unit * pool.uints.quorum;
-    filled = expectedLiq == pool.uint256s.currentPool;
+    uint expected = self.uint256s.unit.mul(self.uints.quorum);
+    filled = !isPermissioned? _getUserCount(self) == self.uints.quorum : expected == self.uint256s.currentPool;
   }
 
   /**@dev Update selector to who will get finance next
@@ -571,13 +545,23 @@ library FactoryLib {
     uint epochId
   ) 
     private
-    // returns(address contributor)
   {
-    self.contributors[epochId][selector].turnTime = _now();
-    // contributor = self.contributors[epochId][selector].id;
+    self.poolArr[epochId].cData[selector].cData.turnTime = _now();
   }
 
-  /**@dev Get the slots of contributor on the list
+  function getProfile(
+    Data storage self, 
+    address user,
+    uint epochId
+  ) 
+    internal 
+    view 
+    returns(Common.ContributorData memory) 
+  {
+    return _getProfile(self, _getSlot(self.slots, user, epochId), epochId);
+  }
+
+  /**@dev Get the slots of user with address and epochId
     @param self : Storage of type mappping
     @param contributor : Contributor address
    */
@@ -594,59 +578,42 @@ library FactoryLib {
   }
 
   /**@dev Set the slot for contributor
-    @param self : Storage of type mapping
-    @param contributor : Contributor
-    @param slot : New index
+    @param self : Common.ContributorData
+    @param rank : User's Rank
+    @param slot : User's position
+    @param user : User's address
    */
-  function _setSlot(
-    mapping(address => mapping(uint => uint)) storage self, 
-    address contributor, 
+  function _setSlotAndRank(
+    Common.ContributorData[] storage self,
     uint8 slot, 
-    uint epochId
+    Common.Rank memory rank,
+    address user
   ) 
     private 
-  {
-    self[contributor][epochId] = slot;
+  { 
+    self[slot].slot = slot;
+    self[slot].rank = rank;
+    self[slot].cData.id = user;
   }
   
   /**@dev Set amount withdrawable by provider in their respective strategy.
-   * @param contributor : Contributor.
-   * @param epochId: Pool index.
-   * @param amount: Amount to set as claim.
-   * @param fee: platform fee if any.
-   * @param debt Loan or debt if any.
-   * @param feeTo : If fee is greater than 0, feeTo (fee Recipient) must not be address(0).
-   * @param allHasGF : A booleab flag indicating if all providers has fulfilled their borrowings.
-   * @param strategy: Strategy for mentioned epoch.
-   * @param txType : The type of transaction to perform in the strategy contract. It can either 
-   *                  be ERC20 or NATIVE.
-   */
+   * @param scp : Parameter of type Common.SetClaimPAram
+  */
 
-  function _setClaim(
-    uint amount,
-    uint epochId,
-    uint fee,
-    uint debt,
-    uint value,
-    address contributor,
-    address strategy,
-    address feeTo,
-    bool allHasGF,
-    Common.TransactionType txType
-  ) 
+  function _setClaim(Common.SetClaimParam memory scp) 
     private 
     returns(uint actualClaim)
   {
     actualClaim = 
-      IStrategy(strategy).setClaim{value: value}(
-        amount,
-        fee,
-        debt,
-        epochId,
-        contributor,
-        feeTo,
-        allHasGF,
-        txType
+      IStrategy(scp.strategy).setClaim{value: scp.value}(
+        scp.amount,
+        scp.fee,
+        scp.debt,
+        scp.epochId,
+        scp.contributor,
+        scp.feeTo,
+        scp.allHasGF,
+        scp.txType
       );
   }
 
@@ -657,8 +624,6 @@ library FactoryLib {
     @param msgValue : Value sent in call.
     @param daysOfUseInHr : Number of days specified in hours after which 
                       the contributor shall return the borrowed fund.
-    @param _lock : Utility that lock a function when called.
-    @param _unlock : Utility that unlock a function when called.
     @param getXFIPriceInUSD : A function that returns the current price of XFI.
   */
   function getFinance(
@@ -666,24 +631,21 @@ library FactoryLib {
     uint epochId,
     uint msgValue,
     uint16 daysOfUseInHr,
-    function (uint, Common.FuncTag) internal _lock,
-    function (uint, Common.FuncTag) internal _unlock,
     function () internal returns(uint) getXFIPriceInUSD
   ) 
     internal
     returns(Common.CommonEventData memory ced)
   {
-    _lock(epochId, Common.FuncTag.GET);
-    _unlock(epochId, Common.FuncTag.PAYBACK);
-    Common.Pool memory pool = _fetchPoolData(self, epochId);
+    Common.Pool memory pool = _fetchPool(self, epochId);
+    _validateStage(pool.stage, Common.FuncTag.GET, "Borrow not ready");
     if(pool.allGh == pool.uints.quorum) revert IFactory.AllMemberIsPaid();
-    _increaseAllGh(self.pools, epochId);
+    _increaseAllGh(self.poolArr, epochId);
     bool(pool.uint256s.currentPool >= (pool.uint256s.unit.mul(pool.uints.quorum))).assertTrue("Pool not complete");
     ced = _updateStorageAndCall(
       self,
       Common.UpdateMemberDataParam(
         _convertDurToSec(daysOfUseInHr), 
-        self.contributors[epochId][pool.uints.selector].id,
+        self.poolArr[epochId].cData[pool.uints.selector].cData.id,
         epochId,
         pool.uint256s.currentPool.computeFee(self.pData.makerRate),
         msgValue,
@@ -697,7 +659,7 @@ library FactoryLib {
    *  This is a flag we use in selecting the next borrower.
   */
   function _moveSelectorToTheNext(
-    mapping(uint => Common.Pool) storage self, 
+    Common.Pool[] storage self, 
     uint epochId
   ) 
     private 
@@ -708,7 +670,7 @@ library FactoryLib {
   /**@dev Increment allGh when one member get finance
   */
   function _increaseAllGh(
-    mapping(uint => Common.Pool) storage self, 
+    Common.Pool[] storage self, 
     uint epochId
   )  
     private 
@@ -799,49 +761,54 @@ library FactoryLib {
     returns (Common.CommonEventData memory ced) 
   {
     Def memory _d = _def();
-    _resetPoolBalance(self.pools, arg.epochId);
-    address sender = arg.expected;
-    Common.ContributorData memory cbt = _getProfile(self, arg.epochId, arg.expected); // Expected contributor
-    ced.slot = cbt.slot;
-    ced.cbData = cbt.cData;
+    _resetPoolBalance(self.poolArr, arg.epochId);
+    address caller = arg.expected;
+    Common.ContributorData memory cbt = _getProfile(self, _getSlot(self.slots, arg.expected, arg.epochId), arg.epochId); // Expected contributor
     if(_now() > cbt.cData.turnTime + 1 hours){
       if(_msgSender() != arg.expected) {
-        sender = _msgSender();
-        _mustBeAMember(self, arg.epochId, sender);
-        ced.slot = _swapSlots(self, cbt.slot, arg.expected, sender, arg.epochId);
+        caller = _msgSender();
+        _mustBeAMember(self, arg.epochId, caller);
+        cbt = _swapFullProfile(self, cbt.slot, arg.expected, caller, arg.epochId, cbt);
+      } else {
+        // Do thing
       }
     } else {
-      require(_msgSender() == cbt.cData.id, "Not the expected");
+      require(_msgSender() == cbt.cData.id, "Turn time has not passed");
     }
-    _computeCollateral(
-      arg.pool.uint256s.currentPool,
-      arg.msgValue,
-      uint24(arg.pool.uints.colCoverage),
-      arg.xfiUSDPriceInDecimals
+    bool(
+      arg.msgValue >=
+      _computeCollateral(
+        arg.pool.uint256s.currentPool,
+        arg.msgValue,
+        uint24(arg.pool.uints.colCoverage),
+        arg.xfiUSDPriceInDecimals
+      )
+    ).assertTrue("Insufficient Collateral in XFI");
+    self.poolArr[arg.epochId].addrs.lastPaid = caller;
+    _moveSelectorToTheNext(self.poolArr, arg.epochId);
+    _setContributorData(
+      self.poolArr[arg.epochId].cData,
+      Common.Contributor({
+        durOfChoice: arg.durOfChoice,
+        expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
+        payDate: _now().add(arg.durOfChoice),
+        turnTime: cbt.cData.turnTime,
+        loan: _setClaim(Common.SetClaimParam(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,caller, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20)),
+        colBals: arg.msgValue,
+        id: caller
+      }),
+      cbt.rank,
+      cbt.slot
     );
-    self.pools[arg.epochId].addrs.lastPaid = sender;
-    _moveSelectorToTheNext(self.pools, arg.epochId);
-    ced.cbData = Common.Contributor({
-      durOfChoice: arg.durOfChoice,
-      expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
-      payDate: _now().add(arg.durOfChoice),
-      turnTime: cbt.cData.turnTime + 1 hours,
-      loan: _setClaim(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,sender, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20),
-      colBals: arg.msgValue,
-      // hasGH: _d.t,
-      id: sender
-    });
-    _setContributorData(self.contributors, ced.cbData, arg.epochId, ced.slot);
-    ced.pool = _fetchPoolData(self, arg.epochId);
-    // (bool sent,) = arg.pool.addrs.strategy.call{value:arg.msgValue}("");
-    // sent.assertTrue("XFI sent to strategy failed");
+    _setNextStage(self.poolArr, arg.epochId, Common.FuncTag.PAYBACK);
+    ced.pool = _fetchPool(self, arg.epochId);
   }
 
   /**@dev Reset pool balances
     @param self: Storage of type mapping
     @param epochId : Pool index
    */
-  function _resetPoolBalance(mapping(uint => Common.Pool) storage self, uint epochId) private {
+  function _resetPoolBalance(Common.Pool[] storage self, uint epochId) private {
     self[epochId].uint256s.currentPool = _def().zero;
   }
 
@@ -859,30 +826,33 @@ library FactoryLib {
    * The assumption is that profile data of contributors who are yet to get finance
    * are identical except if the expected address is an admin which makes it easier for us to swap profile data.
    * @param self: Storage ref of type `Data`.
-   * @param _expSlot: Slot of the expected address.
-   * @param _expContributor : The address that should get finance if nothing change.
-   * @param _actContributor: Actual calling address.
+   * @param expSlot: Slot of the expected address.
+   * @param expCaller : The address that should get finance if nothing change.
+   * @param actCaller: Actual calling address.
    * @param epochId: Pool Id.
+   * @param expcData: Profile of expected user.
    * @notice Defaulted address will not be taken out of the band. In this case, we move them backward. 
    *          The worse that could happen to them is to them is for someone else to occupy their slot. 
    */
-  function _swapSlots(
+  function _swapFullProfile(
     Data storage self,
-    uint8 _expSlot,
-    address _expContributor,
-    address _actContributor,
-    uint epochId
+    uint8 expSlot,
+    address expCaller,
+    address actCaller,
+    uint epochId,
+    Common.ContributorData memory expcData
   )
     private 
-    returns(
-      // Common.Contributor memory _actInfo, 
-      uint8 _actSlot
-    ) 
+    returns(Common.ContributorData memory cbt) 
   {
-    Common.ContributorData memory cbt = _getProfile(self, epochId, _actContributor);
-    _actSlot = _expSlot;
-    self.slots[_expContributor][epochId] = cbt.slot;
-    self.slots[_actContributor][epochId] = _expSlot;
+    cbt = _getProfile(self, _getSlot(self.slots, actCaller, epochId), epochId);
+    cbt.cData.turnTime = expcData.cData.turnTime;
+    expcData.cData.turnTime = 0;
+    _setContributorData(self.poolArr[epochId].cData, cbt.cData, cbt.rank, expSlot);
+    _setContributorData(self.poolArr[epochId].cData, expcData.cData, expcData.rank, cbt.slot);
+    self.slots[expCaller][epochId] = cbt.slot;
+    self.slots[actCaller][epochId] = expSlot;
+    cbt = _getProfile(self, _getSlot(self.slots, actCaller, epochId), epochId);
   }
 
   /**@dev Payback borrowed fund.
@@ -897,39 +867,59 @@ library FactoryLib {
     internal
     returns(Common.CommonEventData memory ced)
   {
-    Common.Pool memory _p = _fetchPoolData(self, pb.epochId);
-    uint debt = _getCurrentDebt(self, pb.epochId, pb.user);
-    bool(debt > 0).assertTrue("No debt");
-    bool allGF = _allHasGF(self.pools, pb.epochId);
-    pb.lock(pb.epochId, Common.FuncTag.PAYBACK);
+    Common.Pool memory _p = _fetchPool(self, pb.epochId);
+    _validateStage(_p.stage, Common.FuncTag.PAYBACK, "Payback not ready");
+    Common.DebtReturnValue memory crv = _getCurrentDebt(self, pb.epochId, pb.user);
+    bool(crv.debt > 0).assertTrue("No debt");
+    bool allGF = _allHasGF(self.poolArr, pb.epochId);
     if(!allGF){
-      _replenishPoolBalance(self.pools, pb.epochId);
-      pb.unlock(pb.epochId, Common.FuncTag.GET);
+      _replenishPoolBalance(self.poolArr, pb.epochId);
+      _setNextStage(self.poolArr, pb.epochId, Common.FuncTag.GET);
       _setTurnTime(self, _p.uints.selector, pb.epochId);
+    } else {
+      _setNextStage(self.poolArr, pb.epochId, Common.FuncTag.ENDED);
     }
-    // pb.unlock(pb.epochId, Common.FuncTag.WITHDRAW);
     setPermit(pb.user, pb.epochId, _def().t);
-    _validateAllowance(pb.user, _p.addrs.asset, debt);
-    _withdrawAllowance(pb.user, _p.addrs.asset, debt, _p.addrs.strategy);
-    ced = Common.CommonEventData(
-      _getSlot(self.slots, pb.user, pb.epochId),
-      _getRank(self.ranks, pb.epochId, pb.user),
-      _getProfile(self, pb.epochId, pb.user).cData,
-      _fetchPoolData(self, pb.epochId)
-    );
-    
+    _validateAllowance(pb.user, _p.addrs.asset, crv.debt);
+    _withdrawAllowance(pb.user, _p.addrs.asset, crv.debt, _p.addrs.strategy);
+    ced.pool = _fetchPool(self, pb.epochId);
     _setClaim(
-      ced.cbData.colBals,
-      pb.epochId,
-      0,
-      debt,
-      0,
-      pb.user,
-      _p.addrs.strategy,
-      address(0),
-      allGF,
-      Common.TransactionType.NATIVE
+      Common.SetClaimParam(
+        ced.pool.cData[crv.slot].cData.colBals,
+        pb.epochId,
+        0,
+        crv.debt,
+        0,
+        pb.user,
+        _p.addrs.strategy,
+        address(0),
+        allGF,
+        Common.TransactionType.NATIVE
+      )
     );
+  }
+
+  /**
+   * @dev Returns the current stage of pool at epochId 
+   */
+  function _getStage(
+    Common.Pool[] storage self, 
+    uint epochId
+  ) internal view returns(Common.FuncTag stage) {
+    stage = self[epochId].stage;
+  }
+
+  /**
+   * @dev Sets the next stage of an epoch
+   */
+  function _setNextStage(
+    Common.Pool[] storage self, 
+    uint epochId,
+    Common.FuncTag nextStage
+  ) private {
+    // uint8 stage = uint8(_getStage(self, epochId));
+    assert(uint8(nextStage) < 5);
+    self[epochId].stage = nextStage;
   }
 
   /**@dev Return accrued debt for user up to this moment.
@@ -944,18 +934,19 @@ library FactoryLib {
     address user
   ) 
     internal 
-    view returns(uint debt) 
+    view returns(Common.DebtReturnValue memory crv) 
   {
-    Common.Pool memory _p = _fetchPoolData(self, epochId);
-    Common.Contributor memory _cb = _getProfile(self, epochId, user).cData;
-    debt = _cb.loan.add(_p.uint256s.intPerSec.mul(_now().sub(_cb.turnTime)));
+    uint intPerSec = _fetchPool(self, epochId).uint256s.intPerSec;
+    crv.slot = _getSlot(self.slots, user, epochId);
+    Common.Contributor memory _cb = _getProfile(self, crv.slot, epochId).cData;
+    crv.debt = _cb.loan.add(intPerSec.mul(_now().sub(_cb.turnTime)));
   }
 
   /**@dev Reset pool balances
     @param self: Storage of type mapping
     @param epochId : Pool index
    */
-  function _replenishPoolBalance(mapping(uint => Common.Pool) storage self, uint epochId) private {
+  function _replenishPoolBalance(Common.Pool[] storage self, uint epochId) private {
     Common.Pool memory pool = self[epochId];
     self[epochId].uint256s.currentPool = pool.uint256s.unit.mul(pool.uints.quorum);
   }
@@ -963,7 +954,7 @@ library FactoryLib {
   
   /**@dev Check if round is completed i.e all contributors have received finance
   */
-  function _allHasGF(mapping(uint => Common.Pool) storage self, uint epochId) internal view returns(bool) {
+  function _allHasGF(Common.Pool[] storage self, uint epochId) internal view returns(bool) {
     Common.Pool memory pool = self[epochId];
     return pool.allGh == pool.uints.quorum;
   }
@@ -979,21 +970,20 @@ library FactoryLib {
   ) 
     internal 
     view 
-    returns (Common.Contributor memory _liq, bool defaulted, uint currentDebt) 
+    returns (Common.ContributorData memory _liq, bool defaulted, uint currentDebt) 
   {
-    Common.Pool memory _p = _fetchPoolData(self, epochId);
-    // uint16 slot = _getSlot(self.slots, _p.addrs.lastPaid, epochId);
-    Common.Contributor memory prof = _getProfile(self, epochId, _p.addrs.lastPaid).cData;
+    Common.Pool memory _p = _fetchPool(self, epochId);
+    Common.ContributorData memory prof = _getProfile(self, _getSlot(self.slots, _p.addrs.lastPaid, epochId), epochId);
     (_liq, defaulted, currentDebt) 
       = 
-        _now() <= prof.payDate? 
+        _now() <= prof.cData.payDate? 
           (_liq, _def().f, 0) 
             : 
               (prof, _def().t, _getCurrentDebt(
                 self,
                 epochId,
-                prof.id
-              ));
+                prof.cData.id
+              ).debt);
   }
 
   /**
@@ -1003,30 +993,26 @@ library FactoryLib {
       - Liquidator must not be a participant in pool at `epochId. We use this 
         to avoid fatal error in storage.
     @param self : Storage ref.
-    @param lp : Parameters.
+    @param epochId : Epoch Id.
   */
   function liquidate(
     Data storage self,
-    Common.LiquidateParam memory lp,
+    uint epochId,
     function(address, uint, bool) internal setPermit
   ) 
     internal
     returns (Common.CommonEventData memory ced)
   {
-    (Common.Contributor memory prof, bool defaulted,) = _enquireLiquidation(self, lp.epochId);
+    (Common.ContributorData memory prof, bool defaulted,) = _enquireLiquidation(self, epochId);
     defaulted.assertTrue("Not defaulter");
     address liquidator = _msgSender();
-    _mustNotBeAMember(self, lp.epochId, liquidator);
-    self.pools[lp.epochId].addrs.lastPaid = liquidator;
-    _swapProfile(self, lp.epochId, _getSlot(self.slots, prof.id, lp.epochId), liquidator, prof, self.ranks[lp.epochId][prof.id]);
+    _mustNotBeAMember(self, epochId, liquidator);
+    self.poolArr[epochId].addrs.lastPaid = liquidator;
+    uint8 slot = _getSlot(self.slots, prof.cData.id, epochId);
+    _swapProfile(self, epochId, slot, liquidator, prof.cData.id);
     ced = payback(
       self, 
-      Common.PaybackParam(
-        lp.epochId, 
-        liquidator,
-        lp.lock, 
-        lp.unlock
-      ),
+      Common.PaybackParam(epochId, liquidator),
       setPermit
     ); 
   }
@@ -1043,20 +1029,14 @@ library FactoryLib {
     uint epochId,
     uint8 oldProvSlot,
     address newProv,
-    Common.Contributor memory oldProvData,
-    Common.Rank memory oldProvRank
+    address defProv
   ) 
     private 
   {
-    Common.Contributor memory newProvData = oldProvData;
-    newProvData.id = newProv;
-    // newProvData.loan = 0;
-    // newProvData.colBals = 0;
-    _setContributorData(self.contributors, newProvData, epochId, oldProvSlot);
-    _setSlot(self.slots, newProv, oldProvSlot, epochId);
-    self.ranks[epochId][newProv] = oldProvRank;
-    delete self.ranks[epochId][oldProvData.id];
-    IStrategy(_fetchPoolData(self, epochId).addrs.strategy).swapProvider(epochId, newProv, oldProvData.id);
+    self.poolArr[epochId].cData[oldProvSlot].cData.id = newProv;
+    self.slots[newProv][epochId] = oldProvSlot;
+    delete self.slots[defProv][epochId];
+    IStrategy(_fetchPool(self, epochId).addrs.strategy).swapProvider(epochId, newProv, defProv);
   }
 
   /**
@@ -1072,42 +1052,39 @@ library FactoryLib {
     Data storage self,
     uint epochId,
     bool isPermissionLess,
-    function(address, uint, bool) internal setPermit,
-    function (uint, Common.FuncTag) internal _lock
+    function(address, uint, bool) internal setPermit
   ) 
     internal
     returns (uint success)
   {
-    require(epochId < self.poolArr.length, "Invalid epoch lId");
-    Common.Pool memory _p = _fetchPoolData(self, epochId);
+    verifyEpochId(self, epochId);
+    Common.Pool memory _p = _fetchPool(self, epochId);
     address creator = _msgSender();
-    _isAdmin(self.ranks, epochId, creator);
+    _isAdmin(self, epochId, creator);
     Def memory _d = _def();
     if(isPermissionLess) {
-      bool(self.contributors[epochId].length == 1).assertTrue("FactoryLib - Pub: Cannot cancel");
+      bool(self.poolArr[epochId].userCount.current() == 1).assertTrue("FactoryLib - Pub: Cannot cancel");
       delete self.amountExist[_p.uint256s.unit];
     } else {
       bool(_p.uint256s.currentPool <= _p.uint256s.unit).assertTrue("FactoryLib - Priv: Cannot cancel");
     }
-    delete self.poolArr[epochId];
-    Common.Contributor memory newC;
-    self.pools[epochId].uints.quorum = 0;
-    _setContributorData(self.contributors, newC, epochId, _getSlot(self.slots, creator, epochId));
-    _lock(epochId, Common.FuncTag.JOIN);
+    self.poolArr[epochId].uints.quorum = 0;
     setPermit(creator, epochId, true);
-    _setClaim(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20);
+    _setNextStage(self.poolArr, epochId, Common.FuncTag.ENDED);
+    _setClaim(Common.SetClaimParam(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20));
     success = epochId;
   }
 
   function _isAdmin(
-    mapping(uint => mapping (address => Common.Rank)) storage self,
+    Data storage self,
     uint epochId,
     address user
   ) 
     internal
     view
   {
-    require(self[epochId][user].admin, "FactoryLib: Only admin");
+    uint8 slot = _getSlot(self.slots, user, epochId);
+    require(self.poolArr[epochId].cData[slot].rank.admin, "FactoryLib: Only admin");
   }
 
 
@@ -1123,8 +1100,8 @@ library FactoryLib {
     internal
   {
     address user = _msgSender();
-    self.contributors[epochId][_getSlot(self.slots, user, epochId)].colBals = 0;
-    require(IStrategy(_fetchPoolData(self, epochId).addrs.strategy).withdraw(epochId, user), "Withdrawal failed");
+    self.poolArr[epochId].cData[_getSlot(self.slots, user, epochId)].cData.colBals = 0;
+    require(IStrategy(_fetchPool(self, epochId).addrs.strategy).withdraw(epochId, user), "Withdrawal failed");
   }
 
   /**
@@ -1140,10 +1117,10 @@ library FactoryLib {
     view
     returns(Common.Balances memory balances) 
   {
-    Common.Pool memory pool = _fetchPoolData(self, epochId);
+    Common.Addresses memory addrs = _fetchPool(self, epochId).addrs;
     balances = Common.Balances({
-      xfi: pool.addrs.strategy.balance,
-      erc20: IERC20(pool.addrs.asset).balanceOf(pool.addrs.strategy)
+      xfi: addrs.strategy.balance,
+      erc20: IERC20(addrs.asset).balanceOf(addrs.strategy)
     });
   }
   /** @dev Update Contract variables
@@ -1167,19 +1144,6 @@ library FactoryLib {
     return true;
   }
 
-  /**
-   * @dev Set pool to storage array. 
-   * We use it for read purpose.
-   */
-  function _pushToStorage(
-    Common.Pool[] storage self, 
-    Common.Pool memory pool
-  ) 
-    private
-  {
-    self.push(pool);
-  } 
-
   function fetchPools(
     Data storage self
   )
@@ -1188,6 +1152,7 @@ library FactoryLib {
     returns(Common.Pool[] memory pools) 
   {
     pools = self.poolArr;
+    return pools;
   } 
 }
 

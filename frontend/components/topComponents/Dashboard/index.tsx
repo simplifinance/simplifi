@@ -7,6 +7,7 @@ import { LiquidityPool, Pools } from '@/interfaces';
 import { BigNumber } from  'bignumber.js';
 import { toBN, toBigInt } from '@/utilities';
 import { formatEther } from 'viem';
+import { StorageContext } from '@/components/StateContextProvider';
 
 const extractValues = (pools: Pools ) => {
   let tvl : BigNumber = toBN(0);
@@ -23,8 +24,8 @@ const extractValues = (pools: Pools ) => {
   };
 }
 
-const Dashboard = ({pools} : {pools:Pools}) => {
-
+const Dashboard : React.FC = () => {
+  const { storage: { pools } } = React.useContext(StorageContext);
   const { tvl, permissioned, permissionless } = extractValues(pools);
 
   const dashboardInfo = [

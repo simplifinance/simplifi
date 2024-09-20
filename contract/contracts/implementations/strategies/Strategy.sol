@@ -196,7 +196,8 @@ contract Strategy is IStrategy, OnlyOwner {
   }
 
   /**
-   * @dev Swaps addresses.
+   * @dev Swaps addresses. Only during liquidation. We attemp to replace
+   *  the defaulted party with the liquidated.
    * @param epochId : EpochId.
    * @param newProv : New address.
    * @param oldProv : Old address.

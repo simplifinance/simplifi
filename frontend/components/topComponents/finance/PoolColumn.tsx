@@ -82,7 +82,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
             config,
             epochId
         });
-        console.log("Result", result);
+        // console.log("Result", result);
         setProfile(result);
     };
     const toggleProfileModal = async() => {

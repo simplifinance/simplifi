@@ -98,7 +98,7 @@ interface IFactory is Common {
   ) 
     external 
     view 
-    returns(Contributor memory prof, bool defaulted, uint debtToDate); 
+    returns(Common.ContributorData memory _liq, bool defaulted, uint currentDebt); 
   
   function getCurrentDebt(
     uint epochId,

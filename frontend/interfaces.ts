@@ -1,4 +1,5 @@
-import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
+import { BigNumberish } from "ethers";
+import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 export type WagmiConfig = import("wagmi").Config;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
@@ -12,12 +13,12 @@ export enum FuncTag {
     JOIN, 
     GET, 
     PAYBACK, 
-    WITHDRAW
+    WITHDRAW,
+    ENDED
 }
 
-export type LiquidityPool = Common.PoolStruct;
 export type Pools = Readonly<LiquidityPool[]>;
-export type Provider = Common.ContributorStruct;
+// export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
 export type Message = "Preparing trxn" | "Creating Liquidity Pool" | "Completing Trxn" | "Approval Completed" | "Transaction Completed" | "Adding provider" | "Initiating borrowing" | "Paying back loan" | "Liquidating In Progress" | "Removing Pool" | "Withdrawing Collateral" | "Approving Factory" | "Transaction reverted" | "Transaction Failed" | "Transaction Completed" | "Approval Failed" | TxnStatus;
@@ -25,6 +26,17 @@ export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
   txDone: boolean;
+}
+
+export type LiquidityPool = {
+  userCount: Counters.CounterStruct;
+  uints: Common.UintsStruct;
+  uint256s: Common.Uint256sStruct;
+  addrs: Common.AddressesStruct;
+  allGh: BigNumberish;
+  isPermissionless: boolean;
+  cData: Readonly<Common.ContributorDataStruct[]>;
+  stage: BigNumberish;
 }
 
 export interface LiquidityChildrenProps {
@@ -35,7 +47,7 @@ export interface LiquidityChildrenProps {
 export interface TrxnResult {
   wait?: WaitForTransactionReceiptReturnType;
   pools: Pools;
-  profile: Profile;
+  // profile: Profile;
 }
 
 export interface CreatePermissionedPoolParams extends Config{

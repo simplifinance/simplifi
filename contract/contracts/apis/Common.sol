@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: MIT
+
+import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
 pragma solidity 0.8.24;
 
 interface Common {
   /**
    * @dev Tags/Placeholders for functions available in the implementation contract.
    */
-  enum FuncTag { 
+  enum FuncTag {
     JOIN, 
     GET, 
     PAYBACK, 
-    WITHDRAW
+    WITHDRAW,
+    ENDED
   }
 
   enum TransactionType { NATIVE, ERC20 }
@@ -34,7 +37,6 @@ interface Common {
     uint turnTime;
     uint loan;
     uint colBals;
-    // bool hasGH;
     address id;
   }
 
@@ -49,13 +51,18 @@ interface Common {
    *  @param uint256s: Structured data of all unsigned integers type uint256.
    *  @param addrs : Structured data of all address type
    *  @param allGh : Total members already got financed.
+   *  @param isPermissionless : A tag for each pool showing whether permissionless or otherwise.
+   *  @param cData : Participants i.e Providers and Borrowers.
    */
   struct Pool {
+    Counters.Counter userCount;
     Uints uints;
     Uint256s uint256s;
     Addresses addrs;
     uint allGh;
     bool isPermissionless;
+    ContributorData[] cData;
+    FuncTag stage;
   }
 
   /**
@@ -131,32 +138,21 @@ interface Common {
     address strategy;
     address admin;
   }
-
-  struct LiquidateParam {
-    uint epochId;
-    function (uint, FuncTag) internal lock;
-    function (uint, FuncTag) internal unlock;
-  }
   
   struct AddTobandParam {
     uint epochId;
     bool isPermissioned;
-    function (uint, FuncTag) internal lock;
-    function (uint, FuncTag) internal unlock;
   }
 
   struct CreatePoolReturnValue {
     Pool pool; 
-    Contributor contributor; 
-    uint epochId;
-    uint16 spot;
+    ContributorData cData; 
+    // uint epochId;
   }
 
   struct PaybackParam {
     uint epochId;
     address user;
-    function (uint, FuncTag) internal lock;
-    function (uint, FuncTag) internal unlock;
   }
 
   struct UpdateMemberDataParam {
@@ -169,11 +165,6 @@ interface Common {
     Pool pool;
   }
 
-  struct CreatePermissionedPoolParam {
-    CreatePoolParam cpp;
-    function (uint, FuncTag) internal _unlock;
-  }
-
   struct InterestReturn {
     uint fullInterest;
     uint intPerSec;
@@ -181,9 +172,6 @@ interface Common {
   }
 
   struct CommonEventData {
-    uint8 slot;
-    Rank rank;
-    Contributor cbData;
     Pool pool;
   }
 
@@ -196,6 +184,24 @@ interface Common {
   struct Balances {
     uint xfi;
     uint erc20;
+  }
+
+  struct DebtReturnValue {
+    uint debt;
+    uint slot;
+  }
+
+  struct SetClaimParam {
+    uint amount;
+    uint epochId;
+    uint fee;
+    uint debt;
+    uint value;
+    address contributor;
+    address strategy;
+    address feeTo;
+    bool allHasGF;
+    TransactionType txType;
   }
 
   error UpdateStrategyError();
