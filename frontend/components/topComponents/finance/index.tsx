@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Box from '@mui/material/Box';
-import { getEpoches } from '@/apis/readContract';
+import { getEpoches } from '@/apis/factory/read/readContract';
 import { useAccount, useConfig } from 'wagmi';
 import { StorageContext } from '@/components/StateContextProvider';
 

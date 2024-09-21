@@ -1,6 +1,7 @@
 import { BigNumberish } from "ethers";
 import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
+import BigNumber from "bignumber.js";
 export type WagmiConfig = import("wagmi").Config;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
 export type Str = string;
@@ -21,7 +22,26 @@ export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
-export type Message = "Preparing trxn" | "Creating Liquidity Pool" | "Completing Trxn" | "Approval Completed" | "Transaction Completed" | "Adding provider" | "Initiating borrowing" | "Paying back loan" | "Liquidating In Progress" | "Removing Pool" | "Withdrawing Collateral" | "Approving Factory" | "Transaction reverted" | "Transaction Failed" | "Transaction Completed" | "Approval Failed" | TxnStatus;
+export type Message = 
+  "Preparing trxn" | 
+  "Creating Liquidity Pool" | 
+  "Completing Trxn" | 
+  "Approval Completed" | 
+  "Transaction Completed" | 
+  "Adding provider" | 
+  "Paying back loan" | 
+  "Liquidating In Progress" | 
+  "Removing Pool" | 
+  "Withdrawing Collateral" | 
+  "Approving Factory" | 
+  "Transaction reverted" | 
+  "Transaction Failed" | 
+  "Transaction Completed" | 
+  "Approval Failed" | 
+  "Approval in progress" |
+  "Getting Finance" |
+  TxnStatus;
+
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
@@ -88,38 +108,41 @@ export interface GetFinanceParam extends CommonParam {
   value: bigint;
 }
 
-// export type Theme = {
-//     colors: {
-//       accentButtonBg: string;
-//       accentButtonText: string;
-//       accentText: string;
-//       borderColor: string;
-//       connectedButtonBg: string;
-//       connectedButtonBgHover: string;
-//       danger: string;
-//       inputAutofillBg: string;
-//       modalBg: string;
-//       modalOverlayBg: string;
-//       primaryButtonBg: string;
-//       primaryButtonText: string;
-//       primaryText: string;
-//       scrollbarBg: string;
-//       secondaryButtonBg: string;
-//       secondaryButtonHoverBg: string;
-//       secondaryButtonText: string;
-//       secondaryIconColor: string;
-//       secondaryIconHoverBg: string;
-//       secondaryIconHoverColor: string;
-//       secondaryText: string;
-//       selectedTextBg: string;
-//       selectedTextColor: string;
-//       separatorLine: string;
-//       skeletonBg: string;
-//       success: string;
-//       tertiaryBg: string;
-//       tooltipBg: string;
-//       tooltipText: string;
-//     };
-//     fontFamily: string;
-//     type: "light" | "dark";
-// };
+export interface PoolColumnProps {
+  pool: LiquidityPool;
+}
+
+export interface ScreenUserResult{
+  isMember: boolean;
+  data: FormattedData;
+}
+
+export type ButtonText = 'ADD' | 'GET' | 'PAY' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'AWAIT PAYMENT';
+
+export interface FormattedData {
+  payDate_InDateFormat: string;
+  payDate_InSec: number;
+  slot_toNumber: number;
+  turnTime_InDateFormat: string;
+  turnTime_InSec: number;
+  durOfChoice_InSec: number;
+  colBals_InEther: string;
+  loan_InEther: string;
+  expInterest_InEther: string;
+  id_lowerCase: string;
+  isMember: boolean;
+  isAdmin: boolean;
+  loan_InBN: BigNumber;
+}
+
+export interface AmountToApproveParam {
+  txnType: ButtonText;
+  unit: BigNumberish | bigint;
+  // loan: BigNumberish | bigint;
+  // quorum: BigNumberish | bigint;
+  config: WagmiConfig;
+  epochId: bigint;
+  account: Address;
+  intPerSec: BigNumberish | bigint;
+  lastPaid: Address;
+}

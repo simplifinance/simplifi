@@ -1,56 +1,33 @@
 import React from "react";
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { PopUp } from "@/components/transactionStatus/PopUp";
-import { Address, FuncTag, LiquidityPool, Profile, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
-import { formatAddr, toBigInt, toBN } from "@/utilities";
-import { Grid, Container, Stack, Box, } from "@mui/material";
-import { formatEther } from "viem";
-import { flexSpread, PROFILE_MOCK } from "@/constants";
-import { DisplayProfile } from "./DisplayProfile";
-import { getProfile } from "@/apis/readContract";
+import { Address, AmountToApproveParam, FormattedData, PoolColumnProps, ScreenUserResult } from "@/interfaces";
+import { formatAddr, formatPoolContent } from "@/utilities";
+import { Grid } from "@mui/material";
+import { FORMATTEDDATA_MOCK } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
-import { addToPool } from "@/apis/factory/addToPool";
-import { getFinance } from "@/apis/factory/getFinance";
-import { payback } from "@/apis/factory/payback";
-import { liquidate } from "@/apis/factory/liquidate";
-import { Input } from "./Create/Input";
-import Notification from "@/components/Notification";
-import { approve } from "@/apis/testToken/approve";
-import BigNumber from "bignumber.js";
-import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
-import { StorageContext } from "@/components/StateContextProvider";
+import { RenderActions } from "./RenderActions";
 
-interface PoolColumnProps {
-    pool: LiquidityPool;
-}
+// import { Input } from "./Create/Input";
+// import Notification from "@/components/Notification";
+// import { approve } from "@/apis/factory/transact/testToken/approve";
+// import BigNumber from "bignumber.js";
 
-interface ScreenUserResult{
-    isMember: boolean;
-    data: Profile;
-}
+// const filterButtonObject = () => {
+//     const buttonTextArr : {tag: ButtonText, }[] = ['ADD', 'GET', 'PAY', 'LIQUIDATE', 'AWAIT PAYMENT', 'DISABLED', 'WAIT'];
 
-type ButtonText = 'ADD' | 'GET' | 'PAY' | 'LIQUIDATE' | 'WAIT' | 'DISABLED';
+// }
 
-const renderIcon = (isPermissionless: boolean) => {
-    return (
-        !isPermissionless? 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-            </svg> 
-                : 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-            </svg>              
-
-    );
-}
-
+/**
+ * Filter the data list for current user
+ * @param cData : Formatted providers' data
+ * @param currentUser : Connected user wallet.
+ * @returns Object: <{isMember: boolean, data: FormattedData}>
+ */
 const screenUser = (
-    pool: LiquidityPool, 
+    cData: FormattedData[], 
     currentUser: Address
 ) : ScreenUserResult => {
-    let result : ScreenUserResult = { isMember: false, data: PROFILE_MOCK};
-    const filtered = pool.cData.filter(({cData: { id }}) => id.toString().toLowerCase() === currentUser.toString().toLowerCase());
+    let result : ScreenUserResult = { isMember: false, data: FORMATTEDDATA_MOCK};
+    const filtered = cData.filter(({id_lowerCase}) => id_lowerCase === currentUser.toString().toLowerCase());
     if(filtered?.length > 0) {
         result = {
             isMember: true,
@@ -59,185 +36,71 @@ const screenUser = (
     }
     return result;
 }
-  
+
 export const PoolColumn = (props: PoolColumnProps) => {
     const [modalOpen, setOpen] = React.useState<boolean>(false);
-    const [preferredDur, setPreferredDur] = React.useState<string>('0');
-    const [message, setMessage] = React.useState<string>('');
-    const [profile, setProfile] = React.useState<Profile>(PROFILE_MOCK);
-    const [profileModalOpen, setProfileOpen] = React.useState<boolean>(false);
-    
-    // const { storage } = React.useContext(StorageContext);
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { isMember, data: { slot, cData: { loan, payDate } } } = screenUser(props.pool, account);
 
-    const {
-        pool: {
-          uint256s: { unit, currentPool, intPerSec, fullInterest, epochId: epochId_, },
-          uints: { intRate, quorum, duration, colCoverage, selector },
-          addrs: { admin, asset },
-          isPermissionless,
-          stage,
-          cData,
-          allGh,
-          userCount : { _value : userCount }
-        },
-    } = props;
+    const { 
+        pair,
+        unit,
+        cData_formatted, 
+        stage_toNumber, 
+        isPermissionless,
+        epochId_toNumber,
+        epochId_bigint,
+        quorum_toNumber,
+        intPerSec_InEther,
+        intPercent_string,
+        unit_InEther,
+        intPerSec,
+        lastPaid,
+        duration_toNumber,
+        userCount_toNumber,
+    } = formatPoolContent(props.pool, true);
+    const { isMember, data: { loan_InEther, slot_toNumber, payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
 
-    const epochId = toBigInt(epochId_);
-    const formattedStage = toBN(stage.toString()).toNumber();
-    const expectedPoolAmt = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
-    const formattedUnit =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
-    const currentProviders = toBN(currentPool.toString()).div(toBN(unit.toString())).toString();
-    const intPercent = toBN(intRate.toString()).div(toBN(100)).toString();
-    const formattedDuration = toBN(duration.toString()).div(toBN(3600)).toNumber();
-    const poolFilled = userCount === quorum;
+    const otherParam: AmountToApproveParam = {
+        config,
+        account,
+        epochId: epochId_bigint,
+        intPerSec,
+        lastPaid,
+        txnType: 'WAIT',
+        unit
+    };
 
-    const renderActions = () => {
-        let result : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
-        switch (formattedStage) {
-            case FuncTag.JOIN:
-                if(isPermissionless){
-                    if(isMember){
-                        result.disable = true;
-                    } else {
-                        result.value = 'ADD';
-                    }
-                }
-                break;
-
-            case FuncTag.GET:
-                if(isMember) {
-                    result.value = 'GET';
-                } else {
-                    result = {disable: true, value: 'DISABLED'};
-                }
-                break;
-            
-            case FuncTag.PAYBACK:
-                if(isMember){
-                    if(toBN(loan.toString()).isGreaterThan(0)) result.value = 'PAY';
-                } else {
-                    if((new Date().getTime() / 1000) >  toBN(payDate.toString()).toNumber()){
-                        result.value = 'LIQUIDATE';
-                    } else {
-                        result.disable = true;
-                    }
-                }
-                break;
-            
-            default:
-                break;
-        }
-
-        return(
-            <button 
-                disabled={result.disable}
-                className="w-[10%] p-2 rounded-lg text-orangec bg-yellow-100" 
-            >
-                {result.value}
-            </button>
-        );
-    }
-    // 'Epoch ID',
-    // 'Quorum',
-    // 'Liquidity/head',
-    // 'Int.Rate',
-    // 'Pair',
-    // 'Fill',
-    // 'Type',
-    // 'Action'
     const column_content = Array.from([
-      epochId_.toString(),
-      quorum.toString(),
-      formattedUnit,
-      intPercent,
-      "USDT/XFI",
-      currentProviders,
-      renderIcon(isPermissionless),
-      renderActions()
+        togglerIcon(modalOpen),
+        epochId_toNumber,
+        quorum_toNumber,
+        unit_InEther,
+        intPercent_string,
+        pair,
+        userCount_toNumber,
+        renderIcon(isPermissionless),
+        <RenderActions 
+            {
+                ...{
+                    isMember,
+                    isPermissionless,
+                    loan_InBN,
+                    payDate_InSec,
+                    stage_toNumber,
+                    maxEpochDuration: duration_toNumber.toString(),
+                    otherParam
+                }
+            }
+        />
     ]);
 
-    // const txnType : TxnType = `${(!member && toBN(currentPool.toString()).lt(toBN(expectedPoolAmt.toString())))? 'Add Liquidity' : expectedPoolAmt === currentPool? 'Borrow' : toBN(loan.toString()).gt(0)? 'Payback' : 'Liquidate'}`;
     const gridSize = 12/column_content.length;
-
-    const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg?.message) setMessage(arg.message);
-        console.log("Arg: ", arg)
-    }
-
-    const handleSetDur = (e:React.ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        setPreferredDur(e.currentTarget.value);
-    }
 
     const toggleModal = async() => {
         setOpen(!modalOpen)
-        const result = await getProfile({
-            account,
-            config,
-            epochId
-        });
-        // console.log("Result", result);
-        setProfile(result);
     };
-    const toggleProfileModal = async() => {
-        
-        setProfileOpen(!profileModalOpen)
-    }
 
-    const getAmountToApprove = () => {
-        let amtToApprove : BigNumber = toBN(0);
-        switch (txnType) {
-            case 'Add Liquidity':
-                amtToApprove = toBN(unit.toString());
-                break;
-            case 'Payback':
-                amtToApprove = toBN(loan.toString()).plus(toBN(loan.toString()).div(toBN(2)));
-                break;
-            case 'Liquidate':
-                amtToApprove = toBN(unit.toString()).times(toBN(quorum.toString()).plus(toBN(1)));
-                break;
-        
-            default:
-                break;
-            }
-        return toBigInt(amtToApprove.toString());
-    }
-
-    const handleTransact = async() => {
-        console.log("EpochId", epochId)
-        const amountToApprove = getAmountToApprove();
-        if(txnType === 'Add Liquidity' || txnType === 'Payback' || txnType === 'Liquidate') {
-            console.log("txnType", txnType)
-            await approve({
-                account,
-                config,
-                callback,
-                amountToApprove
-            });
-        }
-        switch (txnType) {
-            case 'Add Liquidity':
-                await addToPool({account, config, epochId, callback});
-                break;
-            case 'Borrow':
-                const collateral = await getCollateralQuote({config, epochId});
-                await getFinance({account, value: collateral[0], config, epochId, daysOfUseInHr: toBN(preferredDur).toNumber(), callback});
-                break;
-            case 'Payback':
-                await payback({account, config, epochId, callback});
-                break;
-            case 'Liquidate':
-                await liquidate({account, config, epochId, callback});
-                break;
-        
-            default:
-                break;
-        }
-    }
-    
     return(
         <React.Fragment>
             {/* <Grid container xs className="hover:bg-gray-100 p-4 cursor-pointer" onClick={() => handleClick({pool: props.pool, epochId})} > */}
@@ -253,7 +116,51 @@ export const PoolColumn = (props: PoolColumnProps) => {
         </React.Fragment>
     )
 }
+
+const togglerIcon = (open: boolean) => {
+    return (
+        <span>
+            {
+                open? 
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-4 text-orangec">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>              
+                        : 
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className="size-4 text-orangec">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  
+            }
+        </span>
+    )
+}
   
+const renderIcon = (isPermissionless: boolean) => {
+    return (
+        !isPermissionless? 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg> 
+                : 
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+            </svg>              
+
+    );
+}
+
+
+
+// const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
+//     if(arg?.message) setMessage(arg.message);
+//     console.log("Arg: ", arg)
+// }
+
+// const handleSetDur = (e:React.ChangeEvent<HTMLInputElement>) => {
+//     e.preventDefault();
+//     setPreferredDur(e.currentTarget.value);
+// }
+
 {/* <AddressWrapper account={admin.toString()} size={4} display key={4}/>,
 <AddressWrapper account={asset.toString()} size={4} display key={5}/>, */}
     

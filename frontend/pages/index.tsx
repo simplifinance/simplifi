@@ -66,7 +66,7 @@ const renderAppChildComponents = () => [
 ].map(({renderElement, path, children}) => (<Route {...{element: renderElement(), path, children}} />));
 
 export default function SimpliApp() {
-  const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK, profile: PROFILE_MOCK});
+  const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK});
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [innerlink, setInnerlink] = React.useState<LiquidityInnerLinkEntry>('Dashboard');
 

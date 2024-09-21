@@ -7,7 +7,7 @@ import { Grid, Container, Stack, Box, } from "@mui/material";
 import { formatEther } from "viem";
 import { flexSpread, PROFILE_MOCK } from "@/constants";
 import { DisplayProfile } from "./DisplayProfile";
-import { getProfile } from "@/apis/readContract";
+import { getProfile } from "@/apis/factory/read/readContract";
 import { useAccount, useConfig } from "wagmi";
 import { addToPool } from "@/apis/factory/addToPool";
 import { getFinance } from "@/apis/factory/getFinance";
@@ -15,7 +15,7 @@ import { payback } from "@/apis/factory/payback";
 import { liquidate } from "@/apis/factory/liquidate";
 import { Input } from "./Create/Input";
 import Notification from "@/components/Notification";
-import { approve } from "@/apis/testToken/approve";
+import { approve } from "@/apis/factory/transact/testToken/approve";
 import BigNumber from "bignumber.js";
 import { getCollateralQuote } from "@/apis/factory/getCollateralQuote";
 

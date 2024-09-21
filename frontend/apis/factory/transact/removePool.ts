@@ -1,12 +1,13 @@
 import { CommonParam } from "@/interfaces";
-import { getFactoryAddress } from "./contractAddress";
+import { getFactoryAddress } from "../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
-import { waitForConfirmation } from "../waitForConfirmation";
+import { waitForConfirmation } from "../../waitForConfirmation";
 
 export const removePool = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
+    callback?.({message: "Liquidating In Progress", txDone: false});
     try {
       const {request} = await simulateContract(config, {
         address,
@@ -15,7 +16,6 @@ export const removePool = async(args: CommonParam) => {
         functionName: "removeLiquidityPool",
         args: [epochId]
       });
-      callback?.({message: "Liquidating In Progress", txDone: false});
       const hash = await writeContract(config, { ...request });
       await waitForConfirmation({config, fetch: true, epochId, hash, callback:callback!, account});
     } catch (error: any) {

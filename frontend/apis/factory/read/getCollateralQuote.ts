@@ -1,5 +1,5 @@
 import { WagmiConfig } from "@/interfaces";
-import { getFactoryAddress } from "./contractAddress";
+import { getFactoryAddress } from "../contractAddress";
 import { readContract } from "wagmi/actions";
 
 export const getCollateralQuote = async(args: {config: WagmiConfig, epochId: bigint}) => {

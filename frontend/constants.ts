@@ -1,5 +1,6 @@
 import { zeroAddress } from 'viem';
-import { LiquidityPool, Profile } from './interfaces';
+import { FormattedData, LiquidityPool, Profile } from './interfaces';
+import BigNumber from 'bignumber.js';
 
 export const DONOTHING = () => null;
 export const DRAWERWIDTH = 240;
@@ -208,4 +209,20 @@ export const POOLS_MOCK : LiquidityPool[] = [
     allGh: 0n
   },
   
-]
+];
+
+export const FORMATTEDDATA_MOCK : FormattedData = {
+  payDate_InDateFormat: '',
+  payDate_InSec: 0,
+  slot_toNumber: 0,
+  turnTime_InDateFormat: '',
+  turnTime_InSec: 0,
+  durOfChoice_InSec: 0,
+  colBals_InEther: '',
+  loan_InEther: '',
+  expInterest_InEther: '',
+  id_lowerCase: '',
+  isMember: false,
+  isAdmin: false,
+  loan_InBN: new BigNumber(0)
+}

@@ -1,24 +1,25 @@
-import { CreatePermissionedPoolParams } from "@/interfaces";
-import { getFactoryAddress } from "./contractAddress";
+import type { CreatePermissionLessPoolParams } from "@/interfaces";
+import { getFactoryAddress } from "../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
-import { waitForConfirmation } from "../waitForConfirmation";
-import { getTokenAddress } from "../testToken/getAddress";
+import { waitForConfirmation } from "../../waitForConfirmation";
+import { getTokenAddress } from "./testToken/getAddress";
 
 const tokenAddr = getTokenAddress();
 
-export const createPermissionedLiquidityPool = async(param: CreatePermissionedPoolParams) => {
-  const { config, account, contributors, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
+export const createPermissionlessLiquidityPool = async(param: CreatePermissionLessPoolParams) => {
+  // console.log("Param: ", param)
+  const { config, account, quorum, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   const address = getFactoryAddress();
   if(config) {
+    callback?.({message: "Creating Liquidity Pool",txDone: false});
     try {
       const { request } = await simulateContract(config, {
         address,
         account,
-        abi: createPermissionedLiquidityPoolAbi,
-        functionName: "createPermissionedPool",
-        args: [intRate, durationInHours, colCoverage, unitLiquidity, tokenAddr, contributors],
+        abi: createPermissionlessLiquidityPoolAbi,
+        functionName: "createPermissionlessPool",
+        args: [intRate, quorum, durationInHours, colCoverage, unitLiquidity, tokenAddr],
       });
-      callback?.({message: "Creating Liquidity Pool", txDone: false});
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, epochId: 0n, callback: callback!, account});
     } catch (error: any) {
@@ -29,13 +30,18 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
 
 }
 
-const createPermissionedLiquidityPoolAbi = [
+const createPermissionlessLiquidityPoolAbi = [
   {
     "inputs": [
       {
         "internalType": "uint16",
         "name": "intRate",
         "type": "uint16"
+      },
+      {
+        "internalType": "uint8",
+        "name": "quorum",
+        "type": "uint8"
       },
       {
         "internalType": "uint16",
@@ -56,14 +62,9 @@ const createPermissionedLiquidityPoolAbi = [
         "internalType": "address",
         "name": "liquidAsset",
         "type": "address"
-      },
-      {
-        "internalType": "address[]",
-        "name": "contributors",
-        "type": "address[]"
       }
     ],
-    "name": "createPermissionedPool",
+    "name": "createPermissionlessPool",
     "outputs": [
       {
         "internalType": "bool",

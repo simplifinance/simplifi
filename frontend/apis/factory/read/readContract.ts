@@ -1,6 +1,6 @@
 import type { WagmiConfig, Address, Profile, Pools, TrxnResult } from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
-import { getFactoryAddress } from "./factory/contractAddress";
+import { getFactoryAddress } from "../contractAddress";
 
 const address = getFactoryAddress();
 
@@ -26,8 +26,6 @@ export async function getEpoches({config} : {config: WagmiConfig}) {
 export async function getContractData(arg: {config: WagmiConfig}) : Promise<TrxnResult> 
 {
   const { config } = arg;
-  
-  // const profile = await getProfile({epochId, account, config});
   const pools = await getEpoches({config});
   return { pools }
 }

@@ -1,8 +1,8 @@
 import { Address, Config } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
-import { waitForConfirmation } from "../waitForConfirmation";
+import { waitForConfirmation } from "../../../waitForConfirmation";
 import { getTokenAddress  } from "./getAddress";
-import { getFactoryAddress } from "../factory/contractAddress";
+import { getFactoryAddress } from "../../../factory/contractAddress";
 
 const factoryAddr = getFactoryAddress();
 
@@ -11,16 +11,16 @@ export const approve = async(args: ApproveParam) => {
     const address = getTokenAddress();
     if(config) {        
         try {
-            const {request} = await simulateContract(config, {
-                address,
-                account,
-                abi: approveAbi,
-                functionName: "approve", 
-                args: [factoryAddr, amountToApprove]
-            })
-            callback?.({message: "Completing Trxn", txDone: false});
-            const hash = await writeContract(config, { ...request });
-            await waitForConfirmation({config, hash, fetch: false, account, epochId: 0n});
+          callback?.({message: "Approval in progress", txDone: false});
+          const {request} = await simulateContract(config, {
+              address,
+              account,
+              abi: approveAbi,
+              functionName: "approve", 
+              args: [factoryAddr, amountToApprove]
+          });
+          const hash = await writeContract(config, { ...request });
+          await waitForConfirmation({config, hash, fetch: false, account, epochId: 0n, callback});
         } catch (error: any) {
             callback?.({message: "Approval Failed", txDone: true});
         }
