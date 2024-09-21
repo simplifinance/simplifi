@@ -1,14 +1,14 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, ButtonText, FormattedData, LiquidityPool, TransactionCallback, WagmiConfig } from "@/interfaces";
+import type { Address, AmountToApproveParam, ButtonText, FormattedData, FormattedPoolContentProps, LiquidityPool, TransactionCallback, WagmiConfig } from "@/interfaces";
 import BigNumber from 'bignumber.js';
-import { getCurrentDebt } from "./apis/factory/read/getCurrentDebt";
-import { getAllowance } from "./apis/factory/transact/testToken/getAllowance";
-import { getCollateralQuote } from "./apis/factory/read/getCollateralQuote";
-import { approve } from "./apis/factory/transact/testToken/approve";
-import { addToPool } from "./apis/factory/transact/addToPool";
-import { getFinance } from "./apis/factory/transact/getFinance";
-import { liquidate } from "./apis/factory/transact/liquidate";
-import { payback } from "./apis/factory/transact/payback";
+import { getCurrentDebt } from "./apis/read/getCurrentDebt";
+import { getAllowance } from "./apis/transact/testToken/getAllowance";
+import { getCollateralQuote } from "./apis/read/getCollateralQuote";
+import { approve } from "./apis/transact/testToken/approve";
+import { addToPool } from "./apis/transact/factory/addToPool";
+import { getFinance } from "./apis/transact/factory/getFinance";
+import { liquidate } from "./apis/transact/factory/liquidate";
+import { payback } from "./apis/transact/factory/payback";
 import { formatEther } from "viem";
 import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
 
@@ -129,7 +129,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
  * @param pool : Pool data
  * @returns : Formatted data
  */
-export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) => {
+export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) : FormattedPoolContentProps => {
   const {
     uint256s: { unit, currentPool, intPerSec, fullInterest, epochId: epochId_, },
     uints: { intRate, quorum, duration, colCoverage, selector },
@@ -143,7 +143,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
 
   let cData_formatted : FormattedData[] = [];
   const selector_toNumber = toBN(selector.toString()).toNumber();
-  const colCoverage_InEther = formatEther(toBigInt(toBN(colCoverage.toString()).toString()));
+  const colCoverage_InString = toBN(colCoverage.toString()).toString();
   const fullInterest_InEther = formatEther(toBigInt(toBN(fullInterest.toString()).toString()));
   const intPerSec_InEther = formatEther(toBigInt(toBN(intPerSec.toString()).toString()));
   const currentPool_InEther = formatEther(toBigInt(toBN(currentPool.toString()).toString()));
@@ -183,7 +183,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
     poolFilled,
     isPermissionless,
     selector_toNumber,
-    colCoverage_InEther,
+    colCoverage_InString,
     fullInterest_InEther,
     intPerSec_InEther,
     currentPool_InEther,
@@ -222,6 +222,7 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
     loan_InEther,
     expInterest_InEther,
     id_lowerCase,
+    id_toString: id.toString(),
     isMember: member,
     isAdmin: admin,
     loan_InBN

@@ -51,7 +51,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         epochId_toNumber,
         epochId_bigint,
         quorum_toNumber,
-        intPerSec_InEther,
+        // intPerSec_InEther,
         intPercent_string,
         unit_InEther,
         intPerSec,
@@ -103,7 +103,6 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
     return(
         <React.Fragment>
-            {/* <Grid container xs className="hover:bg-gray-100 p-4 cursor-pointer" onClick={() => handleClick({pool: props.pool, epochId})} > */}
             <Grid container xs className="hover:bg-gray-100 p-4 cursor-pointer" onClick={toggleModal} >
                 {
                     column_content.map((item, id) => (
@@ -117,7 +116,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
     )
 }
 
-const togglerIcon = (open: boolean) => {
+export const togglerIcon = (open: boolean) => {
     return (
         <span>
             {

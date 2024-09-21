@@ -1,6 +1,6 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
-import { getTokenAddress } from "./getAddress";
+import { getTokenAddress } from "../../getAddress";
 
 export const getTestTokenBalance = async(args: GetBalanceArg) => {
   const { account, config, target } = args;

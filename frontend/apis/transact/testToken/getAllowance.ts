@@ -1,7 +1,7 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
-import { getTokenAddress } from "./getAddress";
-import { getFactoryAddress } from "../../../factory/contractAddress";
+import { getTokenAddress } from "../../getAddress";
+import { getFactoryAddress } from "../../contractAddress";
 
 const factoryAddr = getFactoryAddress();
 

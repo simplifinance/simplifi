@@ -1,8 +1,8 @@
 import { Address, Config } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
-import { waitForConfirmation } from "../../../waitForConfirmation";
-import { getTokenAddress  } from "./getAddress";
-import { getFactoryAddress } from "../../../factory/contractAddress";
+import { waitForConfirmation } from "../../waitForConfirmation";
+import { getTokenAddress  } from "../../getAddress";
+import { getFactoryAddress } from "../../contractAddress";
 
 const factoryAddr = getFactoryAddress();
 

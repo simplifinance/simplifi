@@ -12,9 +12,11 @@ import { filterPools, type Operation } from "../commonUtilities";
 
 const renderPool = (pool: LiquidityPool, operation: Operation) => {
     const quorumIsZero = toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED || toBN(pool.uints.quorum.toString()).isZero();
-    if(operation === 'Closed') return (quorumIsZero? <PoolColumn {...{ pool }} /> : null);
+    if(operation === 'Closed') {
+      return (quorumIsZero? <PoolColumn {...{ pool }} /> : null);
+    }
     
-    return (!quorumIsZero? <PoolColumn {...{ pool }} /> : null);
+    return (<PoolColumn {...{ pool }} /> );
 
 }
 

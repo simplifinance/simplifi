@@ -1,5 +1,5 @@
 import { GetFinanceParam } from "@/interfaces";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 

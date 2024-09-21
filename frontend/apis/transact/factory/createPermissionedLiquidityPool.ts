@@ -1,8 +1,8 @@
 import { CreatePermissionedPoolParams } from "@/interfaces";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
-import { getTokenAddress } from "./testToken/getAddress";
+import { getTokenAddress } from "../../getAddress";
 
 const tokenAddr = getTokenAddress();
 

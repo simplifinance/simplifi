@@ -1,23 +1,23 @@
 import { CommonParam } from "@/interfaces";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 
-export const addToPool = async(args: CommonParam ) => {
-  const { epochId, config, callback, account } = args;
+export const liquidate = async(args: CommonParam) => {
+  const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
-    callback?.({message: "Adding provider", txDone: false});
+    callback?.({message: "Liquidating In Progress", txDone: false});
     try {
-      const { request } = await simulateContract(config, {
+      const {request} = await simulateContract(config, {
         address,
         account,
-        abi: addToPoolAbi,
-        functionName: "joinAPool",
+        abi: liquidateAbi,
+        functionName: "liquidate",
         args: [epochId]
       });
-      const hash = await writeContract(config, request );
-      await waitForConfirmation({config, hash, fetch: true, epochId, callback: callback!, account});
+      const hash = await writeContract(config, { ...request });
+      await waitForConfirmation({config, fetch: true, epochId, hash, callback:callback!, account});
     } catch (error: any) {
       console.log("contract error", error);
       callback?.({message: "Transaction Failed", txDone: true});
@@ -25,7 +25,7 @@ export const addToPool = async(args: CommonParam ) => {
   }
 }
 
-const addToPoolAbi = [
+const liquidateAbi = [
   {
     "inputs": [
       {
@@ -34,7 +34,7 @@ const addToPoolAbi = [
         "type": "uint256"
       }
     ],
-    "name": "joinAPool",
+    "name": "liquidate",
     "outputs": [
       {
         "internalType": "bool",
@@ -46,5 +46,3 @@ const addToPoolAbi = [
     "type": "function"
   },
 ] as const;
-
-

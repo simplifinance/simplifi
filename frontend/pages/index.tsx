@@ -21,17 +21,17 @@ import { StorageContextProvider } from "@/components/StateContextProvider";
 const renderLiquidityChildComponents = () => [
   {
     path: ROUTE_ENUM.CREATE,
-    element: <Create />,
+    element: () => (<Create />),
   },
   {
     path: ROUTE_ENUM.OPEN,
-    element: <Open />,
+    element: () => (<Open />),
   },
   {
     path: ROUTE_ENUM.CLOSED,
-    element: <Closed />
+    element: () => (<Closed />)
   }
-].map(({path, element}) => (<Route {...{path, element}} />));
+].map(({path, element}) => (<Route {...{path, element: element()}} />));
 
 /**
  * Renders App child components
@@ -39,7 +39,7 @@ const renderLiquidityChildComponents = () => [
  */
 const renderAppChildComponents = () => [
   {
-    children: undefined,
+    // children: undefined,
     path: ROUTE_ENUM.DASHBOARD,
     renderElement: () => ( <Dashboard /> ), 
   },
@@ -84,14 +84,13 @@ export default function SimpliApp() {
     )
   );
 
-  const displayRouterProvider = () => displayAppScreen? <RouterProvider router={router} /> : null;
-  const displayOnboardScreen = () => !displayAppScreen? <OnbaordScreen exitOnboardScreen={exitOnboardScreen} /> : null;
+  const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen exitOnboardScreen={exitOnboardScreen} />;
 
   return (
-    <main className="h-screen bg-green1">
+    <main className="h-screen ">
       <StorageContextProvider 
         value={{storage, setstate}}
-        children={(displayRouterProvider(), displayOnboardScreen())} 
+        children={displayScreen()} 
       />
     </main>
   );

@@ -224,5 +224,6 @@ export const FORMATTEDDATA_MOCK : FormattedData = {
   id_lowerCase: '',
   isMember: false,
   isAdmin: false,
+  id_toString: '',
   loan_InBN: new BigNumber(0)
 }

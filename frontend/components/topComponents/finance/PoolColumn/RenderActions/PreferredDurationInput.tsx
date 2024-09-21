@@ -12,11 +12,11 @@ export const PreferredDurationInput :
     React.FC<PreferredDurationInputProp> = 
         ({modalOpen, handleModalClose, maxEpochDuration, preferredDuration, useEpochDuration, onChange}) => 
 {
-    const title = `
-        The period you wish to use the fund. Max duration is 30 days
-        Note: Your choice should be greater than 0 and less than the
-        duration of ${maxEpochDuration} set in your epoch. 
-    `;
+    // const title = `
+    //     The period you wish to use the fund. Max duration is 30 days
+    //     Note: Your choice should be greater than 0 and less than the
+    //     duration of ${maxEpochDuration} set in your epoch. 
+    // `;
 
     return (
         <PopUp { ...{modalOpen, handleModalClose } } > 

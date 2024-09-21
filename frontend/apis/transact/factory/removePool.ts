@@ -1,9 +1,9 @@
 import { CommonParam } from "@/interfaces";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 
-export const liquidate = async(args: CommonParam) => {
+export const removePool = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
@@ -13,7 +13,7 @@ export const liquidate = async(args: CommonParam) => {
         address,
         account,
         abi: liquidateAbi,
-        functionName: "liquidate",
+        functionName: "removeLiquidityPool",
         args: [epochId]
       });
       const hash = await writeContract(config, { ...request });
@@ -34,7 +34,7 @@ const liquidateAbi = [
         "type": "uint256"
       }
     ],
-    "name": "liquidate",
+    "name": "removeLiquidityPool",
     "outputs": [
       {
         "internalType": "bool",

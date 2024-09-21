@@ -1,4 +1,4 @@
-import { BigNumberish } from "ethers";
+import { BigNumberish, ethers } from "ethers";
 import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
@@ -130,9 +130,40 @@ export interface FormattedData {
   loan_InEther: string;
   expInterest_InEther: string;
   id_lowerCase: string;
+  id_toString: string;
   isMember: boolean;
   isAdmin: boolean;
   loan_InBN: BigNumber;
+}
+
+export interface FormattedPoolContentProps {
+  unit: BigNumberish;
+  pair: string;
+  quorum_toNumber: number;
+  userCount_toNumber: number;
+  allGET_bool: boolean;
+  allGh_toNumber: number;
+  epochId_toNumber: number;
+  epochId_bigint: bigint;
+  stage_toNumber: number;
+  expectedPoolAmt_bigint: bigint;
+  unit_InEther: string;
+  intPercent_string: string;
+  duration_toNumber: number;
+  poolFilled: boolean;
+  isPermissionless: boolean;
+  selector_toNumber: number;
+  colCoverage_InString: string;
+  fullInterest_InEther: string;
+  intPerSec_InEther: string;
+  currentPool_InEther: string;
+  admin_lowerCase: string;
+  asset_lowerCase: string;
+  admin: ethers.AddressLike;
+  asset: ethers.AddressLike;
+  cData_formatted: FormattedData[];
+  intPerSec: BigNumberish;
+  lastPaid: Address;
 }
 
 export interface AmountToApproveParam {

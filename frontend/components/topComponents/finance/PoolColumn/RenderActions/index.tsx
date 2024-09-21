@@ -40,34 +40,34 @@ export const RenderActions = (props: RenderActionsProps) => {
         }
     }
 
-    switch (stage_toNumber) {
-        case FuncTag.JOIN:
-            if(isPermissionless){
-                if(isMember) setButtonObj((prev) => { prev.disable = true; return prev;});
-                else setButtonObj((prev) => { prev.value = 'ADD'; return prev;});
-            } else {
-                if(isMember) setButtonObj((prev) => { prev.value = 'ADD'; return prev;});
-                else setButtonObj((prev) => { prev.disable = true; return prev;});
-            }
-            break;
+    // switch (stage_toNumber) {
+    //     case FuncTag.JOIN:
+    //         if(isPermissionless){
+    //             if(isMember) setButtonObj((prev) => { prev.disable = true; return prev;});
+    //             else setButtonObj((prev) => { prev.value = 'ADD'; return prev;});
+    //         } else {
+    //             if(isMember) setButtonObj((prev) => { prev.value = 'ADD'; return prev;});
+    //             else setButtonObj((prev) => { prev.disable = true; return prev;});
+    //         }
+    //         break;
 
-        case FuncTag.GET:
-            if(isMember) setButtonObj((prev) => { prev.value = 'GET'; return prev;});
-            else setButtonObj({ value: 'DISABLED', disable: true});
-            break;
+    //     case FuncTag.GET:
+    //         if(isMember) setButtonObj((prev) => { prev.value = 'GET'; return prev;});
+    //         else setButtonObj({ value: 'DISABLED', disable: true});
+    //         break;
         
-        case FuncTag.PAYBACK:
-            if(isMember){
-                if(loan_InBN.gt(0)) setButtonObj((prev) => { prev.value = 'PAY'; return prev;});
-                else setButtonObj({ value: 'AWAIT PAYMENT', disable: true});
-            } else {
-                if((new Date().getTime() / 1000) >  payDate_InSec) setButtonObj((prev) => { prev.value = 'LIQUIDATE'; return prev;});
-                else setButtonObj({ value: 'AWAIT PAYMENT', disable: true});
-            }
-            break;
-        default:
-            break;
-    }
+    //     case FuncTag.PAYBACK:
+    //         if(isMember){
+    //             if(loan_InBN.gt(0)) setButtonObj((prev) => { prev.value = 'PAY'; return prev;});
+    //             else setButtonObj({ value: 'AWAIT PAYMENT', disable: true});
+    //         } else {
+    //             if((new Date().getTime() / 1000) >  payDate_InSec) setButtonObj((prev) => { prev.value = 'LIQUIDATE'; return prev;});
+    //             else setButtonObj({ value: 'AWAIT PAYMENT', disable: true});
+    //         }
+    //         break;
+    //     default:
+    //         break;
+    // }
 
     const handleSendTransaction = async() => {
         const otherParam : AmountToApproveParam = otp;
@@ -86,11 +86,11 @@ export const RenderActions = (props: RenderActionsProps) => {
             <button 
                 onClick={handleSendTransaction}
                 disabled={buttonObj.disable}
-                className="w-[10%] p-2 rounded-lg text-orangec bg-yellow-100" 
+                className="w-full p-2 rounded-lg text-orangec bg-yellow-100" 
             >
                 {buttonObj.value}
             </button>
-            <PreferredDurationInput 
+            {/* <PreferredDurationInput 
                 {
                     ...{
                         handleModalClose,
@@ -101,7 +101,7 @@ export const RenderActions = (props: RenderActionsProps) => {
                         preferredDuration
                     }
                 }
-            />
+            /> */}
             <Notification message={message} />
         </React.Fragment>
     );
