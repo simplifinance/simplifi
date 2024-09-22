@@ -72,10 +72,11 @@ export const Permissioned = (props: {handleBack: () => void}) => {
         <Stack className="space-y-6">
             <Box className="flex justify-between items-center text-black text-opacity-60">
                 <div className="">
-                    <button onClick={handleBack} className="p-2 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                    <button onClick={handleBack} className="p-2 w-full flex justify-between items-center gap-4 text-orangec cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                         </svg>
+                        <h3>Back</h3>
                     </button>
                 </div>
                 <div className="w-full text-center text-xl font-semibold">

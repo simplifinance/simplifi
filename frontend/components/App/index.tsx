@@ -194,7 +194,7 @@ export default function App(props: AppProps) {
           <Outlet />
         </MotionDivWrap>
       </div>
-      <ConnectWallet {...{handleModalClose, modalOpen}} />
+      {/* <ConnectWallet {...{handleModalClose, modalOpen}} /> */}
     </React.Fragment>
   );
 } 

@@ -33,16 +33,17 @@ export const ROUTE_ENUM = {
   CLOSED: '/liquidity/closed'
 }
 
-export const POOL_HEADER_CONTENT = ([
-  'Epoch ID',
-  'Quorum',
-  'Liquidity/head',
-  'Int.Rate',
-  'Pair',
-  'Fill',
-  'Type',
-  'Action'
-] as const);
+export const POOL_HEADER_CONTENT = Array.from([
+  { value: '', gridSize: 0.5},
+  { value: 'Epoch ID', gridSize: 1},
+  { value: 'Quorum', gridSize: 1},
+  { value: 'Liquidity/head', gridSize: 1.5},
+  { value: 'Int.Rate', gridSize: 1.5},
+  { value: 'Pair', gridSize: 1.5},
+  { value: 'Fill', gridSize: 1.5},
+  { value: 'Type', gridSize: 1.5},
+  { value: 'Action', gridSize: 2},
+]);
 
 export const PROFILE_MOCK : Profile = {
   cData: {

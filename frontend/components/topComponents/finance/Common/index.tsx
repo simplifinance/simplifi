@@ -21,7 +21,7 @@ const renderPool = (pool: LiquidityPool, operation: Operation) => {
 }
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
-  const gridSize = 12/POOL_HEADER_CONTENT.length;
+  // const gridSize = 12/POOL_HEADER_CONTENT.length;
   const { storage: { pools } } = React.useContext(StorageContext);
 
   return(
@@ -46,9 +46,9 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
         {/* Table Head */}
         <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
           {
-            POOL_HEADER_CONTENT.map((text: string) => (
-              <Grid item key={text} xs={gridSize}>
-                <h3 className='text-white font-black text-center'>{text}</h3>
+            POOL_HEADER_CONTENT.map(({ value, gridSize}) => (
+              <Grid item key={value} xs={gridSize}>
+                <h3 className='text-white font-black text-center'>{value}</h3>
               </Grid>
             ))
           }
