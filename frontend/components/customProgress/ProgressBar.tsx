@@ -1,11 +1,9 @@
-// import { Progress } from 'antd';
-import Typography from '@mui/material/Typography'
+import { Progress } from 'antd';
 
 const ProgressBar = (props: {percent: number}) => {
   const { percent } = props;
   return (
-    <>
-      {/* <Progress
+      <Progress
         type="circle"
         strokeColor={{
           '0%': '#108ee9',
@@ -13,11 +11,7 @@ const ProgressBar = (props: {percent: number}) => {
         }}
         trailColor='white'
         percent={percent}
-        // style={{color: lightMode? '#108ee9' : '#fff'}}
-        style={{color: '#fff'}}
-      /> */}
-      <Typography variant={"body1"}>Progess update</Typography>
-    </>
+      />
   )
 }
 

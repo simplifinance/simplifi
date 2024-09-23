@@ -157,7 +157,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
   const unit_InEther =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
   const userCount_toNumber = toBN(userCount.toString()).toNumber();
   const intPercent_string = toBN(intRate.toString()).div(100).toString();
-  const duration_toNumber = toBN(duration.toString()).div(toBN(3600)).toNumber();
+  const duration_toNumber = toBN(duration.toString()).div(3600).toNumber();
   const poolFilled = userCount_toNumber === quorum_toNumber;
 
   if(formatProfiles) {

@@ -103,7 +103,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
     return(
         <React.Fragment>
-            <Grid container xs className={`${open? "bg-gray-100 rounded-b-lg" : ""} p-4`} >
+            <Grid container xs={12} className={`${open? "bg-gray-100 rounded-b-lg" : ""} p-4`} >
                 {
                     column_content.map(({ value, gridSize}, id) => (
                         <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
@@ -112,14 +112,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                     ))
                 }
             </Grid>
-                <TableChild 
-                    {
-                        ...{
-                            formattedPool,
-                            open
-                        }
-                    }
-                />
+            <TableChild {...{formattedPool, open}} />
         </React.Fragment>
     )
 }

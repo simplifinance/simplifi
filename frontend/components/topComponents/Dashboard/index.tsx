@@ -64,10 +64,10 @@ const Dashboard : React.FC = () => {
   return (
     <Stack className="space-y-10">
       <Box className="w-full">
-        <Grid container xs={12} spacing={4}  >
+        <div className='grid md:grid-cols-3 justify-between gap-12' >
           {
             dashboardInfo.map((item) => (
-              <Grid item xs={12} md={4} key={item.title}>
+              <div key={item.title}>
                 <div className={`w-full bg-orangec rounded-lg p-8 text-white flex justify-start gap-4`}>
                   <div>
                     <Image 
@@ -82,13 +82,14 @@ const Dashboard : React.FC = () => {
                     <h1 className='font-semibold text-lg'>{ item.value }</h1>
                   </Stack>
                 </div>
-              </Grid>
+              </div>
             ))
           }
-        </Grid>
+        </div>
       </Box>
     </Stack>
   )
 }
 
 export default Dashboard;
+   

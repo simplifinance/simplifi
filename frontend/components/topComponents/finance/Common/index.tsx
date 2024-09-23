@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { FuncTag, type LiquidityPool } from '@/interfaces';
 import { motion } from 'framer-motion';
-import { POOL_HEADER_CONTENT } from "@/constants";
+import { flexCenter, flexEnd, POOL_HEADER_CONTENT } from "@/constants";
 import { PoolColumn } from "../PoolColumn";
 import { toBN } from "@/utilities";
 import { StorageContext } from "@/components/StateContextProvider";
@@ -21,8 +21,16 @@ const renderPool = (pool: LiquidityPool, operation: Operation) => {
 }
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
-  // const gridSize = 12/POOL_HEADER_CONTENT.length;
+  // const [displayRange, setDisplayRange] = React.useState<{min: number, max: number}>({min: 0, max: 2});
   const { storage: { pools } } = React.useContext(StorageContext);
+
+  // const handleNext = () => {
+
+  // }
+
+  // const handleBack = () => {
+
+  // }
 
   return(
     <Stack className='space-y-6 mt-4'>
@@ -42,7 +50,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
         </div>
       </Box>
 
-      <Grid container xs>
+      <Grid container xs={12}>
         {/* Table Head */}
         <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
           {
@@ -54,7 +62,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
           }
         </Grid>
         {/* Table Body */}
-        <Grid container xs>
+        <Grid container xs={12}>
           {
             pools.map((pool: LiquidityPool, i) => (
               <motion.button
@@ -68,6 +76,15 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
               </motion.button>
             ))
           }
+          {/* <Grid item xs={12} mt={4}>
+            <Box className={`${flexEnd} gap-4 text-sm`}>
+                <h3>{`Showing ${''} to ${''} of ${''} items`}</h3>
+                <div className={`${flexCenter}`}>
+                    <button className="bg-yellow-100 w-full p-2 text-sm text-orangec border border-orangec hover:bg-orange-200 rounded-l-lg">Back</button>
+                    <button className="bg-yellow-100 w-full p-2 text-sm text-orangec border border-orangec hover:bg-orange-200 rounded-r-lg">Next</button>
+                </div>
+              </Box>
+          </Grid> */}
         </Grid>
       </Grid>
     </Stack>

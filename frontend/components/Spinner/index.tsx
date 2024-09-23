@@ -5,12 +5,12 @@ export function Spinner(props: SpinnerProps) {
   const { color, className } = props;
   return (
     <svg
-      width="38"
-      height="38"
+      width="28"
+      height="28"
       viewBox="0 0 38 38"
       xmlns="http://www.w3.org/2000/svg"
       stroke={color}
-      className={className || "text-stone-600"}
+      className={className || "text-white1"}
     >
       <g fill="none" fillRule="evenodd">
         <g transform="translate(1 1)" strokeWidth="4">
