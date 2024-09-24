@@ -4,11 +4,13 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { FuncTag, type LiquidityPool } from '@/interfaces';
 import { motion } from 'framer-motion';
-import { flexCenter, flexEnd, POOL_HEADER_CONTENT } from "@/constants";
+import { flexSpread, POOL_HEADER_CONTENT } from "@/constants";
 import { PoolColumn } from "../PoolColumn";
 import { toBN } from "@/utilities";
 import { StorageContext } from "@/components/StateContextProvider";
 import { filterPools, type Operation } from "../commonUtilities";
+
+const headerClassName = `w-full ${flexSpread} bg-orangec rounded-lg p-6`;
 
 const renderPool = (pool: LiquidityPool, operation: Operation) => {
     const quorumIsZero = toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED || toBN(pool.uints.quorum.toString()).isZero();
@@ -36,21 +38,21 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
     <Stack className='space-y-6 mt-4'>
       <Box className="w-full flex ">
         <div className='w-[30%] '>
-          <button className='w-full py-8 text-xl font-black text-orangec text-left'>Liquidity Pool</button>
+          <button className='w-full cursor-none text-xl font-black text-yellow-100 text-left'>Liquidity Pools</button>
         </div>
-        <div className='w-[70%] text-2xl font-bold  flex justify-between items-center gap-10 text-white'>
-          <div className='w-full bg-orangec rounded-lg p-8'>
+        <div className={`w-[70%] text-xl font-bold ${flexSpread} gap-10 text-white1`}>
+          <div className={headerClassName}>
             <h3 >Total Pool</h3>
             <h3>{pools.length}</h3>
           </div>
-          <div className='w-full bg-orangec rounded-lg p-8'>
+          <div className={headerClassName}>
             <h3 >{heroTitle2}</h3>
             <h3>{filterPools(pools, operation)}</h3>
           </div>
         </div>
       </Box>
 
-      <Grid container xs={12}>
+      <Grid container xs={12} className="space-y-2">
         {/* Table Head */}
         <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
           {
@@ -62,7 +64,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
           }
         </Grid>
         {/* Table Body */}
-        <Grid container xs={12}>
+        <Grid container xs={12} >
           {
             pools.map((pool: LiquidityPool, i) => (
               <motion.button

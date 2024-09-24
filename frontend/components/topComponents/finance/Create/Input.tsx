@@ -17,7 +17,7 @@ export const Input = (props: InputProps) => {
             required={true}
             id={id}
             onChange={onChange}
-            className="w-full border-2 p-2 opacity-70 text-sm bg-gray-100 rounded-lg "
+            className="w-full p-3 text-sm bg-white1 opacity-70 rounded-lg"
         />
     )
 }

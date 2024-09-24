@@ -9,6 +9,8 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
+export type ButtonText = 'ADD' | 'GET' | 'PAY' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'AWAIT PAYMENT' | 'CREATE';
+export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export enum FuncTag { 
     JOIN, 
@@ -117,8 +119,6 @@ export interface ScreenUserResult{
   data: FormattedData;
 }
 
-export type ButtonText = 'ADD' | 'GET' | 'PAY' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'AWAIT PAYMENT';
-
 export interface FormattedData {
   payDate_InDateFormat: string;
   payDate_InSec: number;
@@ -169,11 +169,9 @@ export interface FormattedPoolContentProps {
 export interface AmountToApproveParam {
   txnType: ButtonText;
   unit: BigNumberish | bigint;
-  // loan: BigNumberish | bigint;
-  // quorum: BigNumberish | bigint;
   config: WagmiConfig;
-  epochId: bigint;
+  epochId?: bigint;
   account: Address;
-  intPerSec: BigNumberish | bigint;
-  lastPaid: Address;
+  intPerSec?: BigNumberish | bigint;
+  lastPaid?: Address;
 }

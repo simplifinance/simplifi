@@ -2,7 +2,6 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import { Permissioned } from "./forms/Permissioned";
 import { Permissionless } from "./forms/Permissionless";
-// import { Input } from "./Input";
 
 export type PoolType = 'Permissioned' | 'Permissionless' | '';
 const poolType : PoolType[] = ['Permissioned', 'Permissionless'] as const;
@@ -18,7 +17,7 @@ const SelectPooType = (options: {handleSelected: (arg: PoolType) => void, handle
                     poolType.map((item: PoolType) => (
                         <button 
                             key={item}
-                            className={`w-full border uppercase border-gray-300 p-4 rounded-lg ${selected === item? 'bg-yellow-200 ' : 'bg-gray-50'}`}
+                            className={`w-full border uppercase p-4 rounded-lg ${selected === item? 'bg-yellow-200 ' : 'bg-white1'}`}
                             onClick={() => handleSelected(item)}    
                         >
                             { item }
@@ -55,9 +54,7 @@ export const Create : React.FC<{}> = () => {
             default:
                 element = <Permissionless {...{handleBack: handleNext}} />;
         }
-        return(
-            element
-        )
+        return(element);
     }
 
     return(

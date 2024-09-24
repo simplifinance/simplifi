@@ -5,15 +5,16 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { Address, InputSelector, TransactionCallback, TransactionCallbackArg, TrxnResult } from "@/interfaces";
+import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg, TrxnResult } from "@/interfaces";
 import { Chevron } from "@/components/Collapsible";
 import { createPermissionedLiquidityPool } from "@/apis/transact/factory/createPermissionedLiquidityPool";
 import { useAccount, useConfig } from "wagmi";
-import { formatAddr, toBigInt, toBN } from "@/utilities";
+import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
 import { createPermissionlessLiquidityPool } from "@/apis/transact/factory/createPermissionless";
-import { Approval } from "../Approval";
 import Notification from "@/components/Notification";
 import { parseEther } from "viem";
+import { Spinner } from "@/components/Spinner";
+import { StorageContext } from "@/components/StateContextProvider";
 
 interface ReviewInputProps {
     values: {title: string, value: string}[];
@@ -23,62 +24,126 @@ interface ReviewInputProps {
     handleModalClose: () => void;
 }
 
+type ButtonContent = 'Approve' | 'CreatePool';
+
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
+    const [loading, setLoading] = React.useState<{buttonText: ButtonContent, value: boolean}>({buttonText: 'Approve', value: false});
     const [message, setMessage] = React.useState<string>('');
-    const [continueExec, setContinuation] = React.useState<boolean>(false);
-    const [approvalModalOpen, setApprovalModal] = React.useState<boolean>(false);
+    // const [continueExec, setContinuation] = React.useState<boolean>(false);
+    // const [approvalModalOpen, setApprovalModal] = React.useState<boolean>(false);
     
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
+    const { setstate } = React.useContext(StorageContext);
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg.txDone) handleModalClose();
+        // if(arg.txDone) handleModalClose();
         if(arg?.message) setMessage(arg.message);
-        // if(arg?.result) setstate(arg.result);
+        if(arg?.result) setstate(arg.result);
         console.log("Arg result", arg?.result);
     }
 
-    const toggleApprovalModal = (continueExec: boolean) => {
-        setApprovalModal(false);
-        setContinuation(true);
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "AWAIT PAYMENT"};
+    const createPermissionedPoolParam : CreatePermissionedPoolParams = {
+        account,
+        colCoverage,
+        config,
+        contributors: participants!,
+        durationInHours,
+        intRate,
+        unitLiquidity: parseEther(unitLiquidity.toString()),
+        callback
+    };
+    const createPermissionlessPoolParam : CreatePermissionLessPoolParams = {
+        account,
+        colCoverage,
+        config,
+        quorum: toBN(values[0].value).toNumber(),
+        durationInHours,
+        intRate,
+        unitLiquidity: parseEther(unitLiquidity.toString()),
+        callback
     };
 
-    const handleCreatePool = async() => {
+    const handleClick = async() => {
+        otherParam.txnType = 'AWAIT PAYMENT';
+        setLoading((prev) => {prev.value = true; return prev;});
         const isPermissioned = type === "address";
-        if(isPermissioned) {
-            await createPermissionedLiquidityPool(
-                {
-                    account,
-                    colCoverage,
-                    config,
-                    contributors: participants!,
-                    durationInHours,
-                    intRate,
-                    unitLiquidity: parseEther(unitLiquidity.toString()),
-                    callback
-                }
-            )
-        } else {
-            await createPermissionlessLiquidityPool(
-                {
-                    account,
-                    colCoverage,
-                    config,
-                    quorum: toBN(values[0].value).toNumber(),
-                    durationInHours,
-                    intRate,
-                    unitLiquidity: parseEther(unitLiquidity.toString()),
-                    callback
-                }
-            );
+        switch (loading.buttonText) {
+            case 'Approve':
+                await handleTransact({ callback, otherParam })
+                    .then(() => setLoading({value: false, buttonText: 'CreatePool'}))
+                    // .catch((error: any) => {
+                    //     const errorMessage: string = error?.message || error?.data?.message;
+                    //     console.log("Error:", errorMessage)
+                    //     setLoading({value: false, buttonText: 'Approve'});
+                    //     setMessage(errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage);
+                    // });
+
+                break;
+            case 'CreatePool':
+                otherParam.txnType = 'CREATE';
+                await handleTransact({
+                    router: isPermissioned? 'Permissioned' : 'Permissionless',
+                    callback,
+                    otherParam,
+                    createPermissionedPoolParam,
+                    createPermissionlessPoolParam,
+                }).then(() => setLoading({value: false, buttonText: 'Approve'}))
+                    // .catch((error: any) => {
+                    //     const errorMessage: string = error?.message || error?.data?.message;
+                    //     setMessage(errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage);
+                    //     setLoading({value: false, buttonText: 'Approve'});
+                    //     setTimeout(() => handleModalClose(), 3000);
+                    // });
+                break;
+            default:
+                break;
         }
     }
+
+    // const toggleApprovalModal = (continueExec: boolean) => {
+    //     setApprovalModal(false);
+    //     setContinuation(true);
+    // };
+
+    // // Send transaction
+    // const handleCreatePool = async() => {
+        
+    //     if(isPermissioned) {
+    //         await createPermissionedLiquidityPool(
+    //             {
+    //                 account,
+    //                 colCoverage,
+    //                 config,
+    //                 contributors: participants!,
+    //                 durationInHours,
+    //                 intRate,
+    //                 unitLiquidity: parseEther(unitLiquidity.toString()),
+    //                 callback
+    //             }
+    //         )
+    //     } else {
+    //         await createPermissionlessLiquidityPool(
+    //             {
+    //                 account,
+    //                 colCoverage,
+    //                 config,
+    //                 quorum: toBN(values[0].value).toNumber(),
+    //                 durationInHours,
+    //                 intRate,
+    //                 unitLiquidity: parseEther(unitLiquidity.toString()),
+    //                 callback
+    //             }
+    //         );
+    //     }
+    // }
 
     React.useEffect(() => {
         if(!values) handleModalClose();
@@ -86,23 +151,23 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     return(
         <PopUp { ...{modalOpen, handleModalClose } } > 
-            <Container maxWidth="sm" className="space-y-4">
-                <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
+            <Container maxWidth="xs" className="space-y-4">
+                <Stack className="p-4 md:p-8 my-10 rounded-lg space-y-6 text-lg bg-green1 text-white1">
                     <Box className="w-full">
-                        <button className="w-[20%] float-end text-white bg-orangec p-2 rounded-lg" onClick={() => handleModalClose()}>Close</button>
+                        <button className="w-[15%] float-end text-xs text-orangec border border-orangec bg-yellow-100 py-2 px- rounded-lg hover:bg-orangec hover:text-white1 font-extrabold" onClick={() => handleModalClose()}>Close</button>
                     </Box> 
                     <Stack className="space-y-4">
                         {
                             values.map((item) => {
                                 return (
                                     (item.title === "Participants" && type === 'address') ? (
-                                        <div key={item.title} >
-                                            <div className="flex justify-between items-center">
-                                                <h3 >{ item.title }</h3>
-                                                <button className="w-fullfloat-right" onClick={() => setOpen(!open)}><Chevron open={open} hideChevron={false} /></button>
+                                        <Stack key={item.title} >
+                                            <div className="flex justify-between items-center text-sm font-semibold">
+                                                <h3>{ item.title }</h3>
+                                                <button onClick={() => setOpen(!open)}><Chevron open={open} hideChevron={false} /></button>
                                             </div>
-                                            <Collapse in={open} timeout="auto" unmountOnExit className="">
-                                                <div className="p-2 rounded-lg bg-gray-100">
+                                            <Collapse in={open} timeout="auto" unmountOnExit>
+                                                <div className="p-2 rounded bg-[#272525]">
                                                     {
                                                         participants?.map((address, i) => (
                                                             <div key={address} className="flex justify-between items-center" >
@@ -117,9 +182,9 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                                     }
                                                 </div>
                                             </Collapse>
-                                        </div>
+                                        </Stack>
                                     ) : (
-                                        <div key={item.title} className="flex justify-between items-center">
+                                        <div key={item.title} className="flex justify-between items-center text-sm font-semibold">
                                             <h3 >{ item.title }</h3>
                                             <h3 >{ item.value }</h3>
                                         </div>
@@ -127,31 +192,19 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                 )
                             })
                         }
-                        <Box className="w-full flex justify-between items-center">
+                        <Box className="w-full flex justify-center items-center">
                             <button
-                                disabled={!continueExec}
-                                className={`w-full p-4 rounded-lg ${continueExec? "bg-orangec" : "bg-gray-100"} text-white`}
-                                onClick={handleCreatePool}
+                                disabled={loading.value}
+                                className={`w-full p-3 rounded-lg ${loading.value? "bg-gray-200 opacity-50" : "bg-yellow-100"} text-orangec border border-orangec text-small font-extrabold hover:bg-orangec hover:text-white1 flex justify-center`}
+                                onClick={handleClick}
                             >
-                                Transact
-                            </button>
-                            <button
-                                disabled={approvalModalOpen || continueExec}
-                                className={`w-full p-4 rounded-lg ${approvalModalOpen || continueExec? "bg-gray-100" : "bg-orangec"} text-white`}
-                                onClick={() => setApprovalModal(true)}
-                            >
-                                Show Approval
+                                {
+                                    loading.value? <Spinner color={"#F87C00"} /> : loading.buttonText
+                                }
                             </button>
                         </Box>
                     </Stack> 
                 </Stack>
-                <Approval {
-                    ...{
-                        amountToApprove: unitLiquidity,
-                        handleModalClose: toggleApprovalModal,
-                        modalOpen: approvalModalOpen,
-                    }
-                }/>
                 <Notification message={message} />
             </Container>
         </PopUp>

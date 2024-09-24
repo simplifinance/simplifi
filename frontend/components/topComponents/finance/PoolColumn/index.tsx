@@ -1,21 +1,12 @@
 import React from "react";
 import { Address, AmountToApproveParam, FormattedData, PoolColumnProps, ScreenUserResult, VoidFunc } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
 import { FORMATTEDDATA_MOCK } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { RenderActions } from "./RenderActions";
 import { TableChild } from "./TableChild";
-
-// import { Input } from "./Create/Input";
-// import Notification from "@/components/Notification";
-// import { approve } from "@/apis/factory/transact/testToken/approve";
-// import BigNumber from "bignumber.js";
-
-// const filterButtonObject = () => {
-//     const buttonTextArr : {tag: ButtonText, }[] = ['ADD', 'GET', 'PAY', 'LIQUIDATE', 'AWAIT PAYMENT', 'DISABLED', 'WAIT'];
-
-// }
 
 /**
  * Filter the data list for current user
@@ -81,7 +72,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         { value: quorum_toNumber, gridSize: 1},
         { value: unit_InEther, gridSize: 1.5},
         { value: intPercent_string, gridSize: 1.5},
-        { value: pair, gridSize: 1.5},
+        { value: pair, gridSize: 2},
         { value: userCount_toNumber, gridSize: 1.5},
         { value: renderIcon(isPermissionless), gridSize: 1.5},
         { 
@@ -97,23 +88,27 @@ export const PoolColumn = (props: PoolColumnProps) => {
                     maxEpochDuration: duration_toNumber.toString(),
                     otherParam
                 }}                />,
-            gridSize: 2
+            gridSize: 1
         }
     ]);
 
     return(
-        <React.Fragment>
-            <Grid container xs={12} className={`${open? "bg-gray-100 rounded-b-lg" : ""} p-4`} >
-                {
-                    column_content.map(({ value, gridSize}, id) => (
-                        <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
-                            <span className="text-gray-500">{ value }</span>
-                        </Grid>
-                    ))
-                }
+        <Stack className="w-full">
+            <Grid container xs={'auto'}>
+                <Grid item container xs={12} className={`${open? "bg-white1 bg-opacity-10" : ""} p-4`} >
+                    {
+                        column_content.map(({ value, gridSize}, id) => (
+                            <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
+                                <span className="" style={{color: 'rgba(255, 255, 255, 0.7)'}}>{ value }</span>
+                            </Grid>
+                        ))
+                    }
+                </Grid>
             </Grid>
-            <TableChild {...{formattedPool, open}} />
-        </React.Fragment>
+            <Grid item container xs={12}>
+                <TableChild {...{formattedPool, open}} />
+            </Grid>
+        </Stack>
     )
 }
 
@@ -138,11 +133,11 @@ export const togglerIcon = (open: boolean, handleClick?: VoidFunc, className?: s
 const renderIcon = (isPermissionless: boolean) => {
     return (
         !isPermissionless? 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-white1">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg> 
                 : 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-orangec">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-white1">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>              
 

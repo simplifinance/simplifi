@@ -95,7 +95,7 @@ export const RenderActions = (props: RenderActionsProps) => {
             <button 
                 onClick={() => setConfirmationModal(true)}
                 disabled={buttonObj.disable}
-                className="w-full text-xs font-semibold border border-orangec p-2 rounded-lg text-orangec bg-yellow-100 hover:shadow-lg hover:shadow-green1" 
+                className="w-full text-xs font-extrabold border border-orangec p-2 rounded-lg text-orangec bg-yellow-100 hover:bg-orangec hover:text-white1" 
             >
                 {buttonObj.value}
             </button>

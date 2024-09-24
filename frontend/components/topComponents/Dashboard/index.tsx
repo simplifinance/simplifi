@@ -1,6 +1,5 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
 import React from 'react'
 import Image from 'next/image';
 import { LiquidityPool, Pools } from '@/interfaces';

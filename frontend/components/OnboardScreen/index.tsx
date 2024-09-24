@@ -4,6 +4,9 @@ import { MotionDivWrap } from '../MotionDivWrap';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
 import { flexCenter } from '@/constants';
+import Container from '@mui/material/Container';
+import { fadeStyle } from '../topComponents/finance/Create/forms/transactionStatus/PopUp';
+import Stack from '@mui/material/Stack';
 
 export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen : () => void}) {
   const [displaySwipeable, activateSwipeable] = React.useState<boolean>(false);
@@ -19,33 +22,33 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
   }, []);
 
   return (
-    <div className='flex justify-center bg-green1 items-center h-full py-[50px]'>
+    <Container maxWidth={"xs"} className='bg-white1 py-4 px-2 rounded-3xl' style={fadeStyle()}>
       {
         !displaySwipeable? 
-          <MotionDivWrap className='flex justify-center items-center rounded-3xl' >
-            <Image src="/logoSimplifi.png" alt="SimplifiLogo" height={300} width={300} />
+          <MotionDivWrap className={`w-full h-[400px] ${flexCenter} `} >
+            <Image src="/logoSimplifi.png" alt="SimplifiLogo" height={250} width={250} />
           </MotionDivWrap> 
             : 
-          <MotionDivWrap className='bg-white '>
-            <div className='w-full h-full flex flex-col justify-center items-center space-y-8'>
+          <MotionDivWrap className=' w-full h-[400px] p'>
+            <Stack className='place-items-center space-y-4'>
               <AutoSwipeableViews>
                 {
-                  SWIPEABLE_CONTENTS.map((item, i) => (
-                    <div className={`${flexCenter} flex-col space-y-8`} key={i}>
-                      {item.imageComponent}
-                      <div className={`${flexCenter} flex-col w-[80%] text-center`}>
-                        <h1 className='text-lg font-bold'>{item.title}</h1>
-                        <p className='text-center text-gray-400'>{item.description}</p>
-                      </div>
-                    </div>
+                  SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
+                    <Stack className={`${flexCenter} place-items-center`} key={i}>
+                      {imageComponent}
+                      <Stack className={`text-center w-[80%]`}>
+                        <h1 className='text-lg font-bold'>{title}</h1>
+                        <p className='text-center text-gray-400'>{description}</p>
+                      </Stack>
+                    </Stack>
                   ))
                 }
               </AutoSwipeableViews>
-              <button onClick={exitOnboardScreen} className='w-[70%] h-16 bg-orangec rounded-full text-white font-semibold'>Get Started</button>
-            </div>
+              <button onClick={exitOnboardScreen} className='w-[70%] p-4 bg-yellow-200 text-orangec border border-orangec rounded-full text-wh font-extrabold hover:bg-orangec hover:text-yellow-100'>Get Started</button>
+            </Stack>
           </MotionDivWrap>
       }
-    </div>
+    </Container>
   )
 }
 
@@ -53,19 +56,19 @@ const SWIPEABLE_CONTENTS = [
   {
     title: "Welcome to Quatre Digesu",
     description: "The application brings you the full power of decentralization and allows you to earn in multiple ways",
-    imageComponent: <Image src="/blockchain.svg" alt="Decentralization" height={200} width={200}/>,
+    imageComponent: <Image src="/blockchain.svg" alt="Decentralization" height={180} width={180}/>,
     buttonContent: "Get Started"
   },
   {
     title: "Peer-Funding, Lending And Borrowing",
     description: "Enjoy the super benefits of lending and borrowing assets, via a decentralized stucture and staking",
-    imageComponent: <Image src="/Group2.svg" alt="Peer-Funding" height={300} width={300}/>,
+    imageComponent: <Image src="/Group2.svg" alt="Peer-Funding" height={200} width={200}/>,
     buttonContent: "Get Started"
   },
   {
     title: "Invest Easily With A Click",
     description: "Maximize your loans by leveraging our aggregrated clickable investment dashboards",
-    imageComponent: <Image src="/Group32.svg" alt="Invest" height={300} width={300}/>,
+    imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
     buttonContent: "Get Started"
   }
 ]

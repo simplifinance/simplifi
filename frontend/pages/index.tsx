@@ -87,7 +87,7 @@ export default function SimpliApp() {
   const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen exitOnboardScreen={exitOnboardScreen} />;
 
   return (
-    <main className="h-screen ">
+    <main className="h-scree">
       <StorageContextProvider 
         value={{storage, setstate}}
         children={displayScreen()} 

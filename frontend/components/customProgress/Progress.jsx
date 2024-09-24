@@ -27,21 +27,6 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function TransactionProgressBar({inProgress}) {
-  const [progress, setProgress] = React.useState(40);
-
-  // React.useEffect(() => {
-  //   const timer = setInterval(() => {
-  //     setProgress(inProgress);
-  //   }, 800);
-  //   return () => {
-  //     clearInterval(timer);
-  //   };
-  // }, [inProgress]);
-
-  return (
-    <Box sx={{ width: '100%' }}>
-      <LinearProgressWithLabel value={progress} />
-    </Box>
-  );
+export default function ProgressBar({inProgress}) {
+  return (<LinearProgressWithLabel value={inProgress} />);
 }

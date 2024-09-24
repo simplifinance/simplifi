@@ -39,10 +39,10 @@ export const POOL_HEADER_CONTENT = Array.from([
   { value: 'Quorum', gridSize: 1},
   { value: 'Liquidity/head', gridSize: 1.5},
   { value: 'Int.Rate', gridSize: 1.5},
-  { value: 'Pair', gridSize: 1.5},
+  { value: 'Pair', gridSize: 2},
   { value: 'Fill', gridSize: 1.5},
   { value: 'Type', gridSize: 1.5},
-  { value: 'Action', gridSize: 2},
+  { value: 'Action', gridSize: 1},
 ]);
 
 export const PROFILE_MOCK : Profile = {

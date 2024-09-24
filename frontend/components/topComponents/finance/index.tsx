@@ -31,15 +31,15 @@ const Liquidity : React.FC = () => {
         }
         fetchData();
       }
-    }, 100000);
+    }, 30000);
     return () => {
-      clearTimeout(100000);
+      clearTimeout(30000);
       ctrl.abort();
     };
   }, [isConnected, connector, config, setstate]);
 
   return (
-    <Box className="h-screen">
+    <Box>
       <Outlet />
     </Box>
   )
