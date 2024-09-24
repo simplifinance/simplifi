@@ -493,7 +493,6 @@ abstract contract AbstractFactory is
         pure 
         returns (uint _price) 
     {
-        _price = 900000000000000000; // ================================================> We use oracle here
-        // _price = 50000000000000; // ================================================> We use oracle here
+        _price = 9900000000000000000; // ================================================> We use oracle here
     }
 }

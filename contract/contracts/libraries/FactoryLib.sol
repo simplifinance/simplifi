@@ -72,6 +72,7 @@ library FactoryLib {
   {
     Def memory _d = _def();
     uint epochId = _generateEpochId(self);
+    bool(cpp.colCoverage >= 100).assertTrue("Col coverage is too low");
     Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
     _validateAllowance(user, cpp.asset, cpp.unitContribution);
     _updatePoolSlot(self.poolArr, cpp, _d, strategy, isPermissionless, epochId);
