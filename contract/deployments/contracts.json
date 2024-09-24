@@ -1,6 +1,6 @@
 {
-  "name": "tester",
-  "chainId": "44787",
+  "name": "crossTest",
+  "chainId": "4157",
   "contracts": {
     "AssetClass": {
       "address": "0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c",
@@ -149,7 +149,7 @@
       ]
     },
     "Factory": {
-      "address": "0xDdd90d7364542FDD4DB16843b267a7359585B02A",
+      "address": "0x9890feB714834586aABD839F3395f017C4bA5BFe",
       "abi": [
         {
           "inputs": [
@@ -2833,7 +2833,7 @@
       ]
     },
     "FactoryLib": {
-      "address": "0xd35809a0e021407Cb9B4FFa7C9adC08166107305",
+      "address": "0xc15d6a9B3C7706a974528824AdA319e36376173A",
       "abi": [
         {
           "anonymous": false,
@@ -3179,7 +3179,7 @@
       ]
     },
     "StrategyManager": {
-      "address": "0x308C6E16F08fB8f86252fE7222c76078D096A5a2",
+      "address": "0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d",
       "abi": [
         {
           "inputs": [

@@ -60,27 +60,31 @@ export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
 export const getAmountToApprove = async(param: AmountToApproveParam) => {
   const { txnType, unit, intPerSec, lastPaid, epochId, account, config } = param;
   let amtToApprove : BigNumber = toBN(unit.toString());
-  switch (txnType) {
-    case 'ADD':
-      amtToApprove = amtToApprove;
-      break;
-    case 'PAY':
-      assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId not given");
-      const curDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
-      amtToApprove = curDebt.plus(toBN(intPerSec.toString()).times(60)); 
-      break;
-    case 'LIQUIDATE':
-      assert(epochId !== undefined && intPerSec !== undefined && lastPaid, "Utilities: EpochId and IntPerSec parameters missing.");
-      const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
-      amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
-      break;
-    case 'GET':
-      assert(epochId !== undefined, "Utilities: EpochId not given");
-      const collateral = await getCollateralQuote({config, epochId});
-      amtToApprove = toBN(collateral[0].toString());
-      break;
-    default:
-      break;
+  try {
+    switch (txnType) {
+      case 'ADD':
+        amtToApprove = amtToApprove;
+        break;
+      case 'PAY':
+        assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId not given");
+        const curDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
+        amtToApprove = curDebt.plus(toBN(intPerSec.toString()).times(60)); 
+        break;
+      case 'LIQUIDATE':
+        assert(epochId !== undefined && intPerSec !== undefined && lastPaid, "Utilities: EpochId and IntPerSec parameters missing.");
+        const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
+        amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
+        break;
+      case 'GET':
+        assert(epochId !== undefined, "Utilities: EpochId not given");
+        const collateral = await getCollateralQuote({config, epochId});
+        amtToApprove = toBN(collateral[0].toString());
+        break;
+      default:
+        break;
+    }
+  } catch (error: any) {
+    console.log("Error", error?.message || error?.data.message);
   }
   const prevAllowance = toBN((await getAllowance({config, account})).toString());
   if(prevAllowance.gte(amtToApprove)) {

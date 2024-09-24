@@ -126,7 +126,7 @@ export const TableChild = ({ open, formattedPool } : TableChildProps) => {
                     <Collapse in={innerCollapse} timeout="auto" unmountOnExit className={'w-full'}>
                         {
                             cData_formatted.map(({id_toString, slot_toNumber, isAdmin, colBals_InEther, payDate_InDateFormat, turnTime_InDateFormat, durOfChoice_InSec, loan_InEther, expInterest_InEther}, i) => (
-                                <Grid item container xs={12}>
+                                <Grid item container xs={12} key={i}>
                                     <Box className={`w-full ${flexSpread} rounded-t-lg border border-gray-300 text-gray-400 p-4`}>
                                         <h3>{`Prov. ${i + 1}`}</h3>
                                         { togglerIcon(innerLevel2Collapse, handleClickInnerLevel2Collapse, "bg-none w-[5%]") }

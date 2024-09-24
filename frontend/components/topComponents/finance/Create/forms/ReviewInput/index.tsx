@@ -79,13 +79,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
             case 'Approve':
                 await handleTransact({ callback, otherParam })
                     .then(() => setLoading({value: false, buttonText: 'CreatePool'}))
-                    // .catch((error: any) => {
-                    //     const errorMessage: string = error?.message || error?.data?.message;
-                    //     console.log("Error:", errorMessage)
-                    //     setLoading({value: false, buttonText: 'Approve'});
-                    //     setMessage(errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage);
-                    // });
-
                 break;
             case 'CreatePool':
                 otherParam.txnType = 'CREATE';
@@ -96,12 +89,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     createPermissionedPoolParam,
                     createPermissionlessPoolParam,
                 }).then(() => setLoading({value: false, buttonText: 'Approve'}))
-                    // .catch((error: any) => {
-                    //     const errorMessage: string = error?.message || error?.data?.message;
-                    //     setMessage(errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage);
-                    //     setLoading({value: false, buttonText: 'Approve'});
-                    //     setTimeout(() => handleModalClose(), 3000);
-                    // });
                 break;
             default:
                 break;

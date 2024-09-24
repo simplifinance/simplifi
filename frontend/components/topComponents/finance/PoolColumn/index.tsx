@@ -94,18 +94,18 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
     return(
         <Stack className="w-full">
-            <Grid container xs={'auto'}>
-                <Grid item container xs={12} className={`${open? "bg-white1 bg-opacity-10" : ""} p-4`} >
-                    {
-                        column_content.map(({ value, gridSize}, id) => (
-                            <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
-                                <span className="" style={{color: 'rgba(255, 255, 255, 0.7)'}}>{ value }</span>
-                            </Grid>
-                        ))
-                    }
-                </Grid>
+            {/* <Grid container xs={'auto'}> */}
+            <Grid container xs={12} className={`${open? "bg-white1 bg-opacity-10" : ""} p-4`} >
+                {
+                    column_content.map(({ value, gridSize}, id) => (
+                        <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
+                            <Stack className="place-items-center w-full" style={{color: 'rgba(255, 255, 255, 0.7)'}}>{ value }</Stack>
+                        </Grid>
+                    ))
+                }
             </Grid>
-            <Grid item container xs={12}>
+            {/* </Grid> */}
+            <Grid container xs={12}>
                 <TableChild {...{formattedPool, open}} />
             </Grid>
         </Stack>

@@ -24,30 +24,31 @@ export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
-export type Message = 
-  "Preparing trxn" | 
-  "Creating Liquidity Pool" | 
-  "Completing Trxn" | 
-  "Approval Completed" | 
-  "Transaction Completed" | 
-  "Adding provider" | 
-  "Paying back loan" | 
-  "Liquidating In Progress" | 
-  "Removing Pool" | 
-  "Withdrawing Collateral" | 
-  "Approving Factory" | 
-  "Transaction reverted" | 
-  "Transaction Failed" | 
-  "Transaction Completed" | 
-  "Approval Failed" | 
-  "Approval in progress" |
-  "Getting Finance" |
-  TxnStatus;
+export type Message = string;
+  // "Preparing trxn" | 
+  // "Creating Liquidity Pool" | 
+  // "Completing Trxn" | 
+  // "Approval Completed" | 
+  // "Transaction Completed" | 
+  // "Adding provider" | 
+  // "Paying back loan" | 
+  // "Liquidating In Progress" | 
+  // "Removing Pool" | 
+  // "Withdrawing Collateral" | 
+  // "Approving Factory" | 
+  // "Transaction reverted" | 
+  // "Transaction Failed" | 
+  // "Transaction Completed" | 
+  // "Approval Failed" | 
+  // "Approval in progress" |
+  // "Getting Finance" |
+  // TxnStatus;
 
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
   txDone: boolean;
+  // errorMessage?: string;
 }
 
 export type LiquidityPool = {
