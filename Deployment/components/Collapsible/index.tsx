@@ -11,7 +11,7 @@ export interface CollapsibleProps {
   collapsible?: boolean;
   displayChevron?: boolean;
   parentTitle: string;
-  setIcon: (arg:string) => React.JSX.Element;
+  setIcon: (arg:string, isActive: boolean) => React.JSX.Element;
   setParentActiveLink: (arg:string) => void;
   children?: React.ReactNode;
 }
@@ -66,7 +66,9 @@ export const Collapsible = (props: CollapsibleProps) => {
       >
         <div className={`${parentLinkActive? 'bg-orangec rounded-xl' : ''}`}>
           <div className={`w-[180px] ${flexStart} gap-3 p-3 ml-3 ${parentLinkActive? 'bg-yellow-100 rounded-r-xl' : ''}`}>
-            { setIcon(parentPath) }
+            <span className=''>
+              { setIcon(parentPath, parentLinkActive) }
+            </span>
             <div onClick={() => setOpen(!open)} className={`${flexSpread} text-lg ${parentLinkActive? '': 'text-gray-400'} gap-2 cursor-pointer p-1 rounded`}>
               <h1 className={`text-xl font-`}>{ parentTitle }</h1>
               {

@@ -31,7 +31,9 @@ const renderLiquidityChildComponents = () => [
     path: ROUTE_ENUM.CLOSED,
     element: () => (<Closed />)
   }
-].map(({path, element}) => (<Route {...{path, element: element()}} />));
+].map(({path, element}) => (
+  <Route key={path} {...{path, element: element()}} />
+));
 
 /**
  * Renders App child components
@@ -63,7 +65,11 @@ const renderAppChildComponents = () => [
     path: ROUTE_ENUM.SPEEDDOC,
     renderElement: () => ( <SpeedDoc /> ), 
   }
-].map(({renderElement, path, children}) => (<Route {...{element: renderElement(), path, children}} />));
+].map(({renderElement, path, children}) => (
+  <Route key={path} {...{element: renderElement(), path}}>
+    { children }
+  </Route>
+));
 
 export default function SimpliApp() {
   const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK});
@@ -79,8 +85,9 @@ export default function SimpliApp() {
       <Route 
         path="/" 
         element={ <App {...{ setInnerLink, innerlink, displayAppScreen }} /> } 
-        children={renderAppChildComponents()}
-      />
+      >
+        { renderAppChildComponents() }
+      </Route>
     )
   );
 
@@ -90,8 +97,9 @@ export default function SimpliApp() {
     <main className="h-scree">
       <StorageContextProvider 
         value={{storage, setstate}}
-        children={displayScreen()} 
-      />
+      >
+        { displayScreen() }
+      </StorageContextProvider>
     </main>
   );
 }

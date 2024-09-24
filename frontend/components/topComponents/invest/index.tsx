@@ -29,7 +29,7 @@ function Invest(): JSX.Element {
       popModal(false);
       navigate(ROUTE_ENUM.OPEN);
     }, 5000);
-  }, []);
+  }, [navigate]);
 
   return (
     <React.Fragment>

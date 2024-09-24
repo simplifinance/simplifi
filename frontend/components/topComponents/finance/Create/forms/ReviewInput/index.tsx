@@ -24,14 +24,12 @@ interface ReviewInputProps {
     handleModalClose: () => void;
 }
 
-type ButtonContent = 'Approve' | 'CreatePool';
+type ButtonContent = 'Approve' | 'CreatePool' | 'Completed';
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const [loading, setLoading] = React.useState<{buttonText: ButtonContent, value: boolean}>({buttonText: 'Approve', value: false});
     const [message, setMessage] = React.useState<string>('');
-    // const [continueExec, setContinuation] = React.useState<boolean>(false);
-    // const [approvalModalOpen, setApprovalModal] = React.useState<boolean>(false);
     
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
@@ -88,7 +86,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     otherParam,
                     createPermissionedPoolParam,
                     createPermissionlessPoolParam,
-                }).then(() => setLoading({value: false, buttonText: 'Approve'}))
+                }).then(() => setLoading({value: false, buttonText: 'Completed'}))
                 break;
             default:
                 break;
@@ -134,7 +132,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     React.useEffect(() => {
         if(!values) handleModalClose();
-    },[values, handleModalClose]);
+        if(loading.buttonText === 'Completed') {
+            setTimeout(() => {
+                handleModalClose();
+                setLoading({value: false, buttonText: 'Approve'})
+            }, 3000);
+        }
+        return() => clearTimeout(3000);
+    },[values, handleModalClose, loading.buttonText]);
 
     return(
         <PopUp { ...{modalOpen, handleModalClose } } > 
@@ -181,7 +186,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                         }
                         <Box className="w-full flex justify-center items-center">
                             <button
-                                disabled={loading.value}
+                                disabled={loading.value || loading.buttonText === 'Completed'}
                                 className={`w-full p-3 rounded-lg ${loading.value? "bg-gray-200 opacity-50" : "bg-yellow-100"} text-orangec border border-orangec text-small font-extrabold hover:bg-orangec hover:text-white1 flex justify-center`}
                                 onClick={handleClick}
                             >

@@ -78,6 +78,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
       case 'GET':
         assert(epochId !== undefined, "Utilities: EpochId not given");
         const collateral = await getCollateralQuote({config, epochId});
+        console.log("collateral", collateral[0].toString());
         amtToApprove = toBN(collateral[0].toString());
         break;
       default:
@@ -86,9 +87,11 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
   } catch (error: any) {
     console.log("Error", error?.message || error?.data.message);
   }
-  const prevAllowance = toBN((await getAllowance({config, account})).toString());
-  if(prevAllowance.gte(amtToApprove)) {
-    amtToApprove = toBN(0);
+  if(txnType !== 'GET') {
+    const prevAllowance = toBN((await getAllowance({config, account})).toString());
+    if(prevAllowance.gte(amtToApprove)) {
+      amtToApprove = toBN(0);
+    }
   }
 
   return amtToApprove;

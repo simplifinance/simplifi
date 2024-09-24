@@ -3,7 +3,7 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
-import { TrxnResult } from '@/interfaces';
+// import { TrxnResult } from '@/interfaces';
 
 export const fadeStyle = (overrideWidth? : string) => {
     return {

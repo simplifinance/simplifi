@@ -69,20 +69,20 @@ export const Permissioned = (props: {handleBack: () => void}) => {
     }
 
     return(
-        <Stack className="space-y-6">
-            <Box className="flex justify-between items-center text-black text-opacity-60">
+        <Stack className="space-y-4">
+            <Box className="flex justify-between items-center text-yellow-100 text-opacity-80">
                 <div className="">
-                    <button onClick={handleBack} className="p-2 cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">
+                    <button onClick={handleBack} className="p-2 w-full flex justify-between items-center gap-4 text-yellow-100 cursor-pointer hover:text-orangec text-opacity-80">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={2.5} stroke="currentColor" className="size-4 ">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
                         </svg>
+                        <h3>Back</h3>
                     </button>
                 </div>
                 <div className="w-full text-center text-xl font-semibold">
-                    <h3>Add Permissioned Pool</h3>
+                    <h3>Create Permissioned Pool</h3>
                 </div>
             </Box>
-
             <Box className="space-y-4">
                 {
                     (
@@ -120,7 +120,7 @@ export const Permissioned = (props: {handleBack: () => void}) => {
                         ] as const
                     ).map(({ id, type, placeholder,  onChange }, i) => (
                         <Stack key={id}>
-                            <Typography variant="body2">{id}</Typography>
+                            <h3 className="text-yellow-100 text-opacity-80">{id}</h3>
                             <Input 
                                 key={i}
                                 id={id}
@@ -133,9 +133,9 @@ export const Permissioned = (props: {handleBack: () => void}) => {
                 }
 
             </Box>
-            <Box className="flex justify-center">
-                <button onClick={toggleModal} className="bg-orangec w-[30%] p-4 rounded-lg text-white ">Submit</button>
-            </Box>
+            <Stack className="place-items-center">
+                <button onClick={toggleModal} className="text-orangec border border-orangec bg-yellow-100 font-extrabold w-[30%] p-4 rounded-lg hover:bg-orangec hover:text-yellow-200">Submit</button>
+            </Stack>
             <ReviewInput 
                 {
                     ...{

@@ -1,12 +1,12 @@
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
 import React from 'react'
 import Image from 'next/image';
 import { LiquidityPool, Pools } from '@/interfaces';
 import { BigNumber } from  'bignumber.js';
 import { toBN, toBigInt } from '@/utilities';
 import { formatEther } from 'viem';
+import { StorageContext } from '@/components/StateContextProvider';
 
 const extractValues = (pools: Pools ) => {
   let tvl : BigNumber = toBN(0);
@@ -23,8 +23,8 @@ const extractValues = (pools: Pools ) => {
   };
 }
 
-const Dashboard = ({pools} : {pools:Pools}) => {
-
+const Dashboard : React.FC = () => {
+  const { storage: { pools } } = React.useContext(StorageContext);
   const { tvl, permissioned, permissionless } = extractValues(pools);
 
   const dashboardInfo = [
@@ -63,10 +63,10 @@ const Dashboard = ({pools} : {pools:Pools}) => {
   return (
     <Stack className="space-y-10">
       <Box className="w-full">
-        <Grid container xs={12} spacing={4}  >
+        <div className='grid md:grid-cols-3 justify-between gap-12' >
           {
             dashboardInfo.map((item) => (
-              <Grid item xs={12} md={4} key={item.title}>
+              <div key={item.title}>
                 <div className={`w-full bg-orangec rounded-lg p-8 text-white flex justify-start gap-4`}>
                   <div>
                     <Image 
@@ -81,21 +81,14 @@ const Dashboard = ({pools} : {pools:Pools}) => {
                     <h1 className='font-semibold text-lg'>{ item.value }</h1>
                   </Stack>
                 </div>
-              </Grid>
+              </div>
             ))
           }
-        </Grid>
+        </div>
       </Box>
-
-      {/* <Grid className=''>
-        <Grid >
-          <Grid item container xs={12} sx={{display: 'flex', justifyContent: 'end'}}>
-          </Grid>
-
-        </Grid>
-      </Grid> */}
     </Stack>
   )
 }
 
 export default Dashboard;
+   
