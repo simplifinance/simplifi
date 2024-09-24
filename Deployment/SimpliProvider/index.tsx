@@ -4,7 +4,6 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 import { ReactNode } from "react";
 import { Chain } from "viem";
-import { celoAlfajores } from "wagmi/chains"
 
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
 if (!projectId) throw new Error('Project ID is undefined');
@@ -35,8 +34,7 @@ const crossFiTestnet : Chain = {
 const config = getDefaultConfig({
   appName: 'Simplifinance',
   projectId,
-  // chains: [crossFiTestnet],
-  chains: [celoAlfajores],
+  chains: [crossFiTestnet],
 });
 
 const theme = lightTheme(

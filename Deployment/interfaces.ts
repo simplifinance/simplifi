@@ -1,5 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
-import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common, Counters } from "./typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
 export type WagmiConfig = import("wagmi").Config;
@@ -21,34 +21,13 @@ export enum FuncTag {
 }
 
 export type Pools = Readonly<LiquidityPool[]>;
-// export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
 export type Message = string;
-  // "Preparing trxn" | 
-  // "Creating Liquidity Pool" | 
-  // "Completing Trxn" | 
-  // "Approval Completed" | 
-  // "Transaction Completed" | 
-  // "Adding provider" | 
-  // "Paying back loan" | 
-  // "Liquidating In Progress" | 
-  // "Removing Pool" | 
-  // "Withdrawing Collateral" | 
-  // "Approving Factory" | 
-  // "Transaction reverted" | 
-  // "Transaction Failed" | 
-  // "Transaction Completed" | 
-  // "Approval Failed" | 
-  // "Approval in progress" |
-  // "Getting Finance" |
-  // TxnStatus;
-
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
   txDone: boolean;
-  // errorMessage?: string;
 }
 
 export type LiquidityPool = {
@@ -70,7 +49,6 @@ export interface LiquidityChildrenProps {
 export interface TrxnResult {
   wait?: WaitForTransactionReceiptReturnType;
   pools: Pools;
-  // profile: Profile;
 }
 
 export interface CreatePermissionedPoolParams extends Config{
@@ -78,7 +56,6 @@ export interface CreatePermissionedPoolParams extends Config{
   durationInHours: number;
   colCoverage: number;
   unitLiquidity: bigint;
-  // liquidAsset: Address;
   contributors: Address[];
 }
 
@@ -88,7 +65,6 @@ export interface CreatePermissionLessPoolParams extends Config{
   durationInHours: number;
   colCoverage: number;
   unitLiquidity: bigint;
-  // liquidAsset: Address;
 }
 
 export interface GetProfileParam {
