@@ -2,6 +2,7 @@ import { CommonParam } from "@/interfaces";
 import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
+import { formatError } from "../formatError";
 
 export const addToPool = async(args: CommonParam ) => {
   const { epochId, config, callback, account } = args;
@@ -19,8 +20,7 @@ export const addToPool = async(args: CommonParam ) => {
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, callback: callback!});
     } catch (error: any) {
-      console.log("contract error", error);
-      callback?.({message: "Transaction Failed", txDone: true});
+      callback?.({message: formatError(error), txDone: true});
     }
   }
 }

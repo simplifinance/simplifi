@@ -69,6 +69,10 @@ abstract contract AbstractFactory is
     ///@dev Fallback
     receive() external payable {}
 
+    /**
+     * @dev Withdraws XFI balances of this contract if any. OnlyOwner function
+     * @param value : Amount to withdraw
+     */
     function withdrawXFI(
         uint value
     )

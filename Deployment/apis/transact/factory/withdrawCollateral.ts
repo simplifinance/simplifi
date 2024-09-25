@@ -4,17 +4,17 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 import { formatError } from "../formatError";
 
-export const liquidate = async(args: CommonParam) => {
+export const withdrawCollateral = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
-    callback?.({message: "Liquidating In Progress", txDone: false});
+    callback?.({message: "Getting back collateral", txDone: false});
     try {
       const {request} = await simulateContract(config, {
         address,
         account,
-        abi: liquidateAbi,
-        functionName: "liquidate",
+        abi: withdrawCollateralAbi,
+        functionName: 'withdrawCollateral',
         args: [epochId]
       });
       const hash = await writeContract(config, { ...request });
@@ -25,7 +25,7 @@ export const liquidate = async(args: CommonParam) => {
   }
 }
 
-const liquidateAbi = [
+const withdrawCollateralAbi = [
   {
     "inputs": [
       {
@@ -34,7 +34,7 @@ const liquidateAbi = [
         "type": "uint256"
       }
     ],
-    "name": "liquidate",
+    "name": "withdrawCollateral",
     "outputs": [
       {
         "internalType": "bool",

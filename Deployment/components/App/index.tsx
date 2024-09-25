@@ -43,7 +43,6 @@ export default function App(props: AppProps) {
     // }
   }, [displayAppScreen, isConnected, modalOpen ]);
 
-
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
     background: '#121212',

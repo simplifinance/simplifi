@@ -3,6 +3,7 @@ import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 import { getTokenAddress } from "../../getAddress";
+import { formatError } from "../formatError";
 
 const tokenAddr = getTokenAddress();
 
@@ -23,8 +24,7 @@ export const createPermissionlessLiquidityPool = async(param: CreatePermissionLe
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, callback: callback!});
     } catch (error: any) {
-      console.log("contract error", error);
-      callback?.({message: "Transaction Failed", txDone: true});
+      callback?.({message: formatError(error), txDone: true});
     }
   }
 

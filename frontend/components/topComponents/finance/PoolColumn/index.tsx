@@ -46,7 +46,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         epochId_toNumber,
         epochId_bigint,
         quorum_toNumber,
-        // intPerSec_InEther,
+        formatted_strategy,
         intPercent_string,
         unit_InEther,
         intPerSec,
@@ -78,16 +78,18 @@ export const PoolColumn = (props: PoolColumnProps) => {
         { 
             value:  
                 <RenderActions 
-                {...{
-                    isMember,
-                    isPermissionless,
-                    loan_InBN,
-                    payDate_InSec,
-                    stage_toNumber,
-                    epochId_toNumber,
-                    maxEpochDuration: duration_toNumber.toString(),
-                    otherParam
-                }}                />,
+                    {...{
+                        isMember,
+                        isPermissionless,
+                        loan_InBN,
+                        payDate_InSec,
+                        stage_toNumber,
+                        epochId_toNumber,
+                        strategy: formatted_strategy,
+                        maxEpochDuration: duration_toNumber.toString(),
+                        otherParam
+                    }}
+                />,
             gridSize: 1
         }
     ]);

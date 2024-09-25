@@ -1,18 +1,15 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { getTokenAddress } from "../../getAddress";
-import { getFactoryAddress } from "../../contractAddress";
 
-const factoryAddr = getFactoryAddress();
-
-export const getAllowance = async(args: {account: Address, config: WagmiConfig}) => {
-  const { account, config } = args;
+export const getAllowance = async(args: {owner: Address, account: Address, spender: Address, config: WagmiConfig}) => {
+  const { owner, spender, account, config } = args;
   return await readContract(config, {
     address: getTokenAddress(),
     abi: allowanceAbi,
     functionName: "allowance",
     account,
-    args: [account, factoryAddr]
+    args: [owner, spender]
   });
 }
 

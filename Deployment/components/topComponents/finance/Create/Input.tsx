@@ -4,11 +4,12 @@ interface InputProps {
     type: 'number' | 'text';
     placeholder?: string;
     id: string;
+    overrideBg: string;
     onChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const Input = (props: InputProps) => {
-    const { type, placeholder, id, onChange } = props;
+    const { type, placeholder, id, overrideBg, onChange } = props;
 
     return(
         <input 
@@ -17,7 +18,7 @@ export const Input = (props: InputProps) => {
             required={true}
             id={id}
             onChange={onChange}
-            className="w-full p-3 text-sm bg-white1 opacity-70 rounded-lg"
+            className={`w-full p-3 text-sm bg-transparent rounded-lg ${overrideBg}`}
         />
     )
 }

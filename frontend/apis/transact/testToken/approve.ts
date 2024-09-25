@@ -3,6 +3,7 @@ import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 import { getTokenAddress  } from "../../getAddress";
 import { getFactoryAddress } from "../../contractAddress";
+import { formatError } from "../formatError";
 
 const factoryAddr = getFactoryAddress();
 
@@ -22,7 +23,7 @@ export const approve = async(args: ApproveParam) => {
           const hash = await writeContract(config, { ...request });
           await waitForConfirmation({config, hash, fetch: false, callback});
         } catch (error: any) {
-            callback?.({message: "Approval Failed", txDone: true});
+            callback?.({message: formatError(error), txDone: true});
         }
     }
 }

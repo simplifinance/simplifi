@@ -2,6 +2,7 @@ import { GetFinanceParam } from "@/interfaces";
 import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
+import { formatError } from "../formatError";
 
 export const getFinance = async(args: GetFinanceParam ) => {
   const { epochId, daysOfUseInHr, config, callback, account, value } = args;
@@ -20,8 +21,7 @@ export const getFinance = async(args: GetFinanceParam ) => {
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, callback: callback!});
     } catch (error: any) {
-      console.log("contract error", error);
-      callback?.({message: "Transaction Failed",txDone: true});
+      callback?.({message: formatError(error),txDone: true});
     }
   }
 }

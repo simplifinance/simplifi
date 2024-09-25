@@ -277,7 +277,7 @@ export async function transferAsset(x: FundAccountParam) : Null {
 }
 
 /**
- * @dev Claim CTRIB tokens as loan after getFinance successful.
+ * @dev Withdraws loan after getFinance successful.
  * 
  * @param x : Parameters 
  * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>

@@ -144,9 +144,9 @@ export const ReviewInput = (props: ReviewInputProps) => {
     return(
         <PopUp { ...{modalOpen, handleModalClose } } > 
             <Container maxWidth="xs" className="space-y-4">
-                <Stack className="p-4 md:p-8 my-10 rounded-lg space-y-6 text-lg bg-green1 text-white1">
+                <Stack className="p-4 md:p-8 rounded-lg space-y-4 text-lg bg-green1 text-white1 border shadow-lg shadow-yellow-100">
                     <Box className="w-full">
-                        <button className="w-[15%] float-end text-xs text-orangec border border-orangec bg-yellow-100 py-2 px- rounded-lg hover:bg-orangec hover:text-white1 font-extrabold" onClick={() => handleModalClose()}>Close</button>
+                        <button className="w-[15%] float-end text-xs text-white1 bg-green1 rounded-lg hover:shadow-lg p-2 hover:shadow-orangec hover:text-yellow-200 font-extrabold" onClick={() => handleModalClose()}>Close</button>
                     </Box> 
                     <Stack className="space-y-4">
                         {
@@ -187,7 +187,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                         <Box className="w-full flex justify-center items-center">
                             <button
                                 disabled={loading.value || loading.buttonText === 'Completed'}
-                                className={`w-full p-3 rounded-lg ${loading.value? "bg-gray-200 opacity-50" : "bg-yellow-100"} text-orangec border border-orangec text-small font-extrabold hover:bg-orangec hover:text-white1 flex justify-center`}
+                                className={`w-full p-3 rounded-lg ${loading.value? "bg-gray-200 opacity-50" : "bg-yellow-100"} text-orangec border border-orangec text-small font-extrabold hover:bg-orangec hover:text-black flex justify-center`}
                                 onClick={handleClick}
                             >
                                 {

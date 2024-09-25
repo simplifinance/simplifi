@@ -6,15 +6,15 @@ import { StorageContext } from "@/components/StateContextProvider";
 import { PreferredDurationInput } from "./PreferredDurationInput";
 import Notification from "@/components/Notification";
 import { ConfirmationPopUp } from "./ConfirmationPopUp";
+import { Address } from "viem";
 
 export const RenderActions = (props: RenderActionsProps) => {
     const [message, setMessage] = React.useState<string>('');
-    const [modalOpen, setModal] = React.useState<boolean>(false);
+    const [modalOpen, setInputModal] = React.useState<boolean>(false);
     const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
-    // const [buttonObj, setButtonObj] = React.useState<{value: ButtonText, disable: boolean}>({value: 'WAIT', disable: false});
 
-    const { stage_toNumber, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
+    const { stage_toNumber, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
     const { setstate } = React.useContext(StorageContext);
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
@@ -23,7 +23,7 @@ export const RenderActions = (props: RenderActionsProps) => {
         if(preferredDuration === '0') {
             setPreferredDuration(maxEpochDuration);
         }
-        setModal(!modalOpen);
+        setInputModal(!modalOpen);
         setConfirmationModal(!confirmationModal);
     }
 
@@ -31,17 +31,17 @@ export const RenderActions = (props: RenderActionsProps) => {
 
     const useEpochDuration = () => {
         setPreferredDuration(maxEpochDuration);
-        setModal(false);
+        setInputModal(false);
         setConfirmationModal(!confirmationModal);
     };
 
     const handleClick = () => {
-        if(buttonObj.value === 'GET') {
-            // setConfirmationModal(!confirmationModal);
-            setModal(true);
-        } else {
-            setConfirmationModal(!confirmationModal);
-        }
+        setInputModal(true);
+        // if(buttonObj.value === 'GET') {
+        //     setInputModal(true);
+        // } else {
+        //     setConfirmationModal(!confirmationModal);
+        // }
     }
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,10 +79,10 @@ export const RenderActions = (props: RenderActionsProps) => {
         case FuncTag.PAYBACK:
             if(isMember){
                 if(loan_InBN.gt(0)) buttonObj.value = 'PAY';
-                else buttonObj = { value: 'AWAIT PAYMENT', disable: true};
+                else buttonObj = { value: 'DISABLED', disable: true};
             } else {
-                if((new Date().getTime() / 1000) >  payDate_InSec) buttonObj.value = 'LIQUIDATE';
-                else buttonObj = { value: 'AWAIT PAYMENT', disable: true};
+                if((new Date().getTime() / 1000) >  payDate_InSec) buttonObj = { value: 'LIQUIDATE', disable: true};
+                else buttonObj = { value: 'DISABLED', disable: true};
             }
             break;
         default:
@@ -97,7 +97,8 @@ export const RenderActions = (props: RenderActionsProps) => {
             {
                 callback,
                 preferredDuration,
-                otherParam
+                otherParam,
+                strategy
             }
         );
     }
@@ -148,4 +149,5 @@ export interface RenderActionsProps {
     payDate_InSec: number;
     otherParam: AmountToApproveParam;
     maxEpochDuration: string;
+    strategy: Address;
 }

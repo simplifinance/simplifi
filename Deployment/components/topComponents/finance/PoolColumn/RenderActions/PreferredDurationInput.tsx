@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import { PopUp } from "@/components/transactionStatus/PopUp";
-import { flexSpread } from "@/constants";
+import { flexCenter, flexSpread } from "@/constants";
 import { Input } from "../../Create/Input";
 import Tooltip from "@mui/material/Tooltip";
 import { VoidFunc } from "@/interfaces";
@@ -18,8 +18,8 @@ export const PreferredDurationInput :
 
     return (
         <PopUp { ...{modalOpen, handleModalClose } } > 
-            <Container maxWidth="xs" className="space-y-2 bg-green1 ">
-                <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg text-center text-wrap ">
+            <Container maxWidth="xs" className="space-y-4">
+                <Stack className="p-4 md:p-8 rounded-lg space-y-12 text-lg bg-green1 text-white1 border shadow-lg shadow-yellow-100 text-center text-wrap ">
                     <Tooltip title={title}>
                         <h3 className="text-xl font-bold opacity-80">{"Your preferred duration (In hrs) "}</h3>
                     </Tooltip>
@@ -31,24 +31,25 @@ export const PreferredDurationInput :
                                         id: "Duration",
                                         onChange,
                                         type: 'text',
-                                        placeholder: 'Enter preferred duration'
+                                        placeholder: 'Enter preferred duration',
+                                        overrideBg: ''
                                     }
                                 }
                             />
                         </Stack>
-                        <button className="w-[30%] bg-white1 p-3 rounded-lg text-sm">
+                        <button className="w-[30%] p-3 rounded-lg text-sm text-yellow-100">
                             {`${preferredDuration} hrs`}
                         </button>
                     </Box>
                     <Stack className={`font-bold gap-2`}>
                         <button 
-                            className="w-full bg-orangec p-4 rounded-lg text-yellow-100 hover:bg-opacity-70 "
+                            className={`${flexCenter} w-full bg-orangec text-yellow-100" font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
                             onClick={useEpochDuration}
                         >
                             Use Epoch Duration
                         </button>
                         <button 
-                            className="w-full text-orangec border border-orangec p-4 rounded-lg bg-yellow-100 hover:bg-orangec hover:text-yellow-100"
+                            className={`${flexCenter} w-full bg-yellow-200 text-orangec font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
                             onClick={handleModalClose}
                         >
                             Submit
