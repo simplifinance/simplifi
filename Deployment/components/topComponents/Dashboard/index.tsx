@@ -66,11 +66,10 @@ const Dashboard : React.FC = () => {
   ];
 
   React.useEffect(() => {
-    // if(!isConnected && !isConnecting && !isReconnecting) {
-    if(!isConnected) {
+    if(!isConnected && !isConnecting && !isReconnecting) {
       setModal(true);
     }
-    // if(isConnected && modalOpen) handleModalClose();
+    if(isConnected && modalOpen) handleModalClose();
   }, [isConnected, isConnecting, isReconnecting]);
 
   return (

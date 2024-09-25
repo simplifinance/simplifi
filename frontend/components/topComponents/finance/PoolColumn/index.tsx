@@ -114,7 +114,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
 
 export const togglerIcon = (open: boolean, handleClick?: VoidFunc, className?: string) => {
     return (
-        <button onClick={() => handleClick?.()} className={`${className || "w-full p-2 bg-orangec rounded-lg"}`}>
+        <button onClick={() => handleClick?.()} className={`${className || "w-full p-2 flex justify-center items-center bg-orangec rounded-lg"}`}>
             {
                 open? 
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className? "text-orangec" : "text-white1"}`}>

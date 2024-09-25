@@ -27,13 +27,13 @@ export const ConfirmationPopUp :
 
     switch (buttonText) {
         case 'ADD':
-            message = `You're about to join add liquidity to epoch ${epochId}`;
+            message = `You request to add liquidity to epoch ${epochId}`;
             break;
         case 'GET':
-            message = `Now You're getting finance from epoch ${epochId}`;
+            message = `Now, getting finance from epoch ${epochId}`;
             break;
         case 'PAY':
-            message = `Returning borrowed fund to pool at epoch ${epochId}`
+            message = `Paying back to pool at epoch ${epochId}`
             break;
         case 'LIQUIDATE':
             message = `Setting liquidation at epoch ${epochId}`;
@@ -61,44 +61,40 @@ export const ConfirmationPopUp :
 
     return (
         <PopUp { ...{modalOpen, handleModalClose } } > 
-            <Container maxWidth="xs" className="space-y-2">
-                <Stack sx={{bgcolor: 'background.paper'}} className="p-4 md:p-8 my- rounded-xl space-y-6 bg-orangec">
+            <Container maxWidth="xs" className="space-y-4">
+                <Stack className="p-4 md:p-8 rounded-lg space-y-12 text-lg bg-green1 text-white1 border shadow-lg shadow-yellow-100">
                    {
                         txnStatus.loading? 
-                            <Box>
-                                <Image 
+                            <Box className={`${flexCenter} my-4 text-2xl text-center text-yellow-200`}>
+                                {/* <Image 
                                     src='/blockchain.svg'
                                     alt={"Loading image"}
                                     width={100}
                                     height={100}
-                                />
+                                /> */}
+                                <h3>{"Transaction Processing ..."}</h3>
                             </Box>
                                 : 
-                                <Stack className={`${flexCenter} space-y-4 text-xl font-semibold text-wrap text-center`}>
+                                <Stack className={`${flexCenter} text-2xl font-semibold text-wrap text-center text-yellow-100`}>
                                     <h3>{message}</h3>
-                                    <h3 className="text-sm ">Confirm to send</h3>
+                                    {/* <h3 className="text-sm ">Confirm to send</h3> */}
                                 </Stack>
                    }
                     <Box className={`${flexSpread} gap-4 `}>
                         <button 
                             disabled={txnStatus.loading}
-                            className={`${flexCenter} w-full border border-yellow-100 bg-orangec p-4 rounded-lg text-white1 hover:shadow-lg hover:shadow-green1`}
+                            className={`${flexCenter} w-full ${txnStatus.loading? "bg-opacity-50" : "bg-orangec text-yellow-100"} font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
                             onClick={handleModalClose}
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-6 text-white1">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                            </svg>
+                            Cancel
                         </button>
                         <button 
                             disabled={txnStatus.loading || txnStatus.txResult === 'Success'}
-                            className={`${flexCenter} w-full text-orangec bg-yellow-100 border border-orangec p-4 rounded-lg hover:shadow-lg hover:shadow-green1`}
+                            className={`${flexCenter} w-full ${txnStatus.loading? "bg-opacity-50" : "bg-yellow-200 text-orangec"} font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
                             onClick={handleSendTransaction}
                         >
                             {
-                                txnStatus.loading? <Spinner color={"orange"} /> : 
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-6 text-green-600">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                                    </svg>
+                                txnStatus.loading? <Spinner color={"orange"} /> : "Proceed"
                             }
                         </button>
                     </Box>
@@ -109,11 +105,11 @@ export const ConfirmationPopUp :
     );
 }
 
-interface PreferredDurationInputProp {
-    modalOpen: boolean;
-    maxEpochDuration: string;
-    preferredDuration: string;
-    handleModalClose: VoidFunc;
-    useEpochDuration: VoidFunc
-    onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
-}
+// interface PreferredDurationInputProp {
+//     modalOpen: boolean;
+//     maxEpochDuration: string;
+//     preferredDuration: string;
+//     handleModalClose: VoidFunc;
+//     useEpochDuration: VoidFunc
+//     onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
+// }

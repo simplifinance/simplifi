@@ -69,3 +69,7 @@
     yarn deploy-testnet
 ```
 
+<!-- import {DIAOracleLib} from "./libraries/DIAOracleLib.sol";
+function exampleGetPrice(string memory key) external returns (uint128){
+        return DIAOracleLib.getPrice(ORACLE, key);
+    } -->
