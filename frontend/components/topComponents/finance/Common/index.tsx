@@ -14,12 +14,11 @@ const headerClassName = `w-full ${flexSpread} bg-orangec rounded-lg p-6`;
 
 const renderPool = (pool: LiquidityPool, operation: Operation) => {
     const quorumIsZero = toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED || toBN(pool.uints.quorum.toString()).isZero();
-    if(operation === 'Closed') {
-      return (quorumIsZero? <PoolColumn {...{ pool }} /> : null);
-    }
-    
-    return (<PoolColumn {...{ pool }} /> );
+    const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
+    const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
+    const isClosed : boolean = poolIsZero || allGH || quorumIsZero || toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED;
 
+    return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
 }
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {

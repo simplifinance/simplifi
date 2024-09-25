@@ -70,7 +70,7 @@ const Dashboard : React.FC = () => {
       setModal(true);
     }
     if(isConnected && modalOpen) handleModalClose();
-  }, [isConnected, isConnecting, isReconnecting]);
+  }, [isConnected, isConnecting, isReconnecting, handleModalClose, modalOpen]);
 
   return (
     <Stack className="space-y-10">
