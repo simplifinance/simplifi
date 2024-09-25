@@ -40,7 +40,7 @@ export default function App(props: AppProps) {
     // if(displayAppScreen && isConnected) {
     //   navigate('/dashboard', {replace: true});
     // }
-  }, [displayAppScreen, isConnected, modalOpen, navigate]);
+  }, [displayAppScreen, isConnected, modalOpen ]);
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
