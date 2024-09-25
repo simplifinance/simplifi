@@ -7,8 +7,6 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { VoidFunc } from "@/interfaces";
 
-// import { flexSpread } from "@/constants";
-
 export const ConnectWallet 
     : 
     React.FC<{modalOpen: boolean, handleModalClose: VoidFunc}> 
@@ -17,13 +15,11 @@ export const ConnectWallet
 
     return (
         <PopUp { ...{modalOpen, handleModalClose } } > 
-            <Container maxWidth="sm" className="space-y-2">
-                <Stack sx={{bgcolor: 'background.paper'}} className="place-items-center p-4 md:p-8 my-10 rounded-xl border-2 space-y-6 text-lg ">
-                    <Box className={`w-full flex justify-between items-center`}>
-                        <h3 className="text-xl text-orangec font-black">{"Have Web3 Wallet?"}</h3>
-                        <button className="w-[15%]  text-white bg-orangec p-2 rounded-lg" onClick={handleModalClose}>Close</button>
-                    </Box> 
-                    <button className="w-[75%] bg-yellow-200 p-6 rounded-3xl hover:shadow-md hover:shadow-black">
+            <Container maxWidth="xs" className="space-y-2">
+                <Stack  className="place-items-center h-[200px] p-4 md:p-8 my-10 space-y-6 text-lg ">
+                    <h3 className="text-xl text-orangec font-black">{"Have Web3 Wallet?"}</h3>
+
+                    <button className="w-[75%] bg-yellow-100 border border-orangec p-6 rounded-lg hover:shadow-md hover:bg-orangec hover:text-yellow-100 font-bold">
                         <ConnectButton 
                             accountStatus={{
                                 smallScreen: 'avatar',

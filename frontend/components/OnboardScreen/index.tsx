@@ -44,7 +44,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
                   ))
                 }
               </AutoSwipeableViews>
-              <button onClick={exitOnboardScreen} className='w-[70%] p-4 bg-yellow-200 text-orangec border border-orangec rounded-full text-wh font-extrabold hover:bg-orangec hover:text-yellow-100'>Get Started</button>
+              <button onClick={exitOnboardScreen} className='w-[70%] p-4  bg-orangec text-yellow-100 rounded-full text-wh font-extrabold hover:bg-yellow-200 hover:text-orangec'>Get Started</button>
             </Stack>
           </MotionDivWrap>
       }

@@ -31,8 +31,6 @@ export default function App(props: AppProps) {
   const location = useLocation().pathname;
   const { isConnected } = useAccount();
 
-  // const handleModalClose = () => setPopUp(false);
-
   React.useEffect(() => {
     if(displayAppScreen && !isConnected) {
       navigate('/dashboard', {replace: true});

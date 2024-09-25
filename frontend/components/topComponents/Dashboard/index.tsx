@@ -7,6 +7,8 @@ import { BigNumber } from  'bignumber.js';
 import { toBN, toBigInt } from '@/utilities';
 import { formatEther } from 'viem';
 import { StorageContext } from '@/components/StateContextProvider';
+import { ConnectWallet } from '@/components/ConnectWallet';
+import { useAccount } from 'wagmi';
 
 const extractValues = (pools: Pools ) => {
   let tvl : BigNumber = toBN(0);
@@ -24,8 +26,11 @@ const extractValues = (pools: Pools ) => {
 }
 
 const Dashboard : React.FC = () => {
+  const [modalOpen, setModal] = React.useState<boolean>(false);
   const { storage: { pools } } = React.useContext(StorageContext);
   const { tvl, permissioned, permissionless } = extractValues(pools);
+  const handleModalClose = () => setModal(!modalOpen);
+  const { isConnected, isConnecting, isReconnecting } = useAccount();
 
   const dashboardInfo = [
     {
@@ -60,6 +65,13 @@ const Dashboard : React.FC = () => {
     },
   ];
 
+  React.useEffect(() => {
+    if(!isConnected && !isConnecting && !isReconnecting) {
+      setModal(true);
+    }
+    if(isConnected && modalOpen) handleModalClose();
+  }, [isConnected, isConnecting, isReconnecting]);
+
   return (
     <Stack className="space-y-10">
       <Box className="w-full">
@@ -86,6 +98,7 @@ const Dashboard : React.FC = () => {
           }
         </div>
       </Box>
+      <ConnectWallet { ...{ modalOpen, handleModalClose }} />
     </Stack>
   )
 }
