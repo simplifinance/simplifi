@@ -1,5 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
-import { Common, Counters } from "./typechain-types/contracts/apis/IFactory";
+import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
 export type WagmiConfig = import("wagmi").Config;
@@ -25,30 +25,11 @@ export type Pools = Readonly<LiquidityPool[]>;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
 export type Message = string;
-  // "Preparing trxn" | 
-  // "Creating Liquidity Pool" | 
-  // "Completing Trxn" | 
-  // "Approval Completed" | 
-  // "Transaction Completed" | 
-  // "Adding provider" | 
-  // "Paying back loan" | 
-  // "Liquidating In Progress" | 
-  // "Removing Pool" | 
-  // "Withdrawing Collateral" | 
-  // "Approving Factory" | 
-  // "Transaction reverted" | 
-  // "Transaction Failed" | 
-  // "Transaction Completed" | 
-  // "Approval Failed" | 
-  // "Approval in progress" |
-  // "Getting Finance" |
-  // TxnStatus;
 
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
   txDone: boolean;
-  // errorMessage?: string;
 }
 
 export type LiquidityPool = {
@@ -165,6 +146,7 @@ export interface FormattedPoolContentProps {
   cData_formatted: FormattedData[];
   intPerSec: BigNumberish;
   lastPaid: Address;
+  formatted_strategy: Address;
 }
 
 export interface AmountToApproveParam {
@@ -175,4 +157,14 @@ export interface AmountToApproveParam {
   account: Address;
   intPerSec?: BigNumberish | bigint;
   lastPaid?: Address;
+}
+
+export interface HandleTransactionParam {
+  otherParam: AmountToApproveParam;
+  preferredDuration?: string; 
+  createPermissionlessPoolParam?: CreatePermissionLessPoolParams;
+  createPermissionedPoolParam?: CreatePermissionedPoolParams;
+  router?: Router;
+  strategy?: Address;
+  callback: TransactionCallback;
 }
