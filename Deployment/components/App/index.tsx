@@ -37,10 +37,10 @@ export default function App(props: AppProps) {
       setPopUp(true);
     }
 
-    if(displayAppScreen && isConnected) {
-      navigate('/dashboard', {replace: true});
-    }
-  }, [displayAppScreen, isConnected, modalOpen, navigate]);
+    // if(displayAppScreen && isConnected) {
+    //   navigate('/dashboard', {replace: true});
+    // }
+  }, [displayAppScreen, isConnected, modalOpen ]);
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',

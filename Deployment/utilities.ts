@@ -1,5 +1,5 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FormattedData, FormattedPoolContentProps, LiquidityPool, Router, TransactionCallback, WagmiConfig } from "@/interfaces";
+import type { Address, AmountToApproveParam, ButtonText, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FormattedData, FormattedPoolContentProps, LiquidityPool, Router, TransactionCallback, WagmiConfig } from "@/interfaces";
 import BigNumber from 'bignumber.js';
 import { getCurrentDebt } from "./apis/read/getCurrentDebt";
 import { getAllowance } from "./apis/transact/testToken/getAllowance";
