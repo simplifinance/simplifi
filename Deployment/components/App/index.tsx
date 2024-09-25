@@ -32,15 +32,17 @@ export default function App(props: AppProps) {
   const { isConnected } = useAccount();
 
   React.useEffect(() => {
-    if(displayAppScreen && !isConnected) {
+    if(displayAppScreen) {
       navigate('/dashboard', {replace: true});
-      setPopUp(true);
+      if(!isConnected) setPopUp(true);
+
     }
 
-    // if(displayAppScreen && isConnected) {
+    // if(isConnected) {
     //   navigate('/dashboard', {replace: true});
     // }
   }, [displayAppScreen, isConnected, modalOpen ]);
+
 
   const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
