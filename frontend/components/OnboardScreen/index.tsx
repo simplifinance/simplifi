@@ -22,7 +22,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
   }, []);
 
   return (
-    <Container maxWidth={"xs"} className='bg-white1 py-4 px-2 rounded-3xl' style={fadeStyle()}>
+    <Container maxWidth={"xs"} className={`${!displaySwipeable? "bg-orangec" : "bg-white1"} py-4 px-2 rounded-3xl`} style={fadeStyle()}>
       {
         !displaySwipeable? 
           <MotionDivWrap className={`w-full h-[400px] ${flexCenter} `} >
@@ -54,7 +54,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
 
 const SWIPEABLE_CONTENTS = [
   {
-    title: "Welcome to Quatre Digesu",
+    title: "Welcome to Simplifinance",
     description: "The application brings you the full power of decentralization and allows you to earn in multiple ways",
     imageComponent: <Image src="/blockchain.svg" alt="Decentralization" height={180} width={180}/>,
     buttonContent: "Get Started"
@@ -66,8 +66,8 @@ const SWIPEABLE_CONTENTS = [
     buttonContent: "Get Started"
   },
   {
-    title: "Invest Easily With A Click",
-    description: "Maximize your loans by leveraging our aggregrated clickable investment dashboards",
+    title: "Collateral Maximization",
+    description: "Maximize your collateral leveraging our aggregrated yield strategies",
     imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
     buttonContent: "Get Started"
   }
