@@ -14,7 +14,7 @@ export const ERROR = [
   "MetaMask Tx Signature: User denied transaction signature.",
   "Transaction could not be completed"
 ];
-export const CONFIRMATIONS = 2; // 2 blocks
+export const CONFIRMATIONS = 3; // 3 blocks
 
 export const flexCenter = "flex justify-center items-center";
 export const flexStart = "flex justify-start items-center";

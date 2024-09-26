@@ -12,16 +12,16 @@ import { filterPools, type Operation } from "../commonUtilities";
 
 const headerClassName = `w-full ${flexSpread} bg-orangec rounded-lg p-6`;
 
-const renderPool = (pool: LiquidityPool, operation: Operation) => {
-  const stage = toBN(pool.stage.toString()).toNumber();
+// const renderPool = (pool: LiquidityPool, operation: Operation) => {
+//   const stage = toBN(pool.stage.toString()).toNumber();
 
-    const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
-    // const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
-    const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
-    const isClosed : boolean = allGH || quorumIsZero;
+//     const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
+//     // const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
+//     const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
+//     const isClosed : boolean = allGH || quorumIsZero;
 
-    return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
-}
+//     return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
+// }
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
   const { storage: { pools } } = React.useContext(StorageContext);
@@ -33,6 +33,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
   // const handleBack = () => {
 
   // }
+  const filtered = filterPools(pools, operation);
 
   return(
     <Stack className='space-y-6 mt-4'>
@@ -47,7 +48,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
           </div>
           <div className={headerClassName}>
             <h3 >{heroTitle2}</h3>
-            <h3>{filterPools(pools, operation)}</h3>
+            <h3>{filtered.length}</h3>
           </div>
         </div>
       </Box>
@@ -66,7 +67,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
         {/* Table Body */}
         <Grid container xs={12} >
           {
-            pools.map((pool: LiquidityPool, i) => (
+            filtered?.map((pool: LiquidityPool, i) => (
               <motion.button
                 key={i}
                 initial={{opacity: 0}}
@@ -74,7 +75,7 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
                 transition={{duration: '0.5', delay: i/pools.length}}
                 className='w-full rounded-md flex flex-col justify-start items-center  text-stone-300 cursor-pointer' 
               >
-                { renderPool(pool, operation) }
+                <PoolColumn {...{ pool }} />
               </motion.button>
             ))
           }

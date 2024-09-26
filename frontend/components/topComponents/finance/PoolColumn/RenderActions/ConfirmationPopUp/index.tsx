@@ -104,12 +104,3 @@ export const ConfirmationPopUp :
         </PopUp>
     );
 }
-
-// interface PreferredDurationInputProp {
-//     modalOpen: boolean;
-//     maxEpochDuration: string;
-//     preferredDuration: string;
-//     handleModalClose: VoidFunc;
-//     useEpochDuration: VoidFunc
-//     onChange: (e:React.ChangeEvent<HTMLInputElement>) => void;
-// }

@@ -31,9 +31,9 @@ const Liquidity : React.FC = () => {
         }
         fetchData();
       }
-    }, 10000);
+    }, 6000);
     return () => {
-      clearTimeout(10000);
+      clearTimeout(6000);
       ctrl.abort();
     };
   }, [isConnected, connector, config, setstate]);

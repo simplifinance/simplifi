@@ -14,7 +14,7 @@ const config: HardhatUserConfig = {
   
   networks: {
     crossTest: {
-      // url: "https://rpc.testnet.ms",  // Not working
+      url: "https://rpc.testnet.ms",  // Not working
       // url: "https://rpc-t.crossfi.nodestake.org", // Bad gateway
       // url: "https://crossfi-testnet-rpc.itrocket.net:443", // Bad gateway
       // url: "https://crossfi-testnet-rpc.itrocket.net/", // Bad gateway
@@ -38,21 +38,15 @@ const config: HardhatUserConfig = {
       // url: "https://crossfi-testnet-rpc.synergynodes.com/", // Bad gateway
       // url: "https://crossfi-testnet-rpc.bangpateng.id/", // Bad gateway
       // url: "https://crossfi-testnet-rpc.staketab.org/", // Bad gateway
-      url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
+      // url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
-    },
-    tester: {
-      url: "https://alfajores-forno.celo-testnet.org",
-      accounts: [`${PRIVATE_KEY}`],
-      chainId: 44787
     },
   },
   namedAccounts: {
     deployer: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
-      44787: `privatekey://${PRIVATE_KEY}`,
     },
   },
 

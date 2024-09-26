@@ -4,12 +4,11 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 import { ReactNode } from "react";
 import { Chain } from "viem";
-// import { celoAlfajores } from "wagmi/chains"
 
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
 if (!projectId) throw new Error('Project ID is undefined');
 
-const alchemy_api_key = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
+// const alchemy_api_key = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
 const crossFiTestnet : Chain = {
   id: 4157,
   name: "CrossFi Testnet Chain",
@@ -26,7 +25,8 @@ const crossFiTestnet : Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["https://rpc.testnet.ms", `https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`,],
+      http: ["https://rpc.testnet.ms",],
+      // http: ["https://rpc.testnet.ms", `https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`,],
       webSocket: ['']
     }
   }
@@ -36,7 +36,6 @@ const config = getDefaultConfig({
   appName: 'Simplifinance',
   projectId,
   chains: [crossFiTestnet],
-  // chains: [celoAlfajores],
 });
 
 const theme = lightTheme(

@@ -183,4 +183,36 @@ Factory deployed to: 0x4976c4999187416eE499F3Fb9974966C74747eAd
 Done in 35.90s.
 ```
 
-444444444444444444
+% crossfi node
+
+```
+  C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-testnet
+yarn run v1.22.22
+$ hardhat deploy --network crossTest --export deployments/contracts.json
+Nothing to compile
+No need to generate any newer typings.
+reusing "OwnerShip" at 0xe09e23F8a8032BB39326098802c970f9b48D726C
+OwnershipManager deployed to: 0xe09e23F8a8032BB39326098802c970f9b48D726C
+reusing "TestAsset" at 0xb28721f7b977D64F9401161EA91bC25D59F25308
+Test Asset deployed to: 0xb28721f7b977D64F9401161EA91bC25D59F25308
+reusing "AssetClass" at 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+AssertMgr deployed to: 0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c
+reusing "StrategyManager" at 0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d
+strategyManager deployed to: 0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d
+reusing "FactoryLib" at 0x881E46D24d81776e5c4c839E12648C5880904874
+factoryLib deployed to: 0x881E46D24d81776e5c4c839E12648C5880904874
+reusing "Factory" at 0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB
+Factory deployed to: 0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB
+[
+  '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+  '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+  10,
+  '0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d',
+  feeTo: '0xD7c271d20c9E323336bFC843AEb8deC23B346352',
+  assetAdmin: '0x1a375D2aEF1370B306B4aCc9d930e3C2defaBF9c',
+  makerRate: 10,
+  strategyManager: '0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d'
+]
+Done in 34.77s.
+```
+
