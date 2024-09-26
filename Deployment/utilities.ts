@@ -1,5 +1,5 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, ButtonText, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FormattedData, FormattedPoolContentProps, LiquidityPool, Router, TransactionCallback, WagmiConfig } from "@/interfaces";
+import type { Address, AmountToApproveParam, ButtonText, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, Router, TransactionCallback, WagmiConfig } from "@/interfaces";
 import BigNumber from 'bignumber.js';
 import { getCurrentDebt } from "./apis/read/getCurrentDebt";
 import { getAllowance } from "./apis/transact/testToken/getAllowance";
@@ -10,10 +10,13 @@ import { getFinance } from "./apis/transact/factory/getFinance";
 import { liquidate } from "./apis/transact/factory/liquidate";
 import { payback } from "./apis/transact/factory/payback";
 import { formatEther, zeroAddress } from "viem";
-import { Common } from "./typechain-types/contracts/apis/IFactory";
+import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
 import { createPermissionedLiquidityPool } from "./apis/transact/factory/createPermissionedLiquidityPool";
 import { createPermissionlessLiquidityPool } from "./apis/transact/factory/createPermissionless";
 import assert from "assert";
+import { getFactoryAddress } from "./apis/contractAddress";
+import { withdrawLoan } from "./apis/transact/testToken/withdrawLoan";
+import { withdrawCollateral } from "./apis/transact/factory/withdrawCollateral";
 
 /**
  * Converts value of 'value' of type string to 'ether' representation.
@@ -60,6 +63,9 @@ export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
 export const getAmountToApprove = async(param: AmountToApproveParam) => {
   const { txnType, unit, intPerSec, lastPaid, epochId, account, config } = param;
   let amtToApprove : BigNumber = toBN(unit.toString());
+  let owner : Address = account;
+  let spender : Address = getFactoryAddress();
+
   try {
     switch (txnType) {
       case 'ADD':
@@ -88,7 +94,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
     console.log("Error", error?.message || error?.data.message);
   }
   if(txnType !== 'GET') {
-    const prevAllowance = toBN((await getAllowance({config, account})).toString());
+    const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
     if(prevAllowance.gte(amtToApprove)) {
       amtToApprove = toBN(0);
     }
@@ -98,7 +104,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
 }
 
 export const handleTransact = async(param: HandleTransactionParam) => {
-  const { callback, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
+  const { callback, strategy, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
 
@@ -119,12 +125,14 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       break;
     case 'GET':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      assert(preferredDuration !== undefined, "Utilities: PreferredDuration not set");
+      assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
       await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
+      await withdrawLoan({config, account, strategy, callback});
       break;
     case 'PAY':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       await payback({account, config, epochId, callback});
+      await withdrawCollateral({account, config, epochId, callback});
       break;
     case 'LIQUIDATE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
@@ -159,7 +167,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
   const {
     uint256s: { unit, currentPool, intPerSec, fullInterest, epochId: epochId_, },
     uints: { intRate, quorum, duration, colCoverage, selector },
-    addrs: { admin, asset, lastPaid },
+    addrs: { admin, asset, lastPaid, strategy },
     isPermissionless,
     stage,
     cData,
@@ -221,6 +229,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
     asset,
     cData_formatted,
     intPerSec,
+    formatted_strategy: formatAddr(strategy.toString()),
     lastPaid: formatAddr(lastPaid.toString())
   }
 }
@@ -255,13 +264,4 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
     isAdmin: admin,
     loan_InBN
   }
-}
-
-export interface HandleTransactionParam {
-  otherParam: AmountToApproveParam;
-  preferredDuration?: string; 
-  createPermissionlessPoolParam?: CreatePermissionLessPoolParams;
-  createPermissionedPoolParam?: CreatePermissionedPoolParams;
-  router?: Router;
-  callback: TransactionCallback;
 }
