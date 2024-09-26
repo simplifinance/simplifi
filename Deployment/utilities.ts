@@ -10,7 +10,7 @@ import { getFinance } from "./apis/transact/factory/getFinance";
 import { liquidate } from "./apis/transact/factory/liquidate";
 import { payback } from "./apis/transact/factory/payback";
 import { formatEther, zeroAddress } from "viem";
-import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common } from "./typechain-types/contracts/apis/IFactory";
 import { createPermissionedLiquidityPool } from "./apis/transact/factory/createPermissionedLiquidityPool";
 import { createPermissionlessLiquidityPool } from "./apis/transact/factory/createPermissionless";
 import assert from "assert";
