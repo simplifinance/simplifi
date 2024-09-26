@@ -9,17 +9,15 @@ export const waitForConfirmation = async(
         hash: Address, 
         callback?: TransactionCallback, 
         fetch: boolean,
+        setTrxnDone: boolean
     }) => {
-    const { config, hash, callback, fetch } = arg;
-    await waitForTransactionReceipt(config, { hash, confirmations: CONFIRMATIONS})
-        .then(async(wait) => {
-            if(fetch) {
-                const data = await getContractData({config});
-                callback?.({message: "Transaction Completed", txDone: wait.status === 'success'? true : false, result: {wait, ...data}});
-            }
-        }).catch((error: any) => {
-            const errorMessage: string = error?.message || error?.data?.message;
-            callback?.({message: `Transaction Failed with: ${errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage}`, txDone: true});
-        
-        })
+    const { config, hash, callback, setTrxnDone, fetch } = arg;
+    const wait = await waitForTransactionReceipt(config, { hash, confirmations: CONFIRMATIONS})
+    if(fetch) {
+        const data = await getContractData({config});
+        callback?.({
+            message:  `${wait?.status.toString().toUpperCase()} : Hash ${wait?.transactionHash.substring(0, 10)}... ${wait.transactionHash.substring(11, wait?.transactionHash.length)}`, 
+            txDone: setTrxnDone? wait.status === 'success'? true : false : false, result: {wait, ...data}
+        });
+    }
 }

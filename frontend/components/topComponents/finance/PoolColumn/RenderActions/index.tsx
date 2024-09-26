@@ -14,7 +14,7 @@ export const RenderActions = (props: RenderActionsProps) => {
     const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
 
-    const { stage_toNumber, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
+    const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
     const { setstate } = React.useContext(StorageContext);
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
@@ -36,12 +36,11 @@ export const RenderActions = (props: RenderActionsProps) => {
     };
 
     const handleClick = () => {
-        setInputModal(true);
-        // if(buttonObj.value === 'GET') {
-        //     setInputModal(true);
-        // } else {
-        //     setConfirmationModal(!confirmationModal);
-        // }
+        if(buttonObj.value === 'GET') {
+            setInputModal(true);
+        } else {
+            setConfirmationModal(!confirmationModal);
+        }
     }
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +50,7 @@ export const RenderActions = (props: RenderActionsProps) => {
     }
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg?.message) setMessage(arg.message);
+        if(arg.message) setMessage(arg.message);
         if(arg.txDone && arg.result) {
             setstate(arg.result);
         }
@@ -66,7 +65,8 @@ export const RenderActions = (props: RenderActionsProps) => {
                 if(isMember) buttonObj.disable = true;
                 else buttonObj.value = 'ADD';
             } else {
-                if(isMember) buttonObj.value = 'ADD';
+                if(isMember && !isAdmin) buttonObj.value = 'ADD';
+                else if(isMember && isAdmin) buttonObj = {value: 'WAIT', disable: true};
                 else buttonObj.disable = true;;
             }
             break;
@@ -144,6 +144,7 @@ export interface RenderActionsProps {
     stage_toNumber: number;
     isPermissionless: boolean;
     isMember: boolean;
+    isAdmin: boolean;
     epochId_toNumber: number;
     loan_InBN: BigNumber;
     payDate_InSec: number;

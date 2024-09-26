@@ -1,4 +1,4 @@
-import type { WagmiConfig, Address, Profile, Pools, TrxnResult } from "@/interfaces";
+import type { WagmiConfig, Address, TrxnResult } from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
 import { getFactoryAddress } from "../contractAddress";
 

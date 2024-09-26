@@ -1,5 +1,5 @@
 import React from "react";
-import { Address, AmountToApproveParam, FormattedData, PoolColumnProps, ScreenUserResult, VoidFunc } from "@/interfaces";
+import type { Address, AmountToApproveParam, FormattedData, PoolColumnProps, ScreenUserResult, VoidFunc } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -18,12 +18,13 @@ const screenUser = (
     cData: FormattedData[], 
     currentUser: Address
 ) : ScreenUserResult => {
-    let result : ScreenUserResult = { isMember: false, data: FORMATTEDDATA_MOCK};
+    let result : ScreenUserResult = { isMember: false, isAdmin : false, data: FORMATTEDDATA_MOCK};
     const filtered = cData.filter(({id_lowerCase}) => id_lowerCase === currentUser.toString().toLowerCase());
     if(filtered?.length > 0) {
         result = {
             isMember: true,
-            data: filtered[0]
+            data: filtered[0],
+            isAdmin: filtered[0].isAdmin
         }
     }
     return result;
@@ -54,7 +55,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         duration_toNumber,
         userCount_toNumber,
     } = formattedPool;
-    const { isMember, data: { loan_InEther, slot_toNumber, payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
+    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
 
     const otherParam: AmountToApproveParam = {
         config,
@@ -80,6 +81,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 <RenderActions 
                     {...{
                         isMember,
+                        isAdmin,
                         isPermissionless,
                         loan_InBN,
                         payDate_InSec,

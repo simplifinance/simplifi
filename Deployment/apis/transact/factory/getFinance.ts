@@ -7,6 +7,7 @@ import { formatError } from "../formatError";
 export const getFinance = async(args: GetFinanceParam ) => {
   const { epochId, daysOfUseInHr, config, callback, account, value } = args;
   const address = getFactoryAddress();
+  let result: boolean = false;
   if(config) {
     try {
       callback?.({message: "Getting Finance", txDone: false});
@@ -19,11 +20,13 @@ export const getFinance = async(args: GetFinanceParam ) => {
         value
       });
       const hash = await writeContract(config, request );
-      await waitForConfirmation({config, hash, fetch: true, callback: callback!});
+      await waitForConfirmation({config, hash, fetch: false, setTrxnDone: false, callback: callback!})
+        .then(() => result = true);
     } catch (error: any) {
       callback?.({message: formatError(error),txDone: true});
     }
   }
+  return result;
 }
 
 const setForwarderAbi = [

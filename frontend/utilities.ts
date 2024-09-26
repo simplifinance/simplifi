@@ -71,6 +71,9 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
       case 'ADD':
         amtToApprove = amtToApprove;
         break;
+      case 'APPROVE':
+        amtToApprove = amtToApprove;
+        break;
       case 'PAY':
         assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId not given");
         const curDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
@@ -108,7 +111,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
 
-  if(txnType === 'ADD' || txnType === 'PAY' || txnType === 'LIQUIDATE' || txnType === 'AWAIT PAYMENT') {
+  if(txnType === 'ADD' || txnType === 'PAY' || txnType === 'LIQUIDATE' || txnType === 'APPROVE') {
     if(amountToApprove.gt(0)) {
       await approve({
           account,
@@ -126,13 +129,17 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     case 'GET':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
-      await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
-      await withdrawLoan({config, account, strategy, callback});
+      await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback})
+        .then(async(result) => {
+          if(result) await withdrawLoan({config, account, strategy, callback});
+        })
       break;
     case 'PAY':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await payback({account, config, epochId, callback});
-      await withdrawCollateral({account, config, epochId, callback});
+      await payback({account, config, epochId, callback})
+        .then(async(result) => {
+          if(result) await withdrawCollateral({account, config, epochId, callback});
+        });
       break;
     case 'LIQUIDATE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");

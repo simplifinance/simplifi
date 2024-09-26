@@ -7,6 +7,7 @@ import { formatError } from "../formatError";
 export const payback = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
+  let result: boolean = false;
   if(config) {
     callback?.({message: "Paying back loan", txDone: false});
     try {
@@ -18,11 +19,13 @@ export const payback = async(args: CommonParam) => {
         args: [epochId]
       });
       const hash = await writeContract(config, { ...request });
-      await waitForConfirmation({config, fetch: true, hash, callback:callback!});
+      await waitForConfirmation({config, fetch: false, setTrxnDone: false, hash, callback:callback!})
+        .then(() => result = true);
     } catch (error: any) {
       callback?.({message: formatError(error), txDone: true});
     }
   }
+  return result;
 }
 
 const paybackAbi = [

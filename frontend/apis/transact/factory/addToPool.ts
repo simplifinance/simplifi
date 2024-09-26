@@ -18,7 +18,7 @@ export const addToPool = async(args: CommonParam ) => {
         args: [epochId]
       });
       const hash = await writeContract(config, request );
-      await waitForConfirmation({config, hash, fetch: true, callback: callback!});
+      await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback: callback!});
     } catch (error: any) {
       callback?.({message: formatError(error), txDone: true});
     }

@@ -13,10 +13,12 @@ import { filterPools, type Operation } from "../commonUtilities";
 const headerClassName = `w-full ${flexSpread} bg-orangec rounded-lg p-6`;
 
 const renderPool = (pool: LiquidityPool, operation: Operation) => {
-    const quorumIsZero = toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED || toBN(pool.uints.quorum.toString()).isZero();
-    const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
-    const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
-    const isClosed : boolean = poolIsZero || allGH || quorumIsZero || toBN(pool.stage.toString()).toNumber() === FuncTag.ENDED;
+  const stage = toBN(pool.stage.toString()).toNumber();
+
+    const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
+    // const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
+    const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
+    const isClosed : boolean = allGH || quorumIsZero;
 
     return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
 }

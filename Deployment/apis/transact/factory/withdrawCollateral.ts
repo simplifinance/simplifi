@@ -18,7 +18,7 @@ export const withdrawCollateral = async(args: CommonParam) => {
         args: [epochId]
       });
       const hash = await writeContract(config, { ...request });
-      await waitForConfirmation({config, fetch: true, hash, callback:callback!});
+      await waitForConfirmation({config, fetch: true, hash, setTrxnDone: true, callback:callback!});
     } catch (error: any) {
       callback?.({message: formatError(error), txDone: true});
     }

@@ -34,7 +34,6 @@ const crossFiTestnet : Chain = {
 const config = getDefaultConfig({
   appName: 'Simplifinance',
   projectId,
-  // chains: [crossFiTestnet],
   chains: [crossFiTestnet],
 });
 

@@ -18,7 +18,7 @@ export const Input = (props: InputProps) => {
             required={true}
             id={id}
             onChange={onChange}
-            className={`w-full p-3 text-sm bg-transparent rounded-lg ${overrideBg}`}
+            className={`w-full p-3 text-sm rounded-lg ${overrideBg}`}
         />
     )
 }

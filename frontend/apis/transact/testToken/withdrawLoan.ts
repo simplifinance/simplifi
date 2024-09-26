@@ -16,16 +16,20 @@ export const withdrawLoan = async(args: TransferFromParam) => {
     if(config) {
         try {
             const allowance = await getAllowance({config, account: spender, spender, owner });
-            callback?.({message: `Withdrawal ${formatEther(allowance)} progress"`, txDone: false});
-            const {request} = await simulateContract(config, {
-                address,
-                account: spender,
-                abi: transferFromAbi,
-                functionName: 'transferFrom', 
-                args: [owner, spender, allowance]
-            });
-            const hash = await writeContract(config, { ...request });
-            await waitForConfirmation({config, hash, fetch: false, callback});
+            if(new BigNumber(allowance.toString()).gt(0)) {
+              callback?.({message: `Withdrawal ${formatEther(allowance)} progress`, txDone: false});
+              const {request} = await simulateContract(config, {
+                  address,
+                  account: spender,
+                  abi: transferFromAbi,
+                  functionName: 'transferFrom', 
+                  args: [owner, spender, allowance]
+              });
+              const hash = await writeContract(config, { ...request });
+              await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback});
+            } else {
+              callback?.({message: `Nothing to withdraw`, txDone: false});
+            }
         } catch (error: any) {
             callback?.({message: formatError(error), txDone: true});
         }

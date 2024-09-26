@@ -32,7 +32,7 @@ export const PreferredDurationInput :
                                         onChange,
                                         type: 'text',
                                         placeholder: 'Enter preferred duration',
-                                        overrideBg: ''
+                                        overrideBg: 'bg-transparent'
                                     }
                                 }
                             />

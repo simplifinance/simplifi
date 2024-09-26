@@ -21,7 +21,7 @@ export const approve = async(args: ApproveParam) => {
               args: [factoryAddr, amountToApprove]
           });
           const hash = await writeContract(config, { ...request });
-          await waitForConfirmation({config, hash, fetch: false, callback});
+          await waitForConfirmation({config, hash, fetch: false, setTrxnDone: false, callback});
         } catch (error: any) {
             callback?.({message: formatError(error), txDone: true});
         }

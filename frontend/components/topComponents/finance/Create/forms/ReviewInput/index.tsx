@@ -5,12 +5,10 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg, TrxnResult } from "@/interfaces";
+import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
 import { Chevron } from "@/components/Collapsible";
-import { createPermissionedLiquidityPool } from "@/apis/transact/factory/createPermissionedLiquidityPool";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
-import { createPermissionlessLiquidityPool } from "@/apis/transact/factory/createPermissionless";
 import Notification from "@/components/Notification";
 import { parseEther } from "viem";
 import { Spinner } from "@/components/Spinner";
@@ -47,7 +45,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
         console.log("Arg result", arg?.result);
     }
 
-    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "AWAIT PAYMENT"};
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "APPROVE"};
     const createPermissionedPoolParam : CreatePermissionedPoolParams = {
         account,
         colCoverage,
@@ -70,7 +68,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
     };
 
     const handleClick = async() => {
-        otherParam.txnType = 'AWAIT PAYMENT';
+        // otherParam.txnType = 'AWAIT PAYMENT';
         setLoading((prev) => {prev.value = true; return prev;});
         const isPermissioned = type === "address";
         switch (loading.buttonText) {
