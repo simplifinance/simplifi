@@ -69,7 +69,4 @@
     yarn deploy-testnet
 ```
 
-<!-- import {DIAOracleLib} from "./libraries/DIAOracleLib.sol";
-function exampleGetPrice(string memory key) external returns (uint128){
-        return DIAOracleLib.getPrice(ORACLE, key);
-    } -->
+`Note`: Ignore the `Deployment' folder. We had issue on Vercel with deployment, so the 'Deployment' folder is a solution to it.

@@ -1,1 +1,0 @@
-Simpli Finance

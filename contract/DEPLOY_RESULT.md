@@ -216,3 +216,99 @@ Factory deployed to: 0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB
 Done in 34.77s.
 ```
 
+
+
+
+
+<!-- 
+**Tserundede Godswill Ejueyitchie** - Cofounder, Project Manager
+A Blockchain consultant. Experienced in the telecommunication industry and cross-border payment.
+
+**Gbenga Olotu ** - Lead Designer, Cofounder
+
+A Software engineer with over 12 years of experience spanning Telecommunications and Media, Entertainment, Oil and Gas, and Financial Technology (FinTech). A crypto enthusiast and a blockchain developer/consultant.
+
+**Isaac J** Cofounder, Developer
+
+Solidity/Ethereum/Web3/Python/Javascript/React developer with over 5+ years of experience in the blockchain and Fintech sectors. 
+
+
+CrossFi Evolution Hackathon (CEH) #1_ Boost XFI Utility _ Hackathon _ DoraHacks
+
+https://docs.google.com/document/d/1hfFCgGVc3HXY0ZhgGAsFiLahFJIVloUG1cRdQdD2k3Y/edit?usp=drivesdk
+
+https://github.com/simplifinance/simpliDoc
+https://github.com/simplifinance/devdoc
+
+Simplifinance FlexPools uses XFI as a collateral base asset. Users who want to GF/Borrow are required to lock a certain amount of XFI  as a pledge to return the loans. With this, we drive a huge value and demand for XFI. 
+
+The locked collaterals are sent to our aggregated yield strategy dashboard to earn more crypto for the users.
+
+Lastly, user of Simplifinance's products are require to pay gas fee in XFI.
+
+
+
+https://test.xfiscan.com/tx/0x9029e146e72a6c09f657f971f4b1229d45d1268ca86e55b1acd136011ace9eb7
+
+https://test.xfiscan.com/tx/0x1dab2083a987f1d3ec0bd556933734a2359c9413417ffc0fb6806dbc56c450ff
+
+https://test.xfiscan.com/tx/0xa7dc86ab760ec8639ca5e3c610eb50f922cb409a5cae426a8843d1d86aff8eea
+
+https://github.com/simplifinance/simplifi/blob/main/contract/DEPLOY_RESULT.md
+
+
+
+https://youtu.be/SwPouAJYx6E
+
+https://simplifi-st5h.vercel.app/
+
+mx16lp8r5svncerxd4lepp6awx7cgangc6j3w6ctk
+0xD7c271d20c9E323336bFC843AEb8deC23B346352
+
+We are a team of passionate persons with knowledge and background in software development, design, community management, and blockchain know-how.
+Our mission is to continuously build decentralized innovative products; easily accessible without constraints; to drive adoption for the blockchain sector.
+
+
+**Inspiration**
+Decentralized finance can be described as fueling the blockchain and crypto space over the years. Often, it is a way of providing and accessing crypto loans to make more money. We discovered that many existing liquidity protocols remain complex for an average crypto user with web3 jargon and technicalities thereby creating an atmosphere for financial exclusion to thrive.  We could encourage financial inclusion by building simple protocols usable by all classes of users. This is coupled with our passion for decentralization.
+
+**What Our Project Does**
+The MVP of Simplifinance is 'FlexPool' which we designed in 3 ways. We built the first part of FlexPool in this hackathon. Users can create a synergy of liquidity using FlexPool.  It is divided into two categories.
+
+- The first category is the permissioned pool which brings together people of the same settings, backgrounds, ethnic groups, friends, or peers. One person (the creator) only needs to initialize a FlexPool with the addresses of the others.  These predefined members can later provide liquidity or contribute to the pool.
+When the pool is filled with the required providers, a round to borrow is started. The total pooled funds will be rotated among the providers until the last person uses their turn. This type of funding often will attract no interest but it depends on what they agreed upon. Each time a participant wants to GF/Borrow, they are required to lock a weighted amount of XFI as a pledge to return the loan. The locked collaterals are directed to the yield strategy protocol to generate more income for the epoch duration.
+
+- Permissionless pool as the second category operates similarly to the permission except that it is open to anyone to participate. Interest may or may not be charged. Since users decide how long they wish to utilize the loan, charging interest may be necessary.  
+
+- The second type of FlexPool lets users access an expandable liquidity pool without committing. This is contrary to the logic of the type described above.
+
+The flow of any of the types remains:
+
+- Create flexPool
+- Add liquidity
+- GetFinance/Borrow
+   - Lock collateral to a strategy.
+- Payback
+  - Unlock collateral from strategy
+- Finalized.
+
+**How we built it**
+The project is a combination of on-chain code (the Simplifi contracts), client code, backend, and Oracle APIs fetching the price of XFI. The client sends a request to the backend (web3) which in turn interacts with the blockchain. For demo purposes and to manage time, we directly fetch data from the blockchain and relay it to the front end.  This method may be slow but we plan to subscribe to a more intuitive service like Covalent, or others in the future for better user experience. 
+
+Contracts: Written in Solidity, can be found here: https://github.com/simplifinance/simplifi/tree/main/contract
+
+Frontend: Written in Typescript with React, can be found here: https://github.com/simplifinance/simplifi/tree/main/frontend
+
+Web3 Backend: Written using Wagmi and Ethers, can be found here: https://github.com/simplifinance/simplifi/tree/main/frontend/apis
+
+**Challenges we encountered**
+
+We want to have reliable data sources instead of fetching on-chain code but the limited time won't permit us. We encountered very tough logical bugs while writing the smart contracts considering we have to write secure code. It took us days to get this fixed. We also encountered a nightmare while try to deploy the smart contracts to the CrossFi testnet as 99% of the nodes were not open to connection. Thanks to the Alchemy endpoint.
+
+We are very excited to have pushed this project to this stage. This is an accomplishment we are proud of.
+
+
+
+
+https://x.com/Sim_pliFi?t=lVINiuaAU5qTiCRGqww_JA&s=08
+ -->
