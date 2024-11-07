@@ -119,7 +119,7 @@ export default function App(props: AppProps) {
   ]  
 
   return (
-    <Box className="">
+    <Box className="h-screen">
       <Drawer
         sx={{
           width: DRAWERWIDTH,
@@ -190,7 +190,7 @@ export default function App(props: AppProps) {
             <ModeSwitch lightMode={lightMode} toggleMode={toggleMode} />
           </div>
         </nav>
-        <MotionDivWrap className={`h-full w-full ${location === 'liquidity'? "overflow-auto" : ""}`} style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} >
+        <MotionDivWrap className={`w-full ${location === 'liquidity'? "overflow-auto" : ""}`} style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} >
           <Outlet />
         </MotionDivWrap>
       </Stack>
@@ -229,3 +229,6 @@ const setIcon = (selector: string, isActive: boolean) => {
   ]);
   return icons[iconsUrl.indexOf(selector)];
 }
+
+
+// className={`bg-[url("/images/hero/hero-bg1.png")] object-cover bg-no-repeat`}

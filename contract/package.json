@@ -23,6 +23,7 @@
     "hardhat-deploy": "^0.12.4",
     "web3-utils": "^4.3.1"
   },
+  
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.7",
     "@nomicfoundation/hardhat-ethers": "^3.0.7",

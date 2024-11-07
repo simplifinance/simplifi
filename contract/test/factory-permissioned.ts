@@ -33,7 +33,6 @@ import {
   withdraw,
   removeLiquidityPool
 } from "./factoryUtils";
-import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 import { toBigInt, ZeroAddress } from "ethers";
 
 describe("Permissioned", function () {
