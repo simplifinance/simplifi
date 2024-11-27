@@ -1,17 +1,19 @@
-import React from 'react';
-import { storageInitialValueType, type StorageContextProps} from '@/storageContext';
+"use client"
 
-export interface StorageContextProviderProp {
-    value: StorageContextProps;
+import React from "react";
+import {type DataContextProps} from './simpliDataContext';
+
+export interface RandoAppProviderProps {
+    value: DataContextProps;
     children: React.ReactNode;
 }
 
-export const StorageContext = React.createContext(storageInitialValueType);
+export const DataContext = React.createContext<DataContextProps | null>(null);
 
-export const StorageContextProvider = ({ value, children } : StorageContextProviderProp) => {
+export const StorageContextProvider = ({ value, children } : RandoAppProviderProps) => {
     return(
-        <StorageContext.Provider value={value}>
+        <DataContext.Provider value={value}>
             { children }
-        </StorageContext.Provider>
+        </DataContext.Provider>
     );
 }
