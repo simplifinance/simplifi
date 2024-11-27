@@ -5,7 +5,7 @@ export const Closed : React.FC = () => {
 
   return(
     <Common 
-      heroTitle2="Total Closed Pools"
+      heroTitle2="Closed"
       operation='Closed'
     />
   );

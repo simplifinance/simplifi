@@ -7,15 +7,15 @@ const wrapToText = (arg: string | undefined) => String(arg);
 
 const AddressWrapper = (props: AddressProps ) => {
   const [isClicked, setIsClicked] = useState(false);
-  const { account, display, size } = props;
+  const { account, display, size, copyIconSize, overrideClassName } = props;
 
   const Copy = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className='w-6 h-6 text-white cursor-pointer '
+      className={`w-${copyIconSize || '6'} h-${copyIconSize || '6'} text-white cursor-pointer`}
       viewBox="0 0 24 24"
       strokeWidth="3"
-      stroke="cyan"
+      stroke="orange"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -34,7 +34,7 @@ const AddressWrapper = (props: AddressProps ) => {
   );
 
   return (
-    <div className="flex justify-start items-center gap-2">
+    <div className={`flex justify-center items-center gap-1 ${overrideClassName}`}>
       <span ><Blockie account={wrapToText(account)} size={size} /></span> 
       <a href={`https://xfiscan.com/address/${account}`} rel="noreferrer" target="_blank">{size ? getEllipsisTxt(wrapToText(account || zeroAddress), size) : account}</a>
       <span className="" >{(isClicked ? display && <Check /> : props?.display && <Copy />)}</span>
@@ -66,4 +66,6 @@ interface AddressProps {
   account?: string;
   display?: boolean;
   size?: number;
+  copyIconSize?: string;
+  overrideClassName?: string;
 }

@@ -11,7 +11,7 @@ const SelectPooType = (options: {handleSelected: (arg: PoolType) => void, handle
 
     return(
         <Stack className="space-y-14 text-center">
-            <h1 className="text-2xl font-semibold text-black text-opacity-70">Select the type of liquidity pool</h1>
+            <h1 className="text-2xl font-semibold text-black text-opacity-70">Select type of FlexPool</h1>
             <Stack className="space-y-6">
                 {
                     poolType.map((item: PoolType) => (

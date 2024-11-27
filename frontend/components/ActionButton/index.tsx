@@ -1,5 +1,7 @@
 import { flexSpread } from "@/constants";
+import { VoidFunc } from "@/interfaces";
 import React from "react";
+// import styles from "../../styles/hero.module.css"
 
 export const ActionButton = (prop: ActionButtonArg) => {
     const {option1, option2, innerButtonText, outerButtonBg, innerButtonBg, innerButtonBorderColor, outerButtonBorderColor, handleClick, disableButton, outerButtonWidth, innerButtonWidth, innerButtonHeight, outerButtonHeight, flexType, innerButtonRest, outerButtonRest,} = prop;
@@ -16,6 +18,26 @@ export const ActionButton = (prop: ActionButtonArg) => {
         </button>
     );
 }
+
+export const CustomButton = (props: {overrideStyle?: string, buttonText: string, handleClick: VoidFunc}) => {
+    const { overrideStyle, buttonText, handleClick } = props;
+    return(
+        <button
+            onClick={handleClick}
+            className={
+                [
+                    "w-full h-[48px] m-0 mb-3 xss:mb-0 xss:w-[130px]",
+                    "xss:h-[40px] lg:w-[80%] lg:h-[60px]",
+                    "rounded-full bg-orange xss:mr-[9px] underlineFromLeft",
+                    overrideStyle
+                  ].join(" ")
+            }
+        >
+            { buttonText }
+        </button>
+    );
+}
+  
 
 interface ActionButtonArg {
     option1: React.ReactNode;

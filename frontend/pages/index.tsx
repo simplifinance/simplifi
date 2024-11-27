@@ -62,7 +62,7 @@ const renderAppChildComponents = () => [
   },
   {
     children: undefined,
-    path: ROUTE_ENUM.SPEEDDOC,
+    path: ROUTE_ENUM.FAQ,
     renderElement: () => ( <SpeedDoc /> ), 
   }
 ].map(({renderElement, path, children}) => (
@@ -95,7 +95,7 @@ export default function SimpliApp() {
 
   return (
     <StorageContextProvider 
-      value={{storage, setstate}}
+      value={{storage, setstate, exitOnboardScreen}}
     >
       { displayScreen() }
     </StorageContextProvider>

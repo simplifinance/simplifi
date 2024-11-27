@@ -1,3 +1,4 @@
+import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import React from 'react'
@@ -6,9 +7,9 @@ import { LiquidityPool, Pools } from '@/interfaces';
 import { BigNumber } from  'bignumber.js';
 import { toBN, toBigInt } from '@/utilities';
 import { formatEther } from 'viem';
-import { StorageContext } from '@/components/StateContextProvider';
 import { ConnectWallet } from '@/components/ConnectWallet';
 import { useAccount } from 'wagmi';
+import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 
 const extractValues = (pools: Pools ) => {
   let tvl : BigNumber = toBN(0);
@@ -27,7 +28,7 @@ const extractValues = (pools: Pools ) => {
 
 const Dashboard : React.FC = () => {
   const [modalOpen, setModal] = React.useState<boolean>(false);
-  const { storage: { pools } } = React.useContext(StorageContext);
+  const { storage: { pools } } = useAppStorage()
   const { tvl, permissioned, permissionless } = extractValues(pools);
   const handleModalClose = () => setModal(!modalOpen);
   const { isConnected, isConnecting, isReconnecting } = useAccount();
@@ -54,7 +55,7 @@ const Dashboard : React.FC = () => {
       icon: '/PROPOSAL.svg'
     },
     {
-      title: 'PERMISSIONLESS',
+      title: 'PERMISSION-LESS',
       value: permissionless,
       icon: '/OPENED.svg'
     },
@@ -66,40 +67,36 @@ const Dashboard : React.FC = () => {
   ];
 
   React.useEffect(() => {
-    if(!isConnected && !isConnecting && !isReconnecting) {
+    if(!isConnected) {
       setModal(true);
     }
     if(isConnected && modalOpen) handleModalClose();
   }, [isConnected, isConnecting, isReconnecting, handleModalClose, modalOpen]);
 
   return (
-    <Stack className="space-y-10">
-      <Box className="w-full">
-        <div className='grid md:grid-cols-3 justify-between gap-12' >
-          {
-            dashboardInfo.map((item) => (
-              <div key={item.title}>
-                <div className={`w-full bg-orangec rounded-lg p-8 text-white flex justify-start gap-4`}>
-                  <div>
-                    <Image 
-                      alt={item.title}
-                      src={item.icon}
-                      width={50}
-                      height={50}
-                    />
-                  </div>
-                  <Stack >
-                    <h3 className='text-2xl font-bold'>{ item.title }</h3>
-                    <h1 className='font-semibold text-lg'>{ item.value }</h1>
-                  </Stack>
-                </div>
-              </div>
-            ))
-          }
-        </div>
-      </Box>
-      <ConnectWallet { ...{ modalOpen, handleModalClose }} />
-    </Stack>
+    <Box>
+      <Grid container xs={'auto'} rowGap={{xs: 4, lg: 6}}>
+        {
+          dashboardInfo.map((item) => (
+            <Grid item xs={12} md={6} lg={4} key={item.title} className={"md:px-4"}>
+              <Box className={`w-full bg-orangec rounded-lg p-6 lg:p-8 text-white flex justify-between lg:justify-start gap-4`}>
+                <Image 
+                  alt={item.title}
+                  src={item.icon}
+                  width={50}
+                  height={50}
+                />
+                <Box className='w-full flex flex-col justify-start items-start'>
+                  <h3 className='text-lg lg:text-xl font-semibold md:font-bold '>{ item.title }</h3>
+                  <p className='text-xs md:text-md'>{ item.value }</p>
+                </Box>
+              </Box>
+            </Grid>
+          ))
+        }
+      </Grid>
+      {/* <ConnectWallet { ...{ modalOpen, handleModalClose }} /> */}
+    </Box>
   )
 }
 

@@ -2,11 +2,11 @@ import React from "react";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import { PopUp } from "@/components/transactionStatus/PopUp";
 import { flexCenter, flexSpread } from "@/constants";
 import { Input } from "../../Create/Input";
 import Tooltip from "@mui/material/Tooltip";
 import { VoidFunc } from "@/interfaces";
+import { PopUp } from "../../Create/forms/transactionStatus/PopUp";
 
 export const PreferredDurationInput : 
     React.FC<PreferredDurationInputProp> = 

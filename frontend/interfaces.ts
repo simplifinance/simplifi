@@ -9,7 +9,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
-export type ButtonText = 'ADD' | 'GET' | 'PAY' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED';
+export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export enum FuncTag { 

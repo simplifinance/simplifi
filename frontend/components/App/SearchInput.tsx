@@ -12,7 +12,7 @@ const SearchInput = () => {
   }
 
   return (
-    <div className={`${flexSpread}`}>
+    <div className={`hidden lg:flex ${flexSpread}`}>
       <button className={`rounded-l-lg`}>
         <input 
           id="inputSearch" 

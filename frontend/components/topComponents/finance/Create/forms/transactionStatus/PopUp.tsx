@@ -5,11 +5,12 @@ import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 // import { TrxnResult } from '@/interfaces';
 
-export const fadeStyle = (overrideWidth? : string) => {
+export const fadeStyle = (overrideWidth? : string, overrideHeight?: string) => {
     return {
         top: '50%',
         transform: 'translate(-50%, -50%)',
         width:overrideWidth ||  "100%",
+        height: overrideHeight || "100%",
         left: '50%',
         p: 4,
         position: 'absolute' as 'absolute',
@@ -17,7 +18,7 @@ export const fadeStyle = (overrideWidth? : string) => {
 };
 
 export const PopUp = (props: PopUpProps) => {
-    const { modalOpen, handleModalClose, overrideWidth, children } = props;
+    const { modalOpen, handleModalClose, overrideHeight, overrideWidth, children } = props;
 
     return (
         <Modal
@@ -34,7 +35,7 @@ export const PopUp = (props: PopUpProps) => {
             }}
         >
             <Fade in={modalOpen}>
-                <Box sx={fadeStyle(overrideWidth)}>
+                <Box sx={fadeStyle(overrideWidth, overrideHeight)}>
                     {children}
                 </Box>
             </Fade>
@@ -46,5 +47,6 @@ export interface PopUpProps {
     handleModalClose: () => void;
     modalOpen: boolean;
     overrideWidth?: string;
+    overrideHeight?: string;
     children: React.ReactNode;
 }

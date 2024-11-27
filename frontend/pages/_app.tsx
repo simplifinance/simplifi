@@ -20,7 +20,6 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <React.Fragment>
       <SEOHead url={undefined} />
-      <main className='bg-green1 relative h-screen'>
         {
           isMounted? 
             <ErrorBoundary fallback={<p>Something went wrong</p>}>
@@ -31,7 +30,6 @@ export default function App({ Component, pageProps }: AppProps) {
               </SimplifiProvider>
             </ErrorBoundary> : null
         }
-      </main>
       </React.Fragment>
     );
 }

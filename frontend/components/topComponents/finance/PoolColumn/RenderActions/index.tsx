@@ -2,7 +2,7 @@ import React from "react";
 import { AmountToApproveParam, ButtonText, FuncTag, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
 import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
-import { StorageContext } from "@/components/StateContextProvider";
+import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
 import Notification from "@/components/Notification";
 import { ConfirmationPopUp } from "./ConfirmationPopUp";
@@ -16,7 +16,7 @@ export const RenderActions = (props: RenderActionsProps) => {
 
     const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
-    const { setstate } = React.useContext(StorageContext);
+    const { setstate } = useAppStorage();
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
 
     const handleModalClose = () => {
@@ -36,7 +36,7 @@ export const RenderActions = (props: RenderActionsProps) => {
     };
 
     const handleClick = () => {
-        if(buttonObj.value === 'GET') {
+        if(buttonObj.value === 'GET FINANCE') {
             setInputModal(true);
         } else {
             setConfirmationModal(!confirmationModal);
@@ -63,22 +63,22 @@ export const RenderActions = (props: RenderActionsProps) => {
         case FuncTag.JOIN:
             if(isPermissionless){
                 if(isMember) buttonObj.disable = true;
-                else buttonObj.value = 'ADD';
+                else buttonObj.value = 'ADD LIQUIDITY';
             } else {
-                if(isMember && !isAdmin) buttonObj.value = 'ADD';
+                if(isMember && !isAdmin) buttonObj.value = 'ADD LIQUIDITY';
                 else if(isMember && isAdmin) buttonObj = {value: 'WAIT', disable: true};
                 else buttonObj.disable = true;;
             }
             break;
 
         case FuncTag.GET:
-            if(isMember) buttonObj.value = 'GET';
+            if(isMember) buttonObj.value = 'GET FINANCE';
             else buttonObj = { value: 'DISABLED', disable: true };
             break;
         
         case FuncTag.PAYBACK:
             if(isMember){
-                if(loan_InBN.gt(0)) buttonObj.value = 'PAY';
+                if(loan_InBN.gt(0)) buttonObj.value = 'PAYBACK';
                 else buttonObj = { value: 'DISABLED', disable: true};
             } else {
                 if((new Date().getTime() / 1000) >  payDate_InSec) buttonObj = { value: 'LIQUIDATE', disable: true};
@@ -108,7 +108,7 @@ export const RenderActions = (props: RenderActionsProps) => {
             <button 
                 onClick={handleClick}
                 disabled={buttonObj.disable}
-                className="w-full text-xs font-extrabold border border-orangec p-2 rounded-lg text-orangec bg-yellow-100 hover:bg-orangec hover:text-white1" 
+                className="text-xs font-extrabold border border-orangec p-2 rounded-lg text-orangec bg-yellow-100 hover:bg-orangec hover:text-white1 underlineFromLeft" 
             >
                 {buttonObj.value}
             </button>

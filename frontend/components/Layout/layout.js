@@ -23,7 +23,7 @@ const Layout = ({ handleClick, isClicked, children }) => {
   }, [])
 
   return (
-    <div className="relative">
+    <main className="relative">
       <section
         className={[
           "fixed h-screen w-full flex justify-center items-center bg-green1 z-50",
@@ -33,11 +33,11 @@ const Layout = ({ handleClick, isClicked, children }) => {
         <Spinner_2 size={40} color={"white"} />
       </section>
 
-      <main className="relative font-gothic">
+      <div className="relative font-gothic">
         <ScrollButton windowIsDefined={windowIsDefined} />
         {children}
-      </main>
-    </div>
+      </div>
+    </main>
   )
 }
 

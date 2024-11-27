@@ -1,6 +1,6 @@
-import { fadeStyle } from "@/components/transactionStatus/PopUp";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
+import { fadeStyle } from "@/components/topComponents/finance/Create/forms/transactionStatus/PopUp";
 
 export default function Custom404() {
     return (
