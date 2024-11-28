@@ -1,5 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
-import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common, Counters } from "./typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
 export type WagmiConfig = import("wagmi").Config;
