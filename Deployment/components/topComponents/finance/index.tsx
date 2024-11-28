@@ -3,15 +3,15 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import Box from '@mui/material/Box';
 import { getEpoches } from '@/apis/read/readContract';
 import { useAccount, useConfig } from 'wagmi';
-import { StorageContext } from '@/components/StateContextProvider';
+import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 
 const Liquidity : React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setstate } = React.useContext(StorageContext);
+  const { setstate } = useAppStorage();
 
   React.useEffect(() => {
-    if(location.pathname === '/liquidity'){
+    if(location.pathname === '/flexpool'){
       navigate('open');
     }
   });
@@ -39,7 +39,7 @@ const Liquidity : React.FC = () => {
   }, [isConnected, connector, config, setstate]);
 
   return (
-    <Box>
+    <Box className='w-full'>
       <Outlet />
     </Box>
   )

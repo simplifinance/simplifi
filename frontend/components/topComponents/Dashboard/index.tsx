@@ -71,7 +71,7 @@ const Dashboard : React.FC = () => {
       setModal(true);
     }
     if(isConnected && modalOpen) handleModalClose();
-  }, [isConnected, isConnecting, isReconnecting, handleModalClose, modalOpen]);
+  }, [isConnected, isConnecting, isReconnecting, modalOpen]);
 
   return (
     <Box>

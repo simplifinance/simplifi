@@ -24,25 +24,25 @@ export const flexEven = "flex justify-evenly items-center";
 
 export const ROUTE_ENUM = {
   DASHBOARD : 'dashboard',
-  INVEST: 'invest',
-  DAO: 'digdao',
-  LIQUIDITY: 'liquidity',
-  SPEEDDOC: 'speeddoc',
-  CREATE: '/liquidity/create',
-  OPEN: '/liquidity/open',
-  CLOSED: '/liquidity/closed'
+  INVEST: 'yield',
+  DAO: 'simplidao',
+  LIQUIDITY: 'flexpool',
+  FAQ: 'faq',
+  CREATE: '/flexpool/create',
+  OPEN: '/flexpool/open',
+  CLOSED: '/flexpool/closed'
 }
 
 export const POOL_HEADER_CONTENT = Array.from([
-  { value: '', gridSize: 0.5},
-  { value: 'Epoch ID', gridSize: 1},
-  { value: 'Quorum', gridSize: 1},
-  { value: 'Liquidity/head', gridSize: 1.5},
-  { value: 'Int.Rate', gridSize: 1.5},
+  // { value: '', gridSize: 0.5},
+  { value: 'Epoch', gridSize: 1},
+  { value: 'Quorum', gridSize: 2},
+  { value: 'Liquidity', gridSize: 2},
+  { value: 'Rate(%)', gridSize: 1.5},
   { value: 'Pair', gridSize: 2},
   { value: 'Fill', gridSize: 1.5},
-  { value: 'Type', gridSize: 1.5},
-  { value: 'Action', gridSize: 1},
+  { value: 'Type', gridSize: 2},
+  // { value: 'Action', gridSize: 1},
 ]);
 
 export const PROFILE_MOCK : Profile = {

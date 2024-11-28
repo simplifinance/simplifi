@@ -64,7 +64,7 @@ export const Collapsible = (props: CollapsibleProps) => {
         return {}
         }} 
       >
-        <div className={`${parentLinkActive? 'bg-orangec rounded-xl' : ''}`}>
+        <div className={`${parentLinkActive? 'bg-orangec rounded-xl' : ''} underlineFromLeft`}>
           <div className={`w-[180px] ${flexStart} gap-3 p-3 ml-3 ${parentLinkActive? 'bg-yellow-100 rounded-r-xl' : ''}`}>
             <span className=''>
               { setIcon(parentPath, parentLinkActive) }

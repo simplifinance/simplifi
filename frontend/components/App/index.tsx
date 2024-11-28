@@ -1,19 +1,11 @@
 import * as React from 'react';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import Link from 'next/link';
-import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import SearchInput from './SearchInput';
-import { ModeSwitch } from './ModeSwitch';
-import { DRAWERWIDTH, ROUTE_ENUM, flexSpread, flexStart } from '@/constants';
-import { Collapsible } from '../Collapsible';
+import { DRAWERWIDTH } from '@/constants';
 import { MotionDivWrap } from '../MotionDivWrap';
-import Stack from '@mui/material/Stack';
 import { useAccount } from 'wagmi';
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Image from 'next/image';
 import SideDrawer from './SIdeDrawer';
 import MobileSideDrawer from './MobileSideDrawer';
 
@@ -122,102 +114,3 @@ const setIcon = (selector: string, isActive: boolean) => {
   ]);
   return icons[iconsUrl.indexOf(selector)];
 }
-
-
-{/* <Drawer
-  sx={{
-    width: DRAWERWIDTH,
-    flexShrink: 0,
-    '& .MuiDrawer-paper': {
-      width: DRAWERWIDTH,
-      boxSizing: 'border-box',
-      borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-      background: '#121212',
-    },
-  }}
-  variant="permanent"
-  anchor="left"
-> */}
-  {/* <Toolbar /> */}
-  {/* <DrawerHeader sx={{display:'flex', justifyContent: 'center'}}> */}
-  
-// className={`bg-[url("/images/hero/hero-bg1.png")] object-cover bg-no-repeat`}
-
-{/* <Box className="h-screen">
-      <div className='hidden lg:grid w-full'>
-        <Drawer
-          sx={{
-            width: DRAWERWIDTH,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: DRAWERWIDTH,
-              boxSizing: 'border-box',
-              borderRight: '1px solid rgba(255, 255, 255, 0.2)',
-              background: '#121212',
-            },
-          }}
-          variant="permanent"
-          anchor="left"
-        >
-          <Toolbar />
-          <DrawerHeader sx={{display:'flex', justifyContent: 'center'}}>
-            <Link href="/" passHref>
-              <Image 
-                src="/logoSimplifi.png"
-                alt="Simiplifi-logo"
-                width={100} 
-                height={100}
-              />
-            </Link>
-          </DrawerHeader>
-          
-          <List className={`${flexStart} flex-col gap-2`} sx={{marginTop: 6}}>
-            {DRAWER_CONTENT.map(({collapsible, parentPath, parentTitle, displayChevron, children }) => (
-              <Collapsible 
-                key={parentTitle}
-                {
-                  ...{
-                      setParentActiveLink,
-                      parentLinkActive: parentLinkActive === parentPath,
-                      parentPath,
-                      parentTitle,
-                      setIcon,
-                      displayChevron,
-                      collapsible,
-                      children
-                  }
-                }
-              />
-            ))}
-          </List>
-          <Divider />
-        </Drawer>
-      </div>
-      <Box className={` px-4 ${location === '/dashboard'? 'space-y-24' : 'space-y-14'} '`}>
-        <nav style={{ width: `calc(100% - ${DRAWERWIDTH}px)`,  marginLeft: `${DRAWERWIDTH}px`, borderBottom: '1px solid rgba(255, 255, 255, 0.2)', }} className={` p-4  ${flexSpread}`}>
-          <div className='w-[20%]'>
-            <h3 className='text-lg font-semibold text-orangec'>{ `${location[1]?.toUpperCase()}${location?.substring(2, location.length)}` }</h3>
-          </div>
-          <div className={`flex justify-end w-[80%] mr-8 gap-5`}>
-            { isConnected && <ConnectButton 
-                accountStatus={{
-                  smallScreen: 'avatar',
-                  largeScreen: 'full',
-                }}
-              />
-            }
-            <button>
-              <svg width="24" height="24" viewBox="0 0 21 27" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fillRule="evenodd" clipRule="evenodd" d="M18.3408 16.6842L20.442 18.8491C20.9892 19.412 21.1502 20.252 20.8526 20.9889C20.5563 21.7245 19.8656 22.1997 19.0909 22.1997H15.1674V22.6089C15.1674 25.0307 13.0743 27 10.5006 27C7.92689 27 5.83384 25.0307 5.83384 22.6089V22.1997H1.91026C1.13558 22.1997 0.443734 21.7245 0.146228 20.9877C-0.150112 20.252 0.0120581 19.4132 0.559236 18.8491L2.66045 16.6842L2.66161 11.0715C2.66161 8.75056 3.6393 6.53763 5.34733 4.99914C7.04487 3.46785 9.30825 2.76341 11.5506 3.07063C15.4217 3.59746 18.3408 7.14607 18.3408 11.3235V16.6842ZM2.93462 19.7996L4.31131 18.3811C4.75232 17.9275 4.99499 17.325 4.99499 16.6842V11.0715C4.99499 9.443 5.68334 7.88651 6.88503 6.80405C8.09606 5.71198 9.63842 5.23196 11.245 5.44917C13.9598 5.81999 16.0074 8.34493 16.0074 11.3235V16.6842C16.0074 17.325 16.2501 17.9275 16.6899 18.3799L18.0678 19.7996H2.93462ZM12.834 22.6089C12.834 23.6878 11.7653 24.5999 10.5006 24.5999C9.23591 24.5999 8.16722 23.6878 8.16722 22.6089V22.1997H12.834V22.6089Z" fill="#B1B1B1"/>
-                <circle cx="17.5" cy="3.5" r="3.5" fill="orange"/>
-              </svg>
-            </button>
-            <SearchInput />
-            <ModeSwitch lightMode={lightMode} toggleMode={toggleMode} />
-          </div>
-        </nav>
-        <MotionDivWrap className={`w-full ${location === 'flexpool'? "overflow-auto" : ""}`} style={{ width: `calc(100% - ${DRAWERWIDTH}px)`, marginLeft: `${DRAWERWIDTH}px` }} >
-          <Outlet />
-        </MotionDivWrap>
-      </Box>
-    </Box> */}

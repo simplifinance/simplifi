@@ -1,4 +1,4 @@
-import { Pools, LiquidityPool, FuncTag } from "@/interfaces";
+import { Pools, FuncTag } from "@/interfaces";
 import { toBN } from "@/utilities";
 
 export type Operation = 'Open' | 'Closed';

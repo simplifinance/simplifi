@@ -3,6 +3,7 @@ import type { Address, AmountToApproveParam, FormattedData, PoolColumnProps, Scr
 import { formatAddr, formatPoolContent } from "@/utilities";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import { FORMATTEDDATA_MOCK } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { RenderActions } from "./RenderActions";
@@ -67,52 +68,83 @@ export const PoolColumn = (props: PoolColumnProps) => {
         unit
     };
 
-    const column_content = Array.from([
-        { value: togglerIcon(open, handleClick), gridSize: 0.5 },
+    const column_content = [
+        // { value: togglerIcon(open, handleClick), gridSize: 0.5 },
         { value: epochId_toNumber, gridSize: 1},
-        { value: quorum_toNumber, gridSize: 1},
-        { value: unit_InEther, gridSize: 1.5},
+        { value: quorum_toNumber, gridSize: 2},
+        { value: unit_InEther, gridSize: 2},
         { value: intPercent_string, gridSize: 1.5},
         { value: pair, gridSize: 2},
         { value: userCount_toNumber, gridSize: 1.5},
-        { value: renderIcon(isPermissionless), gridSize: 1.5},
-        { 
-            value:  
-                <RenderActions 
-                    {...{
-                        isMember,
-                        isAdmin,
-                        isPermissionless,
-                        loan_InBN,
-                        payDate_InSec,
-                        stage_toNumber,
-                        epochId_toNumber,
-                        strategy: formatted_strategy,
-                        maxEpochDuration: duration_toNumber.toString(),
-                        otherParam
-                    }}
-                />,
-            gridSize: 1
-        }
-    ]);
+        { value: renderIcon(isPermissionless), gridSize: 2},
+        // { 
+        //     value:  
+                // <RenderActions 
+                //     {...{
+                //         isMember,
+                //         isAdmin,
+                //         isPermissionless,
+                //         loan_InBN,
+                //         payDate_InSec,
+                //         stage_toNumber,
+                //         epochId_toNumber,
+                //         strategy: formatted_strategy,
+                //         maxEpochDuration: duration_toNumber.toString(),
+                //         otherParam
+                //     }}
+                // />,
+        //     gridSize: 1
+        // }
+    ];
 
     return(
-        <Stack className="w-full">
+        <React.Fragment>
             {/* <Grid container xs={'auto'}> */}
-            <Grid container xs={12} className={`${open? "bg-white1 bg-opacity-10" : ""} p-4`} >
+            <Grid 
+                container 
+                xs={12} 
+                className={`${open? "bg-white1/10" : "hover:bg-gray-500/10"} p-4`} 
+                onClick={handleClick}
+            >
                 {
                     column_content.map(({ value, gridSize}, id) => (
-                        <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center">
-                            <Stack className="place-items-center w-full" style={{color: 'rgba(255, 255, 255, 0.7)'}}>{ value }</Stack>
+                        <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center p-1">
+                            <div 
+                                style={{color: 'rgba(255, 255, 255, 0.7)'}}
+                                className=""
+                            >
+                                { value }
+                            </div>
                         </Grid>
                     ))
                 }
             </Grid>
-            {/* </Grid> */}
-            <Grid container xs={12}>
-                <TableChild {...{formattedPool, open}} />
-            </Grid>
-        </Stack>
+            <TableChild 
+                {
+                    ...{
+                            formattedPool, 
+                            open, 
+                            handleModalClose: handleClick,
+                            actions:  <RenderActions 
+                                {
+                                    ...{
+                                        isMember,
+                                        isAdmin,
+                                        isPermissionless,
+                                        loan_InBN,
+                                        payDate_InSec,
+                                        stage_toNumber,
+                                        epochId_toNumber,
+                                        strategy: formatted_strategy,
+                                        maxEpochDuration: duration_toNumber.toString(),
+                                        otherParam
+                                    }
+                                }
+                            />
+                        }
+                } 
+            />
+        </React.Fragment>
     )
 }
 
@@ -121,11 +153,11 @@ export const togglerIcon = (open: boolean, handleClick?: VoidFunc, className?: s
         <button onClick={() => handleClick?.()} className={`${className || "w-full p-2 flex justify-center items-center bg-orangec rounded-lg"}`}>
             {
                 open? 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className? "text-orangec" : "text-white1"}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className || "text-white1"}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                     </svg>              
                         : 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className? "text-orangec" : "text-white1"}`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className || "text-white1"}`}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                     </svg>
                   
@@ -137,11 +169,11 @@ export const togglerIcon = (open: boolean, handleClick?: VoidFunc, className?: s
 const renderIcon = (isPermissionless: boolean) => {
     return (
         !isPermissionless? 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-white1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-red-600">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg> 
                 : 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-white1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-green-600">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
             </svg>              
 

@@ -12,7 +12,7 @@ import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
 import Notification from "@/components/Notification";
 import { parseEther } from "viem";
 import { Spinner } from "@/components/Spinner";
-import { StorageContext } from "@/components/StateContextProvider";
+import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 interface ReviewInputProps {
     values: {title: string, value: string}[];
@@ -32,7 +32,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setstate } = React.useContext(StorageContext);
+    const { setstate } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();

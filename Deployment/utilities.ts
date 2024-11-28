@@ -10,7 +10,7 @@ import { getFinance } from "./apis/transact/factory/getFinance";
 import { liquidate } from "./apis/transact/factory/liquidate";
 import { payback } from "./apis/transact/factory/payback";
 import { formatEther, zeroAddress } from "viem";
-import { Common } from "./typechain-types/contracts/apis/IFactory";
+import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
 import { createPermissionedLiquidityPool } from "./apis/transact/factory/createPermissionedLiquidityPool";
 import { createPermissionlessLiquidityPool } from "./apis/transact/factory/createPermissionless";
 import assert from "assert";
@@ -68,13 +68,13 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
 
   try {
     switch (txnType) {
-      case 'ADD':
+      case 'ADD LIQUIDITY':
         amtToApprove = amtToApprove;
         break;
       case 'APPROVE':
         amtToApprove = amtToApprove;
         break;
-      case 'PAY':
+      case 'PAYBACK':
         assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId not given");
         const curDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
         amtToApprove = curDebt.plus(toBN(intPerSec.toString()).times(60)); 
@@ -84,7 +84,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
         const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
         amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
         break;
-      case 'GET':
+      case 'GET FINANCE':
         assert(epochId !== undefined, "Utilities: EpochId not given");
         const collateral = await getCollateralQuote({config, epochId});
         // console.log("collateral", collateral[0].toString());
@@ -96,7 +96,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
   } catch (error: any) {
     console.log("Error", error?.message || error?.data.message);
   }
-  if(txnType !== 'GET') {
+  if(txnType !== 'GET FINANCE') {
     const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
     if(prevAllowance.gte(amtToApprove)) {
       amtToApprove = toBN(0);
@@ -111,7 +111,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
 
-  if(txnType === 'ADD' || txnType === 'PAY' || txnType === 'LIQUIDATE' || txnType === 'APPROVE') {
+  if(txnType === 'ADD LIQUIDITY' || txnType === 'PAYBACK' || txnType === 'LIQUIDATE' || txnType === 'APPROVE') {
     if(amountToApprove.gt(0)) {
       await approve({
           account,
@@ -122,11 +122,11 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     }
   }
   switch (txnType) {
-    case 'ADD':
+    case 'ADD LIQUIDITY':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       await addToPool({account, config, epochId, callback});
       break;
-    case 'GET':
+    case 'GET FINANCE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
       await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback})
@@ -134,7 +134,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
           if(result) await withdrawLoan({config, account, strategy, callback});
         })
       break;
-    case 'PAY':
+    case 'PAYBACK':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       await payback({account, config, epochId, callback})
         .then(async(result) => {

@@ -1,7 +1,7 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import App from "@/components/App";
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, Outlet } from "react-router-dom";
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
 import { POOLS_MOCK, PROFILE_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import Liquidity from "@/components/topComponents/finance";
@@ -62,7 +62,7 @@ const renderAppChildComponents = () => [
   },
   {
     children: undefined,
-    path: ROUTE_ENUM.SPEEDDOC,
+    path: ROUTE_ENUM.FAQ,
     renderElement: () => ( <SpeedDoc /> ), 
   }
 ].map(({renderElement, path, children}) => (
@@ -94,12 +94,10 @@ export default function SimpliApp() {
   const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen exitOnboardScreen={exitOnboardScreen} />;
 
   return (
-    <main className="h-scree">
-      <StorageContextProvider 
-        value={{storage, setstate}}
-      >
-        { displayScreen() }
-      </StorageContextProvider>
-    </main>
+    <StorageContextProvider 
+      value={{storage, setstate, exitOnboardScreen}}
+    >
+      { displayScreen() }
+    </StorageContextProvider>
   );
 }
