@@ -1,6 +1,5 @@
 import React from "react";
 import { useState } from "react";
-import Image from "next/image";
 
 const ScrollButton = ({ windowIsDefined }) => {
   const [visible, setVisible] = useState(false);
@@ -32,7 +31,7 @@ const ScrollButton = ({ windowIsDefined }) => {
         "fixed z-50 bottom-12 right-1 xl:right-5 1xl:right-10  h-10 w-10 xl:h-[53px] xl:w-[52px]"
       }
     >
-      <Image src="images/scrollDown.svg" alt="global lanthern" className="rotate-180" width={100} height={100}/>
+      <img src="images/scrollDown.svg" alt="global lanthern" className="rotate-180"/>
     </button>
   );
 };

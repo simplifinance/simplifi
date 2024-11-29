@@ -23,10 +23,10 @@ export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
 
 export const ROUTE_ENUM = {
-  DASHBOARD : 'dashboard',
-  INVEST: 'yield',
-  DAO: 'simplidao',
-  LIQUIDITY: 'flexpool',
+  DASHBOARD : '/dashboard',
+  INVEST: '/yield',
+  DAO: '/simplidao',
+  LIQUIDITY: '/flexpool',
   FAQ: 'faq',
   CREATE: '/flexpool/create',
   OPEN: '/flexpool/open',

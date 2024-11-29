@@ -43,7 +43,7 @@ SEOHead.defaultProps = {
   title: "",
   description:
     "Simpli Finance - Enjoy Decentralised Protocols Built On The Blockchain",
-  ogImage: "images/gallery/1.png",
+  ogImage: "/favicon-32x32.png",
 }
 
 export default SEOHead
