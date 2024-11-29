@@ -3,7 +3,6 @@ import List from '@mui/material/List';
 import Link from 'next/link';
 import { DRAWERWIDTH, flexStart } from '@/constants';
 import { Collapsible } from '@/components/Collapsible';
-import Image from 'next/image';
 import { DRAWER_CONTENT } from '../MobileSideDrawer';
 
 export default function SideDrawer({setIcon, setParentActive, parentLinkActive}: SideDrawerProps) {
@@ -11,7 +10,7 @@ export default function SideDrawer({setIcon, setParentActive, parentLinkActive}:
         <div style={{width: `${DRAWERWIDTH}px`}} className={`hidden lg:inline-block border-r border-r-gray-600/40`} >
             <nav className='p-4 border-b border-b-gray-600/10 pl-6'>
                 <Link href="/" passHref>
-                    <Image 
+                    <img 
                         src="/logoSimplifi.png"
                         alt="Simiplifi-logo"
                         width={100} 

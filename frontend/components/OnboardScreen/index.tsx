@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import { MotionDivWrap } from '../MotionDivWrap';
 import Container from '@mui/material/Container';
 import SwipeableInfo from './SwipeableInfo';
@@ -19,16 +18,12 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
   return (
     <div className='relative flex flex-col justify-center h-screen w-full'>
       <div className="absolute flex z-0 justify-between w-full top-[-5rem]">
-        <Image
-          width={100}
-          height={100}
+        <img
           src="images/hero/hero-bg1.png"
           alt="background image"
           className=""
         />
-        <Image
-          width={100}
-          height={100}
+        <img
           src="images/hero/hero-bg2.png"
           alt="background image"
           className="hidden lg:flex right-0 absolute"
@@ -37,7 +32,7 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
       <Container maxWidth={"xs"} >
         {
           !displaySwipeable? 
-            <MotionDivWrap><Image src="/logoSimplifi.png" alt="SimplifiLogo" height={250} width={250} /></MotionDivWrap> 
+            <MotionDivWrap><img src="/logoSimplifi.png" alt="SimplifiLogo" height={250} width={250} /></MotionDivWrap> 
               : 
             <SwipeableInfo />
         }

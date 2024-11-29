@@ -12,7 +12,7 @@ export const fadeStyle = (overrideWidth? : string, overrideHeight?: string) => {
         width:overrideWidth ||  "100%",
         height: overrideHeight || "100%",
         left: '50%',
-        p: 4,
+        p: {sx: 2, md: 4},
         position: 'absolute' as 'absolute',
     }
 };

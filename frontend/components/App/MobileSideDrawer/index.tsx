@@ -22,9 +22,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     background: '#121212',
     alignItems: 'left',
     justifyContent: 'center',
-    // paddingLeft: '22px',
     padding: theme.spacing(0, 1),
-    // borderRight: '1px solid #fff',
     ...theme.mixins.toolbar,
 }));
 
@@ -50,7 +48,7 @@ export default function MobileSideDrawer({setIcon, setParentActive, handleModalC
                     <DrawerHeader>
                         <div className="w-full flex justify-center">
                             <button onClick={handleModalClose}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.0} stroke="currentColor" className="size-10 text-white1/70 hover:text-white1/50 active:ring-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.0} stroke="currentColor" className="size-10 text-orangec hover:text-white1/50 active:ring-1">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
                             </button>

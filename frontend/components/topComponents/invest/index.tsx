@@ -1,17 +1,18 @@
 import React from "react";
-import Modal from "@mui/material/Modal";
+import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import ProgressBar from "../../customProgress/Progress";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_ENUM } from "@/constants";
+import Container from "@mui/material/Container";
+import { PopUp } from "../finance/Create/forms/transactionStatus/PopUp";
 
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  // width: 400,
-  // border: "0.1em solid #fff",
+  width: '30%',
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -19,27 +20,36 @@ const style = {
 };
 
 function Invest(): JSX.Element {
-  const [modalPop, popModal] = React.useState(false);
-  const closeModal = () => popModal(false);
+  const [modalOpen, popModal] = React.useState(false);
+  const handleModalClose = () => popModal(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
     popModal(true);
     setTimeout(() => {
-      popModal(false);
-      navigate(ROUTE_ENUM.OPEN);
+      handleModalClose();
+      navigate(ROUTE_ENUM.DASHBOARD);
     }, 5000);
   }, [navigate]);
 
   return (
     <React.Fragment>
-      <Modal open={modalPop} onClose={closeModal} aria-labelledby="child-modal-title" aria-describedby="child-modal-description">
-        <Stack sx={{ ...style }} onClick={() => navigate(ROUTE_ENUM.DASHBOARD)} className="text-xl text-center place-items-center text-orangec font-semibold ">
-          <h3 className="text-2xl">Yield Strategy</h3>
-          <h3>...in development</h3>
-          <ProgressBar inProgress={5} />
-        </Stack>
-      </Modal>
+      <PopUp { ...{modalOpen, handleModalClose } } > 
+        <Container maxWidth="sm" className="space-y-4">
+          <Box sx={style} className="p-4 rounded-lg border border-white1/30 bg-white1/20 text-white1 shadow-lg shadow-yellow-400">
+            <div className="w-full flex justify-end cursor-pointer" onClick={() => navigate(ROUTE_ENUM.DASHBOARD)}>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-10 text-orangec hover:text-white1/70 active:ring-1 rounded-lg p-2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div className="text-center space-y-4">
+              <h3 className="text-xl font-black text-orangec">Yield Strategy</h3>
+              <p className="text-orange-200">...in development</p>
+              {/* <ProgressBar inProgress={5} /> */}
+            </div>
+          </Box>
+        </Container>
+      </PopUp>
     </React.Fragment>
   );
 }

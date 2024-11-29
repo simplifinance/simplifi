@@ -5,8 +5,8 @@ import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } 
 import { POOLS_MOCK, PROFILE_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import Liquidity from "@/components/topComponents/finance";
-import Invest from "@/components/topComponents/invest";
-import SpeedDoc from "@/components/topComponents/speeddoc";
+import Invest from "@/components/topComponents/Invest";
+import SpeedDoc from "@/components/topComponents/Speeddoc";
 import SimpliDao from "@/components/topComponents/SimpliDao";
 import { LiquidityInnerLinkEntry, TrxnResult } from "@/interfaces";
 import { Create } from "@/components/topComponents/finance/Create";
