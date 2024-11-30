@@ -33,7 +33,7 @@ const ScrollButton = ({ windowIsDefined }) => {
       }
     >
       <Image 
-        src="images/scrollDown.svg" 
+        src="/images/scrollDown.svg" 
         alt="global lanthern" 
         className="rotate-180"
         width={500}
