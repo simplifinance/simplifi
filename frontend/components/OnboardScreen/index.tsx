@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 // import Container from '@mui/material/Container';
 import SwipeableInfo from './SwipeableInfo';
 import { commonStyle } from '@/utilities';
+import Image from 'next/image';
 
 export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen : () => void}) {
   const [displaySwipeable, activateSwipeable] = React.useState<boolean>(false);
@@ -20,13 +21,17 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
   return (
     <div className='relative flex flex-col justify-center h-screen w-full'>
       <div className="absolute flex z-0 justify-between w-full top-[-5rem]">
-        <img
-          src="images/hero/hero-bg1.png"
+        <Image
+          width={500}
+          height={500}
+          src="/images/hero/hero-bg1.png"
           alt="background image"
           className=""
         />
-        <img
-          src="images/hero/hero-bg2.png"
+        <Image
+          width={500}
+          height={500}
+          src="/images/hero/hero-bg2.png"
           alt="background image"
           className="hidden lg:flex right-0 absolute"
         />
