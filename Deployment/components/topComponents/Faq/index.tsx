@@ -17,7 +17,7 @@ const style = {
   pb: 3
 };
 
-function SpeedDoc(): JSX.Element {
+function Faq(): JSX.Element {
   const [modalOpen, popModal] = React.useState(false);
   const handleModalClose = () => popModal(false);
   const navigate = useNavigate();
@@ -52,4 +52,4 @@ function SpeedDoc(): JSX.Element {
   );
 }
 
-export default SpeedDoc;
+export default Faq;

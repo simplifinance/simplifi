@@ -6,7 +6,7 @@ import { POOLS_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import Liquidity from "@/components/topComponents/finance";
 import Yield from "@/components/topComponents/Yield";
-import SpeedDoc from "@/components/topComponents/Speeddoc";
+import Faq from "@/components/topComponents/Faq";
 import SimpliDao from "@/components/topComponents/SimpliDao";
 import { LiquidityInnerLinkEntry, TrxnResult } from "@/interfaces";
 import { Create } from "@/components/topComponents/finance/Create";
@@ -63,7 +63,7 @@ const renderAppChildComponents = () => [
   {
     children: undefined,
     path: ROUTE_ENUM.FAQ,
-    renderElement: () => ( <SpeedDoc /> ), 
+    renderElement: () => ( <Faq /> ), 
   }
 ].map(({renderElement, path, children}) => (
   <Route key={path} {...{element: renderElement(), path}}>
