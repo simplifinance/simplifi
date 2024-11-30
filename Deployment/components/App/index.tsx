@@ -21,7 +21,7 @@ export default function App(props: AppProps) {
   
   const { displayAppScreen } = props;
   
-  const toggleMode = () => setMode(!lightMode);
+  // const toggleMode = () => setMode(!lightMode);
   const navigate = useNavigate();
   const location = useLocation().pathname;
   const { isConnected } = useAccount();
@@ -31,8 +31,12 @@ export default function App(props: AppProps) {
   React.useEffect(() => {
     if(displayAppScreen) {
       navigate('/dashboard', {replace: true});
-      if(!isConnected) setPopUp(true);
-
+      if(!isConnected) {
+        if(location !== "/dashboard"){
+          navigate('/dashboard', {replace: true});
+        }
+        setPopUp(true);
+      }
     }
 
     // if(isConnected) {

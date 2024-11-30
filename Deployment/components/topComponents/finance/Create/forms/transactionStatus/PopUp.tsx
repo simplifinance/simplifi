@@ -3,17 +3,25 @@ import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
+import { commonStyle } from '@/utilities';
 // import { TrxnResult } from '@/interfaces';
 
 export const fadeStyle = (overrideWidth? : string, overrideHeight?: string) => {
     return {
-        top: '50%',
-        transform: 'translate(-50%, -50%)',
-        width:overrideWidth ||  "100%",
-        height: overrideHeight || "100%",
-        left: '50%',
-        p: {sx: 2, md: 4},
-        position: 'absolute' as 'absolute',
+        ...commonStyle(
+            {
+                width: overrideWidth ||  "100%",
+                height: overrideHeight || {xs: '100%', md: '750px'},
+                overflowY: 'auto'
+            }
+        )
+        // top: '50%',
+        // transform: 'translate(-50%, -50%)',
+        // width:overrideWidth ||  "100%",
+        // height: overrideHeight || "100%",
+        // left: '50%',
+        // p: {sx: 2, md: 4},
+        // position: 'absolute' as 'absolute',
     }
 };
 

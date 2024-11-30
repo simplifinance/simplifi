@@ -19,7 +19,7 @@ const style = {
   pb: 3
 };
 
-function Invest(): JSX.Element {
+function Yield(): JSX.Element {
   const [modalOpen, popModal] = React.useState(false);
   const handleModalClose = () => popModal(false);
   const navigate = useNavigate();
@@ -54,4 +54,4 @@ function Invest(): JSX.Element {
   );
 }
 
-export default Invest;
+export default Yield;

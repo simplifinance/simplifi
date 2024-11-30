@@ -95,7 +95,7 @@ const Dashboard : React.FC = () => {
           ))
         }
       </Grid>
-      {/* <ConnectWallet { ...{ modalOpen, handleModalClose }} /> */}
+      <ConnectWallet { ...{ modalOpen, handleModalClose }} />
     </Box>
   )
 }

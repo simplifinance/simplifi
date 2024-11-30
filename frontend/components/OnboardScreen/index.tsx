@@ -1,7 +1,9 @@
 import React from 'react';
 import { MotionDivWrap } from '../MotionDivWrap';
-import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+// import Container from '@mui/material/Container';
 import SwipeableInfo from './SwipeableInfo';
+import { commonStyle } from '@/utilities';
 
 export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen : () => void}) {
   const [displaySwipeable, activateSwipeable] = React.useState<boolean>(false);
@@ -29,14 +31,22 @@ export default function OnbaordScreen ({exitOnboardScreen} : {exitOnboardScreen 
           className="hidden lg:flex right-0 absolute"
         />
       </div>
-      <Container maxWidth={"xs"} >
+      <Box sx={commonStyle({})}>
         {
           !displaySwipeable? 
-            <MotionDivWrap><img src="/logoSimplifi.png" alt="SimplifiLogo" height={250} width={250} /></MotionDivWrap> 
+            <MotionDivWrap className='bg-transparent'>
+              <span className='hidden md:inline-block'>
+                <img src="/logoSimplifi.png" alt="SimplifiLogo"/>
+              </span>
+              <span className='md:hidden text-green1 flex justify-center items-center'>
+                <img src="/favicon.ico" alt="SimplifiLogo" className=''/>
+                <p>SimpliFi</p>
+              </span>
+            </MotionDivWrap> 
               : 
             <SwipeableInfo />
         }
-      </Container>
+      </Box>
     </div>
   )
 }

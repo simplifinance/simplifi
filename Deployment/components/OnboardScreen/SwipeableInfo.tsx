@@ -12,23 +12,23 @@ export default function SwipeableInfo() {
     const AutoSwipeableViews = autoPlay(SwipeableViews);
     const { exitOnboardScreen } = useAppStorage();
     return(
-        <MotionDivWrap className='bg-white1 p-6'>
-            <Stack className='place-items-center space-y-4'>
-                <AutoSwipeableViews>
-                    {
-                    SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
-                        <Stack className={`${flexCenter} place-items-center`} key={i}>
-                        {imageComponent}
-                        <Stack className={`text-center `}>
-                            <h1 className='text-lg font-bold text-gray-700'>{title}</h1>
-                            <span className='text-gray-400'>{ description }</span>
-                        </Stack>
-                        </Stack>
-                    ))
-                    }
-                </AutoSwipeableViews>
-                <CustomButton buttonText='Get Started' handleClick={exitOnboardScreen} overrideStyle="bg-orangec text-yellow-100 rounded-full font-extrabold hover:bg-yellow-200 hover:text-orangec w-[60%] md:w-[80%]" />
-            </Stack>
+      <MotionDivWrap className='bg-white1 p-6'>
+        <Stack className='place-items-center space-y-4'>
+          <AutoSwipeableViews>
+            {
+              SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
+                  <Stack className={`${flexCenter} place-items-center`} key={i}>
+                    {imageComponent}
+                    <Stack className={`text-center `}>
+                      <h1 className='text-lg font-bold text-gray-700'>{title}</h1>
+                      <span className='text-gray-400'>{ description }</span>
+                    </Stack>
+                  </Stack>
+              ))
+            }
+          </AutoSwipeableViews>
+          <CustomButton buttonText='Get Started' handleClick={exitOnboardScreen} overrideStyle="bg-orangec text-yellow-100 rounded-full font-extrabold hover:bg-yellow-200 hover:text-orangec w-[60%] md:w-[80%]" />
+        </Stack>
       </MotionDivWrap>
     );
 }

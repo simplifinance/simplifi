@@ -2,9 +2,7 @@ import React from "react";
 import Drawer from '@mui/material/Drawer';
 import Toolbar from "@mui/material/Toolbar";
 import { styled } from '@mui/material/styles';
-import Link from 'next/link';
 import List from "@mui/material/List";
-import Image from 'next/image';
 import { flexStart, ROUTE_ENUM } from "@/constants";
 import Stack from "@mui/material/Stack";
 import { NavLink } from "react-router-dom";
@@ -13,7 +11,7 @@ import { Collapsible } from "@/components/Collapsible";
 import { PopUp } from "@/components/topComponents/finance/Create/forms/transactionStatus/PopUp";
 import { VoidFunc } from "@/interfaces";
 import { SideDrawerProps } from "../SIdeDrawer";
-import ScrollButton from "@/components/Layout/scrollButton";
+// import ScrollButton from "@/components/Layout/scrollButton";
 
 export const DRAWERWIDTH = 240;
 
@@ -125,7 +123,7 @@ export const DRAWER_CONTENT = [
     {
       parentTitle: 'Yield',
       collapsible: true,
-      parentPath: ROUTE_ENUM.INVEST,
+      parentPath: ROUTE_ENUM.YIELD,
       displayChevron: true,
       children: undefined
     },

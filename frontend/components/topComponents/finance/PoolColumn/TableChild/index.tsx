@@ -13,15 +13,15 @@ import { PopUp } from "../../Create/forms/transactionStatus/PopUp";
 // import { ListItemIcon } from "@mui/material";
 
 interface TableChildProps {
-    open: boolean;
+    // viewTableChild: boolean;
     formattedPool: FormattedPoolContentProps;
-    handleModalClose: VoidFunc;
+    back: VoidFunc;
     actions: React.ReactNode;
 }
 
-const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
+const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-white1/80 bg-white1/10";
 
-export const TableChild = ({ open, formattedPool, actions, handleModalClose } : TableChildProps) => {
+export const TableChild = ({ formattedPool, actions, back } : TableChildProps) => {
     const [innerCollapse, setInnerCollapse] = React.useState<boolean>(false);
     const [innerLevel2Collapse, setInnerLevel2Collapse] = React.useState<boolean>(false);
     const handleClickInnerCollapse = () => setInnerCollapse(!innerCollapse);
@@ -44,14 +44,15 @@ export const TableChild = ({ open, formattedPool, actions, handleModalClose } : 
      } = formattedPool;
     return(
         // <PopUp modalOpen={open} timeout="auto" unmountOnExit className={'w-full bg-gray-100 p-4 rounded-lg mt-2'}>
-        <PopUp modalOpen={open} handleModalClose={handleModalClose} >
-            <Box className="h-full md:max-h-[550px] space-y-4 overflow-y-auto md:overflow-y-auto p-4 lg:p-8 rounded-lg text-lg bg-green1 text-white1 border shadow-lg shadow-yellow-100">
+        // <PopUp modalOpen={open} handleModalClose={handleModalClose} >
+        <Box className="md:pb-4">
+            <Box className="space-y-4 mt-2 overflow-y-auto md:overflow-y-auto rounded-lg text-lg bg-green1 text-white1">
                 <Grid item container xs={12}  className="space-y-4">
                     <Grid item xs={12}>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center border border-white1/30 bg-white1 p-4 rounded-lg">
                             {/* <h3 className="text-xl text-left text-orangec font-bold">Details</h3> */}
                             { actions }
-                            <button onClick={handleModalClose}>
+                            <button onClick={back}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                                 </svg>
@@ -60,12 +61,12 @@ export const TableChild = ({ open, formattedPool, actions, handleModalClose } : 
                     </Grid>
                     <Grid item container xs={12} className="rounded-lg ">
                         <Grid item xs={12} className={`${flexSpread} border border-white1/20 bg-white/10 rounded-lg p-4`}>
-                            <Stack className="text-sm md:text-md w-full">
-                                <h3 className="text-orange-200">Asset</h3>
+                            <Stack className="text-sm md:text-md w-full text-left">
+                                <h3 className="text-white1/80 underline font-bold">Asset</h3>
                                 <p className="text-xs md:text-sm">{'USDT'}</p>
                             </Stack>
                             <Stack className="text-center w-full" >
-                                <h3 className="text-orange-200 text-sm md:text-md">{"C/Address"}</h3>
+                                <h3 className="text-white1/80 text-sm md:text-md underline font-bold">{"C/Address"}</h3>
                                 <AddressWrapper 
                                     size={4} 
                                     copyIconSize="4" 
@@ -75,7 +76,7 @@ export const TableChild = ({ open, formattedPool, actions, handleModalClose } : 
                                 />
                             </Stack>
                             <Stack className="text-end w-full" >
-                                <h3 className="text-orange-200 text-sm md:text-md">{"Benefited"}</h3>
+                                <h3 className="text-white1/80 text-sm md:text-md underline font-bold">{"Beneficiary"}</h3>
                                 <p className="text-xs md:text-sm">{`${allGh_toNumber}`}</p>
                             </Stack>
                         </Grid>
@@ -131,28 +132,29 @@ export const TableChild = ({ open, formattedPool, actions, handleModalClose } : 
 
 
                     {/* Inner Collapse Showing the providers */}
-                    <Grid item container xs={12}>
-                        <Box onClick={handleClickInnerCollapse} className={`w-full text-lg p-2 border border-white1/20 bg-white1/20 text-orange-200 rounded-t-lg ${flexSpread} cursor-pointer`}>
+                    <Box className="w-full">
+                        {/* <Box onClick={handleClickInnerCollapse} className={`w-full text-lg p-2 border border-white1/20 bg-white1/20 text-white1/80 rounded-t-lg ${flexSpread} cursor-pointer`}> */}
+                        <Box className={`w-full text-lg p-2 border border-white1/20 bg-white1/20 text-white1/80 rounded-t-lg ${flexSpread} cursor-pointer`}>
                             <h3>Providers</h3>
-                            { togglerIcon(innerCollapse, undefined, "bg-none text-orange-200") }
+                            {/* { togglerIcon(innerCollapse, undefined, "bg-none text-white1/80") } */}
                         </Box>
-                        <Collapse in={innerCollapse} timeout="auto" unmountOnExit className={'w-full'}>
-                            <div className="w-full max-h-[120px] overflow-y-auto border border-white1/20 rounded-b-lg ">
-                                {
-                                    cData_formatted.map((item, i) => (
-                                        <Provider
-                                            formattedData={item}
-                                            key={i} 
-                                            index={i}
-                                            />
-                                    ))
-                                }
-                            </div>
-                        </Collapse>
-                    </Grid>
+                        {/* <Collapse in={innerCollapse} timeout="auto" unmountOnExit className={'w-full'}> */}
+                        <Grid item container xs="auto" className="w-full max-h-[120px] overflow-y-auto border border-white1/20 rounded-b-lg p-4">
+                            {
+                                cData_formatted.map((item, i) => (
+                                    <Provider
+                                        formattedData={item}
+                                        key={i} 
+                                        index={i}
+                                        />
+                                ))
+                            }
+                        </Grid>
+                        {/* </Collapse> */}
+                    </Box>
                 </Grid> 
             </Box>
-        </PopUp>
+        </Box>
     );
 }
 

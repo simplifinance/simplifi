@@ -2,10 +2,10 @@ import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import App from "@/components/App";
 import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
-import { POOLS_MOCK, PROFILE_MOCK, ROUTE_ENUM } from "@/constants";
+import { POOLS_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import Liquidity from "@/components/topComponents/finance";
-import Invest from "@/components/topComponents/Invest";
+import Yield from "@/components/topComponents/Yield";
 import SpeedDoc from "@/components/topComponents/Speeddoc";
 import SimpliDao from "@/components/topComponents/SimpliDao";
 import { LiquidityInnerLinkEntry, TrxnResult } from "@/interfaces";
@@ -52,8 +52,8 @@ const renderAppChildComponents = () => [
   },
   {
     children: undefined,
-    path: ROUTE_ENUM.INVEST,
-    renderElement: () => ( <Invest /> ), 
+    path: ROUTE_ENUM.YIELD,
+    renderElement: () => ( <Yield /> ), 
   },
   {
     children: undefined,

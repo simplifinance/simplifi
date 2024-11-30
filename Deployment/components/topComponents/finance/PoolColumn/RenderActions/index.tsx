@@ -108,7 +108,7 @@ export const RenderActions = (props: RenderActionsProps) => {
             <button 
                 onClick={handleClick}
                 disabled={buttonObj.disable}
-                className="text-xs font-extrabold border border-orangec p-2 rounded-lg text-orangec bg-yellow-100 hover:bg-orangec hover:text-white1 underlineFromLeft" 
+                className="text-xs font-bold border border-orangec p-2 rounded-lg text-white1 bg-orangec/90 underlineFromLeft active:ring1" 
             >
                 {buttonObj.value}
             </button>

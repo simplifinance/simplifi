@@ -32,11 +32,11 @@ const screenUser = (
 }
 
 export const PoolColumn = (props: PoolColumnProps) => {
-    const [open, setOpen] = React.useState<boolean>(false);
+    const [viewTableChild, setViewTableChild] = React.useState<boolean>(false);
     const account = formatAddr(useAccount().address);
     const config = useConfig();
 
-    const handleClick = () => setOpen(!open);
+    const handleClick = () => setViewTableChild(!viewTableChild);
 
     const formattedPool = formatPoolContent(props.pool, true);
     const {
@@ -77,73 +77,59 @@ export const PoolColumn = (props: PoolColumnProps) => {
         { value: pair, gridSize: 2},
         { value: userCount_toNumber, gridSize: 1.5},
         { value: renderIcon(isPermissionless), gridSize: 2},
-        // { 
-        //     value:  
-                // <RenderActions 
-                //     {...{
-                //         isMember,
-                //         isAdmin,
-                //         isPermissionless,
-                //         loan_InBN,
-                //         payDate_InSec,
-                //         stage_toNumber,
-                //         epochId_toNumber,
-                //         strategy: formatted_strategy,
-                //         maxEpochDuration: duration_toNumber.toString(),
-                //         otherParam
-                //     }}
-                // />,
-        //     gridSize: 1
-        // }
     ];
 
     return(
         <React.Fragment>
-            {/* <Grid container xs={'auto'}> */}
-            <Grid 
-                container 
-                xs={12} 
-                className={`${open? "bg-white1/10" : "hover:bg-gray-500/10"} p-4`} 
-                onClick={handleClick}
-            >
-                {
-                    column_content.map(({ value, gridSize}, id) => (
-                        <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center p-1">
-                            <div 
-                                style={{color: 'rgba(255, 255, 255, 0.7)'}}
-                                className=""
-                            >
-                                { value }
-                            </div>
-                        </Grid>
-                    ))
-                }
-            </Grid>
-            <TableChild 
-                {
-                    ...{
-                            formattedPool, 
-                            open, 
-                            handleModalClose: handleClick,
-                            actions:  <RenderActions 
-                                {
-                                    ...{
-                                        isMember,
-                                        isAdmin,
-                                        isPermissionless,
-                                        loan_InBN,
-                                        payDate_InSec,
-                                        stage_toNumber,
-                                        epochId_toNumber,
-                                        strategy: formatted_strategy,
-                                        maxEpochDuration: duration_toNumber.toString(),
-                                        otherParam
-                                    }
+            
+            {
+                viewTableChild? 
+                    <TableChild 
+                        {
+                            ...{
+                                    formattedPool, 
+                                    // viewTableChild, 
+                                    back: handleClick,
+                                    actions:  <RenderActions 
+                                        {
+                                            ...{
+                                                isMember,
+                                                isAdmin,
+                                                isPermissionless,
+                                                loan_InBN,
+                                                payDate_InSec,
+                                                stage_toNumber,
+                                                epochId_toNumber,
+                                                strategy: formatted_strategy,
+                                                maxEpochDuration: duration_toNumber.toString(),
+                                                otherParam
+                                            }
+                                        }
+                                    />
                                 }
-                            />
-                        }
-                } 
-            />
+                        } 
+                /> 
+                    : 
+                <Grid 
+                    container 
+                    xs={12} 
+                    className={`${viewTableChild? "bg-white1/10" : "hover:bg-gray-500/10"} p-4`} 
+                    onClick={handleClick}
+                >
+                    {
+                        column_content.map(({ value, gridSize}, id) => (
+                            <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center p-1">
+                                <div 
+                                    style={{color: 'rgba(255, 255, 255, 0.7)'}}
+                                    className=""
+                                >
+                                    { value }
+                                </div>
+                            </Grid>
+                        ))
+                    }
+                </Grid>
+            }
         </React.Fragment>
     )
 }

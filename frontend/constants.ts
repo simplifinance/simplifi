@@ -24,7 +24,7 @@ export const flexEven = "flex justify-evenly items-center";
 
 export const ROUTE_ENUM = {
   DASHBOARD : '/dashboard',
-  INVEST: '/yield',
+  YIELD: '/yield',
   DAO: '/simplidao',
   LIQUIDITY: '/flexpool',
   FAQ: 'faq',

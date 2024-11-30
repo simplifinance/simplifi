@@ -52,6 +52,21 @@ export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
   return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
 }
 
+export const commonStyle = (props?: {}) => {
+  return {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    // width: {xs: '100%', sm: '60%', md: '30%'},
+    boxShadow: 24,
+    // pt: 2,
+    // px: 4,
+    p: 12,
+    ...props
+  };
+} 
+
 /**
  * Filter and calculate amount to approve
  * Note: If trxnType is 'PAY', we provide for 60 minutes contingency between now and 
