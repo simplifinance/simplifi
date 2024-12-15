@@ -62,7 +62,7 @@ export const commonStyle = (props?: {}) => {
     boxShadow: 24,
     // pt: 2,
     // px: 4,
-    p: 12,
+    p: 2,
     ...props
   };
 } 

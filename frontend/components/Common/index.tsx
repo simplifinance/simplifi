@@ -7,7 +7,7 @@ export const CustomButton:
     React.FC<CustomButtonProps> = (
         {
             flexType,
-            buttonText, 
+            children, 
             overrideClassName,
             handleButtonClick
         }
@@ -16,15 +16,15 @@ export const CustomButton:
     return(
         <button 
             onClick={handleButtonClick}
-            className={`${overrideClassName || `${flexType? flexType : ''} w-full p-3 rounded-lg bg-yellow-100` }`}
+            className={`${overrideClassName || `${flexType? flexType : ''}` } animate-pulse hover:animate-none`}
         >
-
+            { children }
         </button>
     )
 }
 
 interface CustomButtonProps {
-    buttonText: string;
+    children: React.ReactNode;
     flexType?: string;
     overrideClassName?: string;
     handleButtonClick: VoidFunc;

@@ -4,20 +4,26 @@ import Box from '@mui/material/Box';
 import { getEpoches } from '@/apis/read/readContract';
 import { useAccount, useConfig } from 'wagmi';
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
+import { ROUTE_ENUM } from '@/constants';
 
-const Liquidity : React.FC = () => {
+const FlexPool : React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setstate } = useAppStorage();
-
-  React.useEffect(() => {
-    if(location.pathname === '/flexpool'){
-      navigate('open');
-    }
-  });
-
+  const { setstate, openPopUp, togglePopUp } = useAppStorage();
   const { isConnected, connector } = useAccount();
   const config = useConfig();
+
+  React.useEffect(() => {
+    if(location.pathname !== ROUTE_ENUM.DASHBOARD){
+      if(!isConnected){
+        // navigate(ROUTE_ENUM.DASHBOARD);
+        // if(!openPopUp) togglePopUp();
+      } else {
+        navigate('open');
+      }
+    }
+
+  }, [isConnected, navigate]);
 
   React.useEffect(() => {
     const ctrl = new AbortController();
@@ -45,4 +51,4 @@ const Liquidity : React.FC = () => {
   )
 }
 
-export default Liquidity
+export default FlexPool

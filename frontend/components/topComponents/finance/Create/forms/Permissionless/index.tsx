@@ -5,8 +5,9 @@ import { Input } from "../../Input";
 import type { InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Grid from "@mui/material/Grid";
+import { flexSpread } from "@/constants";
 
-export const Permissionless = (props: {handleBack: () => void}) => {
+export const Permissionless = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
     const [quorum, setQuorum] = React.useState<string>('0');
     const [duration, setDuration] = React.useState<string>('0');
@@ -14,7 +15,6 @@ export const Permissionless = (props: {handleBack: () => void}) => {
     const [interest, setInterest] = React.useState<string>('0');
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
 
-    const { handleBack } = props;
     const toggleModal = () => setModalPopUp(!modalOpen);
     
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
@@ -44,19 +44,17 @@ export const Permissionless = (props: {handleBack: () => void}) => {
 
     return(
         <Stack className="space-y-4 mt-4">
-            <Box className="flex justify-between items-center text-yellow-100 text-opacity-80">
-                <div className="">
-                    <button onClick={handleBack} className="border border-green1 rounded-lg p-2 w-full flex justify-between items-center gap-2 text-yellow-200 cursor-pointer hover:shadow-lg hover:shadow-orangec text-opacity-80">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={2.5} stroke="currentColor" className="size-4 ">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                        </svg>
-                        <h3>Back</h3>
-                    </button>
-                </div>
-                <div className="w-full text-center text-xl font-semibold">
-                    <h3>New Permissionless Pool</h3>
-                </div>
-            </Box>
+            {/* <div className={`${flexSpread} px-4`}>
+                <button onClick={() => handleBack({poolType: 'Permissionless', displayForm: false})} className={`w-[fit-content] ${flexSpread} gap-2 bg-green1 p-2 rounded-full text-xs uppercase text-orange-200 hover:text-orange-400 focus:shadow-md focus:shadow-orange-200`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={1.5} stroke="currentColor" className="size-2 ">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                    </svg>
+                    <h3>Back</h3>
+                </button>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-300">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                </svg>
+            </div> */}
 
             <Grid container xs={'auto'}>
                 {
@@ -96,22 +94,21 @@ export const Permissionless = (props: {handleBack: () => void}) => {
                     ).map(({ id, type, placeholder, onChange }, i) => (
                         <Grid key={id} xs={12} md={i < 4? 6 : 12}>
                             <Stack className="p-4 space-y-2">
-                                <h3 className="text-yellow-100 text-opacity-80">{id}</h3>
+                                <h3 className="text-orange-200 text-opacity-80">{id}</h3>
                                 <Input 
                                     id={id}
                                     onChange={onChange}
                                     type={type}
                                     placeholder={placeholder}
-                                    overrideBg="bg-stone-300"
+                                    overrideBg="bg-green1"
                                 />
                             </Stack>
                         </Grid>
                     ))
                 }
-
             </Grid>
-            <Stack className="place-items-center">
-                <button onClick={toggleModal} className="text-orangec border border-orangec bg-yellow-100 font-extrabold w-[30%] p-4 rounded-lg hover:bg-orangec hover:text-yellow-200">Submit</button>
+            <Stack className="place-items-center p-4">
+                <button onClick={toggleModal} className="w-full bg-orange-200 p-4 text-green1 rounded-full uppercase font-semibold hover:bg-orangec hover:text-white1">Submit</button>
             </Stack>
             <ReviewInput 
                 {

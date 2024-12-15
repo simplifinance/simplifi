@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts", "components/Spinner_2.js", "components/Hero/index.tsx", "components/getEllipsisTxt.js", "config/index.tsx", "components/Layout/footer.js", "components/Layout/scrollButton.js", "components/Layout/layout.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts", "components/SpinnerWheel.tsx", "components/Hero/index.tsx", "components/getEllipsisTxt.js", "config/index.tsx", "components/Layout/footer.js", "components/Layout/ScrollButton.tsx", "components/Layout/layout.js"],
   "exclude": ["node_modules"]
 }

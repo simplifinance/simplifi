@@ -4,19 +4,18 @@ import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
-import Notification from "@/components/Notification";
+// import Notification from "@/components/Notification";
 import { ConfirmationPopUp } from "./ConfirmationPopUp";
 import { Address } from "viem";
 
 export const RenderActions = (props: RenderActionsProps) => {
-    const [message, setMessage] = React.useState<string>('');
     const [modalOpen, setInputModal] = React.useState<boolean>(false);
     const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
 
     const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
-    const { setstate } = useAppStorage();
+    const { setstate, setMessage } = useAppStorage();
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
 
     const handleModalClose = () => {
@@ -108,7 +107,7 @@ export const RenderActions = (props: RenderActionsProps) => {
             <button 
                 onClick={handleClick}
                 disabled={buttonObj.disable}
-                className="text-xs font-bold border border-orangec p-2 rounded-lg text-white1 bg-orangec/90 underlineFromLeft active:ring1" 
+                className="bg-orange-200 border-[0.3px] border-gray1 text-[12px] font-semibold text-green1 hover:bg-orange-400 hover:text-white1 p-2 active:ring-1 w-full rounded-full underlineFromLeft flex justify-center" 
             >
                 {buttonObj.value}
             </button>
@@ -129,13 +128,11 @@ export const RenderActions = (props: RenderActionsProps) => {
                     ...{
                         buttonText: buttonObj.value,
                         epochId: epochId_toNumber,
-                        handleModalClose: closeConfirmationPopUp,
-                        modalOpen: confirmationModal,
                         sendTransaction,
                     }
                 }
             />
-            <Notification message={message} />
+            {/* <Notification message={message} /> */}
         </React.Fragment>
     );
 }

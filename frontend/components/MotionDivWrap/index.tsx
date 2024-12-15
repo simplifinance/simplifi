@@ -11,9 +11,9 @@ export const MotionDivWrap = (props: MotionDivWrapProps) => {
   const { className, style, children } = props;
   return (
     <motion.div
-      initial={{ zoom: "0%", borderRadius: '16px' }} 
+      initial={{ zoom: "0%",}} 
       animate={{ zoom: ["10%", "30%", "50%", "70%", "90%", "100%"], }}
-      className={`${className || "flex justify-center items-center p-4"}`}
+      className={className}
       style={style}
     >
       { children }

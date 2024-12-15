@@ -1,18 +1,20 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import App from "@/components/App";
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, useNavigate } from "react-router-dom";
 import { POOLS_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
-import Liquidity from "@/components/topComponents/finance";
+import FlexPool from "@/components/topComponents/finance";
 import Yield from "@/components/topComponents/Yield";
 import Faq from "@/components/topComponents/Faq";
 import SimpliDao from "@/components/topComponents/SimpliDao";
-import { LiquidityInnerLinkEntry, TrxnResult } from "@/interfaces";
+import { DrawerAnchor, TransactionResult, TrxnResult } from "@/interfaces";
 import { Create } from "@/components/topComponents/finance/Create";
 import { Open } from "@/components/topComponents/finance/Open";
 import { Closed } from "@/components/topComponents/finance/Closed";
 import { StorageContextProvider } from "@/components/StateContextProvider";
+import Notification from "@/components/Notification";
+// import TransactionWindow from "@/components/topComponents/finance/PoolColumn/RenderActions/ConfirmationPopUp/TransactionWindow";
 
 /**
  * Renders Liquidity child components
@@ -47,8 +49,8 @@ const renderAppChildComponents = () => [
   },
   {
     children: renderLiquidityChildComponents(),
-    path: ROUTE_ENUM.LIQUIDITY,
-    renderElement: () => (<Liquidity />), 
+    path: ROUTE_ENUM.FLEXPOOL,
+    renderElement: () => (<FlexPool />), 
   },
   {
     children: undefined,
@@ -74,30 +76,98 @@ const renderAppChildComponents = () => [
 export default function SimpliApp() {
   const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK});
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
-  const [innerlink, setInnerlink] = React.useState<LiquidityInnerLinkEntry>('Dashboard');
+  const [openPopUp, setPopUp] = React.useState<boolean>(false);
+  const [showSidebar, setShowSidebar] = React.useState(false);
+  const [txnStatus, setTxnStatus] = React.useState<TransactionResult>({loading: false, txResult: '', message: '', buttonText: 'Approve'});
+  const [drawerState, setDrawerState] = React.useState<boolean>(false);
+  const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
+  const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
 
+  const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
+  const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
+  const setdrawerState = (arg: boolean) => setDrawerState(arg);
   const setstate = (arg: TrxnResult) => setStorage(arg);
   const exitOnboardScreen = () => setDisplay(true);
-  const setInnerLink = (arg: LiquidityInnerLinkEntry) => setInnerlink(arg);
-  
+  const togglePopUp = () => setPopUp(!openPopUp);
+  const toggleSidebar = () => setShowSidebar(!showSidebar);
+  const setTrxnStatus = (arg: TransactionResult) => setTxnStatus(arg);
+  const setMessage = (arg: string) => {
+    const networkResponseError = 'Trxn failed with HTTP request failed';
+    setTxnStatus(
+      (prev) => { 
+        if(arg.match(networkResponseError)){
+          prev.message = 'Please check your internet connection';
+        } else {
+          prev.message = arg;
+        }
+        return prev;
+      }
+    );
+  }
+
+  const toggleTransactionWindow =
+    (value: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+        return;
+    }
+
+    setdrawerState(value );
+  };
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route 
-        path="/" 
-        element={ <App {...{ setInnerLink, innerlink, displayAppScreen }} /> } 
+        path={'/'} 
+        element={ <App /> } 
       >
         { renderAppChildComponents() }
       </Route>
     )
   );
 
-  const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen exitOnboardScreen={exitOnboardScreen} />;
+  const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen />;
+  React.useEffect(() => {
+    if(openPopUp){
+      setTimeout(() => {
+        togglePopUp()
+      }, 10000)
+    }
+  }, [openPopUp])
 
   return (
     <StorageContextProvider 
-      value={{storage, setstate, exitOnboardScreen}}
+    value={
+      {
+        storage, 
+        setstate,
+        exitOnboardScreen,
+        toggleSidebar,
+        showSidebar,
+        setTrxnStatus,
+        txnStatus,
+        setMessage,
+        displayAppScreen,
+        drawerState,
+        popUpDrawer,
+        openPopUp,
+        displayOnboardUser,
+        setdrawerState,
+        togglePopUp,
+        handlePopUpDrawer,
+        toggleTransactionWindow,
+        toggleDisplayOnboardUser,
+      }}
     >
-      { displayScreen() }
+      <div >
+        { displayScreen() }
+      </div>
+      <Notification message={txnStatus.message} />
+      {/* <TransactionWindow openDrawer={txnStatus.loading} /> */}
     </StorageContextProvider>
   );
 }

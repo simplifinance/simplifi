@@ -38,12 +38,13 @@ export const PopUp = (props: PopUpProps) => {
             slots={{ backdrop: Backdrop }}
             slotProps={{
                 backdrop: {
-                timeout: 500,
+                    timeout: 500,
                 },
             }}
+            hidden={!modalOpen}
         >
             <Fade in={modalOpen}>
-                <Box sx={fadeStyle(overrideWidth, overrideHeight)}>
+                <Box sx={{...fadeStyle(overrideWidth, overrideHeight), position: 'relative'}}>
                     {children}
                 </Box>
             </Fade>

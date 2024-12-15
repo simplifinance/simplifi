@@ -1,5 +1,5 @@
 import React from "react";
-import type { Address, AmountToApproveParam, FormattedData, PoolColumnProps, ScreenUserResult, VoidFunc } from "@/interfaces";
+import { FuncTag, type Address, type AmountToApproveParam, type FormattedData, type PoolColumnProps, type ScreenUserResult, type VoidFunc } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
 import Grid from "@mui/material/Grid";
 import Stack from "@mui/material/Stack";
@@ -7,7 +7,10 @@ import Box from "@mui/material/Box";
 import { FORMATTEDDATA_MOCK } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { RenderActions } from "./RenderActions";
-import { TableChild } from "./TableChild";
+import { InfoDisplay, Providers } from "./TableChild";
+import { renderIcon } from "./Icons";
+import { PermissionPopUp } from "./PermissionPopUp";
+import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 /**
  * Filter the data list for current user
@@ -32,11 +35,16 @@ const screenUser = (
 }
 
 export const PoolColumn = (props: PoolColumnProps) => {
-    const [viewTableChild, setViewTableChild] = React.useState<boolean>(false);
+    const [showInfo, setShowInfo] = React.useState<boolean>(false);
+    const [showPermission, setShowPermission] = React.useState<boolean>(false);
+    const [showProviders, setShowProvider] = React.useState<boolean>(false);
+    
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-
-    const handleClick = () => setViewTableChild(!viewTableChild);
+    const { handlePopUpDrawer } = useAppStorage();
+    const showPermissionDetail = () => handlePopUpDrawer('permission');
+    const showProviderDetails = () => handlePopUpDrawer('providers');
+    const showPoolInfo = () => handlePopUpDrawer('poolDetails');
 
     const formattedPool = formatPoolContent(props.pool, true);
     const {
@@ -47,7 +55,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         isPermissionless,
         epochId_toNumber,
         epochId_bigint,
-        quorum_toNumber,
+        // quorum_toNumber,
         formatted_strategy,
         intPercent_string,
         unit_InEther,
@@ -56,8 +64,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
         duration_toNumber,
         userCount_toNumber,
     } = formattedPool;
-    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
 
+    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
     const otherParam: AmountToApproveParam = {
         config,
         account,
@@ -68,100 +76,105 @@ export const PoolColumn = (props: PoolColumnProps) => {
         unit
     };
 
-    const column_content = [
-        // { value: togglerIcon(open, handleClick), gridSize: 0.5 },
-        { value: epochId_toNumber, gridSize: 1},
-        { value: quorum_toNumber, gridSize: 2},
-        { value: unit_InEther, gridSize: 2},
-        { value: intPercent_string, gridSize: 1.5},
-        { value: pair, gridSize: 2},
-        { value: userCount_toNumber, gridSize: 1.5},
-        { value: renderIcon(isPermissionless), gridSize: 2},
-    ];
-
     return(
         <React.Fragment>
-            
-            {
-                viewTableChild? 
-                    <TableChild 
+            <div className="relative bg-green1 shadow-lg  space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]">
+                <div className="flex gap-4 items-center ">
+                    <button onClick={showPermissionDetail} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
+                    <div className="relative ">
+                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCount_toNumber}</h3>
+                        <button onClick={showProviderDetails} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">
+                            { 
+                                isPermissionless?
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-300">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                                    </svg> 
+                                        : 
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-red-300">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                                    </svg>
+                            
+                            }
+                        </button>
+                    </div>
+                </div>
+                <div className="text-orangec font-medium">
+                    <span className="flex items-center gap-2">
+                        <h1>{'Epoch:'}</h1>
+                        <h1>{epochId_toNumber}</h1>
+                    </span>
+                    <div className="flex items-center gap-2">
+                        <h3>{'Rate:'}</h3>
+                        <h3>{`${Number(intPercent_string) * 100}%`}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <h3>{'Stage:'}</h3>
+                        <h3>{FuncTag[stage_toNumber]}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <h3 className="">{'Pair:'}</h3>
+                        <h3 className="">{pair}</h3>
+                    </div>
+                    <h2 className="absolute right-0 top-0 text-xl lg:text-3xl p-3 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[36px]">
+                        {`$${unit_InEther}`}
+                    </h2>
+                </div>
+                <div className="w-full flex flex-col justify-between items-center">
+                    <div className="w-full flex flex-col justify-between items-center space-y-2">
+                        <button onClick={showPoolInfo} className="border-[0.3px] border-gray1 text-xs text-orange-400 hover:bg-orange-400 hover:text-white1 p-2 active:ring-1 w-full uppercase rounded-full underlineFromLeft flex justify-center">More Info</button>
+                        <RenderActions 
+                            {
+                                ...{
+                                    isMember,
+                                    isAdmin,
+                                    isPermissionless,
+                                    loan_InBN,
+                                    payDate_InSec,
+                                    stage_toNumber,
+                                    epochId_toNumber,
+                                    strategy: formatted_strategy,
+                                    maxEpochDuration: duration_toNumber.toString(),
+                                    otherParam
+                                }
+                            }
+                        />
+                    </div>
+                </div>
+            </div>
+            <PermissionPopUp
+                children={
+                    `
+                        ${
+                            isPermissionless? 
+                                "A permissionless pool is public, and open to anyone. To operate a permissionless Flexpool, simply provide the required parameters. Other providers are free to participate." 
+                                    : 
+                                "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
+                        }
+                    `
+                }
+            />
+            <Providers cData_formatted={cData_formatted} />
+            <InfoDisplay 
+                formattedPool={formattedPool} 
+                actions={
+                    <RenderActions 
                         {
                             ...{
-                                    formattedPool, 
-                                    // viewTableChild, 
-                                    back: handleClick,
-                                    actions:  <RenderActions 
-                                        {
-                                            ...{
-                                                isMember,
-                                                isAdmin,
-                                                isPermissionless,
-                                                loan_InBN,
-                                                payDate_InSec,
-                                                stage_toNumber,
-                                                epochId_toNumber,
-                                                strategy: formatted_strategy,
-                                                maxEpochDuration: duration_toNumber.toString(),
-                                                otherParam
-                                            }
-                                        }
-                                    />
-                                }
-                        } 
-                /> 
-                    : 
-                <Grid 
-                    container 
-                    xs={12} 
-                    className={`${viewTableChild? "bg-white1/10" : "hover:bg-gray-500/10"} p-4`} 
-                    onClick={handleClick}
-                >
-                    {
-                        column_content.map(({ value, gridSize}, id) => (
-                            <Grid key={id} item xs={gridSize} className="flex justify-center items-center place-content-center p-1">
-                                <div 
-                                    style={{color: 'rgba(255, 255, 255, 0.7)'}}
-                                    className=""
-                                >
-                                    { value }
-                                </div>
-                            </Grid>
-                        ))
-                    }
-                </Grid>
-            }
+                                isMember,
+                                isAdmin,
+                                isPermissionless,
+                                loan_InBN,
+                                payDate_InSec,
+                                stage_toNumber,
+                                epochId_toNumber,
+                                strategy: formatted_strategy,
+                                maxEpochDuration: duration_toNumber.toString(),
+                                otherParam
+                            }
+                        }
+                    />
+                } 
+            />
         </React.Fragment>
     )
-}
-
-export const togglerIcon = (open: boolean, handleClick?: VoidFunc, className?: string) => {
-    return (
-        <button onClick={() => handleClick?.()} className={`${className || "w-full p-2 flex justify-center items-center bg-orangec rounded-lg"}`}>
-            {
-                open? 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className || "text-white1"}`}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                    </svg>              
-                        : 
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.0} stroke="currentColor" className={`size-4 ${className || "text-white1"}`}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                    </svg>
-                  
-            }
-        </button>
-    )
-}
-  
-const renderIcon = (isPermissionless: boolean) => {
-    return (
-        !isPermissionless? 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-red-600">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-            </svg> 
-                : 
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="size-4 text-green-600">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-            </svg>              
-
-    );
 }
