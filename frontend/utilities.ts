@@ -1,5 +1,5 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, ButtonText, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, Router, TransactionCallback, WagmiConfig } from "@/interfaces";
+import type { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool,} from "@/interfaces";
 import BigNumber from 'bignumber.js';
 import { getCurrentDebt } from "./apis/read/getCurrentDebt";
 import { getAllowance } from "./apis/transact/testToken/getAllowance";
@@ -58,10 +58,7 @@ export const commonStyle = (props?: {}) => {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    // width: {xs: '100%', sm: '60%', md: '30%'},
     boxShadow: 24,
-    // pt: 2,
-    // px: 4,
     p: 2,
     ...props
   };

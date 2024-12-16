@@ -1,8 +1,8 @@
-import { Box, Collapse, Stack } from '@mui/material'
+import { Box, Collapse, } from '@mui/material'
 import React from 'react'
-import { flexCenter, flexEnd, flexEven, flexSpread, flexStart, ROUTE_ENUM } from '@/constants';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { useAccount } from 'wagmi';
+import { flexSpread, } from '@/constants';
+import { NavLink, useLocation } from 'react-router-dom';
+import useAppStorage from '../StateContextProvider/useAppStorage';
 
 export interface CollapsibleProps {
   collapsedClassName?: string;
@@ -11,7 +11,7 @@ export interface CollapsibleProps {
   collapsible?: boolean;
   displayChevron?: boolean;
   parentTitle: string;
-  setIcon: (arg:string, isActive: boolean) => React.JSX.Element;
+  icon: React.JSX.Element;
   setParentActiveLink: (arg:string) => void;
   children?: React.ReactNode;
 }
@@ -50,33 +50,54 @@ export const Collapsible = (props: CollapsibleProps) => {
     parentLinkActive,
     parentTitle,
     collapsible,
+    icon,
     displayChevron,
-    setIcon,
     setParentActiveLink,
-    children } = props;
+    children 
+  } = props;
+  const { toggleSidebar, showSidebar } = useAppStorage();
+  const location = useLocation();
 
   return (
-    <Stack>
-      <NavLink onClick={() => setOpen(!open)} to={parentPath} style={({isActive}) => {
-        if(isActive) {
-          setParentActiveLink(parentPath);
-        }
-        return {}
-        }} 
-      >
-        <div className={`${parentLinkActive? 'bg-orangec rounded-xl' : ''} underlineFromLeft`}>
-          <div className={`w-[180px] ${flexStart} gap-3 p-3 ml-3 ${parentLinkActive? 'bg-yellow-100 rounded-r-xl' : ''}`}>
-            <span className=''>
-              { setIcon(parentPath, parentLinkActive) }
-            </span>
-            <div onClick={() => setOpen(!open)} className={`${flexSpread} text-lg ${parentLinkActive? '': 'text-gray-400'} gap-2 cursor-pointer p-1 rounded`}>
-              <h1 className={`text-xl font-`}>{ parentTitle }</h1>
-              {
-                displayChevron && 
-                  <Chevron open={open} />
+    <Box className="p-1">
+      <NavLink 
+        onClick={
+          () => {
+            setOpen(!open);
+            if(parentPath !== "/flexpool"){
+              toggleSidebar();
+            } else {
+              if(location.pathname !== "/flexpool/open"){
+                toggleSidebar();
               }
-            </div> 
-          </div>
+            }
+            }
+          } 
+        to={parentPath} 
+        style={
+          ({isActive}) => {
+            if(isActive) {
+              setParentActiveLink(parentPath);
+            }
+              return {}
+          }
+        } 
+      >
+        <div className='relative md:hidden'>
+          <button className='w-[60px] p-3 border flex flex-col justify-center items-center border-gray1/50 bg-gray1/70 rounded-full hover:bg-stone-400/40 active:ring1 active:shadow active:shadow-white1/40'>
+            { icon }
+            <h1 className='text-xs text-stone-300/70'>{ parentTitle }</h1>
+          </button>
+        </div>
+        <div className={`hidden md:flex gap-1 p-3 ${parentLinkActive? 'bg-green1 text-orangec font-semibold rounded-[56px] border-b-4 border-b-orangec' : 'hover:bg-green1 rounded-[56px]'}`}>
+          <span className='border border-white1/5 rounded-full p-2 bg-green1/70'>{ icon }</span>
+          <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} ${parentLinkActive? '': 'text-white1'} gap-2 p-1 `}>
+            <h1 className={`text-xl`}>{ parentTitle }</h1>
+            {
+              displayChevron && 
+              <Chevron open={open} />
+            }
+          </button> 
         </div>
       </NavLink>
       {
@@ -85,6 +106,11 @@ export const Collapsible = (props: CollapsibleProps) => {
             { children && children }
           </Collapse>
       }
-    </Stack>
+    </Box>
   )
 }
+
+// export const showSidebarWhenSmall = () => {
+//   const sidebar = document.getElementById('sidebar');
+//   sidebar?.classList.toggle('show');
+// }

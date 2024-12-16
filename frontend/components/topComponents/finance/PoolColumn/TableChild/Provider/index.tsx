@@ -5,11 +5,9 @@ import Box from "@mui/material/Box";
 import React from "react";
 import { FormattedData } from "@/interfaces";
 import { flexCenter, flexEnd, flexSpread } from "@/constants";
-// import { togglerIcon } from "../..";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
 import { PopUp } from "../../../Create/forms/transactionStatus/PopUp";
 import { commonStyle } from "@/utilities";
-// import { Collapsible } from "@/components/Collapsible";
 import Collapse from "@mui/material/Collapse";
 import { Chevron } from "@/components/Collapsible";
 

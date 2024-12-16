@@ -1,11 +1,9 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import { Input } from "../../Input";
 import type { InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Grid from "@mui/material/Grid";
-import { flexSpread } from "@/constants";
 
 export const Permissionless = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
@@ -44,18 +42,6 @@ export const Permissionless = () => {
 
     return(
         <Stack className="space-y-4 mt-4">
-            {/* <div className={`${flexSpread} px-4`}>
-                <button onClick={() => handleBack({poolType: 'Permissionless', displayForm: false})} className={`w-[fit-content] ${flexSpread} gap-2 bg-green1 p-2 rounded-full text-xs uppercase text-orange-200 hover:text-orange-400 focus:shadow-md focus:shadow-orange-200`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={1.5} stroke="currentColor" className="size-2 ">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                    </svg>
-                    <h3>Back</h3>
-                </button>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-300">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-            </div> */}
-
             <Grid container xs={'auto'}>
                 {
                     (

@@ -1,7 +1,4 @@
 import React from 'react';
-// import TextField from '@mui/material/TextField';
-// import Image from 'next/image';
-import { flexCenter, flexSpread } from '@/constants';
 
 const SearchInput = () => {
   const [inputText, changeInputText] = React.useState<string>('');

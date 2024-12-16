@@ -5,9 +5,9 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import { TransactionCallback, TransactionCallbackArg, } from "@/interfaces";
 import { useAccount, useConfig } from "wagmi";
-import { formatAddr, toBN } from "@/utilities";
+import { formatAddr, } from "@/utilities";
 import { approve } from "@/apis/transact/testToken/approve";
-import { formatEther, parseEther } from "viem";
+import { parseEther } from "viem";
 import Notification from "@/components/Notification";
 
 interface ApprovalProps {

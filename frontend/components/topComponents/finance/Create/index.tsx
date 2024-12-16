@@ -1,51 +1,11 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
-import Container from "@mui/material/Container";
 import { Permissioned } from "./forms/Permissioned";
 import { Permissionless } from "./forms/Permissionless";
-import { NavLink } from "react-router-dom";
-import { flexCenter, flexSpread, flexStart, ROUTE_ENUM } from "@/constants";
+import { flexSpread, flexStart } from "@/constants";
 import { PoolType } from "@/interfaces";
-import { faLetterboxd } from "@fortawesome/free-brands-svg-icons";
-
-// const SelectPooType = ({ handleSelect }: {handleSelect: (arg: Selector) => void}) => {
-//     return(
-//         <Container maxWidth="sm" className="space-y-[70px]">
-//             <div className="w-full text-center text-xl md:text-2xl space-y-4 font-bold text-orange-300">
-//                 <h1>{'Which type of Pool do you want to operate?'}</h1>
-//                 <h1 className="text-sm md:text-md text-orange-200 bg-green1 p-4 rounded-full">{"Confused which to choose? Check out the "}<NavLink to={ROUTE_ENUM.FAQ} className="underline uppercase cursor-pointer text-red-300 hover:text-opacity-70">Faq</NavLink></h1>
-//             </div>
-           
-//         </Container>
-//     );
-// }
-
-  
-        // <Stack className="space-y-14 text-center">
-        //     <h1 className="text-2xl font-semibold text-black text-opacity-70">Select type of FlexPool</h1>
-        //     <Stack className="space-y-6">
-        //         {
-        //             poolType.map((item: PoolType) => (
-        //                 <button 
-        //                     key={item}
-        //                     className={`w-full border uppercase p-4 rounded-lg ${selected === item? 'bg-yellow-200 ' : 'bg-white1'}`}
-        //                     onClick={() => handleSelected(item)}    
-        //                 >
-        //                     { item }
-        //                 </button>
-        //             ))
-        //         }
-        //     </Stack>
-        //     <div>
-        //         <button onClick={handleNext} className="w-[30%] bg-orangec p-4 rounded-lg text-white font-semibold">
-        //             Next
-        //         </button>
-        //     </div>
-        // </Stack>
 
 export const Create : React.FC<{}> = () => {
     const [formType, setFormType] = React.useState<PoolType>('Permissionless');
-    // const [displayForm, setDisplayForm] = React.useState<boolean>(false);
 
     const disablebutton = formType === 'Permissionless';
     const handleSwitch = (arg: PoolType) => setFormType(arg);
@@ -103,8 +63,3 @@ export const Create : React.FC<{}> = () => {
         </React.Fragment>
     );
 }
-
-// !selected.displayForm? 
-//             <SelectPooType {...{handleSelect}} /> 
-//                 :
-// const poolType : PoolType[] = ['Permissioned', 'Permissionless'] as const;

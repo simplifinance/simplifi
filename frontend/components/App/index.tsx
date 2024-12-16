@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { MotionDivWrap } from '../MotionDivWrap';
-// import { useAccount } from 'wagmi';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import NotConnectedPopUp from './NotConnectedPopUp';
 import useAppStorage from '../StateContextProvider/useAppStorage';
-// import Dashboard from '../topComponents/Dashboard';
 
 export default function App() {
   const [parentLinkActive, setParentActiveLink] = React.useState<string>('Dashboard');
@@ -15,8 +13,6 @@ export default function App() {
   
   const { openPopUp, togglePopUp } = useAppStorage();
   const navigate = useNavigate();
-  // const location = useLocation().pathname;
-  // const { isConnected } = useAccount();
   const setParentActive = (arg: string) => setParentActiveLink(arg);
 
   React.useEffect(() => {

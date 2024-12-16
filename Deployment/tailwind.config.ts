@@ -26,6 +26,7 @@ const config: Config = {
         stone: colors.stone,
         red: colors.red,
         orangec: "#F87C00", // custom orange
+        white2: "#e7e5e0",
         amber: colors.amber,
         yellow: colors.yellow,
         lime: colors.lime,
@@ -44,6 +45,7 @@ const config: Config = {
         white1: "#F9F4F4", //custom white
         green1: "#121212", // background green
         gray1: "#2E3231", // custom grey
+        blue1: "#1c1f2b", // customm blue
       }),
     },
   },

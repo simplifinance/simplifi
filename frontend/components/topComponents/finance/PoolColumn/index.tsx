@@ -1,9 +1,6 @@
 import React from "react";
 import { FuncTag, type Address, type AmountToApproveParam, type FormattedData, type PoolColumnProps, type ScreenUserResult, type VoidFunc } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
 import { FORMATTEDDATA_MOCK } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { RenderActions } from "./RenderActions";
@@ -35,10 +32,6 @@ const screenUser = (
 }
 
 export const PoolColumn = (props: PoolColumnProps) => {
-    const [showInfo, setShowInfo] = React.useState<boolean>(false);
-    const [showPermission, setShowPermission] = React.useState<boolean>(false);
-    const [showProviders, setShowProvider] = React.useState<boolean>(false);
-    
     const account = formatAddr(useAccount().address);
     const config = useConfig();
     const { handlePopUpDrawer } = useAppStorage();
@@ -141,18 +134,14 @@ export const PoolColumn = (props: PoolColumnProps) => {
                     </div>
                 </div>
             </div>
-            <PermissionPopUp
-                children={
-                    `
-                        ${
-                            isPermissionless? 
-                                "A permissionless pool is public, and open to anyone. To operate a permissionless Flexpool, simply provide the required parameters. Other providers are free to participate." 
-                                    : 
-                                "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
-                        }
-                    `
+            <PermissionPopUp>
+                {
+                    isPermissionless? 
+                        "A permissionless pool is public, and open to anyone. To operate a permissionless Flexpool, simply provide the required parameters. Other providers are free to participate." 
+                            : 
+                        "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
                 }
-            />
+            </PermissionPopUp>
             <Providers cData_formatted={cData_formatted} />
             <InfoDisplay 
                 formattedPool={formattedPool} 

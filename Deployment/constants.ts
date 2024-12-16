@@ -26,7 +26,7 @@ export const ROUTE_ENUM = {
   DASHBOARD : '/dashboard',
   YIELD: '/yield',
   DAO: '/simplidao',
-  LIQUIDITY: '/flexpool',
+  FLEXPOOL: '/flexpool',
   FAQ: 'faq',
   CREATE: '/flexpool/create',
   OPEN: '/flexpool/open',

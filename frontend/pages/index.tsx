@@ -1,7 +1,7 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import App from "@/components/App";
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider, useNavigate } from "react-router-dom";
+import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
 import { POOLS_MOCK, ROUTE_ENUM } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import FlexPool from "@/components/topComponents/finance";
@@ -14,7 +14,6 @@ import { Open } from "@/components/topComponents/finance/Open";
 import { Closed } from "@/components/topComponents/finance/Closed";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
-// import TransactionWindow from "@/components/topComponents/finance/PoolColumn/RenderActions/ConfirmationPopUp/TransactionWindow";
 
 /**
  * Renders Liquidity child components
@@ -137,7 +136,7 @@ export default function SimpliApp() {
         togglePopUp()
       }, 10000)
     }
-  }, [openPopUp])
+  }, [openPopUp, togglePopUp])
 
   return (
     <StorageContextProvider 
@@ -167,7 +166,6 @@ export default function SimpliApp() {
         { displayScreen() }
       </div>
       <Notification message={txnStatus.message} />
-      {/* <TransactionWindow openDrawer={txnStatus.loading} /> */}
     </StorageContextProvider>
   );
 }

@@ -1,6 +1,4 @@
 import React from "react";
-import Container from "@mui/material/Container";
-import { PopUp } from "../transactionStatus/PopUp";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";

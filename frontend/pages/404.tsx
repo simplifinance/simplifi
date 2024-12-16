@@ -1,7 +1,3 @@
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import { commonStyle } from "@/utilities";
-
 export default function Custom404() {
     return (
         <div className="pt-[200px]" style={{position: 'absolute', top: '50%', bottom: '0%', left: '50%', transform: "translate(-50%, -50%)"}}>

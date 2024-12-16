@@ -1,25 +1,11 @@
 import React from "react";
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import { FuncTag, type LiquidityPool } from '@/interfaces';
+import { type LiquidityPool } from '@/interfaces';
 import { motion } from 'framer-motion';
-import { flexCenter, flexSpread, POOL_HEADER_CONTENT } from "@/constants";
+import { flexSpread, } from "@/constants";
 import { PoolColumn } from "../PoolColumn";
-import { toBN } from "@/utilities";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { filterPools, type Operation } from "../commonUtilities";
-
-// const renderPool = (pool: LiquidityPool, operation: Operation) => {
-//   const stage = toBN(pool.stage.toString()).toNumber();
-
-//     const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
-//     // const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
-//     const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
-//     const isClosed : boolean = allGH || quorumIsZero;
-
-//     return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
-// }
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
   const { storage: { pools } } = useAppStorage();
@@ -66,9 +52,8 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
           <Grid container xs={"auto"} spacing={2}>
             {
               filtered?.map((pool: LiquidityPool, i) => (
-                <Grid item xs={12} sm={6} md={4} lg={3}>
+                <Grid key={i} item xs={12} sm={6} md={4} lg={3}>
                   <motion.button
-                    key={i}
                     initial={{opacity: 0}}
                     animate={{opacity: [0, 1]}}
                     transition={{duration: '0.5', delay: i/pools.length}}
@@ -87,53 +72,13 @@ export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({h
 
 
 
+// const renderPool = (pool: LiquidityPool, operation: Operation) => {
+//   const stage = toBN(pool.stage.toString()).toNumber();
 
+//     const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
+//     // const poolIsZero = toBN(pool.uint256s.currentPool.toString()).isZero();
+//     const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
+//     const isClosed : boolean = allGH || quorumIsZero;
 
-
-
-
-
-
-      // <Box className="">
-      //   <Grid container xs={12} className="space-y-2">
-      //     {/* Table Head */}
-      //     <Grid item container xs={12} className='bg-orangec rounded-t-lg p-4'>
-      //       {
-      //         POOL_HEADER_CONTENT.map(({ value, gridSize}) => (
-      //           <Grid item key={value} xs={gridSize}>
-      //             <h3 className='text-white font-black text-center'>{value}</h3>
-      //           </Grid>
-      //         ))
-      //       }
-      //     </Grid>
-
-      //     {/* Table Body */}
-          // <Grid container xs={12} >
-          //   {
-          //     filtered?.map((pool: LiquidityPool, i) => (
-          //       <motion.button
-          //         key={i}
-          //         initial={{opacity: 0}}
-          //         animate={{opacity: [0, 1]}}
-          //         transition={{duration: '0.5', delay: i/pools.length}}
-          //         className='w-full rounded-md cursor-pointer' 
-          //       >
-          //         <PoolColumn {...{ pool }} />
-          //       </motion.button>
-          //     ))
-          //   }
-          // </Grid>
-      //   </Grid>
-      // </Box>
-
-
-
-{/* <Grid item xs={12} mt={4}>
-  <Box className={`${flexEnd} gap-4 text-sm`}>
-      <h3>{`Showing ${''} to ${''} of ${''} items`}</h3>
-      <div className={`${flexCenter}`}>
-          <button className="bg-yellow-100 w-full p-2 text-sm text-orangec border border-orangec hover:bg-orange-200 rounded-l-lg">Back</button>
-          <button className="bg-yellow-100 w-full p-2 text-sm text-orangec border border-orangec hover:bg-orange-200 rounded-r-lg">Next</button>
-      </div>
-    </Box>
-</Grid> */}
+//     return operation === 'Closed'? isClosed? <PoolColumn {...{ pool }} /> : null : !isClosed? <PoolColumn {...{ pool }} /> : null;
+// }

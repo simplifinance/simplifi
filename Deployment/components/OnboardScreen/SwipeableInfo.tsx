@@ -1,56 +1,57 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
+import Box from "@mui/material/Box";
 import Image from 'next/image';
-import { MotionDivWrap } from '../MotionDivWrap';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
-import { flexCenter } from '@/constants';
-import { CustomButton } from '../ActionButton';
+import { flexCenter,} from '@/constants';
+import { OnboardButtonTemplate } from "./OnboardTemplate";
 import useAppStorage from "../StateContextProvider/useAppStorage";
+import OnboardUser from "./OnboardUser";
+import OnboardWrapperDiv from "./OnboardWrapper";
 
 export default function SwipeableInfo() {
-    const AutoSwipeableViews = autoPlay(SwipeableViews);
-    const { exitOnboardScreen } = useAppStorage();
-    return(
-      <MotionDivWrap className='bg-white1 p-6'>
-        <Stack className='place-items-center space-y-4'>
-          <AutoSwipeableViews>
-            {
-              SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
-                  <Stack className={`${flexCenter} place-items-center`} key={i}>
-                    {imageComponent}
-                    <Stack className={`text-center `}>
-                      <h1 className='text-lg font-bold text-gray-700'>{title}</h1>
-                      <span className='text-gray-400'>{ description }</span>
-                    </Stack>
-                  </Stack>
-              ))
-            }
-          </AutoSwipeableViews>
-          <CustomButton buttonText='Get Started' handleClick={exitOnboardScreen} overrideStyle="bg-orangec text-yellow-100 rounded-full font-extrabold hover:bg-yellow-200 hover:text-orangec w-[60%] md:w-[80%]" />
-        </Stack>
-      </MotionDivWrap>
-    );
+  const AutoSwipeableViews = autoPlay(SwipeableViews);
+  const { displayOnboardUser, } = useAppStorage();
+
+  return(
+    <React.Fragment>
+      {
+        displayOnboardUser? <OnboardUser /> : <OnboardWrapperDiv>
+            <AutoSwipeableViews>
+              {
+                SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
+                    <Box className={`${flexCenter} flex-col place-items-center space-y-4`} key={i}>
+                      {imageComponent}
+                      <Box className={`text-md text-gray-300 space-y-2 flex flex-col text-center justify-center items-center`}>
+                        <p className='md:text-xl font-black max-w-[300px]'>{title}</p>
+                        <p className='md:text-lg max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[400px] overflow-hidden'>{ description }</p>
+                      </Box>
+                    </Box>
+                ))
+              }
+            </AutoSwipeableViews>
+            <OnboardButtonTemplate buttonAContent="Onboard Me" buttonBContent="Let Me In"/>
+          </OnboardWrapperDiv>
+      }
+    </React.Fragment>
+  );
 }
 
 
 const SWIPEABLE_CONTENTS = [
     {
       title: "Welcome to Simplifinance",
-      description: <div>
-        <p>{"Experience the power of flexible finance,"}</p>
-        <p>{"while earning in multiple ways"}</p>
-      </div>,
+      description: "Experience the power of flexible finance, while earning in multiple ways",
       imageComponent: <Image src="/blockchain.svg" alt="Decentralization" height={150} width={150}/>,
     },
     {
       title: "Peer-Funding",
-      description: <p>{"Enjoy the super benefits of lending and borrowing assets, through a decentralized p2p structure, with near-zero interest"}</p>,
+      description: "Enjoy the super benefits of lending and borrowing assets, through a decentralized p2p structure, with near-zero interest",
       imageComponent: <Image src="/Group2.svg" alt="Peer-Funding" height={200} width={200}/>,
     },
     {
       title: "Collateral Maximization",
-      description: <p>{"Maximize your collateral leveraging our aggregrated yield strategies"}</p>,
+      description: "Maximize your collateral leveraging our aggregrated yield strategies",
       imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
     }
 ]

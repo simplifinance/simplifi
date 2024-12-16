@@ -21,7 +21,6 @@ const extractValues = (pools: Pools ) => {
 }
 
 const Dashboard : React.FC = () => {
-  // const [modalOpen, setModal] = React.useState<boolean>(false);
   const { storage: { pools } } = useAppStorage()
   const { tvl, permissioned, permissionless } = extractValues(pools);
 
@@ -76,8 +75,8 @@ const Dashboard : React.FC = () => {
     <React.Fragment>
       <div className='grid sm:grid-cols-2 gap-10 relative'>
         {
-          dashboardInfo.map((item) => (
-            <div className={`bg-green1 rounded-[36px] py-12 px-6 lg:p-8 text-white flex justify-center items-center lg:justify-start gap-4`}>
+          dashboardInfo.map((item, i) => (
+            <div key={i} className={`bg-green1 rounded-[36px] py-12 px-6 lg:p-8 text-white flex justify-center items-center lg:justify-start gap-4`}>
               <h1 className='border border-gray1 bg-gray1 rounded-full p-2'>{item.icon}</h1>
               <div className='w-full flex flex-col justify-start items-start'>
                 <h3 className='text-sm lg:text-lg font-semibold '>{ item.title }</h3>

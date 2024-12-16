@@ -41,10 +41,11 @@ const config = getDefaultConfig({
 const theme = lightTheme(
   {
     ...lightTheme.accentColors.orange,
-    accentColorForeground: 'orange',
-    borderRadius: 'medium',
+    accentColorForeground: '#fdba74',
+    borderRadius: 'large',
     fontStack: 'system',
-    overlayBlur: 'small'
+    overlayBlur: 'small',
+    accentColor: '#2E3231'
   }
 )
 

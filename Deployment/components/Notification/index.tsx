@@ -43,7 +43,7 @@ export default function Notification(props: NotificationProp) {
   );
 
   return (
-    <div>
+    <div hidden={!open}>
       <Snackbar
         open={open}
         autoHideDuration={3000}

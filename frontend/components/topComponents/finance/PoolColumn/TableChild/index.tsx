@@ -3,7 +3,7 @@ import { flexSpread, } from "@/constants";
 import { Provider } from "./Provider";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
 import TransactionWindow from "../RenderActions/ConfirmationPopUp/TransactionWindow";
-import { FormattedData, FormattedPoolContentProps, FuncTag, VoidFunc } from "@/interfaces";
+import { FormattedData, FormattedPoolContentProps, FuncTag, } from "@/interfaces";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
@@ -152,5 +152,3 @@ interface InfoDisplayProps {
 interface ProvidersProps {
     cData_formatted: FormattedData[];
 }
-
-{/* <Collapse in={innerCollapse} timeout="auto" unmountOnExit className={'w-full'}> */}

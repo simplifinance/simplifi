@@ -1,16 +1,12 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-// import Box from "@mui/material/Box";
 import { Input } from "../../Input";
-// import Typography from "@mui/material/Typography";
 import type { Address, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr } from "@/utilities";
 import { useAccount } from "wagmi";
-// import Notification from "@/components/Notification";
 import { zeroAddress } from "viem";
 import Grid from "@mui/material/Grid";
-import { flexSpread } from "@/constants";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 export const Permissioned = () => {
@@ -73,17 +69,6 @@ export const Permissioned = () => {
 
     return(
         <Stack className="space-y-4 mt-4">
-            {/* <div className={`${flexSpread} px-4`}>
-                <button onClick={() => handleBack({poolType: 'Permissionless', displayForm: false})} className={`w-[fit-content] ${flexSpread} gap-2 bg-green1 p-2 rounded-full text-xs uppercase text-orange-200 hover:text-orange-400 focus:shadow-md focus:shadow-orange-200`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" strokeWidth={1.5} stroke="currentColor" className="size-2 ">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-                    </svg>
-                    <h3>Back</h3>
-                </button>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-red-300">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
-                </svg>
-            </div> */}
             <Grid container xs={'auto'}>
                 {
                     (

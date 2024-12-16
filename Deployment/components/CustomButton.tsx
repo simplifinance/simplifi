@@ -1,31 +1,27 @@
 import { VoidFunc } from "@/interfaces";
 import React from "react";
 
-// Not connected
-
 export const CustomButton: 
     React.FC<CustomButtonProps> = (
         {
-            flexType,
-            buttonText, 
             overrideClassName,
-            handleButtonClick
+            handleButtonClick,
+            children
         }
     ) => 
 {
     return(
         <button 
             onClick={handleButtonClick}
-            className={`${overrideClassName || `${flexType? flexType : ''} w-full p-3 rounded-lg bg-yellow-100` }`}
+            className={`${overrideClassName || `w-full p-3 rounded-full bg-green1 text-yellow-200` }`}
         >
-
+            { children }
         </button>
     )
 }
 
 interface CustomButtonProps {
-    buttonText: string;
-    flexType?: string;
     overrideClassName?: string;
     handleButtonClick: VoidFunc;
+    children: React.ReactNode;
 }

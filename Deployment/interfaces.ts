@@ -12,24 +12,39 @@ export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLi
 export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
+export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
 export enum FuncTag { 
-    JOIN, 
-    GET, 
-    PAYBACK, 
-    WITHDRAW,
-    ENDED
+  JOIN, 
+  GET, 
+  PAYBACK, 
+  WITHDRAW,
+  ENDED
 }
-
+export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed';
+export type PoolType = 'Permissioned' | 'Permissionless';
+export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
 export type TransactionCallback = (arg: TransactionCallbackArg) => void;
 export type Message = string;
+export type TrxResult = 'Failed' | 'Success' | '';
+// export type Selector = {
+//   poolType: PoolType;
+//   displayForm: boolean;
+// }
 
 export interface TransactionCallbackArg {
   message?: Message; 
   result?: TrxnResult;
   txDone: boolean;
+}
+
+export interface TransactionResult {
+  loading: boolean; 
+  message: string;
+  txResult: TrxResult;
+  buttonText?: ButtonContent;
 }
 
 export type LiquidityPool = {
@@ -168,4 +183,8 @@ export interface HandleTransactionParam {
   router?: Router;
   strategy?: Address;
   callback: TransactionCallback;
+}
+export interface DrawerState {
+  anchor: DrawerAnchor
+  value: boolean;
 }

@@ -1,14 +1,10 @@
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import { commonStyle } from "@/utilities";
-
 export default function Custom500() {
     return (
-        <Container maxWidth="sm">
-            <Box sx={commonStyle()}>
-                <h3 className="text-2xl md:text-3xl">404</h3>
-                <h3 className="text-lg md:text-xl">Server-side error occurred</h3>
-            </Box>
-        </Container>
+        <div className="pt-[200px]" style={{position: 'absolute', top: '50%', bottom: '0%', left: '50%', transform: "translate(-50%, -50%)"}}>
+            <div className="rounded-lg text-center space-y-[1rem]">
+                <h3 className="text-2xl md:text-[50px] font-black">404</h3>
+                <h3 className="text-lg md:text-[30px] text-orangec">Server side error occured</h3>
+            </div>
+        </div>
     )
 }

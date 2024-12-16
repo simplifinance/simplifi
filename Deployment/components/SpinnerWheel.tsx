@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-const Spinner_2 = (props) => {
+const SpinnerWheel = () => {
   return (
-    <Wrapper {...props}>
+    <Wrapper>
       <svg
-        width={`${props.size ? props.size : 40}px`}
-        height={`${props.size ? props.size : 40}px`}
+        width="40px"
+        height="40px"
         viewBox="0 0 100 100"
         preserveAspectRatio="xMidYMid"
       >
@@ -18,7 +18,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -38,7 +38,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -58,7 +58,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -78,7 +78,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -98,7 +98,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -118,7 +118,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -138,7 +138,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -158,7 +158,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -178,7 +178,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -198,7 +198,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -218,7 +218,7 @@ const Spinner_2 = (props) => {
             ry="0"
             width="3"
             height="11"
-            fill={props.color}
+            fill={"white"}
           >
             <animate
               attributeName="opacity"
@@ -238,4 +238,4 @@ const Spinner_2 = (props) => {
 const Wrapper = styled.div`
   display: inline-block;
 `;
-export default Spinner_2;
+export default SpinnerWheel;

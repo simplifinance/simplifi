@@ -1,33 +1,13 @@
 import React from "react";
-// import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-// import ProgressBar from "../../customProgress/Progress";
 import { useNavigate } from "react-router-dom";
 import { ROUTE_ENUM } from "@/constants";
-// import { PopUp } from "../finance/Create/forms/transactionStatus/PopUp";
-
-// const style = {
-//   position: "absolute",
-//   top: "50%",
-//   left: "50%",
-//   transform: "translate(-50%, -50%)",
-//   // width: 400,
-//   // border: "0.1em solid #fff",
-//   boxShadow: 24,
-//   pt: 2,
-//   px: 4,
-//   pb: 3
-// };
 
 function SimpliDao(): JSX.Element {
-  // const [modalOpen, popModal] = React.useState(false);
-  // const handleModalClose = () => popModal(false);
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    // popModal(true);
     setTimeout(() => {
-      // popModal(false);
       navigate(ROUTE_ENUM.OPEN);
     }, 10000);
   }, [navigate]);

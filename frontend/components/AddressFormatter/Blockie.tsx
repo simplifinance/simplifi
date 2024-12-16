@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import Blockies from "react-blockies";
 import { zeroAddress } from "viem";
 

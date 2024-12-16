@@ -1,8 +1,6 @@
 import React from "react";
-import { ActionButton } from "../ActionButton";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { flexCenter } from "@/constants";
 
 class ErrorBoundary extends React.Component {
     constructor(props) {
@@ -21,15 +19,15 @@ class ErrorBoundary extends React.Component {
     render(){
         if(this.state.hasError) {
             return ( 
-                <Container maxWidth="sm">
-                    <Box style={fadeStyle()}>
+                <Container maxWidth="sm" className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+                    <Box className="bg-gray1 flex flex-col justify-center items-center">
                         <h3>Oops, an error occurred</h3>
-                       <ActionButton 
-                            option1={<h3>Try again</h3>}
-                            handleClick={() => this.setState({hasError: false})}
-                            overrideClassName="w-2/4"
-                            flexType={flexCenter}
-                       />
+                       <button
+                            className="bg-green1 text-orange-200 rounded-full p-3 text-center"
+                            onClick={() => this.setState({hasError: false})} 
+                       >
+                        Try again
+                       </button>
                     </Box>
                 </Container>
             )

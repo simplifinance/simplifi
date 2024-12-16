@@ -4,7 +4,6 @@ import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
-// import Notification from "@/components/Notification";
 import { ConfirmationPopUp } from "./ConfirmationPopUp";
 import { Address } from "viem";
 
@@ -132,7 +131,6 @@ export const RenderActions = (props: RenderActionsProps) => {
                     }
                 }
             />
-            {/* <Notification message={message} /> */}
         </React.Fragment>
     );
 }
