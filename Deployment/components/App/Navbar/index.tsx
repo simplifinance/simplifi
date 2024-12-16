@@ -2,11 +2,12 @@ import React from "react";
 import { flexSpread } from "@/constants";
 import Link from 'next/link';
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { ConnectWallet } from "@/components/ConnectWallet";
 
 export default function Navbar() {
     const { showSidebar, toggleSidebar } = useAppStorage();
     return(
-        <nav className={`${flexSpread} bg-green1 p-[22px] z-50`}>
+        <nav className={`${flexSpread} bg-green1 p-4 z-50`}>
           <div className='hidden md:block'>
             <Link href="/" passHref>
                 <img 
@@ -30,6 +31,7 @@ export default function Navbar() {
                 </svg>
               </h1>
             </button> 
+            <ConnectWallet />
           </div>
         </nav>
     );
