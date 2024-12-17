@@ -16,8 +16,8 @@ const FlexPool : React.FC = () => {
   React.useEffect(() => {
     if(location.pathname !== ROUTE_ENUM.DASHBOARD){
       if(!isConnected){
-        navigate(ROUTE_ENUM.DASHBOARD);
-        if(!openPopUp) togglePopUp();
+        // navigate(ROUTE_ENUM.DASHBOARD);
+        // if(!openPopUp) togglePopUp();
       } else {
         navigate('open');
       }
