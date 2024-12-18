@@ -6,6 +6,7 @@ import type { ButtonText, } from "@/interfaces";
 import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { DrawerWrapper } from "../../TableChild";
+import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
 
 export const ConfirmationPopUp : 
     React.FC<{
@@ -63,32 +64,24 @@ export const ConfirmationPopUp :
     }
 
     return (
-        <DrawerWrapper openDrawer={popUpDrawer === 'confirmation'}>
-            <Stack className="p-4 lg:p-8 rounded-lg space-y-12 text-xl bg-gray1 text-orange-200 shadow-lg shadow-orange-400">
-                <button onClick={handleCloseDrawer} className="w-2/4">
+        <DrawerWrapper openDrawer={popUpDrawer === 'confirmation'} rest={{padding:'22px', background: '#000', borderLeft: '1px solid #2e3231'}}>
+            <Stack className="lg:p-4 space-y-4 text-orange-200 bg-gray1 md:bg-transparent border border-green1 p-4 rounded-[36px] w-full text-center text-md">
+                <button onClick={handleCloseDrawer} className="w-[fit-content] active:ring-1 bg-green1 rounded-full p-2 active:ring1">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <h1>{ loading? "Processing Transaction ..." : message }</h1>
-                <Box className={`${flexSpread} gap-4 `}>
-                    <button
-                        disabled={loading}
-                        className={`${flexCenter} w-full ${loading? "bg-opacity-50" : ""} border-[0.3px] border-green1 text-[12px] text-orange-200 hover:bg-orange-400 hover:text-white1 p-2 active:ring-1 uppercase rounded-full underlineFromLeft flex justify-center`}
-                        onClick={handleCloseDrawer}
-                    >
-                        Cancel
-                    </button>
-                    <button 
-                        disabled={loading || txResult === 'Success'}
-                        className={`${flexCenter} w-full ${loading? "bg-opacity-50" : "text-green1"} bg-orange-200 border-[0.3px] border-gray1 text-[12px] font-semibold text-green1 hover:bg-orange-400 hover:text-white1 p-2 uppercase active:ring-1 rounded-full underlineFromLeft flex justify-center`}
-                        onClick={handleSendTransaction}
-                    >
-                        {
-                            loading? <Spinner color={"white"} /> : "Proceed"
-                        }
-                    </button>
-                </Box>
+                <h1 className='pb-6 text-md'>{ loading? "Processing Transaction ..." : message }</h1>
+                <ButtonTemplate 
+                    buttonAContent="Cancel"
+                    buttonBContent={
+                        loading? <Spinner color={"white"} /> : "Proceed"
+                    }
+                    buttonAFunc={handleCloseDrawer}
+                    buttonBFunc={handleSendTransaction}
+                    disableButtonA={loading}
+                    disableButtonB={loading || txResult === 'Success'}
+                />
             </Stack>
         </DrawerWrapper>
     );

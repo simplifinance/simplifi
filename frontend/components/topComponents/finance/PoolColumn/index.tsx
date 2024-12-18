@@ -8,6 +8,7 @@ import { InfoDisplay, Providers } from "./TableChild";
 import { renderIcon } from "./Icons";
 import { PermissionPopUp } from "./PermissionPopUp";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { CustomButton } from "@/components/CustomButton";
 
 /**
  * Filter the data list for current user
@@ -114,7 +115,13 @@ export const PoolColumn = (props: PoolColumnProps) => {
                 </div>
                 <div className="w-full flex flex-col justify-between items-center">
                     <div className="w-full flex flex-col justify-between items-center space-y-2">
-                        <button onClick={showPoolInfo} className="border-[0.3px] border-gray1 text-xs text-orange-400 hover:bg-orange-400 hover:text-white1 p-2 active:ring-1 w-full uppercase rounded-full underlineFromLeft flex justify-center">More Info</button>
+                        <CustomButton
+                            disabled={false}
+                            handleButtonClick={showPoolInfo}
+                            overrideClassName="bg-green1 border border-gray1 rounded-full text-white1/30"
+                        >
+                            More Info
+                        </CustomButton>
                         <RenderActions 
                             {
                                 ...{

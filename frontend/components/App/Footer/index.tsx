@@ -17,11 +17,12 @@ const Footer = () => {
             <li className="mt-[16px] md:text-md lg:text-xl">
               {" "}
               <a
-                href="mailto:officialemail@gmail.com"
+                href="mailto:dev.qcontrib@gmail.com"
                 target="_blank"
                 rel="noreferrer"
+                className="text-md underline underline-offset-4 text-[#aab7fe]"
               >
-                  officialemail@gmail.com
+                  Contact us
               </a>
             </li>
           </ul>
@@ -64,7 +65,7 @@ const Footer = () => {
               </ul>
           </div>
         </div>
-        <div className="text-lg text-center pt-[58px] text-orangec">
+        <div className="text-center pt-[36px] text-orangec text-sm">
           &copy;2024 SimpliFinance. All rights reserved.
         </div>
       </div>

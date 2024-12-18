@@ -11,12 +11,12 @@ const Content = ({title, content, subparagraph} : {title: React.ReactNode, conte
 
   return(
     <div>
-      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 bg-gray1 border border-green1 rounded-md hover:bg-gray1/50 focus:bg-gray1/50`}>
-        <h1 className={`text-md`}>{ title }</h1>
+      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 bg-gray1 md:border border-green1 rounded-md hover:bg-gray1/50 focus:bg-gray1/50`}>
+        <span className={`text-md`}>{ title }</span>
         <Chevron open={open} />
       </button> 
       <Collapse in={open} timeout="auto" unmountOnExit className={'w-full '}>
-        <div className="p-4 text-orange-100">
+        <div className="text-orange-100 border border-green1 rounded-b-[26px] md:rounded-b-none md:border-none p-4 bg-green1 md:bg-transparent">
           <span>{content}</span>
           <span>{subparagraph}</span>
         </div>
@@ -27,7 +27,7 @@ const Content = ({title, content, subparagraph} : {title: React.ReactNode, conte
 
 function Faq(): JSX.Element {
   return (
-    <div className="bg-green1 w-full text-orange-200 p-4 rounded-[26px]">
+    <div className="md:bg-green1 w-full text-orange-200 md:p-4 md:rounded-[26px]">
       {
         faqContent.map(({title, content, subparagraph}, i) => (
           <Content {...{title, content, subparagraph}} key={i} />            

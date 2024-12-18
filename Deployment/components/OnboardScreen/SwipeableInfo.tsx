@@ -4,7 +4,7 @@ import Image from 'next/image';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
 import { flexCenter,} from '@/constants';
-import { OnboardButtonTemplate } from "./OnboardTemplate";
+import ButtonTemplate from "./ButtonTemplate";
 import useAppStorage from "../StateContextProvider/useAppStorage";
 import OnboardUser from "./OnboardUser";
 import OnboardWrapperDiv from "./OnboardWrapper";
@@ -22,7 +22,7 @@ export default function SwipeableInfo() {
                 SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
                     <Box className={`${flexCenter} flex-col place-items-center space-y-4`} key={i}>
                       {imageComponent}
-                      <Box className={`text-md text-gray-300 space-y-2 flex flex-col text-center justify-center items-center`}>
+                      <Box className={`text-md text-orange-300 space-y-2 flex flex-col text-center justify-center items-center`}>
                         <p className='md:text-xl font-black max-w-[300px]'>{title}</p>
                         <p className='md:text-lg max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[400px] overflow-hidden'>{ description }</p>
                       </Box>
@@ -30,7 +30,13 @@ export default function SwipeableInfo() {
                 ))
               }
             </AutoSwipeableViews>
-            <OnboardButtonTemplate buttonAContent="Onboard Me" buttonBContent="Let Me In"/>
+            <ButtonTemplate 
+              buttonAContent="Onboard Me" 
+              buttonBContent="Let Me In"
+              disableButtonA={false}
+              disableButtonB={false}
+              overrideClassName="text-orange-200"
+            />
           </OnboardWrapperDiv>
       }
     </React.Fragment>

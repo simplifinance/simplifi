@@ -4,6 +4,8 @@ import { Input } from "../../Input";
 import type { InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Grid from "@mui/material/Grid";
+import { CustomButton } from "@/components/CustomButton";
+import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 export const Permissionless = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
@@ -14,6 +16,7 @@ export const Permissionless = () => {
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
 
     const toggleModal = () => setModalPopUp(!modalOpen);
+    const { txnStatus } = useAppStorage();
     
     const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
         e.preventDefault();
@@ -78,7 +81,7 @@ export const Permissionless = () => {
                             },
                         ] as const
                     ).map(({ id, type, placeholder, onChange }, i) => (
-                        <Grid key={id} xs={12} md={i < 4? 6 : 12}>
+                        <Grid item key={id} xs={12} md={i < 4? 6 : 12}>
                             <Stack className="p-4 space-y-2">
                                 <h3 className="text-orange-200 text-opacity-80">{id}</h3>
                                 <Input 
@@ -94,7 +97,13 @@ export const Permissionless = () => {
                 }
             </Grid>
             <Stack className="place-items-center p-4">
-                <button onClick={toggleModal} className="w-full bg-orange-200 p-4 text-green1 rounded-full uppercase font-semibold hover:bg-orangec hover:text-white1">Submit</button>
+                <CustomButton
+                    overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
+                    disabled={txnStatus.loading}
+                    handleButtonClick={toggleModal}
+                >
+                    Submit
+                </CustomButton>
             </Stack>
             <ReviewInput 
                 {

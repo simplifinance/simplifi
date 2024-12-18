@@ -1,25 +1,9 @@
 import { Box, Collapse, } from '@mui/material'
 import React from 'react'
-import { flexSpread, } from '@/constants';
-import { NavLink, useLocation } from 'react-router-dom';
+import { flexSpread, ROUTE_ENUM, } from '@/constants';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useAppStorage from '../StateContextProvider/useAppStorage';
-
-export interface CollapsibleProps {
-  collapsedClassName?: string;
-  parentPath: string;
-  parentLinkActive: boolean;
-  collapsible?: boolean;
-  displayChevron?: boolean;
-  parentTitle: string;
-  icon: React.JSX.Element;
-  setParentActiveLink: (arg:string) => void;
-  children?: React.ReactNode;
-}
-
-interface ChevronProps {
-  open: boolean;
-  hideChevron?: boolean;
-}
+import { useMediaQuery } from '@mui/material';
 
 export const Chevron = (props: ChevronProps) => {
   const { open, hideChevron } = props;
@@ -42,64 +26,66 @@ export const Chevron = (props: ChevronProps) => {
   )
 }
 
+// interface ActiveState {
+//   : 
+// }
 export const Collapsible = (props: CollapsibleProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
+  const { toggleSidebar, parentLinkActive, setParentActive} = useAppStorage();
+  const isLargeScreen = useMediaQuery('(min-width:768px)');
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const { 
     collapsedClassName, 
     parentPath, 
-    parentLinkActive,
     parentTitle,
     collapsible,
     icon,
     displayChevron,
-    setParentActiveLink,
     children 
   } = props;
-  const { toggleSidebar, showSidebar } = useAppStorage();
-  const location = useLocation();
+
+  const isParentActive = parentLinkActive === parentPath;
+  const handleClick = () => {
+    setParentActive(parentPath);
+    if(displayChevron) setOpen(!open);
+    if(parentPath === ROUTE_ENUM.FLEXPOOL) {
+      navigate(ROUTE_ENUM.OPEN);
+    } else {
+      navigate(parentPath);
+    }
+  }
+
+  React.useEffect(() => {
+    if(!isLargeScreen) {
+      if(location.pathname !== ROUTE_ENUM.FLEXPOOL){
+        toggleSidebar();
+      } 
+    }
+  }, [location.pathname, isLargeScreen]);
 
   return (
     <Box className="p-1">
-      <NavLink 
-        onClick={
-          () => {
-            setOpen(!open);
-            if(parentPath !== "/flexpool"){
-              toggleSidebar();
-            } else {
-              if(location.pathname !== "/flexpool/open"){
-                toggleSidebar();
-              }
-            }
-            }
-          } 
-        to={parentPath} 
-        style={
-          ({isActive}) => {
-            if(isActive) {
-              setParentActiveLink(parentPath);
-            }
-              return {}
-          }
-        } 
-      >
+      <div onClick={handleClick} className='cursor-pointer'>
         <div className='relative md:hidden'>
           <button className='w-[60px] p-3 border flex flex-col justify-center items-center border-gray1/50 bg-gray1/70 rounded-full hover:bg-stone-400/40 active:ring1 active:shadow active:shadow-white1/40'>
             { icon }
             <h1 className='text-xs text-stone-300/70'>{ parentTitle }</h1>
           </button>
         </div>
-        <div className={`hidden md:flex gap-1 p-3 ${parentLinkActive? 'bg-green1 text-orangec font-semibold rounded-[56px] border-b-4 border-b-orangec' : 'hover:bg-green1 rounded-[56px]'}`}>
-          <span className='border border-white1/5 rounded-full p-2 bg-green1/70'>{ icon }</span>
-          <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} ${parentLinkActive? '': 'text-white1'} gap-2 p-1 `}>
-            <h1 className={`text-xl`}>{ parentTitle }</h1>
+
+        <div className={`hidden md:flex gap-3 p-[10px] text-lg font-semibold ${isParentActive? 'border border-green1 font-bold text-orange-300 rounded-full shadow-md shadow-green1 hover:shadow-sm hover:shadow-orange-200 animate-pulse ' : 'hover:bg-green1/60 text-white1/70 rounded-[56px]'}`}>
+          <span className='border border-white1/5 rounded-full p-3 bg-green1/70'>{ icon }</span>
+          <div className={`w-full ${flexSpread} gap-2 p-1 `}>
+            <h1>{ parentTitle }</h1>
             {
               displayChevron && 
               <Chevron open={open} />
             }
-          </button> 
+          </div> 
         </div>
-      </NavLink>
+      </div>
       {
         collapsible && 
           <Collapse in={open} timeout="auto" unmountOnExit className={collapsedClassName || 'w-full'}>
@@ -108,6 +94,21 @@ export const Collapsible = (props: CollapsibleProps) => {
       }
     </Box>
   )
+}
+
+interface CollapsibleProps {
+  collapsedClassName?: string;
+  parentPath: string;
+  collapsible?: boolean;
+  displayChevron?: boolean;
+  parentTitle: string;
+  icon: React.JSX.Element;
+  children?: React.ReactNode;
+}
+
+interface ChevronProps {
+  open: boolean;
+  hideChevron?: boolean;
 }
 
 // export const showSidebarWhenSmall = () => {

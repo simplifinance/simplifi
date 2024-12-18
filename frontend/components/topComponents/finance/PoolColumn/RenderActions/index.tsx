@@ -6,15 +6,16 @@ import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
 import { ConfirmationPopUp } from "./ConfirmationPopUp";
 import { Address } from "viem";
+import { CustomButton } from "@/components/CustomButton";
 
 export const RenderActions = (props: RenderActionsProps) => {
     const [modalOpen, setInputModal] = React.useState<boolean>(false);
-    const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
+    // const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
 
     const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
-    const { setstate, setMessage } = useAppStorage();
+    const { setstate, setMessage, popUpDrawer, handlePopUpDrawer } = useAppStorage();
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
 
     const handleModalClose = () => {
@@ -22,22 +23,22 @@ export const RenderActions = (props: RenderActionsProps) => {
             setPreferredDuration(maxEpochDuration);
         }
         setInputModal(!modalOpen);
-        setConfirmationModal(!confirmationModal);
+        handlePopUpDrawer('confirmation');
     }
 
-    const closeConfirmationPopUp = () => setConfirmationModal(false);
+    const closeConfirmationPopUp = () => handlePopUpDrawer('');
 
     const useEpochDuration = () => {
         setPreferredDuration(maxEpochDuration);
         setInputModal(false);
-        setConfirmationModal(!confirmationModal);
+        handlePopUpDrawer('confirmation');
     };
 
     const handleClick = () => {
         if(buttonObj.value === 'GET FINANCE') {
             setInputModal(true);
         } else {
-            setConfirmationModal(!confirmationModal);
+            handlePopUpDrawer('confirmation');
         }
     }
 
@@ -52,7 +53,7 @@ export const RenderActions = (props: RenderActionsProps) => {
         if(arg.txDone && arg.result) {
             setstate(arg.result);
         }
-        if(arg.txDone && confirmationModal) {
+        if(arg.txDone && popUpDrawer === 'confirmation') {
             closeConfirmationPopUp();
         }
     }
@@ -103,13 +104,13 @@ export const RenderActions = (props: RenderActionsProps) => {
 
     return(
         <React.Fragment>
-            <button 
-                onClick={handleClick}
+            <CustomButton
                 disabled={buttonObj.disable}
-                className="bg-orange-200 border-[0.3px] border-gray1 text-[12px] font-semibold text-green1 hover:bg-orange-400 hover:text-white1 p-2 active:ring-1 w-full rounded-full underlineFromLeft flex justify-center" 
+                handleButtonClick={handleClick}
+                overrideClassName="bg-gray1 text-orange-300 rounded-full"
             >
                 {buttonObj.value}
-            </button>
+            </CustomButton>
             <PreferredDurationInput 
                 {
                     ...{

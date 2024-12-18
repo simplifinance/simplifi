@@ -81,7 +81,10 @@ export default function SimpliApp() {
   const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
-
+  const [parentLinkActive, setParentActiveLink] = React.useState<string>(ROUTE_ENUM.DASHBOARD);
+  
+  
+  const setParentActive = (arg: string) => setParentActiveLink(arg);
   const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const setdrawerState = (arg: boolean) => setDrawerState(arg);
@@ -154,7 +157,9 @@ export default function SimpliApp() {
         drawerState,
         popUpDrawer,
         openPopUp,
+        parentLinkActive,
         displayOnboardUser,
+        setParentActive,
         setdrawerState,
         togglePopUp,
         handlePopUpDrawer,

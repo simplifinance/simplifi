@@ -8,6 +8,7 @@ import { useAccount } from "wagmi";
 import { zeroAddress } from "viem";
 import Grid from "@mui/material/Grid";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { CustomButton } from "@/components/CustomButton";
 
 export const Permissioned = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
@@ -19,8 +20,8 @@ export const Permissioned = () => {
 
     const { setMessage } = useAppStorage();
     const account = formatAddr(useAccount().address);
-    // const { handleBack } = props;
     const toggleModal = () => setModalPopUp(!modalOpen);
+    const { txnStatus } = useAppStorage();
 
     /**
      * If user is creating a permissioned pool, we ensure the user's address is 
@@ -122,7 +123,13 @@ export const Permissioned = () => {
 
             </Grid>
             <Stack className="place-items-center p-4">
-                <button onClick={toggleModal} className="w-full bg-orange-200 p-4 text-green1 rounded-full uppercase font-semibold hover:bg-orangec hover:text-white1">Submit</button>
+                <CustomButton
+                    overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
+                    disabled={txnStatus.loading}
+                    handleButtonClick={toggleModal}
+                >
+                    Submit
+                </CustomButton>
             </Stack>
             <ReviewInput 
                 {

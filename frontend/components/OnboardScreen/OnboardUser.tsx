@@ -1,5 +1,5 @@
 import React from 'react';
-import { OnboardButtonTemplate } from './OnboardTemplate';
+import ButtonTemplate from './ButtonTemplate';
 import OnboardWrapperDiv from './OnboardWrapper';
 
 export default function OnboardUser() {
@@ -8,9 +8,11 @@ export default function OnboardUser() {
         <OnboardWrapperDiv>
             <h1>Onboard video will be ready shortly. Please bear with us</h1>
 
-            <OnboardButtonTemplate 
+            <ButtonTemplate 
                 buttonAContent='Back'
-                buttonBContent="I'm done"
+                buttonBContent="I'm done" 
+                disableButtonA={false} 
+                disableButtonB={false}
             />
         </OnboardWrapperDiv>
     );

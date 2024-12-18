@@ -30,6 +30,8 @@ html,
 body {
   scroll-behavior: smooth;
   background: #121212;
+  background-image: url('/images/hero/hero-bg1.png');
+  object-fit: cover;
   color: #F9F4F4;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -168,7 +170,7 @@ footer{
   position: absolute;
   color: #aab7fe;
   top: 10%;
-  left: 5%;
+  right: 4%;
   background-color: #121212;
   padding: 6px;
   border-radius: 12px 0 12px 0;

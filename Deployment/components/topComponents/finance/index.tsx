@@ -14,16 +14,11 @@ const FlexPool : React.FC = () => {
   const config = useConfig();
 
   React.useEffect(() => {
-    if(location.pathname !== ROUTE_ENUM.DASHBOARD){
-      if(!isConnected){
-        // navigate(ROUTE_ENUM.DASHBOARD);
-        // if(!openPopUp) togglePopUp();
-      } else {
-        navigate('open');
-      }
-    }
-
-  }, [isConnected, navigate, location.pathname, openPopUp, togglePopUp]);
+    if(!isConnected){
+      navigate(ROUTE_ENUM.DASHBOARD);
+      if(!openPopUp) togglePopUp();
+    } 
+  }, [isConnected, navigate, openPopUp, togglePopUp]);
 
   React.useEffect(() => {
     const ctrl = new AbortController();

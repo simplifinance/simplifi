@@ -20,5 +20,7 @@ export interface DataContextProps {
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
     popUpDrawer: DrawerAnchor;
+    parentLinkActive: string;
+    setParentActive: (arg: string) => void;
 
 }
