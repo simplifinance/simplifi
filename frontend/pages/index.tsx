@@ -14,6 +14,7 @@ import { Open } from "@/components/topComponents/finance/Open";
 import { Closed } from "@/components/topComponents/finance/Closed";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
+import { filterPools } from "@/components/topComponents/finance/commonUtilities";
 
 /**
  * Renders Liquidity child components
@@ -106,6 +107,8 @@ export default function SimpliApp() {
       }
     );
   }
+
+  // const filtered = filterPools(pools, operation);
 
   const toggleTransactionWindow =
     (value: boolean) =>

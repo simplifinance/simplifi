@@ -12,9 +12,10 @@ export const filterPools = (pools: Pools, type: Operation) => {
     // let result : number = 0;
     return pools.filter((pool) => {
       const stage = toBN(pool.stage.toString()).toNumber();
-      const quorumIsZero = stage === FuncTag.ENDED || (stage === FuncTag.ENDED && toBN(pool.uints.quorum.toString()).isZero());
-      const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString())) && stage === FuncTag.ENDED;
-      const isClosed : boolean = allGH || quorumIsZero;
+      const stageEnded = stage === FuncTag.ENDED;
+      const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();
+      const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
+      const isClosed : boolean = stageEnded || allGH || quorumIsZero;
       return type === 'Closed'? isClosed : !isClosed;
     });
   }
