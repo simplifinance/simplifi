@@ -15,6 +15,7 @@ import Interest from "../Interest";
 import CollateralMultiplier from "../CollateralMultiplier";
 import Duration from "../Duration";
 import Participants from "../Participants";
+import { useMediaQuery } from "@mui/material";
 
 export const Permissioned = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
@@ -24,6 +25,7 @@ export const Permissioned = () => {
     const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
+    const isLargeScreen = useMediaQuery('(min-width:768px)');
     const { setMessage } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleModal = () => setModalPopUp(!modalOpen);
@@ -85,7 +87,7 @@ export const Permissioned = () => {
 
     return(
         <Stack className="space-y-4 mt-8">
-            <Grid container xs={'auto'}>
+            <Grid container xs={'auto'} spacing={4}>
                 {
                     (
                         [
@@ -95,30 +97,30 @@ export const Permissioned = () => {
                             },
                             {
                                 id: "Unit Liquidity",
-                                element: (<UnitLiquidity inputProp={unitLiquidity} handleChange={onChange}/>),
+                                element: (<UnitLiquidity isLargeScreen={isLargeScreen} inputProp={unitLiquidity} handleChange={onChange}/>),
                             },
                             {
                                 id:"Duration",
-                                element: (<Duration inputProp={duration} handleChange={onChange}/>),
+                                element: (<Duration isLargeScreen={isLargeScreen} inputProp={duration} handleChange={onChange}/>),
                             },
                             {
                                 id: "Interest",
-                                element: (<Interest inputProp={interest} handleChange={onChange}/>),
+                                element: (<Interest isLargeScreen={isLargeScreen} inputProp={interest} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                element: (<CollateralMultiplier inputProp={ccr} handleChange={onChange}/>),
+                                element: (<CollateralMultiplier isLargeScreen={isLargeScreen} inputProp={ccr} handleChange={onChange}/>),
                             },
                         ] as const
-                    ).map(({ id, element }, i) => (
-                        <Grid key={id} xs={6} >
+                    ).map(({ id, element }) => (
+                        <Grid item key={id} xs={12} md={6} >
                             { element }
                         </Grid>
                     ))
                 }
 
             </Grid>
-            <Stack className="place-items-center p-4">
+            <Stack className="place-items-center">
                 <CustomButton
                     overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
                     disabled={txnStatus.loading}

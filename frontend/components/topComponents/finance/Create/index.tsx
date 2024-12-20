@@ -23,7 +23,7 @@ export const Create : React.FC<{back: VoidFunc}> = ({back}) => {
 
     return(
         <React.Fragment>
-            <div className={`${flexSpread} px-4`}>
+            <div className={`${flexSpread}`}>
                 <div className={`md:hidden w-[fit-content] ${flexStart} p-1 bg-green1 gap-4 rounded-full text-sm`}>
                     <button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${disablebutton? 'bg-gray1' : 'bg-green1'} p-3 rounded-full ${!disablebutton && 'hover:shadow-sm hover:shadow-orange-200'}`}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">

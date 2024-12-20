@@ -9,9 +9,9 @@ const rates = () => {
     return [...Array(100).keys()];
 }
 
-export default function Interest({inputProp: interest, handleChange} : InputCategoryProp) {    
+export default function Interest({inputProp: interest, isLargeScreen, handleChange} : InputCategoryProp) {    
     return (
-        <div className='p-4 relative'>
+        <div className='relative'>
             <button
                 onClick={() => handleChange({value: interest.value, open: !interest.open}, 'Interest')}
                 className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
@@ -24,7 +24,7 @@ export default function Interest({inputProp: interest, handleChange} : InputCate
                 { interest.value }
                 <Chevron open={interest.open} />
             </button>
-            <Collapse in={interest.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[54px] left-[16px] z-50  flex justify-center items-center'} style={{width: 'calc(100% - 32px)'}}>
+            <Collapse in={interest.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>
                 <div className='w-full place-items-center p-4 max-h-[250px] overflow-auto '>
                     {
                         rates().map((value) => (

@@ -198,6 +198,7 @@ export interface InputProp {
 
 export interface InputCategoryProp {
   inputProp: InputProp;
+  isLargeScreen: boolean;
   handleChange: (value: InputProp, tag: InputSelector) => void
 }
 

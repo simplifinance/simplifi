@@ -14,9 +14,9 @@ const durations = () => {
     return [...Array(721).keys()];
 }
 
-export default function Duration({inputProp: duration, handleChange} : InputCategoryProp) {    
+export default function Duration({inputProp: duration, isLargeScreen, handleChange} : InputCategoryProp) {    
     return (
-        <div className='p-4 relative'>
+        <div className='relative'>
             <button
                 onClick={() => handleChange({value: duration.value, open: !duration.open}, 'Duration')}
                 className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
@@ -29,7 +29,7 @@ export default function Duration({inputProp: duration, handleChange} : InputCate
                 { duration.value }
                 <Chevron open={duration.open} />
             </button>
-            <Collapse in={duration.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[54px] left-[16px] z-50  flex justify-center items-center'} style={{width: 'calc(100% - 32px)'}}>
+            <Collapse in={duration.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>
                 <div className='w-full place-items-center p-4 max-h-[250px] overflow-auto '>
                     {
                         durations().map((value) => (

@@ -9,9 +9,9 @@ const collaterals = () => {
     return [...Array(301).keys()];
 }
 
-export default function CollateralMultiplier({inputProp: collateral, handleChange} : InputCategoryProp) {    
+export default function CollateralMultiplier({inputProp: collateral, isLargeScreen, handleChange} : InputCategoryProp) {    
     return (
-        <div className='p-4 relative'>
+        <div className='relative'>
             <button
                 onClick={() => handleChange({value: collateral.value, open: !collateral.open}, 'CCR')}
                 className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
@@ -24,7 +24,7 @@ export default function CollateralMultiplier({inputProp: collateral, handleChang
                 { collateral.value }
                 <Chevron open={collateral.open} />
             </button>
-            <Collapse in={collateral.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[54px] left-[16px] z-50  flex justify-center items-center'} style={{width: 'calc(100% - 32px)'}}>
+            <Collapse in={collateral.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>
                 <div className='w-full place-items-center p-4 max-h-[200px] overflow-auto '>
                     {
                         collaterals().map((value) => (
@@ -40,8 +40,6 @@ export default function CollateralMultiplier({inputProp: collateral, handleChang
                     }
                 </div>
             </Collapse>
-            {/* <div hidden={!open} className='absolute right-0 bg-green1 w-full mx-4'>
-            </div> */}
         </div>
     );
 }

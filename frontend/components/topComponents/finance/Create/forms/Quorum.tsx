@@ -13,9 +13,9 @@ const quorums = () => {
     return [...Array(256).keys()];
 }
 
-export default function Quorum({inputProp: quorum, handleChange} : InputCategoryProp) {    
+export default function Quorum({inputProp: quorum, handleChange, isLargeScreen} : InputCategoryProp) {    
     return (
-        <div className='p-4 relative'>
+        <div className='relative'>
             <button
                 onClick={() => handleChange({value: quorum.value, open: !quorum.open}, 'Quorum')}
                 className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
@@ -28,7 +28,7 @@ export default function Quorum({inputProp: quorum, handleChange} : InputCategory
                 { quorum.value }
                 <Chevron open={quorum.open} />
             </button>
-            <Collapse in={quorum.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[54px] left-[16px] z-50  flex justify-center items-center'} style={{width: 'calc(100% - 32px)'}}>
+            <Collapse in={quorum.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50 flex justify-center items-center rounded-b-[12px]'} style={{width: '100%'}}>
                 <div className='w-full place-items-center p-4 max-h-[300px] overflow-auto '>
                     {
                         quorums().map((value) => (

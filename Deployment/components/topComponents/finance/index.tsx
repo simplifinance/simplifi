@@ -7,6 +7,7 @@ import { CustomButton } from '@/components/CustomButton';
 import { PoolWrapper } from './pool';
 import { Create } from './Create';
 import { useMediaQuery } from '@mui/material';
+import { flexStart, flexSpread } from '@/constants';
 
 const FlexPool = () => {
   const [isPermissioned, setPermissionType] = React.useState<boolean>(false);
@@ -51,35 +52,69 @@ const FlexPool = () => {
       {
         !displayForm?
           <div className='space-y-4'>
-            <div className="flex justify-between items-start md:items-center">
-              <div className="flex bg-green1 p-1 rounded-[26px]">
+            <div className="flex justify-between items-center md:items-center">
+            <div className={`md:hidden w-[fit-content] ${flexStart} p-1 bg-green1 gap-4 rounded-full text-sm`}>
+                    <button disabled={isPermissioned} onClick={() => setPermissionType(true)} className={`${flexSpread} gap-2 ${isPermissioned? 'bg-gray1' : 'bg-green1'} p-3 rounded-full ${!isPermissioned && 'hover:shadow-sm hover:shadow-orange-200'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        </svg>
+                    </button>
+                    <button disabled={!isPermissioned} onClick={() => setPermissionType(false)} className={`${flexSpread} gap-2 ${!isPermissioned? 'bg-gray1' : 'bg-green1'} p-3 rounded-full ${isPermissioned && 'hover:shadow-sm hover:shadow-orange-200'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                        </svg>
+                    </button>
+                </div>
+                <div className={`hidden md:flex items-center w-[fit-content] p-1 bg-green1 gap-4 rounded-full text-xs uppercase`}>
+                    <button disabled={isPermissioned} onClick={() => setPermissionType(true)} className={`${flexSpread} gap-2 uppercase text-orange-300 ${isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-l-full animate-pulse`}>
+                        <h1>Permissionless</h1>
+                        <h1 hidden={!isPermissioned}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                            </svg>
+                        </h1>
+                    </button>
+                    <button disabled={!isPermissioned} onClick={() => setPermissionType(false)} className={`${flexSpread} gap-2 uppercase text-orange-300 ${!isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-r-full animate-pulse`}>
+                        <h1 hidden={isPermissioned}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+                            </svg>
+                        </h1>
+                        <h1>Permissioned</h1>
+                    </button>
+                </div>
+              
+              
+              
+              
+              {/* <div className="flex bg-green1 p-1 rounded-[26px]">
                 <CustomButton
                   disabled={isPermissioned}
-                  overrideClassName={`${isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-l-full ${!isPermissioned && 'animate-pulse text-xs text-orange-300 uppercase'}`}
+                  overrideClassName={`${isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-full ${!isPermissioned && 'animate-pulse text-xs text-orange-300 uppercase'}`}
                   handleButtonClick={() => setPermissionType(true)}
                 >
                   {
-                    isLargeScreen? 'Permissioned' : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
+                    isLargeScreen? 'Permissioned' : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-red-300">
                                                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                                                     </svg>
                   }
                 </CustomButton>
                 <CustomButton
                   disabled={!isPermissioned}
-                  overrideClassName={`${!isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-r-full ${!isPermissioned && 'animate-pulse text-xs text-orange-300 uppercase'}`}
+                  overrideClassName={`${!isPermissioned? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-full ${!isPermissioned && 'animate-pulse text-xs text-orange-300 uppercase'}`}
                   handleButtonClick={() => setPermissionType(false)}
                 >
                   {
-                    isLargeScreen? 'Permissionless' : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
+                    isLargeScreen? 'Permissionless' : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-300">
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                                                       </svg>
                   }
                 </CustomButton>
-              </div>
+              </div> */}
               <div>
                   <CustomButton
                     disabled={false}
-                    overrideClassName={`bg-green1 p-2 rounded-full w-[40px] h-[40px] md:h-[48px] md:w-[48px] hover:shadow-sm hover:shadow-orange-200`}
+                    overrideClassName={`bg-green1 p-2 rounded-full w-[50px] h-[50px] hover:shadow-sm hover:shadow-orange-200`}
                     handleButtonClick={() => setDisplayForm(true)}
                   >
                     <Tooltip title="New FlexPool">
