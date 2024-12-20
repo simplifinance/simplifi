@@ -190,3 +190,14 @@ export interface DrawerState {
   anchor: DrawerAnchor
   value: boolean;
 }
+
+export interface InputProp {
+  value: string;
+  open: boolean;
+}
+
+export interface InputCategoryProp {
+  inputProp: InputProp;
+  handleChange: (value: InputProp, tag: InputSelector) => void
+}
+

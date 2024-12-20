@@ -1,7 +1,7 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import { Input } from "../../Input";
-import type { Address, InputSelector } from '@/interfaces';
+import type { Address, InputProp, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr } from "@/utilities";
 import { useAccount } from "wagmi";
@@ -9,19 +9,53 @@ import { zeroAddress } from "viem";
 import Grid from "@mui/material/Grid";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { CustomButton } from "@/components/CustomButton";
+import Quorum from "../Quorum";
+import UnitLiquidity from "../UnitLiquidity";
+import Interest from "../Interest";
+import CollateralMultiplier from "../CollateralMultiplier";
+import Duration from "../Duration";
+import Participants from "../Participants";
 
 export const Permissioned = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
+    const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
+    const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
+    const [interest, setInterest] = React.useState<InputProp>({value: '1', open: false});
+    const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
     const [participants, setParticipant] = React.useState<Address[]>([]);
-    const [duration, setDuration] = React.useState<string>('0');
-    const [ccr, setCollateralCoverage] = React.useState<string>('0');
-    const [interest, setInterest] = React.useState<string>('0');
-    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
 
     const { setMessage } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleModal = () => setModalPopUp(!modalOpen);
     const { txnStatus } = useAppStorage();
+
+    const handleDeleteParticipant = (arg: number) => {
+        if(participants.length > 0) {
+            const found = participants.filter((_, i) => i === arg).at(0);
+            if(found && found !== account) {
+                const restAddr = participants.filter((_, i) => i !== arg);
+                setParticipant(restAddr);
+            }
+        }
+    }
+
+    const addressOnChange = (arg: string) => {
+        let copy = participants;
+        const formattedValue = formatAddr(arg);
+        // This is to ensure the first provider on the list is the current operator/user.
+        if(copy.length === 0) {
+            copy.push(account);
+        }
+        if(account !== zeroAddress) {
+            if(arg.length === 42) {
+                if(!copy.includes(formattedValue)){
+                    copy.push(formattedValue);
+                    setParticipant(copy);
+                    setMessage(`${formattedValue} was added`);
+                }
+            }
+        }
+    }
 
     /**
      * If user is creating a permissioned pool, we ensure the user's address is 
@@ -29,38 +63,19 @@ export const Permissioned = () => {
      * @param e : Input event value
      * @param tag : Type of operation to perform on the incoming input value
      */
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
-        e.preventDefault();
-        const value = e.currentTarget.value === ''? '0' : e.currentTarget.value;
+    const onChange = (inputProp: InputProp, tag: InputSelector) => {
         switch (tag) {
-            case 'address':
-                let copy = participants;
-                const formattedValue = formatAddr(value);
-                if(copy.length === 0) {
-                    copy.push(account);
-                }
-                if(account !== zeroAddress) {
-                    if(value.length === 42) {
-                        if(!copy.includes(formattedValue)){
-                            copy.push(formattedValue);
-                            setParticipant(copy);
-                            setMessage(`${formattedValue} was added`);
-                        }
-                    }
-                }
-
-                break;
             case 'Duration':
-                setDuration(value);
+                setDuration(inputProp);
                 break;
             case 'CCR':
-                setCollateralCoverage(value);
+                setCollateralCoverage(inputProp);
                 break;
             case 'Interest':
-                setInterest(value);
+                setInterest(inputProp);
                 break;
             case 'UnitLiquidity':
-                setUnitLiquidity(value);
+                setUnitLiquidity(inputProp);
                 break;
         
             default:
@@ -69,54 +84,35 @@ export const Permissioned = () => {
     }
 
     return(
-        <Stack className="space-y-4 mt-4">
+        <Stack className="space-y-4 mt-8">
             <Grid container xs={'auto'}>
                 {
                     (
                         [
                             {
                                 id: 'Participants',
-                                type: 'text',
-                                placeholder: 'Enter participants addresses',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'address'),
+                                element: (<Participants handleDelete={handleDeleteParticipant} addToList={addressOnChange} participants={participants} />),
                             },
                             {
                                 id: "Unit Liquidity",
-                                type: 'number',
-                                placeholder: 'Liquidity contribution per head',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'UnitLiquidity'),
+                                element: (<UnitLiquidity inputProp={unitLiquidity} handleChange={onChange}/>),
                             },
                             {
-                                id:"Duration (In hours)",
-                                type: 'number',
-                                placeholder: 'Hours of use per borrower',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Duration'),
+                                id:"Duration",
+                                element: (<Duration inputProp={duration} handleChange={onChange}/>),
                             },
                             {
-                                id: "Int. Rate percent (Min 0.01%)",
-                                type: 'number',
-                                placeholder: 'Interest to charge to for the duration ',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Interest'),
+                                id: "Interest",
+                                element: (<Interest inputProp={interest} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                type: 'number',
-                                placeholder: 'The % of collateral that should be required',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'CCR'),
+                                element: (<CollateralMultiplier inputProp={ccr} handleChange={onChange}/>),
                             },
                         ] as const
-                    ).map(({ id, type, placeholder,  onChange }, i) => (
-                        <Grid key={id} xs={12} md={i < 4? 6 : 12}>
-                            <Stack className="p-4 space-y-2">
-                                <h3 className="text-orange-200 text-opacity-80">{id}</h3>
-                                <Input 
-                                    id={id}
-                                    onChange={onChange}
-                                    type={type}
-                                    placeholder={placeholder}
-                                    overrideBg="bg-green1"
-                                />
-                            </Stack>
+                    ).map(({ id, element }, i) => (
+                        <Grid key={id} xs={6} >
+                            { element }
                         </Grid>
                     ))
                 }
@@ -145,19 +141,19 @@ export const Permissioned = () => {
                             },
                             {
                                 title: 'Unit Liquidity',
-                                value: unitLiquidity
+                                value: unitLiquidity.value
                             },
                             {
                                 title: 'Duration',
-                                value: duration,
+                                value: duration.value,
                             },
                             {
                                 title: 'Int. Rate',
-                                value: interest
+                                value: interest.value
                             },
                             {
                                 title: 'Collateral Coverage',
-                                value: ccr,
+                                value: ccr.value,
                             },
                         ]
                     }

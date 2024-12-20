@@ -22,8 +22,8 @@ const FlexPool = () => {
   
   React.useEffect(() => {
     if(!isConnected){
-      // setActivepath('/dashboard')
-      // if(!openPopUp) togglePopUp();
+      setActivepath('/dashboard')
+      if(!openPopUp) togglePopUp();
     }
   }, [isConnected, setActivepath, openPopUp, togglePopUp]);
 

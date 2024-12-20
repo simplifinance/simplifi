@@ -15,10 +15,10 @@ export const Input = (props: InputProps) => {
         <input 
             type={type}
             placeholder={placeholder}
-            required={true}
+            required
             id={id}
             onChange={onChange}
-            className={`w-full p-4 text-xs rounded-[26px] placeholder:absolute placeholder:top-0 placeholder:text-white1/40  ${overrideBg}`}
+            className={`w-full p-4 text-xs text-orange-200 rounded-[12px] focus:placeholder:absolute placeholder:top-0 placeholder:text-white1/40 bg-green1  ${overrideBg}`}
         />
     )
 }

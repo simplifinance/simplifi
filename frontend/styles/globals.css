@@ -105,11 +105,11 @@ footer{
   font-size: 10px;
   position: absolute;
   color: #aab7fe;
-  top: 5%;
-  left: 5%;
+  top: 8%;
+  right: 5%;
   background-color: #121212;
   padding: 6px;
-  border-radius: 18px 0 12px 0;
+  border-radius: 0 12px 0 12px;
 }
 
 .animateSidebar{
@@ -170,7 +170,6 @@ footer{
   aside{
     top: 72px; 
     min-height: calc(100vh - 72px);
-    /* display: none; */
     position: fixed;
     width: 120px;
   }

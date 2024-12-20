@@ -1,26 +1,29 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 import { Input } from "../../Input";
-import type { InputSelector } from '@/interfaces';
+import type { InputProp, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Grid from "@mui/material/Grid";
 import { CustomButton } from "@/components/CustomButton";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import Quorum from "../Quorum";
+import Duration from "../Duration";
+import Interest from "../Interest";
+import CollateralMultiplier from "../CollateralMultiplier";
+import UnitLiquidity from "../UnitLiquidity";
 
 export const Permissionless = () => {
     const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
-    const [quorum, setQuorum] = React.useState<string>('0');
-    const [duration, setDuration] = React.useState<string>('0');
-    const [ccr, setCollateralCoverage] = React.useState<string>('0');
-    const [interest, setInterest] = React.useState<string>('0');
-    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('0');
+    const [quorum, setQuorum] = React.useState<InputProp>({value: '2', open: false});
+    const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
+    const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
+    const [interest, setInterest] = React.useState<InputProp>({value: '1', open: false});
+    const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
 
     const toggleModal = () => setModalPopUp(!modalOpen);
     const { txnStatus } = useAppStorage();
     
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>, tag: InputSelector) => {
-        e.preventDefault();
-        const value = e.currentTarget.value === ''? '0' : e.currentTarget.value;
+    const onChange = (value: InputProp, tag: InputSelector) => {
         switch (tag) {
             case 'Quorum':
                 setQuorum(value);
@@ -44,54 +47,35 @@ export const Permissionless = () => {
     }
 
     return(
-        <Stack className="space-y-4 mt-4">
+        <Stack className="space-y-4 mt-8">
             <Grid container xs={'auto'}>
                 {
                     (
                         [
                             {
                                 id: 'Quorum',
-                                type: 'number',
-                                placeholder: 'How many participants do you expect',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Quorum'),
+                                element: (<Quorum inputProp={quorum} handleChange={onChange}/>),
                             },
                             {
                                 id: "Unit Liquidity",
-                                type: 'number',
-                                placeholder: 'Liquidity contribution per head',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'UnitLiquidity'),
+                                element: (<UnitLiquidity inputProp={unitLiquidity} handleChange={onChange}/>),
                             },
                             {
-                                id:"Duration (In hours)",
-                                type: 'number',
-                                placeholder: 'Hours of use per borrower',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Duration'),
+                                id:"Duration",
+                                element: (<Duration inputProp={duration} handleChange={onChange}/>),
                             },
                             {
-                                id: "Int. Rate percent (Min 0.01%)",
-                                type: 'number',
-                                placeholder: 'Interest to charge to for the duration ',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'Interest'),
+                                id: "Interest",
+                                element: (<Interest inputProp={interest} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                type: 'number',
-                                placeholder: 'The % of collateral that should be required',
-                                onChange: (e:React.ChangeEvent<HTMLInputElement>) => onChange(e, 'CCR'),
+                                element: (<CollateralMultiplier inputProp={ccr} handleChange={onChange}/>),
                             },
                         ] as const
-                    ).map(({ id, type, placeholder, onChange }, i) => (
-                        <Grid item key={id} xs={12} md={i < 4? 6 : 12}>
-                            <Stack className="p-4 space-y-2">
-                                <h3 className="text-orange-200 text-opacity-80">{id}</h3>
-                                <Input 
-                                    id={id}
-                                    onChange={onChange}
-                                    type={type}
-                                    placeholder={placeholder}
-                                    overrideBg="bg-green1"
-                                />
-                            </Stack>
+                    ).map(({ id, element }, i) => (
+                        <Grid item key={id} xs={6}>
+                           { element }
                         </Grid>
                     ))
                 }
@@ -114,23 +98,23 @@ export const Permissionless = () => {
                         values: [
                             {
                                 title: 'Quorum',
-                                value: quorum
+                                value: quorum.value
                             },
                             {
                                 title: 'Unit Liquidity',
-                                value: unitLiquidity
+                                value: unitLiquidity.value
                             },
                             {
                                 title: 'Duration',
-                                value: duration,
+                                value: duration.value,
                             },
                             {
                                 title: 'Int. Rate',
-                                value: interest,
+                                value: interest.value,
                             },
                             {
                                 title: 'Collateral Coverage',
-                                value: ccr,
+                                value: ccr.value,
                             },
                         ]
                     }
@@ -139,3 +123,5 @@ export const Permissionless = () => {
         </Stack>
     );
 }
+
+// md={i < 4? 6 : 12}

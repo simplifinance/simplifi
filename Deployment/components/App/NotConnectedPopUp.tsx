@@ -4,7 +4,7 @@ import TransactionWindow from "../topComponents/finance/PoolColumn/RenderActions
 export default function NotConnectedPopUp({openPopUp, handleClosePopUp} : {openPopUp: boolean, handleClosePopUp: VoidFunc}) {
 
     return(
-        <TransactionWindow openDrawer={openPopUp} styles={{background: '#121212', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa'}}>
+        <TransactionWindow openDrawer={openPopUp} styles={{background: '#121212', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', height: '100%'}}>
             <button onClick={handleClosePopUp}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
