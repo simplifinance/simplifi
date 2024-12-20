@@ -105,11 +105,11 @@ footer{
   font-size: 10px;
   position: absolute;
   color: #aab7fe;
-  top: 10%;
-  right: 4%;
+  top: 5%;
+  left: 5%;
   background-color: #121212;
   padding: 6px;
-  border-radius: 12px 0 12px 0;
+  border-radius: 18px 0 12px 0;
 }
 
 .animateSidebar{

@@ -23,13 +23,13 @@ interface ReviewInputProps {
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
-    const [loading, setLoading] = React.useState<{buttonText: ButtonContent, value: boolean}>({buttonText: 'Approve', value: false});
-    const [message, setMessage] = React.useState<string>('');
+    // const [loading, setLoading] = React.useState<{buttonText: ButtonContent, value: boolean}>({buttonText: 'Approve', value: false});
+    // const [message, setMessage] = React.useState<string>('');
     
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setstate, setTrxnStatus } = useAppStorage();
+    const { setstate, setTrxnStatus, setMessage, txnStatus } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
@@ -39,7 +39,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
         // if(arg.txDone) handleModalClose();
         if(arg?.message) setMessage(arg.message);
         if(arg?.result) setstate(arg.result);
-        console.log("Arg result", arg?.result);
+        // console.log("Arg result", arg?.result);
     }
 
     const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "APPROVE"};
@@ -69,7 +69,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
         setTrxnStatus({loading: true, message: 'Trxn processing', txResult: ''});
         // setLoading((prev) => {prev.value = true; return prev;});
         const isPermissioned = type === "address";
-        switch (loading.buttonText) {
+        switch (txnStatus.buttonText) {
             case 'Approve':
                 await handleTransact({ callback, otherParam })
                     // .then(() => setLoading({value: false, buttonText: 'CreatePool'}))
@@ -77,7 +77,8 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     .then(() => setTrxnStatus({loading: false, buttonText: 'CreatePool', message: 'Approval Completed', txResult: 'Success'}))
                     .catch((error: any) => {
                         const errorMessage : string = error?.message || error?.data?.message;
-                        setTrxnStatus({loading: false, message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
+                        console.log("Err message", errorMessage);
+                        setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
                     }); 
                 break;
             case 'CreatePool':
@@ -92,7 +93,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                 .then(() => setTrxnStatus({loading: false, buttonText: 'Completed', message: 'Transaction Completed', txResult: 'Success'}))
                 .catch((error: any) => {
                     const errorMessage : string = error?.message || error?.data?.message;
-                    setTrxnStatus({loading: false, message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
+                    setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
                 }); 
                 break;
             default:
@@ -102,17 +103,17 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     React.useEffect(() => {
         if(!values) handleModalClose();
-        if(loading.buttonText === 'Completed') {
+        if(txnStatus.buttonText === 'Completed') {
             setTimeout(() => {
                 handleModalClose();
-                setLoading({value: false, buttonText: 'Approve'})
+                setTrxnStatus({loading: false, buttonText: 'Approve', message: 'Transaction Completed'})
             }, 3000);
         }
         return() => clearTimeout(3000);
-    },[values, handleModalClose, loading.buttonText]);
+    },[values, handleModalClose, txnStatus.buttonText]);
 
     return(
-        <TransactionWindow openDrawer={modalOpen} styles={{background: '#121212', borderLeft: '1px solid rgb(249 244 244 / 0.3)', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px'}}>
+        <TransactionWindow openDrawer={modalOpen} styles={{borderLeft: '1px solid rgb(249 244 244 / 0.3)', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', height: "100%"}}>
             <Box className="p-4 text-orange-200 space-y-6 gap-4 overflow-hidden">
                 <button onClick={handleModalClose}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
@@ -158,16 +159,16 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     }
                 </div>
                 <button
-                    disabled={loading.value || loading.buttonText === 'Completed'}
-                    className={`w-full p-3 rounded-[26px] ${loading.value? "bg-gray-200 opacity-50" : "bg-orange-200"} text-green1 text-xs uppercase font-medium hover:bg-orangec hover:text-white1 focus:shadow-md focus:shadow-orange-200 flex justify-center`}
+                    disabled={txnStatus.loading || txnStatus.buttonText === 'Completed'}
+                    className={`w-full p-3 rounded-[26px] ${txnStatus.loading? "bg-gray-200 opacity-50" : "bg-orange-200"} text-green1 text-xs uppercase font-medium hover:shadow-sm hover:text-orangec hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200 flex justify-center`}
                     onClick={handleClick}
                 >
                     {
-                        loading.value? <Spinner color={"#F87C00"} /> : loading.buttonText
+                        txnStatus.loading? <Spinner color={"#F87C00"} /> : txnStatus.buttonText
                     }
                 </button>
             </Box>
-            <Notification message={message} />
+            {/* <Notification message={message} /> */}
         </TransactionWindow>
     );
 }

@@ -1,5 +1,7 @@
-import { Pools, FuncTag } from "@/interfaces";
-import { toBN } from "@/utilities";
+import { Pools, FuncTag, LiquidityPool, PoolType } from "@/interfaces";
+import { toBigInt, toBN } from "@/utilities";
+import BigNumber from "bignumber.js";
+import { formatEther } from "viem";
 
 export type Operation = 'Open' | 'Closed';
 
@@ -8,14 +10,29 @@ export type Operation = 'Open' | 'Closed';
  * @param pools : type pool
  * @returns : Number of active or inactive pools
  */
-export const filterPools = (pools: Pools, type: Operation) => {
-    // let result : number = 0;
+export default function filterPools (pools: Pools) {
+  let tvl : BigNumber = toBN(0);
+  pools.forEach((pool: LiquidityPool) => {
+    tvl.plus(toBN(pool.uint256s.currentPool.toString()));
+  })
+  
+  const filterPool = (op: Operation) => {
     return pools.filter((pool) => {
       const stage = toBN(pool.stage.toString()).toNumber();
       const stageEnded = stage === FuncTag.ENDED;
       const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();
       const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
       const isClosed : boolean = stageEnded || allGH || quorumIsZero;
-      return type === 'Closed'? isClosed : !isClosed;
+      return op === 'Closed'? isClosed : !isClosed;
     });
   }
+
+  const filterType = (type: PoolType) => {
+    return pools.filter((pool) => type === 'Permissionless'? pool.isPermissionless : !pool.isPermissionless);
+  }
+  const open = filterPool('Open');
+  const closed = filterPool('Closed');
+  const permissioned = filterType('Permissioned');
+  const permissionless = filterType('Permissionless');
+  return { open, closed, permissioned, permissionless, tvl: formatEther(toBigInt(tvl.toString())) }
+}

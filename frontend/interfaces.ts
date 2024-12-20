@@ -2,6 +2,8 @@ import { BigNumberish, ethers } from "ethers";
 import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
 import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
+
+export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
 export type WagmiConfig = import("wagmi").Config;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
 export type Str = string;
@@ -43,7 +45,7 @@ export interface TransactionCallbackArg {
 export interface TransactionResult {
   loading: boolean; 
   message: string;
-  txResult: TrxResult;
+  txResult?: TrxResult;
   buttonText?: ButtonContent;
 }
 

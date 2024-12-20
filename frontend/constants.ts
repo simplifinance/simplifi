@@ -22,16 +22,16 @@ export const flexEnd = "flex justify-end items-center";
 export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
 
-export const ROUTE_ENUM = {
-  DASHBOARD : '/dashboard',
-  YIELD: '/yield',
-  DAO: '/simplidao',
-  FLEXPOOL: '/flexpool',
-  FAQ: 'faq',
-  CREATE: '/flexpool/create',
-  OPEN: '/flexpool/open',
-  CLOSED: '/flexpool/closed'
-}
+// export const ROUTE_ENUM = {
+//   DASHBOARD : '/dashboard',
+//   YIELD: '/yield',
+//   DAO: '/simplidao',
+//   FLEXPOOL: '/flexpool',
+//   FAQ: 'faq',
+//   CREATE: '/flexpool/create',
+//   OPEN: '/flexpool/open',
+//   CLOSED: '/flexpool/closed'
+// }
 
 export const POOL_HEADER_CONTENT = Array.from([
   // { value: '', gridSize: 0.5},

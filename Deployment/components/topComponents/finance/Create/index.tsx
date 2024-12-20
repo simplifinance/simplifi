@@ -2,9 +2,9 @@ import React from "react";
 import { Permissioned } from "./forms/Permissioned";
 import { Permissionless } from "./forms/Permissionless";
 import { flexSpread, flexStart } from "@/constants";
-import { PoolType } from "@/interfaces";
+import { PoolType, VoidFunc } from "@/interfaces";
 
-export const Create : React.FC<{}> = () => {
+export const Create : React.FC<{back: VoidFunc}> = ({back}) => {
     const [formType, setFormType] = React.useState<PoolType>('Permissionless');
 
     const disablebutton = formType === 'Permissionless';
@@ -23,7 +23,7 @@ export const Create : React.FC<{}> = () => {
 
     return(
         <React.Fragment>
-            <div className="ml-4">
+            <div className={`${flexSpread} px-4`}>
                 <div className={`md:hidden w-[fit-content] ${flexStart} p-1 bg-green1 gap-4 rounded-full text-sm`}>
                     <button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${disablebutton? 'bg-gray1' : 'bg-green1'} p-3 rounded-full ${!disablebutton && 'hover:shadow-sm hover:shadow-orange-200'}`}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
@@ -36,26 +36,27 @@ export const Create : React.FC<{}> = () => {
                         </svg>
                     </button>
                 </div>
-            </div>
-            <div className="ml-4">
-                <div className={`hidden md:flex items-center w-[fit-content] p-1 bg-green1 gap-4 rounded-full text-sm uppercase`}>
-                    <button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${disablebutton? 'bg-gray1 shadow-sm shadow-orange-200' : 'bg-green1 hover:text-orangec'} p-2 rounded-full`}>
+                <div className={`hidden md:flex items-center w-[fit-content] p-1 bg-green1 gap-4 rounded-full text-xs uppercase`}>
+                    <button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 uppercase text-orange-300 ${disablebutton? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-l-full animate-pulse`}>
                         <h1>Permissionless</h1>
-                        <h1 hidden={!disablebutton} className="bg-green1 p-2 rounded-full shadow-sm shadow-orange-200">
+                        <h1 hidden={!disablebutton}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                             </svg>
                         </h1>
                     </button>
-                    <button disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`${flexSpread} gap-2 ${!disablebutton? 'bg-gray1 shadow-sm shadow-orange-200' : 'bg-green1 hover:text-orangec'} p-2 rounded-full`}>
-                        <h1>Permissioned</h1>
-                        <h1 hidden={disablebutton} className="bg-green1 p-2 rounded-full shadow-sm shadow-orange-200">
+                    <button disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`${flexSpread} gap-2 uppercase text-orange-300 ${!disablebutton? 'bg-gray1' : 'bg-green1 hover:text-orangec hover:shadow-sm hover:shadow-orange-200'} p-3 rounded-r-full animate-pulse`}>
+                        <h1 hidden={disablebutton}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                             </svg>
                         </h1>
+                        <h1>Permissioned</h1>
                     </button>
                 </div>
+                <button onClick={back} className="w-[fit-content] focus:ring-1 p-3 hover:shadow-sm text-orange-300 hover:shadow-orange-200 bg-green1 rounded-r-full text-xs uppercase focus:ring-gray1 active:ring-1">
+                    <h1 className="animate-pulse">Back</h1>
+                </button>
             </div>
             {
                 renderForm() 

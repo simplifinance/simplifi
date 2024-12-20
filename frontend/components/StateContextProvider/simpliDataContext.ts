@@ -1,4 +1,4 @@
-import { Anchor, DrawerAnchor, DrawerState, TransactionResult, TrxnResult, VoidFunc } from "@/interfaces";
+import { Anchor, DrawerAnchor, DrawerState, LiquidityPool, Path, TransactionResult, TrxnResult, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
     storage: TrxnResult;
@@ -20,7 +20,12 @@ export interface DataContextProps {
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
     popUpDrawer: DrawerAnchor;
-    parentLinkActive: string;
-    setParentActive: (arg: string) => void;
+    tvl: string;
+    open: LiquidityPool[];
+    closed: LiquidityPool[];
+    permissioned: LiquidityPool[];
+    permissionless: LiquidityPool[];
+    activePath: Path;
+    setActivepath: (arg: Path) => void;
 
 }

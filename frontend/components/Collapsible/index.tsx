@@ -1,9 +1,9 @@
 import { Box, Collapse, } from '@mui/material'
 import React from 'react'
-import { flexSpread, ROUTE_ENUM, } from '@/constants';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { flexSpread, } from '@/constants';
 import useAppStorage from '../StateContextProvider/useAppStorage';
 import { useMediaQuery } from '@mui/material';
+import { Path } from '@/interfaces';
 
 export const Chevron = (props: ChevronProps) => {
   const { open, hideChevron } = props;
@@ -31,10 +31,8 @@ export const Chevron = (props: ChevronProps) => {
 // }
 export const Collapsible = (props: CollapsibleProps) => {
   const [open, setOpen] = React.useState<boolean>(false);
-  const { toggleSidebar, parentLinkActive, setParentActive} = useAppStorage();
+  const { toggleSidebar, activePath, setActivepath} = useAppStorage();
   const isLargeScreen = useMediaQuery('(min-width:768px)');
-  const location = useLocation();
-  const navigate = useNavigate();
 
   const { 
     collapsedClassName, 
@@ -46,24 +44,27 @@ export const Collapsible = (props: CollapsibleProps) => {
     children 
   } = props;
 
-  const isParentActive = parentLinkActive === parentPath;
+  const isParentActive = activePath === parentPath;
   const handleClick = () => {
-    setParentActive(parentPath);
+    setActivepath(parentPath);
     if(displayChevron) setOpen(!open);
-    if(parentPath === ROUTE_ENUM.FLEXPOOL) {
-      navigate(ROUTE_ENUM.OPEN);
-    } else {
-      navigate(parentPath);
-    }
+    // navigate(parentPath);
+    // if(parentPath === ROUTE_ENUM.FLEXPOOL) {
+    //   navigate(ROUTE_ENUM.OPEN);
+    // } else {
+    //   navigate(parentPath);
+    // }
   }
+
+  console.log("ActiePath", activePath)
 
   React.useEffect(() => {
     if(!isLargeScreen) {
-      if(location.pathname !== ROUTE_ENUM.FLEXPOOL){
+      if(activePath !== '/flexpool'){
         toggleSidebar();
       } 
     }
-  }, [location.pathname, isLargeScreen]);
+  }, [activePath, isLargeScreen]);
 
   return (
     <Box className="p-1">
@@ -98,7 +99,7 @@ export const Collapsible = (props: CollapsibleProps) => {
 
 interface CollapsibleProps {
   collapsedClassName?: string;
-  parentPath: string;
+  parentPath: Path;
   collapsible?: boolean;
   displayChevron?: boolean;
   parentTitle: string;

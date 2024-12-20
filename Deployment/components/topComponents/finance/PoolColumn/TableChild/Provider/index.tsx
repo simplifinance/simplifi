@@ -33,7 +33,7 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
 
     return(
         <Grid item xs={2} >
-            <button onClick={handleCollapse} className={`text-yellow-300 p-2 text-xs uppercase font-semibold `}>
+            <button onClick={handleCollapse} className={`${flexSpread} text-yellow-300 p-2 text-xs uppercase font-semibold `}>
                 <h3>{`Prov. ${index + 1}`}</h3>
                 <Chevron open={open} />
             </button>
@@ -47,7 +47,7 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                             </svg>
                         </button>
                     </div> */}
-                    <Box className="space-y-2 pb-4">
+                    <Box className="space-y-2 pb-4 w-full">
                         <ul>
                             <li className={`${flexSpread}`}>
                                 <h3 className="text-center font-bold text-sm md:text-md">Address</h3>

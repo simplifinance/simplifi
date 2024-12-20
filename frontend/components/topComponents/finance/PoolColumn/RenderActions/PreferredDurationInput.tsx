@@ -7,6 +7,7 @@ import { Input } from "../../Create/Input";
 import Tooltip from "@mui/material/Tooltip";
 import { VoidFunc } from "@/interfaces";
 import { PopUp } from "../../Create/forms/transactionStatus/PopUp";
+import { CustomButton } from "@/components/CustomButton";
 
 export const PreferredDurationInput : 
     React.FC<PreferredDurationInputProp> = 
@@ -19,42 +20,38 @@ export const PreferredDurationInput :
     return (
         <PopUp { ...{modalOpen, handleModalClose } } > 
             <Container maxWidth="xs" className="space-y-4">
-                <Stack className="p-4 md:p-8 rounded-lg space-y-12 text-lg bg-green1 text-white1 border shadow-lg shadow-yellow-100 text-center text-wrap ">
+                <Stack className="p-4 md:p-8 rounded-lg space-y-12 text-md bg-gray1 text-orange-300 shadow shadow-orange-200 text-center text-wrap ">
                     <Tooltip title={title}>
                         <h3 className="text-xl font-bold opacity-80">{"Your preferred duration (In hrs) "}</h3>
                     </Tooltip>
                     <Box className={`${flexSpread}`}>
-                        <Stack>
-                            <Input 
-                                {
-                                    ...{
-                                        id: "Duration",
-                                        onChange,
-                                        type: 'text',
-                                        placeholder: 'Enter preferred duration',
-                                        overrideBg: 'bg-transparent'
-                                    }
-                                }
-                            />
-                        </Stack>
-                        <button className="w-[30%] p-3 rounded-lg text-sm text-yellow-100">
+                        <input 
+                            id="Duration"
+                            onChange={onChange}
+                            type='text'
+                            placeholder='Enter preferred duration'
+                            className="bg-green1 rounded-[26px] p-3 text-xs w-[70%] text-white1/50"
+                        />
+                        <button className="w-[30%] p-3 rounded-lg text-sm text-orange-200">
                             {`${preferredDuration} hrs`}
                         </button>
                     </Box>
-                    <Stack className={`font-bold gap-2`}>
-                        <button 
-                            className={`${flexCenter} w-full bg-orangec text-yellow-100" font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
-                            onClick={useEpochDuration}
+                    <div className="flex justify-between items-center p-1 bg-green1 rounded-[26px]">
+                        <CustomButton
+                            handleButtonClick={useEpochDuration}
+                            disabled={false}
+                            overrideClassName="rounded-l-[26px] hover:shadow-sm hover:shadow-orange-200 p-3"
                         >
                             Use Epoch Duration
-                        </button>
-                        <button 
-                            className={`${flexCenter} w-full bg-yellow-200 text-orangec font-extrabold p-3 rounded-lg hover:shadow-md hover:shadow-yellow-100 hover:text-black`}
-                            onClick={handleModalClose}
+                        </CustomButton>
+                        <CustomButton
+                            handleButtonClick={handleModalClose}
+                            disabled={false}
+                            overrideClassName="bg-gray1 rounded-r-[26px] hover:shadow-sm hover:shadow-orange-200 p-3"
                         >
                             Submit
-                        </button>
-                    </Stack>
+                        </CustomButton>
+                    </div>
                 </Stack>
             </Container>
         </PopUp>

@@ -1,20 +1,40 @@
 import React from "react";
 import Grid from '@mui/material/Grid';
-import { type LiquidityPool } from '@/interfaces';
+import { PoolType, type LiquidityPool } from '@/interfaces';
 import { motion } from 'framer-motion';
 import { flexSpread, } from "@/constants";
 import { PoolColumn } from "../PoolColumn";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
-import { filterPools, type Operation } from "../commonUtilities";
+import filterPools, { type Operation } from "../commonUtilities";
+import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+import { CustomButton } from "@/components/CustomButton";
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
+  const [isPermissioned, setPermissionType] = React.useState<boolean>(false);
   const { storage: { pools } } = useAppStorage();
-  const filtered = filterPools(pools, operation);
+  const { open, closed } = filterPools(pools);
+  const filtered = operation === 'Open'? open : closed;
 
   return(
     <div className='space-y-4'>
       <div className="flex justify-between items-start md:items-center">
-        <h3 className='text-[36px] w-2/4 md:w-full md:text-[50px] font-black text-orange-300 text-left '>{heroTitle2}</h3>
+        <div className="flex bg-green1 p-1 rounded-[26px]">
+          <CustomButton
+            disabled={false}
+            overrideClassName={`${isPermissioned? 'bg-gray1' : 'bg-green1'} p-3 rounded-l-full ${!isPermissioned && 'hover:shadow-sm hover:shadow-orange-200 animate-none text-xs md:text-md uppercase'}`}
+            handleButtonClick={() => setPermissionType(true)}
+          >
+            Permissioned
+          </CustomButton>
+          <CustomButton
+            disabled={false}
+            overrideClassName={`w-full ${!isPermissioned? 'bg-gray1' : 'bg-green1'} p-3 rounded-r-full ${!isPermissioned && 'hover:shadow-sm hover:shadow-orange-200 text-xs md:text-md uppercase'}`}
+            handleButtonClick={() => setPermissionType(false)}
+          >
+            Permissionless
+          </CustomButton>
+        </div>
+        {/* <h3 className='text-[36px] w-2/4 md:w-full md:text-[50px] font-black text-orange-300 text-left '>{heroTitle2}</h3> */}
         <ul className={`text-[12px] w-2/4 md:w-full md:text-[16px] font-semibold text-orange-200 ${flexSpread} md:gap-6`}>
           <li className={`flex flex-col justify-center items-center text-center`}>
             <h3 className={"bg-green1 p-2 size-10 text-center rounded-full"}>{pools.length}</h3>

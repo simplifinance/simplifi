@@ -8,11 +8,11 @@ import { commonStyle } from '@/utilities';
 export const fadeStyle = (overrideWidth? : string, overrideHeight?: string) => {
     return {
         ...commonStyle(
-            {
-                width: overrideWidth ||  "100%",
-                height: overrideHeight || {xs: '100%', md: '750px'},
-                overflowY: 'auto'
-            }
+            // {
+            //     width: overrideWidth ||  "100%",
+            //     height: overrideHeight || {xs: '100%', md: '750px'},
+            //     overflowY: 'auto'
+            // }
         )
     }
 };
@@ -36,7 +36,7 @@ export const PopUp = (props: PopUpProps) => {
             hidden={!modalOpen}
         >
             <Fade in={modalOpen}>
-                <Box sx={{...fadeStyle(overrideWidth, overrideHeight), position: 'relative'}}>
+                <Box sx={{...fadeStyle(overrideWidth, overrideHeight),}}>
                     {children}
                 </Box>
             </Fade>

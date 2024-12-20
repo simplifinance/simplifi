@@ -1,77 +1,42 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
-import App from "@/components/App";
-import { Route, createBrowserRouter, createRoutesFromElements, RouterProvider } from "react-router-dom";
-import { POOLS_MOCK, ROUTE_ENUM } from "@/constants";
+import { POOLS_MOCK, } from "@/constants";
 import Dashboard from "@/components/topComponents/Dashboard";
 import FlexPool from "@/components/topComponents/finance";
 import Yield from "@/components/topComponents/Yield";
 import Faq from "@/components/topComponents/Faq";
 import SimpliDao from "@/components/topComponents/SimpliDao";
-import { DrawerAnchor, TransactionResult, TrxnResult } from "@/interfaces";
-import { Create } from "@/components/topComponents/finance/Create";
-import { Open } from "@/components/topComponents/finance/Open";
-import { Closed } from "@/components/topComponents/finance/Closed";
+import { DrawerAnchor, Path, TransactionResult, TrxnResult } from "@/interfaces";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
-import { filterPools } from "@/components/topComponents/finance/commonUtilities";
+import filterPools from "@/components/topComponents/finance/commonUtilities";
+import { MotionDivWrap } from "@/components/MotionDivWrap";
+import Sidebar from "@/components/App/Sidebar";
+import Navbar from "@/components/App/Navbar";
+import Footer from "@/components/App/Footer";
+import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
 
 /**
  * Renders Liquidity child components
  * @returns React.JSX.Element[]
  */
-const renderLiquidityChildComponents = () => [
-  {
-    path: ROUTE_ENUM.CREATE,
-    element: () => (<Create />),
-  },
-  {
-    path: ROUTE_ENUM.OPEN,
-    element: () => (<Open />),
-  },
-  {
-    path: ROUTE_ENUM.CLOSED,
-    element: () => (<Closed />)
-  }
-].map(({path, element}) => (
-  <Route key={path} {...{path, element: element()}} />
-));
+// const renderLiquidityChildComponents = () => [
+//   // {
+//   //   path: ROUTE_ENUM.CREATE,
+//   //   element: () => (<Create />),
+//   // },
+//   // {
+//   //   path: ROUTE_ENUM.OPEN,
+//   //   element: () => (<Open />),
+//   // },
+//   // {
+//   //   path: ROUTE_ENUM.CLOSED,
+//   //   element: () => (<Closed />)
+//   // }
+// ].map(({path, element}) => (
+//   <Route key={path} {...{path, element: element()}} />
+// ));
 
-/**
- * Renders App child components
- * @returns React.JSX.Element[]
- */
-const renderAppChildComponents = () => [
-  {
-    // children: undefined,
-    path: ROUTE_ENUM.DASHBOARD,
-    renderElement: () => ( <Dashboard /> ), 
-  },
-  {
-    children: renderLiquidityChildComponents(),
-    path: ROUTE_ENUM.FLEXPOOL,
-    renderElement: () => (<FlexPool />), 
-  },
-  {
-    children: undefined,
-    path: ROUTE_ENUM.YIELD,
-    renderElement: () => ( <Yield /> ), 
-  },
-  {
-    children: undefined,
-    path: ROUTE_ENUM.DAO,
-    renderElement: () => ( <SimpliDao /> ), 
-  },
-  {
-    children: undefined,
-    path: ROUTE_ENUM.FAQ,
-    renderElement: () => ( <Faq /> ), 
-  }
-].map(({renderElement, path, children}) => (
-  <Route key={path} {...{element: renderElement(), path}}>
-    { children }
-  </Route>
-));
 
 export default function SimpliApp() {
   const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK});
@@ -82,10 +47,8 @@ export default function SimpliApp() {
   const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
-  const [parentLinkActive, setParentActiveLink] = React.useState<string>(ROUTE_ENUM.DASHBOARD);
+  const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
-  
-  const setParentActive = (arg: string) => setParentActiveLink(arg);
   const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const setdrawerState = (arg: boolean) => setDrawerState(arg);
@@ -93,6 +56,7 @@ export default function SimpliApp() {
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = () => setPopUp(!openPopUp);
   const toggleSidebar = () => setShowSidebar(!showSidebar);
+  const setActivepath = (arg:Path) => setActivePath(arg);
   const setTrxnStatus = (arg: TransactionResult) => setTxnStatus(arg);
   const setMessage = (arg: string) => {
     const networkResponseError = 'Trxn failed with HTTP request failed';
@@ -108,7 +72,7 @@ export default function SimpliApp() {
     );
   }
 
-  // const filtered = filterPools(pools, operation);
+  const { open, closed, tvl, permissioned, permissionless } = filterPools(storage.pools);
 
   const toggleTransactionWindow =
     (value: boolean) =>
@@ -124,18 +88,27 @@ export default function SimpliApp() {
     setdrawerState(value );
   };
 
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route 
-        path={'/'} 
-        element={ <App /> } 
-      >
-        { renderAppChildComponents() }
-      </Route>
-    )
-  );
+  const displayScreen = () => {
+    const children = (
+      <div className='appContainer'>
+      <Navbar />
+      <Sidebar />
+      <main className='md:pl-4 md:py-[26px] md:pr-[22px] space-y-4'>
+        <MotionDivWrap className={`minHeight md:border-4 border-white1/20 md:rounded-[56px] px-4 py-6 md:py-10 bg-gray1 relative`} >
+          {
+            CHILDREN.filter(({path}) => path === activePath).at(0)?.element
+          }
+        </MotionDivWrap>
+        <Footer />
+      </main>
+      <NotConnectedPopUp handleClosePopUp={togglePopUp} openPopUp={openPopUp} />
+    </div>
+    );
+    return (
+      displayAppScreen? children : <OnbaordScreen />
+    );
+  };
 
-  const displayScreen = () => displayAppScreen? <RouterProvider router={router} /> : <OnbaordScreen />;
   React.useEffect(() => {
     if(openPopUp){
       setTimeout(() => {
@@ -149,6 +122,11 @@ export default function SimpliApp() {
     value={
       {
         storage, 
+        open,
+        tvl,
+        closed,
+        permissioned,
+        permissionless,
         setstate,
         exitOnboardScreen,
         toggleSidebar,
@@ -160,9 +138,9 @@ export default function SimpliApp() {
         drawerState,
         popUpDrawer,
         openPopUp,
-        parentLinkActive,
         displayOnboardUser,
-        setParentActive,
+        activePath,
+        setActivepath,
         setdrawerState,
         togglePopUp,
         handlePopUpDrawer,
@@ -177,3 +155,39 @@ export default function SimpliApp() {
     </StorageContextProvider>
   );
 }
+
+
+const CHILDREN : {path: Path, element: JSX.Element}[] = [
+  {
+    path: '/dashboard',
+    element: ( <Dashboard /> ), 
+  },
+  {
+    path: '/flexpool',
+    element: ( <FlexPool /> ), 
+  },
+  {
+    path: '/yield',
+    element: ( <Yield /> ), 
+  },
+  {
+    path: '/simplidao',
+    element: ( <SimpliDao /> ), 
+  },
+  {
+    path: 'faq',
+    element: ( <Faq /> ), 
+  }
+];
+
+
+  // const router = createBrowserRouter(
+  //   createRoutesFromElements(
+  //     <Route 
+  //       path={'/'} 
+  //       element={ <App /> } 
+  //     >
+  //       { renderAppChildComponents() }
+  //     </Route>
+  //   )
+  // );

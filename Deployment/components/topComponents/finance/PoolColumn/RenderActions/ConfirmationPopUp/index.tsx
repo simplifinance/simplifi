@@ -64,7 +64,7 @@ export const ConfirmationPopUp :
     }
 
     return (
-        <DrawerWrapper openDrawer={popUpDrawer === 'confirmation'} rest={{padding:'22px', background: '#000', borderLeft: '1px solid #2e3231'}}>
+        <DrawerWrapper openDrawer={popUpDrawer === 'confirmation'} rest={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%"}}>
             <Stack className="lg:p-4 space-y-4 text-orange-200 bg-gray1 md:bg-transparent border border-green1 p-4 rounded-[36px] w-full text-center text-md">
                 <button onClick={handleCloseDrawer} className="w-[fit-content] active:ring-1 bg-green1 rounded-full p-2 active:ring1">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">

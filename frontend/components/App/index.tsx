@@ -16,7 +16,7 @@ export default function App() {
   }, []);
 
   return (
-    <div className='appContainer bg-[url(/images/hero/hero-bg1.png)] object-cover'>
+    <div className='appContainer'>
       <Navbar />
       <Sidebar />
       <main className='md:pl-4 md:py-[26px] md:pr-[22px] space-y-4'>

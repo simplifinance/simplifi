@@ -1,16 +1,14 @@
 import React from "react";
 import Container from "@mui/material/Container";
-import { useNavigate } from "react-router-dom";
-import { ROUTE_ENUM } from "@/constants";
+import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 function SimpliDao(): JSX.Element {
-  const navigate = useNavigate();
-
+  const { setActivepath } = useAppStorage();
   React.useEffect(() => {
     setTimeout(() => {
-      navigate(ROUTE_ENUM.OPEN);
+      setActivepath('/flexpool');
     }, 10000);
-  }, [navigate]);
+  }, [setActivepath]);
 
   return (
     <Container maxWidth="xs" className="space-y-4 absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
