@@ -14,7 +14,7 @@ const durations = () => {
     return [...Array(721).keys()];
 }
 
-export default function Duration({inputProp: duration, isLargeScreen, handleChange} : InputCategoryProp) {    
+export default function Duration({inputProp: duration, handleChange} : InputCategoryProp) {    
     return (
         <div className='relative'>
             <button

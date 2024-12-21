@@ -7,17 +7,16 @@ import Collapse from "@mui/material/Collapse";
 import { flexSpread } from "@/constants";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
 
-
 export default function Participants({addToList, participants, handleDelete} : {participants: Address[], addToList: (arg: string) => void, handleDelete: (arg: number) => void} ) {
     const [address, setAddress] = React.useState<string>('');
     const [open, setOpen] = React.useState<boolean>(false);
     
-    const { setMessage } = useAppStorage();
+    const { setTrxnStatus } = useAppStorage();
     const addUp = () => {
         if(address !== '' && address !== zeroAddress){
             addToList(address);
         } else {
-            setMessage('Address is invalid');
+            setTrxnStatus({message: 'Address is invalid', loading: false});
         }
     }
 

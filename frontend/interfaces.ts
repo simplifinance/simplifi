@@ -22,7 +22,7 @@ export enum FuncTag {
   WITHDRAW,
   ENDED
 }
-export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed';
+export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type PoolType = 'Permissioned' | 'Permissionless';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 export type Pools = Readonly<LiquidityPool[]>;
@@ -38,16 +38,18 @@ export type TrxResult = 'Failed' | 'Success' | '';
 
 export interface TransactionCallbackArg {
   message?: Message; 
-  result?: TrxnResult;
-  txDone: boolean;
+  txResult?: Pools;
+  loading: boolean;
+  buttonText?: ButtonContent;
+  // loading: boolean;
 }
 
-export interface TransactionResult {
-  loading: boolean; 
-  message: string;
-  txResult?: TrxResult;
-  buttonText?: ButtonContent;
-}
+// export interface TransactionResult {
+//   loading: boolean; 
+//   message: string;
+//   txResult?: TrxnResult;
+//   buttonText?: ButtonContent;
+// }
 
 export type LiquidityPool = {
   userCount: Counters.CounterStruct;
@@ -61,15 +63,15 @@ export type LiquidityPool = {
 }
 
 export interface LiquidityChildrenProps {
-  storage: TrxnResult;
+  storage: Pools;
   // setStorage: (arg: TrxnResult) => void;
 }
 
-export interface TrxnResult {
-  wait?: WaitForTransactionReceiptReturnType;
-  pools: Pools;
-  // profile: Profile;
-}
+// export interface TrxnResult {
+//   // wait?: WaitForTransactionReceiptReturnType;
+//   // pools: Pools;
+//   // profile: Profile;
+// }
 
 export interface CreatePermissionedPoolParams extends Config{
   intRate: number;

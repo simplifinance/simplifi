@@ -12,7 +12,7 @@ export const approve = async(args: ApproveParam) => {
     const address = getTokenAddress();
     if(config) {        
         try {
-          callback?.({message: "Approval in progress", txDone: false});
+          callback?.({message: "Approval in progress", loading: true});
           const {request} = await simulateContract(config, {
               address,
               account,
@@ -23,7 +23,7 @@ export const approve = async(args: ApproveParam) => {
           const hash = await writeContract(config, { ...request });
           await waitForConfirmation({config, hash, fetch: false, setTrxnDone: false, callback});
         } catch (error: any) {
-            callback?.({message: formatError(error), txDone: true});
+            callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
         }
     }
 }

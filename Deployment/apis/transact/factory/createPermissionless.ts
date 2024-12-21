@@ -8,11 +8,10 @@ import { formatError } from "../formatError";
 const tokenAddr = getTokenAddress();
 
 export const createPermissionlessLiquidityPool = async(param: CreatePermissionLessPoolParams) => {
-  // console.log("Param: ", param)
   const { config, account, quorum, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   const address = getFactoryAddress();
   if(config) {
-    callback?.({message: "Creating Liquidity Pool",txDone: false});
+    callback?.({message: "Creating Liquidity Pool", loading: true, });
     try {
       const { request } = await simulateContract(config, {
         address,
@@ -24,7 +23,7 @@ export const createPermissionlessLiquidityPool = async(param: CreatePermissionLe
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback: callback!});
     } catch (error: any) {
-      callback?.({message: formatError(error), txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed',});
     }
   }
 

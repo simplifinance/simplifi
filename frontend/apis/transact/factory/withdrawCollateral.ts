@@ -8,7 +8,7 @@ export const withdrawCollateral = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
-    callback?.({message: "Getting back collateral", txDone: false});
+    callback?.({message: "Getting back collateral", loading: true});
     try {
       const {request} = await simulateContract(config, {
         address,
@@ -20,7 +20,7 @@ export const withdrawCollateral = async(args: CommonParam) => {
       const hash = await writeContract(config, { ...request });
       await waitForConfirmation({config, fetch: true, hash, setTrxnDone: true, callback:callback!});
     } catch (error: any) {
-      callback?.({message: formatError(error), txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
     }
   }
 }

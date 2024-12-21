@@ -3,11 +3,11 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import type { Address, AmountToApproveParam, ButtonContent, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
+import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
 import { Chevron } from "@/components/Collapsible";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
-import Notification from "@/components/Notification";
+// import Notification from "@/components/Notification";
 import { parseEther } from "viem";
 import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
@@ -29,16 +29,19 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { modalOpen, values, participants, type, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setstate, setTrxnStatus, setMessage, txnStatus } = useAppStorage();
+    const { setTrxnStatus, txnStatus } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        // if(arg.txDone) handleModalClose();
-        if(arg?.message) setMessage(arg.message);
-        if(arg?.result) setstate(arg.result);
+        if(!arg.loading) handleModalClose();
+        setTrxnStatus(arg);
+        // if(arg?.message) setMessage(arg.message);
+        // if(arg?.result) setstate(arg.result);
+        // setTrxnStatus({loading: arg.txDone? false : txnStatus.loading, buttonText: arg.txDone? 'Completed' : '', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: 'Failed',});
+
         // console.log("Arg result", arg?.result);
     }
 
@@ -66,7 +69,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     const handleClick = async() => {
         // otherParam.txnType = 'AWAIT PAYMENT';
-        setTrxnStatus({loading: true, message: 'Trxn processing', txResult: ''});
+        setTrxnStatus({loading: true, message: 'Trxn processing',});
         // setLoading((prev) => {prev.value = true; return prev;});
         const isPermissioned = type === "address";
         switch (txnStatus.buttonText) {
@@ -74,12 +77,12 @@ export const ReviewInput = (props: ReviewInputProps) => {
                 await handleTransact({ callback, otherParam })
                     // .then(() => setLoading({value: false, buttonText: 'CreatePool'}))
                     // setTrxnStatus({loading: false, message: 'Approval Completed', txResult: 'Success'})
-                    .then(() => setTrxnStatus({loading: false, buttonText: 'CreatePool', message: 'Approval Completed', txResult: 'Success'}))
-                    .catch((error: any) => {
-                        const errorMessage : string = error?.message || error?.data?.message;
-                        console.log("Err message", errorMessage);
-                        setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
-                    }); 
+                    // .then(() => setTrxnStatus({loading: false, buttonText: 'CreatePool', message: 'Approval Completed', txResult: 'Success'}))
+                    // .catch((error: any) => {
+                    //     const errorMessage : string = error?.message || error?.data?.message;
+                    //     // console.log("Err message", errorMessage);
+                    //     setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
+                    // }); 
                 break;
             case 'CreatePool':
                 otherParam.txnType = 'CREATE';
@@ -89,12 +92,12 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     otherParam,
                     createPermissionedPoolParam,
                     createPermissionlessPoolParam,
-                })
-                .then(() => setTrxnStatus({loading: false, buttonText: 'Completed', message: 'Transaction Completed', txResult: 'Success'}))
-                .catch((error: any) => {
-                    const errorMessage : string = error?.message || error?.data?.message;
-                    setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
-                }); 
+                });
+                // .then(() => setTrxnStatus({loading: false, buttonText: 'Completed', message: 'Transaction Completed', txResult: 'Success'}))
+                // .catch((error: any) => {
+                //     // const errorMessage : string = error?.message || error?.data?.message;
+                //     // setTrxnStatus({loading: false, buttonText: 'Failed', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: 'Failed'});
+                // }); 
                 break;
             default:
                 break;
@@ -103,14 +106,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     React.useEffect(() => {
         if(!values) handleModalClose();
-        if(txnStatus.buttonText === 'Completed') {
+        if(txnStatus.buttonText === 'Completed' || txnStatus.buttonText === 'Failed') {
             setTimeout(() => {
                 handleModalClose();
                 setTrxnStatus({loading: false, buttonText: 'Approve', message: 'Transaction Completed'})
             }, 3000);
         }
         return() => clearTimeout(3000);
-    },[values, handleModalClose, txnStatus.buttonText]);
+    },[values, handleModalClose, txnStatus.buttonText, setTrxnStatus]);
 
     return(
         <TransactionWindow openDrawer={modalOpen} styles={{borderLeft: '1px solid rgb(249 244 244 / 0.3)', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', height: "100%"}}>

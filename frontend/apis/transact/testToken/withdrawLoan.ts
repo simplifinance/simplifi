@@ -17,7 +17,7 @@ export const withdrawLoan = async(args: TransferFromParam) => {
         try {
             const allowance = await getAllowance({config, account: spender, spender, owner });
             if(new BigNumber(allowance.toString()).gt(0)) {
-              callback?.({message: `Withdrawal ${formatEther(allowance)} progress`, txDone: false});
+              callback?.({message: `Withdrawal ${formatEther(allowance)} progress`, loading: true});
               const {request} = await simulateContract(config, {
                   address,
                   account: spender,
@@ -28,10 +28,10 @@ export const withdrawLoan = async(args: TransferFromParam) => {
               const hash = await writeContract(config, { ...request });
               await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback});
             } else {
-              callback?.({message: `Nothing to withdraw`, txDone: false});
+              callback?.({message: `Nothing to withdraw`, loading: false});
             }
         } catch (error: any) {
-            callback?.({message: formatError(error), txDone: true});
+            callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
         }
     }
 }

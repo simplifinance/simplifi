@@ -11,7 +11,7 @@ import { CustomButton } from "@/components/CustomButton";
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {
   const [isPermissioned, setPermissionType] = React.useState<boolean>(false);
-  const { storage: { pools } } = useAppStorage();
+  const { storage: pools } = useAppStorage();
   const { open, closed } = filterPools(pools);
   const filtered = operation === 'Open'? open : closed;
 

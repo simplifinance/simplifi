@@ -10,7 +10,7 @@ export const getFinance = async(args: GetFinanceParam ) => {
   let result: boolean = false;
   if(config) {
     try {
-      callback?.({message: "Getting Finance", txDone: false});
+      callback?.({message: "Getting Finance", loading: true});
       const { request } = await simulateContract(config, {
         address,
         account,
@@ -23,7 +23,7 @@ export const getFinance = async(args: GetFinanceParam ) => {
       await waitForConfirmation({config, hash, fetch: false, setTrxnDone: false, callback: callback!})
         .then(() => result = true);
     } catch (error: any) {
-      callback?.({message: formatError(error),txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
     }
   }
   return result;

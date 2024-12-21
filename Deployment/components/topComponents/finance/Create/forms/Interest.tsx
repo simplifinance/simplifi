@@ -9,7 +9,7 @@ const rates = () => {
     return [...Array(100).keys()];
 }
 
-export default function Interest({inputProp: interest, isLargeScreen, handleChange} : InputCategoryProp) {    
+export default function Interest({inputProp: interest, handleChange} : InputCategoryProp) {    
     return (
         <div className='relative'>
             <button

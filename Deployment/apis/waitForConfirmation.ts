@@ -17,7 +17,7 @@ export const waitForConfirmation = async(
         const data = await getContractData({config});
         callback?.({
             message:  `${wait?.status.toString().toUpperCase()} : Hash ${wait?.transactionHash.substring(0, 10)}... ${wait.transactionHash.substring(11, wait?.transactionHash.length)}`, 
-            txDone: setTrxnDone? wait.status === 'success'? true : false : false, result: {wait, ...data}
+            loading: setTrxnDone? wait.status === 'success'? false : true : true, txResult: {...data}
         });
     }
 }

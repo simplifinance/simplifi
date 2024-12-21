@@ -9,7 +9,7 @@ const collaterals = () => {
     return [...Array(301).keys()];
 }
 
-export default function CollateralMultiplier({inputProp: collateral, isLargeScreen, handleChange} : InputCategoryProp) {    
+export default function CollateralMultiplier({inputProp: collateral, handleChange} : InputCategoryProp) {    
     return (
         <div className='relative'>
             <button

@@ -1,9 +1,5 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Chevron } from '@/components/Collapsible';
 import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
@@ -13,7 +9,7 @@ const quorums = () => {
     return [...Array(256).keys()];
 }
 
-export default function Quorum({inputProp: quorum, handleChange, isLargeScreen} : InputCategoryProp) {    
+export default function Quorum({inputProp: quorum, handleChange,} : InputCategoryProp) {    
     return (
         <div className='relative'>
             <button

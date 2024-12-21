@@ -9,6 +9,7 @@ import { formatAddr, } from "@/utilities";
 import { approve } from "@/apis/transact/testToken/approve";
 import { parseEther } from "viem";
 import Notification from "@/components/Notification";
+import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 
 interface ApprovalProps {
     amountToApprove: bigint;
@@ -17,16 +18,16 @@ interface ApprovalProps {
 }
 
 export const Approval = (props: ApprovalProps) => {
-    const [message, setMessage] = React.useState<string>('');
     const { modalOpen, amountToApprove, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
+    const { setTrxnStatus } = useAppStorage();
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg.message) setMessage(arg.message);
-        if(arg.txDone) {
+        if(!arg.loading) {
             handleModalClose(true);
         }
+        setTrxnStatus(arg);
     }
 
     const handleModalClose_ = () => handleModalClose(false);
@@ -65,7 +66,7 @@ export const Approval = (props: ApprovalProps) => {
                         </button>
                     </Stack> 
                 </Stack>
-                <Notification message={message} />
+                {/* <Notification message={message} /> */}
             </Container>
         </PopUp>
     );

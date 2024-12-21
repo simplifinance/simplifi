@@ -12,7 +12,7 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
   const address = getFactoryAddress();
   if(config) {
     try {
-      callback?.({message: "Creating Liquidity Pool", txDone: false});
+      callback?.({message: "Creating Liquidity Pool", loading: true});
       const { request } = await simulateContract(config, {
         address,
         account,
@@ -23,7 +23,7 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
       const hash = await writeContract(config, request );
       await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback: callback!});
     } catch (error: any) {
-      callback?.({message: formatError(error), txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
     }
   }
 

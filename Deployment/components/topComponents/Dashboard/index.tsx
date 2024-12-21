@@ -11,7 +11,7 @@ import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { flexEven, } from '@/constants';
 
 const Dashboard : React.FC = () => {
-  const { storage: { pools }, tvl, permissioned, permissionless } = useAppStorage()
+  const { storage: pools, tvl, permissioned, permissionless } = useAppStorage()
 
   const dashboardInfo = [
     {

@@ -9,7 +9,7 @@ export const payback = async(args: CommonParam) => {
   const address = getFactoryAddress();
   let result: boolean = false;
   if(config) {
-    callback?.({message: "Paying back loan", txDone: false});
+    callback?.({message: "Paying back loan", loading: true});
     try {
       const {request} = await simulateContract(config, {
         address,
@@ -22,7 +22,7 @@ export const payback = async(args: CommonParam) => {
       await waitForConfirmation({config, fetch: false, setTrxnDone: false, hash, callback:callback!})
         .then(() => result = true);
     } catch (error: any) {
-      callback?.({message: formatError(error), txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
     }
   }
   return result;

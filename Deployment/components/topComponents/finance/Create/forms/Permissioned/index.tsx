@@ -26,7 +26,7 @@ export const Permissioned = () => {
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
     const isLargeScreen = useMediaQuery('(min-width:768px)');
-    const { setMessage } = useAppStorage();
+    const { setTrxnStatus } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleModal = () => setModalPopUp(!modalOpen);
     const { txnStatus } = useAppStorage();
@@ -53,7 +53,7 @@ export const Permissioned = () => {
                 if(!copy.includes(formattedValue)){
                     copy.push(formattedValue);
                     setParticipant(copy);
-                    setMessage(`${formattedValue} was added`);
+                    setTrxnStatus({message: `${formattedValue} was added`, loading: false});
                 }
             }
         }

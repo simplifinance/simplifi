@@ -15,7 +15,7 @@ export const RenderActions = (props: RenderActionsProps) => {
 
     const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
-    const { setstate, setMessage, popUpDrawer, handlePopUpDrawer } = useAppStorage();
+    const { setTrxnStatus, popUpDrawer, handlePopUpDrawer } = useAppStorage();
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
 
     const handleModalClose = () => {
@@ -49,13 +49,10 @@ export const RenderActions = (props: RenderActionsProps) => {
     }
 
     const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg.message) setMessage(arg.message);
-        if(arg.txDone && arg.result) {
-            setstate(arg.result);
-        }
-        if(arg.txDone && popUpDrawer === 'confirmation') {
+        if(arg.loading && popUpDrawer === 'confirmation') {
             closeConfirmationPopUp();
         }
+        setTrxnStatus(arg);
     }
 
     switch (stage_toNumber) {

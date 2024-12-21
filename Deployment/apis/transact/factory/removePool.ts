@@ -8,7 +8,7 @@ export const removePool = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
   if(config) {
-    callback?.({message: "Liquidating In Progress", txDone: false});
+    callback?.({message: "Liquidating In Progress", loading: true});
     try {
       const {request} = await simulateContract(config, {
         address,
@@ -20,7 +20,7 @@ export const removePool = async(args: CommonParam) => {
       const hash = await writeContract(config, { ...request });
       await waitForConfirmation({config, fetch: true, hash, setTrxnDone: true, callback:callback!});
     } catch (error: any) {
-      callback?.({message: formatError(error), txDone: true});
+      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
     }
   }
 }
