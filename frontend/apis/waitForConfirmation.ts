@@ -1,7 +1,7 @@
 import { CONFIRMATIONS } from "@/constants";
 import { Address, TransactionCallback, WagmiConfig } from "@/interfaces";
 import { waitForTransactionReceipt } from "wagmi/actions";
-import { getContractData } from "./read/readContract";
+import { getEpoches } from "./read/readContract";
 
 export const waitForConfirmation = async(
     arg: {
@@ -9,15 +9,15 @@ export const waitForConfirmation = async(
         hash: Address, 
         callback?: TransactionCallback, 
         fetch: boolean,
-        setTrxnDone: boolean
     }) => {
-    const { config, hash, callback, setTrxnDone, fetch } = arg;
+    const { config, hash, callback, fetch } = arg;
     const wait = await waitForTransactionReceipt(config, { hash, confirmations: CONFIRMATIONS})
     if(fetch) {
-        const data = await getContractData({config});
+        const data = await getEpoches({config});
         callback?.({
-            message:  `${wait?.status.toString().toUpperCase()} : Hash ${wait?.transactionHash.substring(0, 10)}... ${wait.transactionHash.substring(11, wait?.transactionHash.length)}`, 
-            loading: setTrxnDone? wait.status === 'success'? false : true : true, txResult: {...data}
+            message: `${wait?.status.toString().toUpperCase()} : Hash ${wait?.transactionHash.substring(0, 6)}... ${wait.transactionHash.substring(28, wait?.transactionHash.length)}`, 
+            contractState: [...data],
         });
     }
+    return wait.status;
 }

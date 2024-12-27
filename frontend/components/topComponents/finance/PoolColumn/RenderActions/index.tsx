@@ -1,5 +1,5 @@
 import React from "react";
-import { AmountToApproveParam, ButtonText, FuncTag, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
+import { AmountToApproveParam, ButtonText, FuncTag, TransactionCallback, TrxState, } from "@/interfaces";
 import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
@@ -48,8 +48,8 @@ export const RenderActions = (props: RenderActionsProps) => {
         setPreferredDuration(value === ''? '0' : value);
     }
 
-    const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(arg.loading && popUpDrawer === 'confirmation') {
+    const callback : TransactionCallback = (arg: TrxState) => {
+        if(arg.status === 'success' && popUpDrawer === 'confirmation') {
             closeConfirmationPopUp();
         }
         setTrxnStatus(arg);

@@ -101,15 +101,11 @@ footer{
 
 .poweredbycrossfi::before, .poweredbycrossfi::after {
   content: 'Powered by CrossFI';
-  background-color: transparent;
   font-size: 10px;
   position: absolute;
-  color: #aab7fe;
-  top: 8%;
-  right: 5%;
-  background-color: #121212;
-  padding: 6px;
-  border-radius: 0 12px 0 12px;
+  color: #F87C00;
+  top: 6%;
+  right: 10%;
 }
 
 .animateSidebar{
@@ -191,6 +187,16 @@ footer{
 
   .animateSidebar::before{
     opacity: 0;
+  }
+
+  .poweredbycrossfi::before, .poweredbycrossfi::after {
+    font-size: 10px;
+    position: absolute;
+    top: 8%;
+    right: 5%;
+    background-color: #121212;
+    padding: 6px;
+    border-radius: 0 12px 0 12px;
   }
 }
 

@@ -1,12 +1,11 @@
 import React from "react";
-import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { flexCenter, flexSpread } from "@/constants";
 import type { ButtonText, } from "@/interfaces";
 import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { DrawerWrapper } from "../../TableChild";
 import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+import { formatError } from "@/apis/transact/formatError";
 
 export const ConfirmationPopUp : 
     React.FC<{
@@ -15,9 +14,10 @@ export const ConfirmationPopUp :
         epochId: number
     }> = 
         ({sendTransaction, buttonText, epochId}) => 
-{
+{   
+    const [loading, setLoading] = React.useState<boolean>(false);
     const handleCloseDrawer = () => handlePopUpDrawer('');
-    const { setTrxnStatus, popUpDrawer, handlePopUpDrawer, txnStatus: { loading, txResult } } = useAppStorage();
+    const { setTrxnStatus, popUpDrawer, handlePopUpDrawer, txnStatus } = useAppStorage();
     let message = ``;
 
     switch (buttonText) {
@@ -38,29 +38,20 @@ export const ConfirmationPopUp :
             break;
     }
 
-    const broadcastTransaction = async() => {
-        await sendTransaction()
-            .then(() => {
-                setTrxnStatus({loading: false, message: 'Trxn Completed', txResult: 'Success'});
-                handleCloseDrawer();
-            })
-                .catch((error: any) => {
-                    const errorMessage : string = error?.message || error?.data?.message;
-                    setTrxnStatus({loading: false, message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
-                });
-    }
-    
     const handleSendTransaction = async() => {
-        setTrxnStatus({loading: true, message: 'Trxn processing', txResult: ''});
-        await broadcastTransaction();
-        // setTimeout(
-        //     async() => {
-        //         handleCloseDrawer();
-        //         await broadcastTransaction();
-        //     }, 
-        //     3000
-        // );
-        
+        setLoading(true);
+        await sendTransaction()
+        .then(() => {
+            setTrxnStatus({message: 'Trxn Completed',});
+            setLoading(false);
+            setTimeout(() => handleCloseDrawer(), 3000);
+        })
+        .catch((error: any) => {
+            const errorMessage = formatError(error);
+            setTrxnStatus({message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`,});
+            setLoading(false);
+            setTimeout(() => handleCloseDrawer(), 3000);
+        });
     }
 
     return (
@@ -80,7 +71,8 @@ export const ConfirmationPopUp :
                     buttonAFunc={handleCloseDrawer}
                     buttonBFunc={handleSendTransaction}
                     disableButtonA={loading}
-                    disableButtonB={loading || txResult === 'Success'}
+                    disableButtonB={loading}
+                    overrideClassName="border border-gray1"
                 />
             </Stack>
         </DrawerWrapper>

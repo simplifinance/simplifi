@@ -6,7 +6,7 @@ import { flexSpread, } from "@/constants";
 import { PoolColumn } from "../PoolColumn";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import filterPools, { type Operation } from "../commonUtilities";
-import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+// import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
 import { CustomButton } from "@/components/CustomButton";
 
 export const Common : React.FC<{heroTitle2: string, operation: Operation}> = ({heroTitle2, operation}) => {

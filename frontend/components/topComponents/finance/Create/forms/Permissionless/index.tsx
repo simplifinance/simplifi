@@ -85,45 +85,40 @@ export const Permissionless = () => {
             <Stack className="place-items-center">
                 <CustomButton
                     overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
-                    disabled={txnStatus.loading}
+                    disabled={false}
                     handleButtonClick={toggleModal}
                 >
                     Submit
                 </CustomButton>
             </Stack>
             <ReviewInput 
-                {
-                    ...{
-                        handleModalClose: toggleModal,
-                        modalOpen,
-                        type: 'UnitLiquidity',
-                        values: [
-                            {
-                                title: 'Quorum',
-                                value: quorum.value
-                            },
-                            {
-                                title: 'Unit Liquidity',
-                                value: unitLiquidity.value
-                            },
-                            {
-                                title: 'Duration',
-                                value: duration.value,
-                            },
-                            {
-                                title: 'Int. Rate',
-                                value: interest.value,
-                            },
-                            {
-                                title: 'Collateral Coverage',
-                                value: ccr.value,
-                            },
-                        ]
-                    }
-                }
+                handleModalClose={toggleModal}
+                modalOpen={modalOpen}
+                type={'UnitLiquidity'}
+                formType={'Permissionless'}
+                values={[
+                    {
+                        title: 'Quorum',
+                        value: quorum.value
+                    },
+                    {
+                        title: 'Unit Liquidity',
+                        value: unitLiquidity.value
+                    },
+                    {
+                        title: 'Duration',
+                        value: duration.value,
+                    },
+                    {
+                        title: 'Int. Rate',
+                        value: interest.value,
+                    },
+                    {
+                        title: 'Collateral Coverage',
+                        value: ccr.value,
+                    },
+                ]}
             />
         </Stack>
     );
 }
-
-// md={i < 4? 6 : 12}

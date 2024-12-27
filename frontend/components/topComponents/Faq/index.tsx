@@ -9,7 +9,7 @@ const Content = ({title, content, subparagraph} : {title: React.ReactNode, conte
 
   return(
     <div>
-      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:shadow-sm hover:shadow-orange-200 rounded-md hover:bg-gray1/50 focus:bg-gray1/50`}>
+      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:shadow-sm hover:shadow-orange-200 rounded-t-md hover:bg-gray1/50 focus:bg-gray1/50`}>
         <span className={`text-md`}>{ title }</span>
         <Chevron open={open} />
       </button> 

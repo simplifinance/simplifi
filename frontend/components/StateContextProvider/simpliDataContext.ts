@@ -1,13 +1,13 @@
-import { DrawerAnchor, LiquidityPool, Path, Pools, TransactionCallbackArg, VoidFunc } from "@/interfaces";
+import { DrawerAnchor, LiquidityPool, Path, Pools, TrxState, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
     storage: Pools;
     // setstate: (arg: TrxnResult) => void;
     exitOnboardScreen: VoidFunc;
-    toggleSidebar: VoidFunc;
+    toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
-    setTrxnStatus: (arg: TransactionCallbackArg) => void; 
-    txnStatus: TransactionCallbackArg;
+    setTrxnStatus: (arg: TrxState) => void; 
+    // txnStatus: TrxState;
     // setMessage: (arg: string) => void;
     drawerState: boolean;
     openPopUp: boolean;

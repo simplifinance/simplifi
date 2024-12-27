@@ -3,30 +3,22 @@ import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 import { getTokenAddress } from "../../getAddress";
-import { formatError } from "../formatError";
 
 const tokenAddr = getTokenAddress();
 
 export const createPermissionedLiquidityPool = async(param: CreatePermissionedPoolParams) => {
   const { config, account, contributors, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   const address = getFactoryAddress();
-  if(config) {
-    try {
-      callback?.({message: "Creating Liquidity Pool", loading: true});
-      const { request } = await simulateContract(config, {
-        address,
-        account,
-        abi: createPermissionedLiquidityPoolAbi,
-        functionName: "createPermissionedPool",
-        args: [intRate, durationInHours, colCoverage, unitLiquidity, tokenAddr, contributors],
-      });
-      const hash = await writeContract(config, request );
-      await waitForConfirmation({config, hash, fetch: true, setTrxnDone: true, callback: callback!});
-    } catch (error: any) {
-      callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
-    }
-  }
-
+  callback?.({message: "Creating Liquidity Pool"});
+  const { request } = await simulateContract(config, {
+    address,
+    account,
+    abi: createPermissionedLiquidityPoolAbi,
+    functionName: "createPermissionedPool",
+    args: [intRate, durationInHours, colCoverage, unitLiquidity, tokenAddr, contributors],
+  });
+  const hash = await writeContract(config, request );
+  return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
 }
 
 const createPermissionedLiquidityPoolAbi = [

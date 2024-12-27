@@ -1,6 +1,6 @@
 import { BigNumberish, ethers } from "ethers";
 import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
-import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
+// import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
 
 export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
@@ -28,21 +28,24 @@ export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
-export type TransactionCallback = (arg: TransactionCallbackArg) => void;
+export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
-export type TrxResult = 'Failed' | 'Success' | '';
-// export type Selector = {
-//   poolType: PoolType;
-//   displayForm: boolean;
-// }
-
-export interface TransactionCallbackArg {
-  message?: Message; 
-  txResult?: Pools;
-  loading: boolean;
-  buttonText?: ButtonContent;
-  // loading: boolean;
+export type TrxResult = 'success' | 'reverted';
+export interface TrxState {
+  status?: TrxResult;
+  message: string;
+  // buttonText?: ButtonContent;
+  contractState?: Pools
 }
+
+// export interface TransactionCallbackArg {
+//   message?: Message; 
+//   contractState?: Pools;
+//   status?: TrxResult;
+//   // loading: boolean;
+//   // buttonText?: ButtonContent;
+//   // loading: boolean;
+// }
 
 // export interface TransactionResult {
 //   loading: boolean; 

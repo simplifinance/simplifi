@@ -6,7 +6,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { InputCategoryProp } from '@/interfaces';
 
 const liquidities = () => {
-    return [...Array(5000).keys()];
+    return [...Array(500).keys()];
 }
 
 export default function UnitLiquidity({inputProp: unitLiquidity, handleChange,} : InputCategoryProp) {    
@@ -28,7 +28,7 @@ export default function UnitLiquidity({inputProp: unitLiquidity, handleChange,} 
                 <div className='w-full place-items-center p-4 max-h-[250px] overflow-auto '>
                     {
                         liquidities().map((value) => (
-                            value > 0 && <button 
+                            value > 0 && value % 2 === 0 && <button 
                                 onClick={() => handleChange({value: value.toString(), open: false}, 'UnitLiquidity')}
                                 key={value}
                                 value={value}
