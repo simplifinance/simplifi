@@ -139,6 +139,7 @@ export interface FormattedData {
   isMember: boolean;
   isAdmin: boolean;
   loan_InBN: BigNumber;
+  sentQuota: boolean;
 }
 
 export interface FormattedPoolContentProps {

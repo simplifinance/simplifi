@@ -17,7 +17,7 @@ export default function filterPools (pools: Pools) {
   }
 
   const filterPool = (op: Operation) => {
-    console.log("Pools", pools)
+    // console.log("Pools", pools)
     return pools?.filter((pool) => {
       const stage = toBN(pool.stage.toString()).toNumber();
       const stageEnded = stage === FuncTag.ENDED;

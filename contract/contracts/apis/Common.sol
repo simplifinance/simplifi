@@ -38,6 +38,7 @@ interface Common {
     uint loan;
     uint colBals;
     address id;
+    bool sentQuota;
   }
 
   struct Rank {

@@ -16,7 +16,7 @@ import { CustomButton } from "@/components/CustomButton";
  * @param currentUser : Connected user wallet.
  * @returns Object: <{isMember: boolean, data: FormattedData}>
  */
-const screenUser = (
+const filterUser = (
     cData: FormattedData[], 
     currentUser: Address
 ) : ScreenUserResult => {
@@ -49,7 +49,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         isPermissionless,
         epochId_toNumber,
         epochId_bigint,
-        // quorum_toNumber,
+        quorum_toNumber,
         formatted_strategy,
         intPercent_string,
         unit_InEther,
@@ -59,7 +59,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
         userCount_toNumber,
     } = formattedPool;
 
-    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN }} = screenUser(cData_formatted, account);
+    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN, sentQuota }} = filterUser(cData_formatted, account);
     const otherParam: AmountToApproveParam = {
         config,
         account,
@@ -106,6 +106,10 @@ export const PoolColumn = (props: PoolColumnProps) => {
                         <h3>{FuncTag[stage_toNumber]}</h3>
                     </div>
                     <div className="flex items-center gap-2">
+                        <h3>{'Quorum:'}</h3>
+                        <h3>{quorum_toNumber}</h3>
+                    </div>
+                    <div className="flex items-center gap-2">
                         <h3 className="">{'Pair:'}</h3>
                         <h3 className="">{pair}</h3>
                     </div>
@@ -125,6 +129,9 @@ export const PoolColumn = (props: PoolColumnProps) => {
                         <RenderActions 
                             {
                                 ...{
+                                    sentQuota,
+                                    userCount: userCount_toNumber,
+                                    quorum: quorum_toNumber,
                                     isMember,
                                     isAdmin,
                                     isPermissionless,
@@ -156,6 +163,9 @@ export const PoolColumn = (props: PoolColumnProps) => {
                     <RenderActions 
                         {
                             ...{
+                                sentQuota,
+                                userCount: userCount_toNumber,
+                                quorum: quorum_toNumber, 
                                 isMember,
                                 isAdmin,
                                 isPermissionless,

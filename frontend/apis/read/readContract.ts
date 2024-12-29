@@ -280,6 +280,11 @@ const getPoolsAbi = [
                     "internalType": "address",
                     "name": "id",
                     "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "sentQuota",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct Common.Contributor",

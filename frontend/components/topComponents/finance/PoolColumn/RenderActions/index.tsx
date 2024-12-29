@@ -13,7 +13,7 @@ export const RenderActions = (props: RenderActionsProps) => {
     // const [confirmationModal, setConfirmationModal] = React.useState<boolean>(false);
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
 
-    const { stage_toNumber, isAdmin, strategy, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
+    const { stage_toNumber, isAdmin, strategy, sentQuota, userCount, quorum, epochId_toNumber, otherParam: otp, isPermissionless, maxEpochDuration, isMember, loan_InBN, payDate_InSec } = props;
 
     const { setTrxnStatus, popUpDrawer, handlePopUpDrawer } = useAppStorage();
     let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
@@ -58,12 +58,16 @@ export const RenderActions = (props: RenderActionsProps) => {
     switch (stage_toNumber) {
         case FuncTag.JOIN:
             if(isPermissionless){
-                if(isMember) buttonObj.disable = true;
-                else buttonObj.value = 'ADD LIQUIDITY';
+                if(isAdmin) {
+                    buttonObj = {value: 'WAIT', disable: true}
+                } else {
+                    buttonObj.value = 'ADD LIQUIDITY';
+                }
             } else {
-                if(isMember && !isAdmin) buttonObj.value = 'ADD LIQUIDITY';
-                else if(isMember && isAdmin) buttonObj = {value: 'WAIT', disable: true};
-                else buttonObj.disable = true;;
+                if(isAdmin) buttonObj = {value: 'WAIT', disable: true};
+                else if(isMember && !sentQuota) buttonObj = {value: 'ADD LIQUIDITY', disable: false};
+                else if(isMember && sentQuota) buttonObj = {value: 'WAIT', disable: true};
+                else buttonObj = {value: 'DISABLED', disable: true};
             }
             break;
 
@@ -74,10 +78,10 @@ export const RenderActions = (props: RenderActionsProps) => {
         
         case FuncTag.PAYBACK:
             if(isMember){
-                if(loan_InBN.gt(0)) buttonObj.value = 'PAYBACK';
+                if(loan_InBN.gt(0)) buttonObj = {value : 'PAYBACK', disable: false};
                 else buttonObj = { value: 'DISABLED', disable: true};
             } else {
-                if((new Date().getTime() / 1000) >  payDate_InSec) buttonObj = { value: 'LIQUIDATE', disable: true};
+                if((new Date().getTime() / 1000) >  payDate_InSec) buttonObj = { value: 'LIQUIDATE', disable: false};
                 else buttonObj = { value: 'DISABLED', disable: true};
             }
             break;
@@ -141,7 +145,10 @@ export interface RenderActionsProps {
     epochId_toNumber: number;
     loan_InBN: BigNumber;
     payDate_InSec: number;
+    quorum: number;
     otherParam: AmountToApproveParam;
     maxEpochDuration: string;
     strategy: Address;
+    userCount: number;
+    sentQuota: boolean;
 }

@@ -240,7 +240,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
 }
 
 export const formatProfileData = (param: Common.ContributorDataStruct) : FormattedData => {
-  const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, id, loan}, slot, rank: { member, admin }} = param;
+  const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan}, slot, rank: { member, admin }} = param;
   const payDate_InSec = toBN(payDate.toString()).toNumber();
   const slot_toNumber = toBN(slot.toString()).toNumber();
   const turnTime_InSec = toBN(payDate.toString()).toNumber();
@@ -267,7 +267,8 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
     id_toString: id.toString(),
     isMember: member,
     isAdmin: admin,
-    loan_InBN
+    loan_InBN,
+    sentQuota
   }
 }
 

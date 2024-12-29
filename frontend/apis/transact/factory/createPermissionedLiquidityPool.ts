@@ -8,8 +8,9 @@ const tokenAddr = getTokenAddress();
 
 export const createPermissionedLiquidityPool = async(param: CreatePermissionedPoolParams) => {
   const { config, account, contributors, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
+  console.log("param: ", param)
   const address = getFactoryAddress();
-  callback?.({message: "Creating Liquidity Pool"});
+  callback?.({message: "Creating Permissioned FlexPool"});
   const { request } = await simulateContract(config, {
     address,
     account,

@@ -31,7 +31,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
         setTrxnStatus(arg);
     }
 
-    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "APPROVE"};
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE"};
     const createPermissionedPoolParam : CreatePermissionedPoolParams = {
         account,
         colCoverage,
@@ -54,7 +54,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
     };
 
     const handleClick = async() => {
-        otherParam.txnType = 'CREATE';
         setLoading(true);
         setTrxnStatus({message: 'Trxn processing',});
         switch (formType) {
@@ -66,8 +65,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     createPermissionedPoolParam,
                 })
                 .then(() => {
-                    // callback({message: 'Creating FlexPool completed'});
-                    // setTrxnStatus();
                     setLoading(false);
                 })
                 .catch((error: any) => {
@@ -80,11 +77,9 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     router: 'Permissionless',
                     callback,
                     otherParam,
-                    createPermissionedPoolParam,
                     createPermissionlessPoolParam,
                 })
                 .then(() => {
-                    // setTrxnStatus({message: 'Creating FlexPool completed'});
                     setLoading(false);
                 })
                 .catch((error: any) => {

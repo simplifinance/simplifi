@@ -33,7 +33,7 @@ struct Data {
   /**Mapping of contributors addresses to epochid to slot */
   mapping(address => mapping(uint => uint)) slots;
 
-  Common.Pool[] poolArr;// For testing only. For better optimization, it will 
+  Common.Pool[] poolArr;// For testing only. To better optimize, it will 
                         // removed before going on live network
 }
 
@@ -159,7 +159,7 @@ library FactoryLib {
     self[epochId].isPermissionless = isPermissionless;
     self[epochId].cData.push(
       Common.ContributorData(
-        Common.Contributor(0, 0, 0, 0, 0, 0, cpp.members[0]),
+        Common.Contributor(0, 0, 0, 0, 0, 0, cpp.members[0], false),
         Common.Rank(true, true),
         0
       )
@@ -209,11 +209,11 @@ library FactoryLib {
     for(uint i = _d.zero; i < cpp.members.length; i++) {
       if(i == _d.zero) {
           cpr.pool = _createPool(self, cpp, strategy, admin, _d.f);
-          cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t);
+          cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t, _d.t);
       } else {
         address contributor = cpp.members[i];
         bool(contributor != admin).assertTrue("Admin spotted twice");
-        _addNewContributor(self, cpr.pool.uint256s.epochId, contributor, _d.f, _d.t);
+        _addNewContributor(self, cpr.pool.uint256s.epochId, contributor, _d.f, _d.t, _d.f);
         cpr.pool = _fetchPool(self, cpr.pool.uint256s.epochId); 
       } 
     }
@@ -267,7 +267,8 @@ library FactoryLib {
     uint epochId, 
     address contributor,
     bool isAdmin,
-    bool isMember                                                                                                                                                                                
+    bool isMember,
+    bool sentQuota                                                                                                                                                                              
   ) 
     private 
     returns(
@@ -277,7 +278,7 @@ library FactoryLib {
     self.poolArr[epochId].cData.push();
     uint8 slot = uint8(self.poolArr[epochId].userCount.current());
     self.poolArr[epochId].userCount.increment();
-    cData = _addContributor(self, slot, Common.Rank({admin: isAdmin, member: isMember}), contributor, epochId);
+    cData = _addContributor(self, slot, Common.Rank({admin: isAdmin, member: isMember}), contributor, epochId, sentQuota);
   }
 
   /**@dev Push a new contributor to storage.
@@ -291,13 +292,15 @@ library FactoryLib {
     uint8 slot,
     Common.Rank memory rank,
     address contributor,
-    uint epochId
+    uint epochId,
+    bool sentQuota
   ) 
     private 
     returns (Common.ContributorData memory cData)
   {
     _setSlotAndRank(self.poolArr[epochId].cData, slot, rank, contributor);
     self.slots[contributor][epochId] = slot;
+    self.poolArr[epochId].cData[slot].cData.sentQuota = sentQuota;
     cData = _getProfile(self, slot, epochId);
   }
 
@@ -317,23 +320,30 @@ library FactoryLib {
   {
     self[slot] = Common.ContributorData(
       {
-        cData: Common.Contributor(
-          {
-            durOfChoice: cbData.durOfChoice,
-            expInterest: cbData.expInterest,
-            payDate: cbData.payDate,
-            turnTime: cbData.turnTime,
-            loan: cbData.loan,
-            colBals: cbData.colBals,
-            id: cbData.id
-          }
-        ),
+        cData: cbData,
         rank: rank,
         slot: uint8(slot)
       }
     );
   }
-
+    //   uint durOfChoice;
+    // uint expInterest;
+    // uint payDate;
+    // uint turnTime;
+    // uint loan;
+    // uint colBals;
+    // address id;
+    // bool sentQuota;
+// Common.Contributor(
+//             cbData.durOfChoice,
+//             cbData.expInterest,
+//             cbData.payDate,
+//             cbData.turnTime,
+//             loan: cbData.loan,
+//             cbData.colBals,
+//             cbData.id,
+//             cbData.sentQuota
+//         )
   /**
    * @dev Return the length of epochs i.e total epoch to date
    * @param self : Storage of type Data
@@ -392,7 +402,7 @@ library FactoryLib {
     self.amountExist[cpp.unitContribution].assertFalse("Amount exist");
     self.amountExist[cpp.unitContribution] = _d.t;
     cpr.pool = _createPool(self, cpp, strategy, admin, _d.t);
-    cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t);
+    cpr.cData = _addNewContributor(self, cpr.pool.uint256s.epochId, admin, _d.t, _d.t, _d.t);
   }
 
   /** 
@@ -443,10 +453,11 @@ library FactoryLib {
     Def memory _d = _def();
     if(_ab.isPermissioned) {
       _mustBeAMember(self, _ab.epochId, _msgSender());
+      self.poolArr[_ab.epochId].cData[_getSlot(self.slots, _msgSender(), _ab.epochId)].cData.sentQuota = _d.t;
     } else {
       Utils.assertTrue(_getUserCount(self.poolArr[_ab.epochId]) < ced.pool.uints.quorum, "Pub filled");
       _mustNotBeAMember(self, _ab.epochId, _msgSender());
-      _addNewContributor(self, _ab.epochId, _msgSender(), _d.f, _d.t);
+      _addNewContributor(self, _ab.epochId, _msgSender(), _d.f, _d.t, _d.t);
     }
     self.poolArr[_ab.epochId].uint256s.currentPool += ced.pool.uint256s.unit;
     ced.pool = _fetchPool(self, _ab.epochId);
@@ -770,8 +781,6 @@ library FactoryLib {
         caller = _msgSender();
         _mustBeAMember(self, arg.epochId, caller);
         cbt = _swapFullProfile(self, cbt.slot, arg.expected, caller, arg.epochId, cbt);
-      } else {
-        // Do thing
       }
     } else {
       require(_msgSender() == cbt.cData.id, "Turn time has not passed");
@@ -789,15 +798,16 @@ library FactoryLib {
     _moveSelectorToTheNext(self.poolArr, arg.epochId);
     _setContributorData(
       self.poolArr[arg.epochId].cData,
-      Common.Contributor({
-        durOfChoice: arg.durOfChoice,
-        expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
-        payDate: _now().add(arg.durOfChoice),
-        turnTime: cbt.cData.turnTime,
-        loan: _setClaim(Common.SetClaimParam(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,caller, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20)),
-        colBals: arg.msgValue,
-        id: caller
-      }),
+      Common.Contributor(
+        arg.durOfChoice,
+        arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
+        _now().add(arg.durOfChoice),
+        cbt.cData.turnTime,
+        _setClaim(Common.SetClaimParam(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,caller, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20)),
+        arg.msgValue,
+        caller,
+        cbt.cData.sentQuota
+      ),
       cbt.rank,
       cbt.slot
     );
