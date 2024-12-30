@@ -1,5 +1,5 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool,} from "@/interfaces";
+import type { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, TrxResult,} from "@/interfaces";
 import BigNumber from 'bignumber.js';
 import { getCurrentDebt } from "./apis/read/getCurrentDebt";
 import { getAllowance } from "./apis/transact/testToken/getAllowance";
@@ -17,6 +17,7 @@ import assert from "assert";
 import { getFactoryAddress } from "./apis/contractAddress";
 import { withdrawLoan } from "./apis/transact/testToken/withdrawLoan";
 import { withdrawCollateral } from "./apis/transact/factory/withdrawCollateral";
+import { removePool } from "./apis/transact/factory/removePool";
 
 /**
  * Converts value of 'value' of type string to 'ether' representation.
@@ -68,7 +69,7 @@ export const commonStyle = (props?: {}) => {
  * Filter and calculate amount to approve
  * Note: If trxnType is 'PAY', we provide for 60 minutes contingency between now and 
  * transaction time. This is to avoid the trx being reverted. User should not worry as 
- * what will be taken will be the exact debt to date.
+ * what the contract takes is the exact debt to date.
  * @param param 
  * @returns 
 */
@@ -78,43 +79,29 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
   let owner : Address = account;
   let spender : Address = getFactoryAddress();
 
-  try {
-    switch (txnType) {
-      case 'ADD LIQUIDITY':
-        amtToApprove = amtToApprove;
-        break;
-      case 'APPROVE':
-        amtToApprove = amtToApprove;
-        break;
-      case 'PAYBACK':
-        assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId not given");
-        const curDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
-        amtToApprove = curDebt.plus(toBN(intPerSec.toString()).times(60)); 
-        break;
-      case 'LIQUIDATE':
-        assert(epochId !== undefined && intPerSec !== undefined && lastPaid, "Utilities: EpochId and IntPerSec parameters missing.");
-        const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
-        amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
-        break;
-      case 'GET FINANCE':
-        assert(epochId !== undefined, "Utilities: EpochId not given");
-        const collateral = await getCollateralQuote({config, epochId});
-        // console.log("collateral", collateral[0].toString());
-        amtToApprove = toBN(collateral[0].toString());
-        break;
-      default:
-        break;
-    }
-  } catch (error: any) {
-    console.log("Error", error?.message || error?.data.message);
+  switch (txnType) {
+    case 'PAYBACK':
+      assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId or Interest per second not given");
+      const estCurDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
+      amtToApprove = estCurDebt.plus(toBN(intPerSec.toString()).times(60)); 
+      break;
+    case 'LIQUIDATE':
+      assert(epochId !== undefined && intPerSec !== undefined && lastPaid, "Utilities: EpochId and IntPerSec parameters missing.");
+      const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
+      amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
+      break;
+    case 'GET FINANCE':
+      assert(epochId !== undefined, "Utilities: EpochId not given");
+      const collateral = await getCollateralQuote({config, epochId});
+      amtToApprove = toBN(collateral[0].toString());
+      const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
+      if(prevAllowance.gte(amtToApprove)) {
+        amtToApprove = toBN(0);
+      }
+      break;
+    default:
+      break;
   }
-  if(txnType !== 'GET FINANCE') {
-    const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
-    if(prevAllowance.gte(amtToApprove)) {
-      amtToApprove = toBN(0);
-    }
-  }
-
   return amtToApprove;
 }
 
@@ -122,8 +109,9 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const { callback, strategy, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
+  let returnValue : TrxResult = 'success';
 
-  if(txnType === 'ADD LIQUIDITY' || txnType === 'PAYBACK' || txnType === 'LIQUIDATE' || txnType === 'APPROVE') {
+  if(txnType !== 'GET FINANCE') {
     if(amountToApprove.gt(0)) {
       await approve({
           account,
@@ -136,37 +124,39 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   switch (txnType) {
     case 'ADD LIQUIDITY':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await addToPool({account, config, epochId, callback});
+      returnValue = await addToPool({account, config, epochId, callback});
       break;
     case 'GET FINANCE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
-      await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback})
-        .then(async(result) => {
-          if(result) await withdrawLoan({config, account, strategy, callback});
-        })
+      const get = await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
+      if(get === 'success') await withdrawLoan({config, account, strategy, callback});
       break;
     case 'PAYBACK':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await payback({account, config, epochId, callback})
-        .then(async(result) => {
-          if(result) await withdrawCollateral({account, config, epochId, callback});
-        });
+      const pay = await payback({account, config, epochId, callback});
+      if(pay === 'success') { 
+        returnValue = await withdrawCollateral({account, config, epochId, callback});
+      }  
+      break;
+    case 'REMOVE':
+      assert(epochId !== undefined, "Utilities: EpochId is missing.");
+      await removePool({account, config, epochId}); 
       break;
     case 'LIQUIDATE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await liquidate({account, config, epochId, callback});
+      returnValue = await liquidate({account, config, epochId, callback});
       break;
     case 'CREATE':
       assert(router, "Utilities: Router was not provider");
       switch (router) {
         case 'Permissioned':
           assert(createPermissionedPoolParam !== undefined, "Utilities: createPermissionedPoolParam: Param not found");
-          await createPermissionedLiquidityPool(createPermissionedPoolParam);
+          returnValue = await createPermissionedLiquidityPool(createPermissionedPoolParam);
           break;
         case 'Permissionless':
           assert(createPermissionlessPoolParam !== undefined, "Utilities: createPermissionless parameters not found");
-          await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
+          returnValue = await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
           break;
         default:
           break;
@@ -242,6 +232,8 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
     fullInterest_InEther,
     intPerSec_InEther,
     currentPool_InEther,
+    unitInBN: toBN(unit.toString()),
+    currentPoolInBN: toBN(currentPool.toString()),
     admin_lowerCase: admin.toString().toLowerCase(),
     asset_lowerCase: asset.toString().toLowerCase(),
     admin,
@@ -254,7 +246,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
 }
 
 export const formatProfileData = (param: Common.ContributorDataStruct) : FormattedData => {
-  const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, id, loan}, slot, rank: { member, admin }} = param;
+  const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan}, slot, rank: { member, admin }} = param;
   const payDate_InSec = toBN(payDate.toString()).toNumber();
   const slot_toNumber = toBN(slot.toString()).toNumber();
   const turnTime_InSec = toBN(payDate.toString()).toNumber();
@@ -281,6 +273,15 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
     id_toString: id.toString(),
     isMember: member,
     isAdmin: admin,
-    loan_InBN
+    loan_InBN,
+    sentQuota
   }
 }
+
+
+// case 'ADD LIQUIDITY':
+//   amtToApprove = amtToApprove;
+//   break;
+// case 'APPROVE':
+//   amtToApprove = amtToApprove;
+//   break;

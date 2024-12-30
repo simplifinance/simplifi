@@ -3,49 +3,35 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, TransactionCallback, TransactionCallbackArg } from "@/interfaces";
+import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, PoolType, TransactionCallback, TrxState, } from "@/interfaces";
 import { Chevron } from "@/components/Collapsible";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
-// import Notification from "@/components/Notification";
 import { parseEther } from "viem";
 import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { formatError } from "@/apis/transact/formatError";
 import TransactionWindow from "../../../PoolColumn/RenderActions/ConfirmationPopUp/TransactionWindow";
-
-interface ReviewInputProps {
-    values: {title: string, value: string}[];
-    type: InputSelector;
-    participants?: Address[];
-    modalOpen: boolean;
-    handleModalClose: () => void;
-}
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
-    // const [loading, setLoading] = React.useState<{buttonText: ButtonContent, value: boolean}>({buttonText: 'Approve', value: false});
-    // const [message, setMessage] = React.useState<string>('');
-    
-    const { modalOpen, values, participants, type, handleModalClose } = props;
+    const [loading, setLoading] = React.useState<boolean>(false);
+
+    const { modalOpen, values, participants, type, formType, handleModalClose } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setTrxnStatus, txnStatus } = useAppStorage();
+    const { setTrxnStatus, } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
 
-    const callback : TransactionCallback = (arg: TransactionCallbackArg) => {
-        if(!arg.loading) handleModalClose();
+    const callback : TransactionCallback = (arg: TrxState) => {
+        if(arg.status === 'success') handleModalClose();
         setTrxnStatus(arg);
-        // if(arg?.message) setMessage(arg.message);
-        // if(arg?.result) setstate(arg.result);
-        // setTrxnStatus({loading: arg.txDone? false : txnStatus.loading, buttonText: arg.txDone? 'Completed' : '', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: 'Failed',});
-
-        // console.log("Arg result", arg?.result);
     }
 
-    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "APPROVE"};
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE"};
     const createPermissionedPoolParam : CreatePermissionedPoolParams = {
         account,
         colCoverage,
@@ -68,52 +54,47 @@ export const ReviewInput = (props: ReviewInputProps) => {
     };
 
     const handleClick = async() => {
-        // otherParam.txnType = 'AWAIT PAYMENT';
-        setTrxnStatus({loading: true, message: 'Trxn processing',});
-        // setLoading((prev) => {prev.value = true; return prev;});
-        const isPermissioned = type === "address";
-        switch (txnStatus.buttonText) {
-            case 'Approve':
-                await handleTransact({ callback, otherParam })
-                    // .then(() => setLoading({value: false, buttonText: 'CreatePool'}))
-                    // setTrxnStatus({loading: false, message: 'Approval Completed', txResult: 'Success'})
-                    // .then(() => setTrxnStatus({loading: false, buttonText: 'CreatePool', message: 'Approval Completed', txResult: 'Success'}))
-                    // .catch((error: any) => {
-                    //     const errorMessage : string = error?.message || error?.data?.message;
-                    //     // console.log("Err message", errorMessage);
-                    //     setTrxnStatus({loading: false, buttonText: 'Approve', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: ''});
-                    // }); 
-                break;
-            case 'CreatePool':
-                otherParam.txnType = 'CREATE';
+        setLoading(true);
+        setTrxnStatus({message: 'Trxn processing',});
+        switch (formType) {
+            case 'Permissioned':
                 await handleTransact({
-                    router: isPermissioned? 'Permissioned' : 'Permissionless',
+                    router: 'Permissioned',
                     callback,
                     otherParam,
                     createPermissionedPoolParam,
+                })
+                .then(() => {
+                    setLoading(false);
+                })
+                .catch((error: any) => {
+                    const errorMessage = formatError(error);
+                    setLoading(false);
+                    setTrxnStatus({message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`,});
+                }); 
+            case 'Permissionless':
+                await handleTransact({
+                    router: 'Permissionless',
+                    callback,
+                    otherParam,
                     createPermissionlessPoolParam,
-                });
-                // .then(() => setTrxnStatus({loading: false, buttonText: 'Completed', message: 'Transaction Completed', txResult: 'Success'}))
-                // .catch((error: any) => {
-                //     // const errorMessage : string = error?.message || error?.data?.message;
-                //     // setTrxnStatus({loading: false, buttonText: 'Failed', message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`, txResult: 'Failed'});
-                // }); 
+                })
+                .then(() => {
+                    setLoading(false);
+                })
+                .catch((error: any) => {
+                    const errorMessage = formatError(error);
+                    setLoading(false);
+                    setTrxnStatus({message: `Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`,});
+                }); 
                 break;
             default:
                 break;
         }
+        setTimeout(() => {
+            handleModalClose();
+        }, 3000);
     }
-
-    React.useEffect(() => {
-        if(!values) handleModalClose();
-        if(txnStatus.buttonText === 'Completed' || txnStatus.buttonText === 'Failed') {
-            setTimeout(() => {
-                handleModalClose();
-                setTrxnStatus({loading: false, buttonText: 'Approve', message: 'Transaction Completed'})
-            }, 3000);
-        }
-        return() => clearTimeout(3000);
-    },[values, handleModalClose, txnStatus.buttonText, setTrxnStatus]);
 
     return(
         <TransactionWindow openDrawer={modalOpen} styles={{borderLeft: '1px solid rgb(249 244 244 / 0.3)', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', height: "100%"}}>
@@ -162,12 +143,12 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     }
                 </div>
                 <button
-                    disabled={txnStatus.loading || txnStatus.buttonText === 'Completed'}
-                    className={`w-full p-3 rounded-[26px] ${txnStatus.loading? "bg-gray-200 opacity-50" : "bg-orange-200"} text-green1 text-xs uppercase font-medium hover:shadow-sm hover:text-orangec hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200 flex justify-center`}
+                    disabled={loading}
+                    className={`w-full p-3 rounded-[26px] ${loading? "bg-gray-200 opacity-50" : "bg-orange-200"} text-green1 text-xs uppercase font-medium hover:shadow-sm hover:text-orangec hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200 flex justify-center`}
                     onClick={handleClick}
                 >
                     {
-                        txnStatus.loading? <Spinner color={"#F87C00"} /> : txnStatus.buttonText
+                        loading? <Spinner color={"#F87C00"} /> : 'CreatePool'
                     }
                 </button>
             </Box>
@@ -176,7 +157,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
     );
 }
 
-
+interface ReviewInputProps {
+    values: {title: string, value: string}[];
+    type: InputSelector;
+    participants?: Address[];
+    modalOpen: boolean;
+    formType: PoolType;
+    handleModalClose: () => void;
+}
     // const toggleApprovalModal = (continueExec: boolean) => {
     //     setApprovalModal(false);
     //     setContinuation(true);

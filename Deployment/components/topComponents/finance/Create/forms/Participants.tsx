@@ -16,7 +16,7 @@ export default function Participants({addToList, participants, handleDelete} : {
         if(address !== '' && address !== zeroAddress){
             addToList(address);
         } else {
-            setTrxnStatus({message: 'Address is invalid', loading: false});
+            setTrxnStatus({message: 'Address is invalid'});
         }
     }
 

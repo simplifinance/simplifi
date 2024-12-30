@@ -23,7 +23,6 @@ export default function SimpliApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<boolean>(false);
   const [showSidebar, setShowSidebar] = React.useState(false);
-  // const [txnStatus, setTxnStatus] = React.useState<TrxState>({message: '',});
   const [message, setMessage] = React.useState<string>('');
   const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
@@ -35,28 +34,15 @@ export default function SimpliApp() {
   const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const setdrawerState = (arg: boolean) => setDrawerState(arg);
-  // const setstate = (arg: TrxnResult) => setStorage(arg);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = () => setPopUp(!openPopUp);
+  const setmessage = (arg: string) => setMessage(arg);
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
   const setTrxnStatus = (arg: TrxState) => {
     if(arg.message) setMessage(arg.message);
     if(arg.contractState) setStorage(arg.contractState);
   };
-  // const setMessage = (arg: string) => {
-  //   const networkResponseError = 'Trxn failed with HTTP request failed';
-  //   setTxnStatus(
-  //     (prev) => { 
-  //       if(arg.match(networkResponseError)){
-  //         prev.message = 'Please check your internet connection';
-  //       } else {
-  //         prev.message = arg;
-  //       }
-  //       return prev;
-  //     }
-  //   );
-  // }
 
   const { open, closed, tvl, permissioned, permissionless } = filterPools(storage);
 
@@ -123,6 +109,7 @@ export default function SimpliApp() {
         open,
         tvl,
         closed,
+        message,
         permissioned,
         permissionless,
         exitOnboardScreen,
@@ -130,7 +117,7 @@ export default function SimpliApp() {
         showSidebar,
         setTrxnStatus,
         // txnStatus,
-        // setMessage,
+        setmessage,
         displayAppScreen,
         drawerState,
         popUpDrawer,
@@ -148,7 +135,7 @@ export default function SimpliApp() {
       <div >
         { displayScreen() }
       </div>
-      <Notification message={message} />
+      <Notification message={message} resetMessage={() => setmessage('')} />
     </StorageContextProvider>
   );
 }

@@ -149,7 +149,7 @@
       ]
     },
     "Factory": {
-      "address": "0x4976c4999187416eE499F3Fb9974966C74747eAd",
+      "address": "0x09472cBF305BF8323cb2E8DF79C942E76aeB38cd",
       "abi": [
         {
           "inputs": [
@@ -412,6 +412,11 @@
                               "internalType": "address",
                               "name": "id",
                               "type": "address"
+                            },
+                            {
+                              "internalType": "bool",
+                              "name": "sentQuota",
+                              "type": "bool"
                             }
                           ],
                           "internalType": "struct Common.Contributor",
@@ -493,6 +498,11 @@
                           "internalType": "address",
                           "name": "id",
                           "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
                         }
                       ],
                       "internalType": "struct Common.Contributor",
@@ -707,6 +717,11 @@
                               "internalType": "address",
                               "name": "id",
                               "type": "address"
+                            },
+                            {
+                              "internalType": "bool",
+                              "name": "sentQuota",
+                              "type": "bool"
                             }
                           ],
                           "internalType": "struct Common.Contributor",
@@ -918,6 +933,11 @@
                               "internalType": "address",
                               "name": "id",
                               "type": "address"
+                            },
+                            {
+                              "internalType": "bool",
+                              "name": "sentQuota",
+                              "type": "bool"
                             }
                           ],
                           "internalType": "struct Common.Contributor",
@@ -1129,6 +1149,11 @@
                               "internalType": "address",
                               "name": "id",
                               "type": "address"
+                            },
+                            {
+                              "internalType": "bool",
+                              "name": "sentQuota",
+                              "type": "bool"
                             }
                           ],
                           "internalType": "struct Common.Contributor",
@@ -1353,6 +1378,11 @@
                               "internalType": "address",
                               "name": "id",
                               "type": "address"
+                            },
+                            {
+                              "internalType": "bool",
+                              "name": "sentQuota",
+                              "type": "bool"
                             }
                           ],
                           "internalType": "struct Common.Contributor",
@@ -1587,6 +1617,11 @@
                           "internalType": "address",
                           "name": "id",
                           "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
                         }
                       ],
                       "internalType": "struct Common.Contributor",
@@ -1797,6 +1832,11 @@
                       "internalType": "address",
                       "name": "id",
                       "type": "address"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "sentQuota",
+                      "type": "bool"
                     }
                   ],
                   "internalType": "struct Common.Contributor",
@@ -2158,6 +2198,11 @@
                           "internalType": "address",
                           "name": "id",
                           "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
                         }
                       ],
                       "internalType": "struct Common.Contributor",
@@ -2362,6 +2407,11 @@
                           "internalType": "address",
                           "name": "id",
                           "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
                         }
                       ],
                       "internalType": "struct Common.Contributor",
@@ -2462,6 +2512,11 @@
                       "internalType": "address",
                       "name": "id",
                       "type": "address"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "sentQuota",
+                      "type": "bool"
                     }
                   ],
                   "internalType": "struct Common.Contributor",
@@ -2833,7 +2888,7 @@
       ]
     },
     "FactoryLib": {
-      "address": "0x881E46D24d81776e5c4c839E12648C5880904874",
+      "address": "0x76685868B6c270d081450c488372E04F6db11494",
       "abi": [
         {
           "anonymous": false,
@@ -2997,6 +3052,11 @@
                           "internalType": "address",
                           "name": "id",
                           "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
                         }
                       ],
                       "internalType": "struct Common.Contributor",
@@ -3179,7 +3239,7 @@
       ]
     },
     "StrategyManager": {
-      "address": "0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d",
+      "address": "0x0B097193b0B7a6bC240591351173540467f5f3d4",
       "abi": [
         {
           "inputs": [

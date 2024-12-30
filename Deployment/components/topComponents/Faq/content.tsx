@@ -47,7 +47,7 @@ export const faqContent = [
     },
     {
         title: <h1>What Does Duration Mean?</h1>,
-        content: <p>
+        content: <div>
             The length of time that a loan is due for repayment. This period is often short and are specified in hours between 1 and 30 hours. 
             While &apos;Duration&apos; is set for an epoch, users/liquidity beneficiaries may specify their choices when 
             it&apos;s their turn to getFinance. User&apos;s choices are prioritize over the operator&apos;s. If user&apos;s choice is undefined, 
@@ -56,7 +56,7 @@ export const faqContent = [
                 <li>Borrower&apos;s choice must not be exceed that of operator&apos;s.</li>
                 <li>Maximum epoch or operator&apos;s duration is currently pegged to 30 days equivalent to &apos;720 hrs&apos;, and may be expanded in the future</li>
             </ul> 
-        </p>,
+        </div>,
         subparagraph: <p ></p>,
     },
     {
@@ -82,7 +82,7 @@ export const faqContent = [
     },
     {
         title: <h1>How Do I Withdraw My loan?</h1>,
-        content: <p>
+        content: <div>
             Withdrawal is activate when users send a valid borrow request to 
             a FlexPool. A few conditions must be met before the transaction can pass. 
             <ul>
@@ -94,7 +94,7 @@ export const faqContent = [
             Payback period is another instance where withdrawal is activated. This time,
             user pay back their loans and the collateral is unlocked. With our smart 
             interface, these steps are covered in a smart contract call.
-        </p>,
+        </div>,
         subparagraph: <p ></p>,
     },
     {

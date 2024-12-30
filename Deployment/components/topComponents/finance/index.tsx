@@ -1,13 +1,15 @@
 import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import { getEpoches } from '@/apis/read/readContract';
-import { useAccount, useConfig } from 'wagmi';
+import { Config, useAccount, useConfig, useConnect } from 'wagmi';
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { CustomButton } from '@/components/CustomButton';
 import { PoolWrapper } from './pool';
 import { Create } from './Create';
 // import { useMediaQuery } from '@mui/material';
 import { flexStart, flexSpread } from '@/constants';
+// import { mockConnector } from '@/SimpliProvider';
+// import { WagmiConfig } from '@/interfaces';
 
 const FlexPool = () => {
   const [isPermissioned, setPermissionType] = React.useState<boolean>(false);
@@ -16,38 +18,12 @@ const FlexPool = () => {
   const { storage: pools, permissioned, permissionless } = useAppStorage();
   const closeDisplayForm = () => setDisplayForm(false);
   const { setTrxnStatus, openPopUp, togglePopUp, setActivepath } = useAppStorage();
-  const { isConnected, connector } = useAccount();
+  const { isConnected, connector,  } = useAccount();
   // const isLargeScreen = useMediaQuery('(min-width:768px)');
-  const config = useConfig();
-  const poolIsEmpty = isPermissioned? (!permissioned?.length || permissioned?.length === 0) : (!permissionless?.length || permissionless?.length === 0);
   
-  React.useEffect(() => {
-    if(!isConnected){
-      setActivepath('/dashboard')
-      if(!openPopUp) {
-        togglePopUp();
-      }
-    }
-  }, [isConnected, setActivepath, togglePopUp]);
-
-  React.useEffect(() => {
-    const ctrl = new AbortController();
-    setTimeout(() => {
-      if(isConnected && connector) {
-        const fetchData = async() => {
-          const pools = await getEpoches({
-            config
-          });
-          setTrxnStatus({txResult: pools, loading: false,});
-        }
-        fetchData();
-      }
-    }, 6000);
-    return () => {
-      clearTimeout(6000);
-      ctrl.abort();
-    };
-  }, [isConnected, connector, config, setTrxnStatus]);
+  // const { connect } = useConnect();
+  // const kd :WagmiConfig = { ...config,   }
+  const poolIsEmpty = isPermissioned? (!permissioned?.length || permissioned?.length === 0) : (!permissionless?.length || permissionless?.length === 0);
 
   return (
     <React.Fragment>

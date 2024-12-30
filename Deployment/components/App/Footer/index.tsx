@@ -27,7 +27,7 @@ const Footer = () => {
             </li>
           </ul>
 
-          <div className="w-full md:border-2 text-sm md:text-lg border-white1/10 rounded-[36px] px-4 py-6 bg-green1 flex justify-evenly gap-2 items-center">
+          <div className="w-full md:border-2 text-sm md:text-lg border-white1/10 rounded-[26px] px-4 py-6 bg-green1 flex justify-evenly gap-2 items-center">
               <ul className='space-y-2'>
                   <li>
                       <h1 className="text-md lg:text-2xl text-orangec/70 font-bold mb-[16px] lg:mb-[24px] ">
@@ -65,7 +65,7 @@ const Footer = () => {
               </ul>
           </div>
         </div>
-        <div className="text-center pt-[36px] text-orangec text-sm">
+        <div className="text-center pt-[30px] text-orangec text-sm">
           &copy;2024 SimpliFinance. All rights reserved.
         </div>
       </div>

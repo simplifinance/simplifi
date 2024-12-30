@@ -71,7 +71,13 @@ const config = createConfig({
   connectors: [
     // mockConnector,
     injected(),
-    metaMask(),
+    metaMask({
+      dappMetadata: {
+        name: 'Simplifinance', 
+        url: 'https://simplifi-glxp.vercel.app',
+        iconUrl: '/favicon-32x32.png'
+      }
+    }),
     // coinbaseWallet({
     //   appName: 'Simplifinance',
     //   appLogoUrl: '/favicon-32x32.png',

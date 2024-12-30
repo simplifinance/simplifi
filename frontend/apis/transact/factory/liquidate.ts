@@ -6,7 +6,7 @@ import { waitForConfirmation } from "../../waitForConfirmation";
 export const liquidate = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.({message: "Liquidating In Progress"});
+  callback?.({message: "Creating liquidation request..."});
   const {request} = await simulateContract(config, {
     address,
     account,

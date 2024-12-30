@@ -2,18 +2,24 @@ import * as React from 'react';
 import Button from '@mui/material/Button';
 import Snackbar from '@mui/material/Snackbar';
 import IconButton from '@mui/material/IconButton';
+import useAppStorage from '../StateContextProvider/useAppStorage';
 
 type NotificationProp = {
   message: string;
+  resetMessage: () => void;
 }
 
 export default function Notification(props: NotificationProp) {
+  const { message, resetMessage } = props;
   const [open, setOpen] = React.useState(false);
+  const [prev, setPrevious] = React.useState(message);
 
-  const { message } = props;
-
+  // const { setTrxnStatus } = useAppStorage();
   React.useEffect(() => {
-    setOpen(true);
+    if(message !== '' && message !== prev){
+      setOpen(true);
+      setPrevious(message);
+    }
   }, [message]);
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {

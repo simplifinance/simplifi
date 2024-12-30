@@ -29,7 +29,6 @@ export const Permissioned = () => {
     const { setTrxnStatus } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleModal = () => setModalPopUp(!modalOpen);
-    const { txnStatus } = useAppStorage();
 
     const handleDeleteParticipant = (arg: number) => {
         if(participants.length > 0) {

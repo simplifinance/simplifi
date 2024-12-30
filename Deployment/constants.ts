@@ -22,19 +22,7 @@ export const flexEnd = "flex justify-end items-center";
 export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
 
-// export const ROUTE_ENUM = {
-//   DASHBOARD : '/dashboard',
-//   YIELD: '/yield',
-//   DAO: '/simplidao',
-//   FLEXPOOL: '/flexpool',
-//   FAQ: 'faq',
-//   CREATE: '/flexpool/create',
-//   OPEN: '/flexpool/open',
-//   CLOSED: '/flexpool/closed'
-// }
-
 export const POOL_HEADER_CONTENT = Array.from([
-  // { value: '', gridSize: 0.5},
   { value: 'Epoch', gridSize: 1},
   { value: 'Quorum', gridSize: 2},
   { value: 'Liquidity', gridSize: 2},
@@ -42,7 +30,6 @@ export const POOL_HEADER_CONTENT = Array.from([
   { value: 'Pair', gridSize: 2},
   { value: 'Fill', gridSize: 1.5},
   { value: 'Type', gridSize: 2},
-  // { value: 'Action', gridSize: 1},
 ]);
 
 export const PROFILE_MOCK : Profile = {
@@ -53,7 +40,8 @@ export const PROFILE_MOCK : Profile = {
     expInterest: 0n,
     durOfChoice: 0n,
     turnTime: 0n,
-    loan: 0n
+    loan: 0n,
+    sentQuota: false
   },
   rank: {
     member: false,
@@ -226,5 +214,6 @@ export const FORMATTEDDATA_MOCK : FormattedData = {
   isMember: false,
   isAdmin: false,
   id_toString: '',
-  loan_InBN: new BigNumber(0)
+  loan_InBN: new BigNumber(0),
+  sentQuota: false
 }

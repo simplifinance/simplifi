@@ -44,6 +44,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
     const {
         pair,
         unit,
+        currentPoolInBN,
+        unitInBN,
         cData_formatted, 
         stage_toNumber, 
         isPermissionless,
@@ -73,7 +75,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
     return(
         <React.Fragment>
             <div className="relative bg-green1 shadow-lg  space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]">
-                <div className="flex gap-4 items-center ">
+                <div className="flex gap-2 items-center ">
                     <button onClick={showPermissionDetail} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
                     <div className="relative ">
                         <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCount_toNumber}</h3>
@@ -113,7 +115,7 @@ export const PoolColumn = (props: PoolColumnProps) => {
                         <h3 className="">{'Pair:'}</h3>
                         <h3 className="">{pair}</h3>
                     </div>
-                    <h2 className="absolute right-0 top-0 text-xl lg:text-3xl p-3 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[36px]">
+                    <h2 className="absolute right-0 top-[1px] text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[26px]">
                         {`$${unit_InEther}`}
                     </h2>
                 </div>
@@ -129,6 +131,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
                         <RenderActions 
                             {
                                 ...{
+                                    totalPoolInBN: currentPoolInBN,
+                                    unitInBN,
                                     sentQuota,
                                     userCount: userCount_toNumber,
                                     quorum: quorum_toNumber,
@@ -163,6 +167,8 @@ export const PoolColumn = (props: PoolColumnProps) => {
                     <RenderActions 
                         {
                             ...{
+                                totalPoolInBN: currentPoolInBN,
+                                unitInBN,
                                 sentQuota,
                                 userCount: userCount_toNumber,
                                 quorum: quorum_toNumber, 

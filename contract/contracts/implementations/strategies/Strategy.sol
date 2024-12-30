@@ -46,7 +46,7 @@ contract Strategy is IStrategy, OnlyOwner {
    */
   constructor (address _ownershipManager) OnlyOwner(_ownershipManager)  {}
 
-  receive() external payable onlyOwner("Strategy: Not receive() - Not permitted") {}
+  receive() external payable onlyOwner("Strategy: Not received - Not permitted") {}
 
   /**
    * @dev Implementation of IStrategy.addUp

@@ -2,16 +2,16 @@ import { DrawerAnchor, LiquidityPool, Path, Pools, TrxState, VoidFunc } from "@/
 
 export interface DataContextProps {
     storage: Pools;
-    // setstate: (arg: TrxnResult) => void;
     exitOnboardScreen: VoidFunc;
     toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
     setTrxnStatus: (arg: TrxState) => void; 
     // txnStatus: TrxState;
-    // setMessage: (arg: string) => void;
+    message: string;
     drawerState: boolean;
     openPopUp: boolean;
     setdrawerState: (arg: boolean) => void;
+    setmessage: (arg: string) => void;
     toggleTransactionWindow:(value: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => void;
     toggleDisplayOnboardUser: VoidFunc;

@@ -12,12 +12,13 @@ export type Operation = 'Open' | 'Closed';
  */
 export default function filterPools (pools: Pools) {
   let tvl : BigNumber = toBN(0);
-  pools.forEach((pool: LiquidityPool) => {
-    tvl.plus(toBN(pool.uint256s.currentPool.toString()));
-  })
-  
+  for(let i = 0; i < pools.length; i++){
+    tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
+  }
+
   const filterPool = (op: Operation) => {
-    return pools.filter((pool) => {
+    // console.log("Pools", pools)
+    return pools?.filter((pool) => {
       const stage = toBN(pool.stage.toString()).toNumber();
       const stageEnded = stage === FuncTag.ENDED;
       const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();

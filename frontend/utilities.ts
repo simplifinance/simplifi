@@ -17,6 +17,7 @@ import assert from "assert";
 import { getFactoryAddress } from "./apis/contractAddress";
 import { withdrawLoan } from "./apis/transact/testToken/withdrawLoan";
 import { withdrawCollateral } from "./apis/transact/factory/withdrawCollateral";
+import { removePool } from "./apis/transact/factory/removePool";
 
 /**
  * Converts value of 'value' of type string to 'ether' representation.
@@ -92,7 +93,6 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
     case 'GET FINANCE':
       assert(epochId !== undefined, "Utilities: EpochId not given");
       const collateral = await getCollateralQuote({config, epochId});
-      // console.log("collateral", collateral[0].toString());
       amtToApprove = toBN(collateral[0].toString());
       const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
       if(prevAllowance.gte(amtToApprove)) {
@@ -138,6 +138,10 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       if(pay === 'success') { 
         returnValue = await withdrawCollateral({account, config, epochId, callback});
       }  
+      break;
+    case 'REMOVE':
+      assert(epochId !== undefined, "Utilities: EpochId is missing.");
+      await removePool({account, config, epochId}); 
       break;
     case 'LIQUIDATE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
@@ -228,6 +232,8 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
     fullInterest_InEther,
     intPerSec_InEther,
     currentPool_InEther,
+    unitInBN: toBN(unit.toString()),
+    currentPoolInBN: toBN(currentPool.toString()),
     admin_lowerCase: admin.toString().toLowerCase(),
     asset_lowerCase: asset.toString().toLowerCase(),
     admin,

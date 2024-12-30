@@ -4,7 +4,6 @@ pragma solidity 0.8.24;
 
 import { IStrategyManager } from "../../apis/IStrategyManager.sol";
 import { Strategy } from "./Strategy.sol";
-// import { Clones } from "@openzeppelin/contracts/proxy/Clones.sol";
 import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 
 /**@title SmartStrategyAdmin: A standalone contract that manages strategy creation, 
@@ -17,13 +16,6 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
 
   // Strategy count 
   uint public totalStrategies;
-
-  /* @notice A deployed instance of the SmartStrategy contract
-   */
-  // address public instance;
-
-  // /// @notice Address that can perform upgrade to deployed instance
-  // address public admin;
 
 /**
  * @dev List of Strategies and their keys 
@@ -107,17 +99,6 @@ contract StrategyManager is IStrategyManager, OnlyOwner {
     strategy = address(new Strategy(ownershipManager));
     _updateStrategy(caller, strategy);
   }
-
-  // //Set new instance address : onlyOwner function
-  // function setInstance(
-  //   address newInstance
-  // ) 
-  //   public
-  //   onlyOwner("Strategy - setInstance: Not permitted")
-  // {
-  //   if(newInstance == address(0)) revert ZeroAddress(newInstance);
-  //   instance = newInstance;
-  // }
 
   /**
    * Update storage with the new Strategy instance : {internal}

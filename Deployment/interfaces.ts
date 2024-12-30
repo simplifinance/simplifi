@@ -1,6 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
 import { Common, Counters } from "./typechain-types/contracts/apis/IFactory";
-import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
 import BigNumber from "bignumber.js";
 
 export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
@@ -11,12 +10,12 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
-export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED';
+export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED' | 'REMOVE';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
 export enum FuncTag { 
-  JOIN, 
+  JOIN,
   GET, 
   PAYBACK, 
   WITHDRAW,
@@ -28,21 +27,24 @@ export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
-export type TransactionCallback = (arg: TransactionCallbackArg) => void;
+export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
-export type TrxResult = 'Failed' | 'Success' | '';
-// export type Selector = {
-//   poolType: PoolType;
-//   displayForm: boolean;
-// }
-
-export interface TransactionCallbackArg {
-  message?: Message; 
-  txResult?: Pools;
-  loading: boolean;
-  buttonText?: ButtonContent;
-  // loading: boolean;
+export type TrxResult = 'success' | 'reverted';
+export interface TrxState {
+  status?: TrxResult;
+  message: string;
+  // buttonText?: ButtonContent;
+  contractState?: Pools
 }
+
+// export interface TransactionCallbackArg {
+//   message?: Message; 
+//   contractState?: Pools;
+//   status?: TrxResult;
+//   // loading: boolean;
+//   // buttonText?: ButtonContent;
+//   // loading: boolean;
+// }
 
 // export interface TransactionResult {
 //   loading: boolean; 
@@ -136,6 +138,7 @@ export interface FormattedData {
   isMember: boolean;
   isAdmin: boolean;
   loan_InBN: BigNumber;
+  sentQuota: boolean;
 }
 
 export interface FormattedPoolContentProps {
@@ -167,6 +170,8 @@ export interface FormattedPoolContentProps {
   intPerSec: BigNumberish;
   lastPaid: Address;
   formatted_strategy: Address;
+  unitInBN: BigNumber;
+  currentPoolInBN: BigNumber;
 }
 
 export interface AmountToApproveParam {

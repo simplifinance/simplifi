@@ -326,24 +326,7 @@ library FactoryLib {
       }
     );
   }
-    //   uint durOfChoice;
-    // uint expInterest;
-    // uint payDate;
-    // uint turnTime;
-    // uint loan;
-    // uint colBals;
-    // address id;
-    // bool sentQuota;
-// Common.Contributor(
-//             cbData.durOfChoice,
-//             cbData.expInterest,
-//             cbData.payDate,
-//             cbData.turnTime,
-//             loan: cbData.loan,
-//             cbData.colBals,
-//             cbData.id,
-//             cbData.sentQuota
-//         )
+
   /**
    * @dev Return the length of epochs i.e total epoch to date
    * @param self : Storage of type Data

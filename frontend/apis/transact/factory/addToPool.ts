@@ -2,11 +2,12 @@ import { CommonParam } from "@/interfaces";
 import { getFactoryAddress } from "../../contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
+import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
 
 export const addToPool = async(args: CommonParam ) => {
   const { epochId, config, callback, account } = args;
   const address = getFactoryAddress();
-  callback?.({message: "Adding provider"});
+  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`});
   const { request } = await simulateContract(config, {
     address,
     account,

@@ -1,9 +1,10 @@
-import { Box, Collapse, } from '@mui/material'
+import Box from '@mui/material/Box'
 import React from 'react'
 import { flexSpread, } from '@/constants';
 import useAppStorage from '../StateContextProvider/useAppStorage';
-import { useMediaQuery } from '@mui/material';
+// import { useMediaQuery } from '@mui/material';
 import { Path } from '@/interfaces';
+import { useAccount } from 'wagmi';
 
 export const Chevron = (props: ChevronProps) => {
   const { open, hideChevron } = props;
@@ -26,45 +27,38 @@ export const Chevron = (props: ChevronProps) => {
   )
 }
 
-// interface ActiveState {
-//   : 
-// }
 export const Collapsible = (props: CollapsibleProps) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const { toggleSidebar, activePath, setActivepath} = useAppStorage();
-  const isLargeScreen = useMediaQuery('(min-width:768px)');
+  const { toggleSidebar, activePath, openPopUp, togglePopUp, setActivepath} = useAppStorage();
+  const { isConnected } = useAccount()
+  // const isLargeScreen = useMediaQuery('(min-width:768px)');
 
   const { 
-    collapsedClassName, 
-    parentPath, 
-    parentTitle,
-    collapsible,
+    // collapsedClassName, 
+    path, 
+    title,
+    // collapsible,
     icon,
-    displayChevron,
-    children 
+    // displayChevron,
+    // children 
   } = props;
-
-  const isParentActive = activePath === parentPath;
+  
+  const isActivePath = activePath === path;
   const handleClick = () => {
-    setActivepath(parentPath);
-    if(displayChevron) setOpen(!open);
-    // navigate(parentPath);
-    // if(parentPath === ROUTE_ENUM.FLEXPOOL) {
-    //   navigate(ROUTE_ENUM.OPEN);
-    // } else {
-    //   navigate(parentPath);
-    // }
-  }
-
-  console.log("ActiePath", activePath)
-
-  React.useEffect(() => {
-    if(!isLargeScreen) {
-      if(activePath !== '/flexpool'){
-        toggleSidebar();
-      } 
+    if(!isConnected) {
+      if(activePath === '/flexpool'){
+        setActivepath('/dashboard');
+      } else {
+        if(path === 'faq' || path === '/dashboard'){
+          setActivepath(path);
+        }
+      }
+      togglePopUp();
+    } else {
+      setActivepath(path);
     }
-  }, [activePath, isLargeScreen]);
+    setTimeout(() => toggleSidebar(false), 500);
+    clearTimeout(500);
+  }
 
   return (
     <Box className="p-1">
@@ -72,37 +66,37 @@ export const Collapsible = (props: CollapsibleProps) => {
         <div className='relative md:hidden'>
           <button className='w-[60px] p-3 border flex flex-col justify-center items-center border-gray1/50 bg-gray1/70 rounded-full hover:bg-stone-400/40 active:ring1 active:shadow active:shadow-white1/40'>
             { icon }
-            <h1 className='text-xs text-stone-300/70'>{ parentTitle }</h1>
+            <h1 className='text-xs text-stone-300/70'>{ title }</h1>
           </button>
         </div>
 
-        <div className={`hidden md:flex gap-3 p-[10px] text-lg font-semibold ${isParentActive? 'border border-green1 font-bold text-orange-300 rounded-full shadow-md shadow-green1 hover:shadow-sm hover:shadow-orange-200 animate-pulse ' : 'hover:bg-green1/60 text-white1/70 rounded-[56px]'}`}>
+        <div className={`hidden md:flex gap-3 p-[10px] text-lg font-semibold ${isActivePath? 'border border-green1 font-bold text-orange-300 rounded-full shadow-md shadow-green1 hover:shadow-sm hover:shadow-orange-200 animate-pulse ' : 'hover:bg-green1/60 text-white1/70 rounded-[56px]'}`}>
           <span className='border border-white1/5 rounded-full p-3 bg-green1/70'>{ icon }</span>
           <div className={`w-full ${flexSpread} gap-2 p-1 `}>
-            <h1>{ parentTitle }</h1>
-            {
+            <h1>{ title }</h1>
+            {/* {
               displayChevron && 
-              <Chevron open={open} />
-            }
+              <Chevron open={false} />
+            } */}
           </div> 
         </div>
       </div>
-      {
+      {/* {
         collapsible && 
-          <Collapse in={open} timeout="auto" unmountOnExit className={collapsedClassName || 'w-full'}>
+          <Collapse in={false} timeout="auto" unmountOnExit className={collapsedClassName || 'w-full'}>
             { children && children }
           </Collapse>
-      }
+      } */}
     </Box>
   )
 }
 
 interface CollapsibleProps {
   collapsedClassName?: string;
-  parentPath: Path;
+  path: Path;
   collapsible?: boolean;
   displayChevron?: boolean;
-  parentTitle: string;
+  title: string;
   icon: React.JSX.Element;
   children?: React.ReactNode;
 }

@@ -14,7 +14,7 @@ export const withdrawLoan = async(args: TransferFromParam) => {
   const address = getTokenAddress();
   const allowance = await getAllowance({config, account: spender, spender, owner });
   if(new BigNumber(allowance.toString()).gt(0)) {
-    callback?.({message: `Withdrawal ${formatEther(allowance)} progress`});
+    callback?.({message: `Approving and withdrawal $${formatEther(allowance)} loan to wallet...`});
     const {request} = await simulateContract(config, {
         address,
         account: spender,

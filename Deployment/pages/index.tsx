@@ -6,7 +6,7 @@ import FlexPool from "@/components/topComponents/finance";
 import Yield from "@/components/topComponents/Yield";
 import Faq from "@/components/topComponents/Faq";
 import SimpliDao from "@/components/topComponents/SimpliDao";
-import { DrawerAnchor, Path, TransactionCallbackArg, } from "@/interfaces";
+import { DrawerAnchor, Path, Pools, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
 import filterPools from "@/components/topComponents/finance/commonUtilities";
@@ -15,50 +15,36 @@ import Sidebar from "@/components/App/Sidebar";
 import Navbar from "@/components/App/Navbar";
 import Footer from "@/components/App/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
+import { useAccount, useConfig } from "wagmi";
+import { getEpoches } from "@/apis/read/readContract";
 
 export default function SimpliApp() {
-  // const [storage, setStorage] = React.useState<TrxnResult>({pools: POOLS_MOCK});
+  const [storage, setStorage] = React.useState<Pools>(POOLS_MOCK);
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<boolean>(false);
   const [showSidebar, setShowSidebar] = React.useState(false);
-  const [txnStatus, setTxnStatus] = React.useState<TransactionCallbackArg>({loading: false, txResult: undefined, message: '', buttonText: 'Approve'});
+  const [message, setMessage] = React.useState<string>('');
   const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
+  const { isConnected, connector,  } = useAccount();
+  const config = useConfig();
   const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const setdrawerState = (arg: boolean) => setDrawerState(arg);
-  // const setstate = (arg: TrxnResult) => setStorage(arg);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = () => setPopUp(!openPopUp);
-  const toggleSidebar = () => setShowSidebar(!showSidebar);
+  const setmessage = (arg: string) => setMessage(arg);
+  const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
-  const setTrxnStatus = (arg: TransactionCallbackArg) => {
-    setTxnStatus((prev) => {
-      if(arg.buttonText) prev.buttonText = arg.buttonText;
-      if(arg.message) prev.message = arg.message;
-      if(arg.txResult) prev.txResult = arg.txResult;
-      prev.loading = arg.loading;
-      return prev;
-    })
+  const setTrxnStatus = (arg: TrxState) => {
+    if(arg.message) setMessage(arg.message);
+    if(arg.contractState) setStorage(arg.contractState);
   };
-  // const setMessage = (arg: string) => {
-  //   const networkResponseError = 'Trxn failed with HTTP request failed';
-  //   setTxnStatus(
-  //     (prev) => { 
-  //       if(arg.match(networkResponseError)){
-  //         prev.message = 'Please check your internet connection';
-  //       } else {
-  //         prev.message = arg;
-  //       }
-  //       return prev;
-  //     }
-  //   );
-  // }
 
-  const { open, closed, tvl, permissioned, permissionless } = filterPools(txnStatus.txResult || POOLS_MOCK);
+  const { open, closed, tvl, permissioned, permissionless } = filterPools(storage);
 
   const toggleTransactionWindow =
     (value: boolean) =>
@@ -96,29 +82,42 @@ export default function SimpliApp() {
   };
 
   React.useEffect(() => {
-    if(openPopUp){
-      setTimeout(() => {
-        togglePopUp()
-      }, 10000)
+    const ctrl = new AbortController();
+    if(!isConnected){
+      openPopUp && setTimeout(() => {
+        setPopUp(false);
+      }, 6000);
+    } else {
+      if(isConnected && connector) {
+        setTimeout(async() => {
+          const pools = await getEpoches({config});
+          setStorage(pools);
+        }, 6000);
+      }
     }
-  }, [openPopUp])
+    return () => {
+      clearTimeout(6000);
+      ctrl.abort();
+    };
+  }, [isConnected, connector, openPopUp, togglePopUp]);
 
   return (
     <StorageContextProvider 
     value={
       {
-        storage: txnStatus.txResult || POOLS_MOCK, 
+        storage, 
         open,
         tvl,
         closed,
+        message,
         permissioned,
         permissionless,
         exitOnboardScreen,
         toggleSidebar,
         showSidebar,
         setTrxnStatus,
-        txnStatus,
-        // setMessage,
+        // txnStatus,
+        setmessage,
         displayAppScreen,
         drawerState,
         popUpDrawer,
@@ -136,7 +135,7 @@ export default function SimpliApp() {
       <div >
         { displayScreen() }
       </div>
-      <Notification message={txnStatus.message!} />
+      <Notification message={message} resetMessage={() => setmessage('')} />
     </StorageContextProvider>
   );
 }
@@ -176,10 +175,7 @@ const CHILDREN : {path: Path, element: JSX.Element}[] = [
   //     </Route>
   //   )
   // );
-  /**
- * Renders Liquidity child components
- * @returns React.JSX.Element[]
- */
+
 // const renderLiquidityChildComponents = () => [
 //   // {
 //   //   path: ROUTE_ENUM.CREATE,

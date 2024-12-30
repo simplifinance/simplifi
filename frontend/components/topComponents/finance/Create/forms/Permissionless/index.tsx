@@ -22,7 +22,6 @@ export const Permissionless = () => {
     const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
 
     const toggleModal = () => setModalPopUp(!modalOpen);
-    const { txnStatus } = useAppStorage();
     const isLargeScreen = useMediaQuery('(min-width:768px)');
     
     const onChange = (value: InputProp, tag: InputSelector) => {

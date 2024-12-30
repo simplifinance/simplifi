@@ -1,31 +1,24 @@
-import { Address, Config } from "@/interfaces";
+import { Address, ButtonContent, Config } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../waitForConfirmation";
 import { getTokenAddress  } from "../../getAddress";
 import { getFactoryAddress } from "../../contractAddress";
-import { formatError } from "../formatError";
 
 const factoryAddr = getFactoryAddress();
 
 export const approve = async(args: ApproveParam) => {
     const { callback, config, account, amountToApprove } = args;
     const address = getTokenAddress();
-    if(config) {        
-        try {
-          callback?.({message: "Approval in progress", loading: true});
-          const {request} = await simulateContract(config, {
-              address,
-              account,
-              abi: approveAbi,
-              functionName: "approve", 
-              args: [factoryAddr, amountToApprove]
-          });
-          const hash = await writeContract(config, { ...request });
-          await waitForConfirmation({config, hash, fetch: false, setTrxnDone: false, callback});
-        } catch (error: any) {
-            callback?.({message: formatError(error), loading: false, buttonText: 'Failed'});
-        }
-    }
+    callback?.({message: "Approving spending limit..."});
+    const {request} = await simulateContract(config, {
+        address,
+        account,
+        abi: approveAbi,
+        functionName: "approve", 
+        args: [factoryAddr, amountToApprove]
+    });
+    const hash = await writeContract(config, { ...request });
+    await waitForConfirmation({config, hash, fetch: false, callback});
 }
 
 const approveAbi = [
@@ -56,5 +49,6 @@ const approveAbi = [
 ] as const;
 
 export interface ApproveParam extends Config {
-    amountToApprove: bigint;
+  amountToApprove: bigint;
+  // buttonText: ButtonContent; 
 }

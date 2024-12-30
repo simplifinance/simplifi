@@ -9,16 +9,16 @@ export default function Sidebar() {
   const { showSidebar,} = useAppStorage();
 
   const DRAWER_CONTENT : {
-    parentTitle: string, 
+    title: string, 
     collapsible: boolean, 
     displayChevron: boolean, 
-    parentPath: Path, 
+    path: Path, 
     icon: JSX.Element
   }[] = [
     {
-      parentTitle: 'Home',
+      title: 'Home',
       collapsible: false,
-      parentPath: '/dashboard',
+      path: '/dashboard',
       displayChevron: false,
       icon: 
           <svg key={0} width="20" height="20" viewBox="0 0 20 20" fill="#F87C00" xmlns="http://www.w3.org/2000/svg" className=''>
@@ -27,9 +27,9 @@ export default function Sidebar() {
       
     },
     {
-      parentTitle: 'Flex',
+      title: 'Flex',
       collapsible: false,
-      parentPath: '/flexpool',
+      path: '/flexpool',
       displayChevron: false,
       icon: 
           <svg key={1} width="20" height="20" viewBox="0 0 20 20" fill="#F87C00" xmlns="http://www.w3.org/2000/svg">
@@ -42,9 +42,9 @@ export default function Sidebar() {
       
     },
     {
-      parentTitle: 'Yield',
+      title: 'Yield',
       collapsible: true,
-      parentPath: '/yield',
+      path: '/yield',
       displayChevron: false,
       icon: 
           <svg key={2} width="20" height="20" viewBox="0 0 20 20" fill="#F87C00" xmlns="http://www.w3.org/2000/svg">
@@ -53,9 +53,9 @@ export default function Sidebar() {
       
     },
     {
-      parentTitle: 'Dao',
+      title: 'Dao',
       collapsible: false,
-      parentPath: '/simplidao',
+      path: '/simplidao',
       displayChevron: false,
       icon: 
           <svg key={3} width="20" height="20" viewBox="0 0 20 20" fill="#F87C00" xmlns="http://www.w3.org/2000/svg">
@@ -64,9 +64,9 @@ export default function Sidebar() {
       
     },
     {
-      parentTitle: 'Faq',
+      title: 'Faq',
       collapsible: false,
-      parentPath: 'faq',
+      path: 'faq',
       displayChevron: false,
       icon: 
         <svg key={4} width="20" height="20" viewBox="0 0 20 20" fill="#F87C00" xmlns="http://www.w3.org/2000/svg">
@@ -80,13 +80,13 @@ export default function Sidebar() {
     <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[22px]`}>
       <div className="w-full md:rounded-[56px] min-h-[fit-content] animateSidebar">
         {
-          DRAWER_CONTENT.map(({collapsible, parentPath, icon, parentTitle, displayChevron }) => (
+          DRAWER_CONTENT.map(({collapsible, path, icon, title, displayChevron }) => (
             <Collapsible 
-              key={parentTitle}
+              key={title}
                 {
                   ...{
-                      parentPath,
-                      parentTitle,
+                      path,
+                      title,
                       icon, 
                       displayChevron,
                       collapsible

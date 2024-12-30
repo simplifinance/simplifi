@@ -29,7 +29,6 @@ export const Permissioned = () => {
     const { setTrxnStatus } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleModal = () => setModalPopUp(!modalOpen);
-    const { txnStatus } = useAppStorage();
 
     const handleDeleteParticipant = (arg: number) => {
         if(participants.length > 0) {
@@ -53,7 +52,7 @@ export const Permissioned = () => {
                 if(!copy.includes(formattedValue)){
                     copy.push(formattedValue);
                     setParticipant(copy);
-                    setTrxnStatus({message: `${formattedValue} was added`, loading: false});
+                    setTrxnStatus({message: `${formattedValue} was added`,});
                 }
             }
         }
@@ -123,43 +122,40 @@ export const Permissioned = () => {
             <Stack className="place-items-center">
                 <CustomButton
                     overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
-                    disabled={txnStatus.loading}
+                    disabled={false}
                     handleButtonClick={toggleModal}
                 >
                     Submit
                 </CustomButton>
             </Stack>
-            <ReviewInput 
-                {
-                    ...{
-                        handleModalClose: toggleModal,
-                        modalOpen,
-                        type: 'address',
-                        participants: participants,
-                        values: [
-                            {
-                                title: 'Participants',
-                                value: ''
-                            },
-                            {
-                                title: 'Unit Liquidity',
-                                value: unitLiquidity.value
-                            },
-                            {
-                                title: 'Duration',
-                                value: duration.value,
-                            },
-                            {
-                                title: 'Int. Rate',
-                                value: interest.value
-                            },
-                            {
-                                title: 'Collateral Coverage',
-                                value: ccr.value,
-                            },
-                        ]
-                    }
-                }
+            <ReviewInput
+                handleModalClose={toggleModal}
+                modalOpen={modalOpen}
+                type={'address'}
+                formType={'Permissioned'}
+                participants={participants}
+                values={[
+                    {
+                        title: 'Participants',
+                        value: ''
+                    },
+                    {
+                        title: 'Unit Liquidity',
+                        value: unitLiquidity.value
+                    },
+                    {
+                        title: 'Duration',
+                        value: duration.value,
+                    },
+                    {
+                        title: 'Int. Rate',
+                        value: interest.value
+                    },
+                    {
+                        title: 'Collateral Coverage',
+                        value: ccr.value,
+                    },
+                ]}
             />
         </Stack>
     );

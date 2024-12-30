@@ -1,4 +1,4 @@
-import type { WagmiConfig, Address, TrxnResult } from "@/interfaces";
+import type { WagmiConfig, Address, Pools} from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
 import { getFactoryAddress } from "../contractAddress";
 
@@ -14,7 +14,7 @@ export async function getProfile({config, epochId, account} : {config: WagmiConf
   });
 }
 
-export async function getEpoches({config} : {config: WagmiConfig}) {
+export async function getEpoches({config} : {config: WagmiConfig}): Promise<Pools> {
   return await read(config, {
     abi: getPoolsAbi,
     address, 
@@ -23,12 +23,11 @@ export async function getEpoches({config} : {config: WagmiConfig}) {
   });
 }
 
-export async function getContractData(arg: {config: WagmiConfig}) : Promise<TrxnResult> 
-{
-  const { config } = arg;
-  const pools = await getEpoches({config});
-  return { pools }
-}
+// export async function getContractData(arg: {config: WagmiConfig}) : Promise<Pools> 
+// {
+//   const { config } = arg;
+//   return await getEpoches({config});
+// }
 
 const profileAbi = [
   {
@@ -281,6 +280,11 @@ const getPoolsAbi = [
                     "internalType": "address",
                     "name": "id",
                     "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "sentQuota",
+                    "type": "bool"
                   }
                 ],
                 "internalType": "struct Common.Contributor",
