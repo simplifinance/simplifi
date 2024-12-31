@@ -7,7 +7,7 @@ function SimpliDao(): JSX.Element {
   React.useEffect(() => {
     setTimeout(() => {
       setActivepath('/flexpool');
-    }, 10000);
+    }, 2000);
   }, [setActivepath]);
 
   return (

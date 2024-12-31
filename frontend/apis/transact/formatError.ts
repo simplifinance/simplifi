@@ -1,12 +1,3 @@
-export const formatError = (arg: FormatErrorArgs) : string => {
-    const { error, ...rest } = arg;
-    const errorMessage : string = error?.message || error?.data?.message;
-    // const reg = RegExp(errorMessage);
-    const filteredMessage = defaultErrors({...rest}).filter(({key,}) => errorMessage.match(key));
-    if(filteredMessage.length && filteredMessage.length > 0) return filteredMessage[0].value();
-    return errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage;
-}
-
 function defaultErrors(arg: DefaultErrorArgs) {
     const { duration, epochId, maxEpochDuration, durationInSec, amount } = arg;
 
@@ -139,6 +130,14 @@ function defaultErrors(arg: DefaultErrorArgs) {
             value: () => 'Cannot complete request. Please check your internet connection'
         },
     ]
+}
+
+export const formatError = (arg: FormatErrorArgs) : string => {
+    const { error, ...rest } = arg;
+    const errorMessage : string = error?.message || error?.data?.message;
+    const filteredMessage = defaultErrors({...rest}).filter(({key,}) => errorMessage.match(key));
+    if(filteredMessage.length && filteredMessage.length > 0) return filteredMessage[0].value();
+    return errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage;
 }
 
 interface DefaultErrorArgs {

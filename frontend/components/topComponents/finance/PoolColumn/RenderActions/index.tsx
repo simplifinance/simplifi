@@ -29,8 +29,8 @@ export const RenderActions = (props: RenderActionsProps) => {
         loan_InBN, 
         payDate_InSec } = props;
 
-    const { setTrxnStatus, popUpDrawer, setmessage, handlePopUpDrawer } = useAppStorage();
-    let buttonObj : {value: ButtonText, disable: boolean} = {value: 'WAIT', disable: false};
+    const { setTrxnStatus, popUpDrawer, handlePopUpDrawer } = useAppStorage();
+    let buttonObj : ButtonObj = {value: 'WAIT', disable: true};
 
     const handleModalClose = () => {
         if(preferredDuration === '0') {
@@ -41,7 +41,6 @@ export const RenderActions = (props: RenderActionsProps) => {
     }
 
     const closeConfirmationPopUp = () => handlePopUpDrawer('');
-
     const useEpochDuration = () => {
         setPreferredDuration(maxEpochDuration);
         setInputModal(false);
@@ -184,4 +183,9 @@ export interface RenderActionsProps {
     sentQuota: boolean;
     totalPoolInBN: BigNumber;
     unitInBN: BigNumber; 
+}
+
+type ButtonObj = {
+    value: ButtonText;
+    disable: boolean;
 }

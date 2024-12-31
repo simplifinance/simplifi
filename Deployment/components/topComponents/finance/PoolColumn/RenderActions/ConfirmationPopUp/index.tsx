@@ -37,7 +37,7 @@ export const ConfirmationPopUp :
             displayMessage = `Setting liquidation at epoch ${epochId}`;
             break;
         default:
-            displayMessage = `No valid transaction request found at epoch ${epochId}`;
+            displayMessage = `Request to remove Flexpool at epoch ${epochId}`;
             break;
     }
 

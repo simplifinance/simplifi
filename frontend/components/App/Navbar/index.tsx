@@ -19,7 +19,7 @@ export default function Navbar() {
             </Link>
           </div>
           <div className={`flex justify-between md:w-full md:justify-end w-full md:px-4 lg:gap-4`}>
-            <button className='md:hidden hover:text-orange-400' onClick={() => toggleSidebar(true)}>
+            <button className='md:hidden hover:text-orange-400' onClick={() => toggleSidebar(!showSidebar)}>
               <h1 hidden={showSidebar} className="ring-1 ring-orange-200 p-2 rounded-full bg-gray1 focus:ring-orange-400">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-200">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />

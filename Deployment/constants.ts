@@ -15,22 +15,21 @@ export const ERROR = [
   "Transaction could not be completed"
 ];
 export const CONFIRMATIONS = 3; // 3 blocks
-
 export const flexCenter = "flex justify-center items-center";
 export const flexStart = "flex justify-start items-center";
 export const flexEnd = "flex justify-end items-center";
 export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
 
-export const POOL_HEADER_CONTENT = Array.from([
-  { value: 'Epoch', gridSize: 1},
-  { value: 'Quorum', gridSize: 2},
-  { value: 'Liquidity', gridSize: 2},
-  { value: 'Rate(%)', gridSize: 1.5},
-  { value: 'Pair', gridSize: 2},
-  { value: 'Fill', gridSize: 1.5},
-  { value: 'Type', gridSize: 2},
-]);
+// export const POOL_HEADER_CONTENT = Array.from([
+//   { value: 'Epoch', gridSize: 1},
+//   { value: 'Quorum', gridSize: 2},
+//   { value: 'Liquidity', gridSize: 2},
+//   { value: 'Rate(%)', gridSize: 1.5},
+//   { value: 'Pair', gridSize: 2},
+//   { value: 'Fill', gridSize: 1.5},
+//   { value: 'Type', gridSize: 2},
+// ]);
 
 export const PROFILE_MOCK : Profile = {
   cData: {

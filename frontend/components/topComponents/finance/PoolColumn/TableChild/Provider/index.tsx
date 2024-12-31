@@ -20,15 +20,16 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const handleCollapse = () => setOpen(!open);
     const { 
-        slot_toNumber, 
         isAdmin, 
+        sentQuota,
         id_toString, 
-        turnTime_InDateFormat,
-        durOfChoice_InSec,
         loan_InEther,
-        payDate_InDateFormat,
+        slot_toNumber, 
         colBals_InEther,
-        expInterest_InEther
+        durOfChoice_InSec,
+        expInterest_InEther,
+        payDate_InDateFormat,
+        turnTime_InDateFormat,
     } = formattedData;
 
     return(
@@ -51,11 +52,15 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                         <h3>{ slot_toNumber }</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Turn</h3>
+                        <h3>Time Until GetFinance</h3>
                         <h3>{turnTime_InDateFormat}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Duration</h3>
+                        <h3>Has Sent Quota</h3>
+                        <h3>{sentQuota? 'Yes' : 'No'}</h3>
+                    </li>
+                    <li className={`${flexSpread}`}>
+                        <h3>Duration Choice</h3>
                         <h3>{durOfChoice_InSec > 0? durOfChoice_InSec / 3600 : 0}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
@@ -71,7 +76,7 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                         <h3>{`${colBals_InEther} XFI`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>{"Est. Interest"}</h3>
+                        <h3>Interest Accrued</h3>
                         <h3>{`${expInterest_InEther} XFI`}</h3>
                     </li>
                 </ul>

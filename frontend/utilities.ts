@@ -49,7 +49,7 @@ export const toBN = (x: string | number ) => {
 }
 
 export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
-  var newDate = new Date(toBN(onchainUnixTime.toString()).toNumber());
+  var newDate = new Date(toBN(onchainUnixTime.toString()).toString());
   return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
 }
 
@@ -109,7 +109,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const { callback, strategy, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
-  let returnValue : TrxResult = 'success';
+  // let returnValue : TrxResult = 'success';
 
   if(txnType !== 'GET FINANCE') {
     if(amountToApprove.gt(0)) {
@@ -124,7 +124,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   switch (txnType) {
     case 'ADD LIQUIDITY':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      returnValue = await addToPool({account, config, epochId, callback});
+      await addToPool({account, config, epochId, callback});
       break;
     case 'GET FINANCE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
@@ -136,7 +136,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       const pay = await payback({account, config, epochId, callback});
       if(pay === 'success') { 
-        returnValue = await withdrawCollateral({account, config, epochId, callback});
+        await withdrawCollateral({account, config, epochId, callback});
       }  
       break;
     case 'REMOVE':
@@ -145,18 +145,18 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       break;
     case 'LIQUIDATE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      returnValue = await liquidate({account, config, epochId, callback});
+      await liquidate({account, config, epochId, callback});
       break;
     case 'CREATE':
       assert(router, "Utilities: Router was not provider");
       switch (router) {
         case 'Permissioned':
           assert(createPermissionedPoolParam !== undefined, "Utilities: createPermissionedPoolParam: Param not found");
-          returnValue = await createPermissionedLiquidityPool(createPermissionedPoolParam);
+          await createPermissionedLiquidityPool(createPermissionedPoolParam);
           break;
         case 'Permissionless':
           assert(createPermissionlessPoolParam !== undefined, "Utilities: createPermissionless parameters not found");
-          returnValue = await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
+          await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
           break;
         default:
           break;
