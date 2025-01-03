@@ -1,23 +1,58 @@
 import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, TrxResult,} from "@/interfaces";
-import BigNumber from 'bignumber.js';
+import { Address, AmountToApproveParam, FormattedData, Pools, FuncTag, PoolType, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, } from "@/interfaces";
 import { getCurrentDebt } from "./apis/read/getCurrentDebt";
-import { getAllowance } from "./apis/transact/testToken/getAllowance";
+import { getAllowance } from "./apis/update/testToken/getAllowance";
 import { getCollateralQuote } from "./apis/read/getCollateralQuote";
-import { approve } from "./apis/transact/testToken/approve";
-import { addToPool } from "./apis/transact/factory/addToPool";
-import { getFinance } from "./apis/transact/factory/getFinance";
-import { liquidate } from "./apis/transact/factory/liquidate";
-import { payback } from "./apis/transact/factory/payback";
+import { approve } from "./apis/update/testToken/approve";
+import { addToPool } from "./apis/update/factory/addToPool";
+import { getFinance } from "./apis/update/factory/getFinance";
+import { liquidate } from "./apis/update/factory/liquidate";
+import { payback } from "./apis/update/factory/payback";
 import { formatEther, zeroAddress } from "viem";
 import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
-import { createPermissionedLiquidityPool } from "./apis/transact/factory/createPermissionedLiquidityPool";
-import { createPermissionlessLiquidityPool } from "./apis/transact/factory/createPermissionless";
+import { createPermissionedLiquidityPool } from "./apis/update/factory/createPermissionedLiquidityPool";
+import { createPermissionlessLiquidityPool } from "./apis/update/factory/createPermissionless";
 import assert from "assert";
-import { getFactoryAddress } from "./apis/contractAddress";
-import { withdrawLoan } from "./apis/transact/testToken/withdrawLoan";
-import { withdrawCollateral } from "./apis/transact/factory/withdrawCollateral";
-import { removePool } from "./apis/transact/factory/removePool";
+import { getFactoryAddress } from "./apis/utils/contractAddress";
+import { withdrawLoan } from "./apis/update/testToken/withdrawLoan";
+import { withdrawCollateral } from "./apis/update/factory/withdrawCollateral";
+import { removePool } from "./apis/update/factory/removePool";
+import BigNumber from "bignumber.js";
+
+export type Operation = 'Open' | 'Closed';
+
+/**
+ * Exposes number of active or inactive pools
+ * @param pools : type pool
+ * @returns : Number of active or inactive pools
+ */
+export default function filterPools (pools: Pools) {
+  let tvl : BigNumber = toBN(0);
+  for(let i = 0; i < pools.length; i++){
+    tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
+  }
+
+  const filterPool = (op: Operation) => {
+    // console.log("Pools", pools)
+    return pools?.filter((pool) => {
+      const stage = toBN(pool.stage.toString()).toNumber();
+      const stageEnded = stage === FuncTag.ENDED;
+      const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();
+      const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
+      const isClosed : boolean = stageEnded || allGH || quorumIsZero;
+      return op === 'Closed'? isClosed : !isClosed;
+    });
+  }
+
+  const filterType = (type: PoolType) => {
+    return pools.filter((pool) => type === 'Permissionless'? pool.isPermissionless : !pool.isPermissionless);
+  }
+  const open = filterPool('Open');
+  const closed = filterPool('Closed');
+  const permissioned = filterType('Permissioned');
+  const permissionless = filterType('Permissionless');
+  return { open, closed, permissioned, permissionless, tvl: formatEther(toBigInt(tvl.toString())) }
+}
 
 /**
  * Converts value of 'value' of type string to 'ether' representation.
@@ -49,7 +84,7 @@ export const toBN = (x: string | number ) => {
 }
 
 export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
-  var newDate = new Date(toBN(onchainUnixTime.toString()).toString());
+  var newDate = new Date(toBN(onchainUnixTime.toString()).toNumber());
   return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
 }
 
@@ -94,14 +129,14 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
       assert(epochId !== undefined, "Utilities: EpochId not given");
       const collateral = await getCollateralQuote({config, epochId});
       amtToApprove = toBN(collateral[0].toString());
-      const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
-      if(prevAllowance.gte(amtToApprove)) {
-        amtToApprove = toBN(0);
-      }
       break;
     default:
       break;
-  }
+    }
+    const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
+    if(prevAllowance.gte(amtToApprove)) {
+      amtToApprove = toBN(0);
+    }
   return amtToApprove;
 }
 
@@ -110,8 +145,8 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
   // let returnValue : TrxResult = 'success';
-
-  if(txnType !== 'GET FINANCE') {
+  console.log("amountToApprove", amountToApprove);
+  if(txnType !== 'GET FINANCE' && txnType !== 'REMOVE') {
     if(amountToApprove.gt(0)) {
       await approve({
           account,
@@ -129,6 +164,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     case 'GET FINANCE':
       assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
       assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
+      console.log("Collateral: ", amountToApprove.toString())
       const get = await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
       if(get === 'success') await withdrawLoan({config, account, strategy, callback});
       break;
@@ -156,7 +192,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
           break;
         case 'Permissionless':
           assert(createPermissionlessPoolParam !== undefined, "Utilities: createPermissionless parameters not found");
-          await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
+          await createPermissionlessLiquidityPool(createPermissionlessPoolParam)
           break;
         default:
           break;

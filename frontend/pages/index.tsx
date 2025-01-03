@@ -1,41 +1,37 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
 import { POOLS_MOCK, } from "@/constants";
-import Dashboard from "@/components/topComponents/Dashboard";
-import FlexPool from "@/components/topComponents/finance";
-import Yield from "@/components/topComponents/Yield";
-import Faq from "@/components/topComponents/Faq";
-import SimpliDao from "@/components/topComponents/SimpliDao";
-import { DrawerAnchor, Path, Pools, TrxState, } from "@/interfaces";
+import Dashboard from "@/components/features/Dashboard";
+import FlexPool from "@/components/features/FlexPool";
+import Yield from "@/components/features/Yield";
+import Faq from "@/components/features/Faq";
+import SimpliDao from "@/components/features/SimpliDao";
+import { Path, Pools, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
-import filterPools from "@/components/topComponents/finance/commonUtilities";
 import { MotionDivWrap } from "@/components/MotionDivWrap";
-import Sidebar from "@/components/App/Sidebar";
-import Navbar from "@/components/App/Navbar";
-import Footer from "@/components/App/Footer";
+import Sidebar from "@/components/Layout/Sidebar";
+import Navbar from "@/components/Layout/Navbar";
+import Footer from "@/components/Layout/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
 import { useAccount, useConfig } from "wagmi";
 import { getEpoches } from "@/apis/read/readContract";
+import filterPools from "@/utilities";
 
 export default function SimpliApp() {
   const [storage, setStorage] = React.useState<Pools>(POOLS_MOCK);
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
-  const [openPopUp, setPopUp] = React.useState<boolean>(false);
+  const [openPopUp, setPopUp] = React.useState<number>(0);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
-  const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
-  const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
   const { isConnected, connector,  } = useAccount();
   const config = useConfig();
-  const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
-  const setdrawerState = (arg: boolean) => setDrawerState(arg);
   const exitOnboardScreen = () => setDisplay(true);
-  const togglePopUp = () => setPopUp(!openPopUp);
+  const togglePopUp = (arg: number) => setPopUp(arg);
   const setmessage = (arg: string) => setMessage(arg);
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
@@ -45,20 +41,6 @@ export default function SimpliApp() {
   };
 
   const { open, closed, tvl, permissioned, permissionless } = filterPools(storage);
-
-  const toggleTransactionWindow =
-    (value: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-        (event as React.KeyboardEvent).key === 'Shift')
-    ) {
-        return;
-    }
-
-    setdrawerState(value );
-  };
 
   const displayScreen = () => {
     const children = (
@@ -73,7 +55,7 @@ export default function SimpliApp() {
         </MotionDivWrap>
         <Footer />
       </main>
-      <NotConnectedPopUp handleClosePopUp={togglePopUp} openPopUp={openPopUp} />
+      <NotConnectedPopUp toggleDrawer={togglePopUp} openDrawer={openPopUp} />
     </div>
     );
     return (
@@ -85,7 +67,7 @@ export default function SimpliApp() {
     const ctrl = new AbortController();
     if(!isConnected){
       openPopUp && setTimeout(() => {
-        setPopUp(false);
+        setPopUp(0);
       }, 6000);
     } else {
       if(isConnected && connector) {
@@ -116,19 +98,13 @@ export default function SimpliApp() {
         toggleSidebar,
         showSidebar,
         setTrxnStatus,
-        // txnStatus,
         setmessage,
         displayAppScreen,
-        drawerState,
-        popUpDrawer,
         openPopUp,
         displayOnboardUser,
         activePath,
         setActivepath,
-        setdrawerState,
         togglePopUp,
-        handlePopUpDrawer,
-        toggleTransactionWindow,
         toggleDisplayOnboardUser,
       }}
     >

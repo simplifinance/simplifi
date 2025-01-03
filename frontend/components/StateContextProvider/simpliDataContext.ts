@@ -6,20 +6,13 @@ export interface DataContextProps {
     toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
     setTrxnStatus: (arg: TrxState) => void; 
-    // txnStatus: TrxState;
     message: string;
-    drawerState: boolean;
-    openPopUp: boolean;
-    setdrawerState: (arg: boolean) => void;
+    openPopUp: number;
     setmessage: (arg: string) => void;
-    toggleTransactionWindow:(value: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => void;
     toggleDisplayOnboardUser: VoidFunc;
-    togglePopUp: VoidFunc;
-    handlePopUpDrawer: (arg: DrawerAnchor) => void;
+    togglePopUp: (arg: number) => void;
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
-    popUpDrawer: DrawerAnchor;
     tvl: string;
     open: LiquidityPool[];
     closed: LiquidityPool[];

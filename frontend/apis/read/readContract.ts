@@ -1,6 +1,6 @@
 import type { WagmiConfig, Address, Pools} from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../utils/contractAddress";
 
 const address = getFactoryAddress();
 

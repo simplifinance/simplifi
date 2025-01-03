@@ -1,7 +1,7 @@
+import React from "react";
+import BigNumber from "bignumber.js";
 import { BigNumberish, ethers } from "ethers";
 import { Common, Counters } from "../contract/typechain-types/contracts/apis/IFactory";
-// import { WaitForTransactionReceiptReturnType } from "wagmi/actions";
-import BigNumber from "bignumber.js";
 
 export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
 export type WagmiConfig = import("wagmi").Config;
@@ -11,7 +11,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
-export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'DISABLED' | 'APPROVE' | 'CREATE' | 'ENDED' | 'REMOVE';
+export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'NOT ALLOWED' | 'APPROVE' | 'CREATE' | 'ENDED' | 'REMOVE';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -22,6 +22,7 @@ export enum FuncTag {
   WITHDRAW,
   ENDED
 }
+export type ToggleDrawer = (value: number, setState: (value: number) => void) => (event: React.KeyboardEvent | React.MouseEvent) => void;
 export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type PoolType = 'Permissioned' | 'Permissionless';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
@@ -210,3 +211,8 @@ export interface InputCategoryProp {
   handleChange: (value: InputProp, tag: InputSelector) => void
 }
 
+export interface ButtonObj {
+  value: ButtonText;
+  disable: boolean;
+  displayMessage?: string;
+}

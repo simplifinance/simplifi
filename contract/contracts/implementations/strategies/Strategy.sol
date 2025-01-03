@@ -124,10 +124,10 @@ contract Strategy is IStrategy, OnlyOwner {
       }
     } else {
       nativeApprovals[user][epochId] += claim;
-      if(allHasGF) {
-        _roundUp(epochId, assets[epochId]);
-      }
       if(credit > 0) credits[epochId] += credit;
+      if(allHasGF) {
+        _roundUp(epochId, assets[epochId]); //-------------------------------------hetr
+      }
     }
     return actualClaim;
   }
@@ -146,10 +146,12 @@ contract Strategy is IStrategy, OnlyOwner {
   {
     uint credit = credits[epochId];
     address[] memory providers = contributors[epochId];
-    credits[epochId] = credit.sub(credit);
+    // credits[epochId] = credit.sub(credit);
+    credits[epochId] = 0;
     uint size = providers.length;
-    if(credit < size) revert InsufficientCredit(credit, size);
-    uint allowance = credit.sub(size);
+    // if(credit < size) revert InsufficientCredit(credit, size);
+    assert(credit > size);
+    uint allowance = credit.div(size);
     for(uint i = 0; i < size; i++){
       _setAllowance(providers[i], asset, allowance);
     }

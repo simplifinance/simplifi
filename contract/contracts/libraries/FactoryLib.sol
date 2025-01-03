@@ -79,7 +79,7 @@ library FactoryLib {
     // _setNextStage(self.poolArr, epochId, Common.FuncTag.JOIN);
     pool = _fetchPool(self, epochId);
     _updateAssetInStrategy(strategy, cpp.asset, epochId);
-    _withdrawAllowance(user, cpp.asset, cpp.unitContribution, strategy);
+    _withdrawAllowanceToStrategy(user, cpp.asset, cpp.unitContribution, strategy);
   }
 
   function _def()
@@ -123,7 +123,7 @@ library FactoryLib {
    * a strategy by querying StrategyManager. Every address that create a pool must operate a 
    * strategy. This process is managed internally for users.  
    */
-  function _withdrawAllowance(
+  function _withdrawAllowanceToStrategy(
     address user, 
     address assetInUse, 
     uint unitContribution, 
@@ -449,7 +449,7 @@ library FactoryLib {
       _setNextStage(self.poolArr, _ab.epochId, Common.FuncTag.GET);
     }
     _validateAllowance(_msgSender(), ced.pool.addrs.asset, ced.pool.uint256s.unit);
-    _withdrawAllowance(_msgSender(), ced.pool.addrs.asset, ced.pool.uint256s.unit, ced.pool.addrs.strategy);
+    _withdrawAllowanceToStrategy(_msgSender(), ced.pool.addrs.asset, ced.pool.uint256s.unit, ced.pool.addrs.strategy);
     addContributorToStrategy(_msgSender(), ced.pool.addrs.strategy, _ab.epochId); 
     ced.pool = _fetchPool(self, _ab.epochId);
   }
@@ -593,6 +593,18 @@ library FactoryLib {
   
   /**@dev Set amount withdrawable by provider in their respective strategy.
    * @param scp : Parameter of type Common.SetClaimPAram
+   *   struct SetClaimParam {
+          uint amount;
+          uint epochId;
+          uint fee;
+          uint debt;
+          uint value;
+          address contributor;
+          address strategy;
+          address feeTo;
+          bool allHasGF;
+          TransactionType txType;
+        }
   */
 
   function _setClaim(Common.SetClaimParam memory scp) 
@@ -852,6 +864,18 @@ library FactoryLib {
   /**@dev Payback borrowed fund.
    * @param self : Storage
    * @param pb : Payback Parameters struct.
+   *    struct SetClaimParam {
+          uint amount;
+          uint epochId;
+          uint fee;
+          uint debt;
+          uint value;
+          address contributor;
+          address strategy;
+          address feeTo;
+          bool allHasGF;
+          TransactionType txType;
+        }
   */
   function payback(
     Data storage self,
@@ -863,8 +887,8 @@ library FactoryLib {
   {
     Common.Pool memory _p = _fetchPool(self, pb.epochId);
     _validateStage(_p.stage, Common.FuncTag.PAYBACK, "Payback not ready");
-    Common.DebtReturnValue memory crv = _getCurrentDebt(self, pb.epochId, pb.user);
-    bool(crv.debt > 0).assertTrue("No debt");
+    Common.DebtReturnValue memory drv = _getCurrentDebt(self, pb.epochId, pb.user);
+    bool(drv.debt > 0).assertTrue("No debt");
     bool allGF = _allHasGF(self.poolArr, pb.epochId);
     if(!allGF){
       _replenishPoolBalance(self.poolArr, pb.epochId);
@@ -874,15 +898,15 @@ library FactoryLib {
       _setNextStage(self.poolArr, pb.epochId, Common.FuncTag.ENDED);
     }
     setPermit(pb.user, pb.epochId, _def().t);
-    _validateAllowance(pb.user, _p.addrs.asset, crv.debt);
-    _withdrawAllowance(pb.user, _p.addrs.asset, crv.debt, _p.addrs.strategy);
+    _validateAllowance(pb.user, _p.addrs.asset, drv.debt);
+    _withdrawAllowanceToStrategy(pb.user, _p.addrs.asset, drv.debt, _p.addrs.strategy);
     ced.pool = _fetchPool(self, pb.epochId);
     _setClaim(
       Common.SetClaimParam(
-        ced.pool.cData[crv.slot].cData.colBals,
+        ced.pool.cData[drv.slot].cData.colBals,
         pb.epochId,
         0,
-        crv.debt,
+        drv.debt,
         0,
         pb.user,
         _p.addrs.strategy,
@@ -928,12 +952,12 @@ library FactoryLib {
     address user
   ) 
     internal 
-    view returns(Common.DebtReturnValue memory crv) 
+    view returns(Common.DebtReturnValue memory drv) 
   {
     uint intPerSec = _fetchPool(self, epochId).uint256s.intPerSec;
-    crv.slot = _getSlot(self.slots, user, epochId);
-    Common.Contributor memory _cb = _getProfile(self, crv.slot, epochId).cData;
-    crv.debt = _cb.loan.add(intPerSec.mul(_now().sub(_cb.turnTime)));
+    drv.slot = _getSlot(self.slots, user, epochId);
+    Common.Contributor memory _cb = _getProfile(self, drv.slot, epochId).cData;
+    drv.debt = _cb.loan.add(intPerSec.mul(_now().sub(_cb.turnTime)));
   }
 
   /**@dev Reset pool balances
