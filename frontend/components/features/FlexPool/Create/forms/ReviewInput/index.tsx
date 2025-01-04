@@ -27,7 +27,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const durationInHours = toBN(values[2].value).toNumber();
 
     const callback : TransactionCallback = (arg: TrxState) => {
-        // if(arg.status === 'success') handleModalClose();
         setTrxnStatus(arg);
     }
 
@@ -53,9 +52,19 @@ export const ReviewInput = (props: ReviewInputProps) => {
         callback
     };
 
+    const callback_final = (errored: boolean, error?: any) => {
+        if(!errored){
+            setmessage('Trxn Completed');
+        } else {
+            setmessage(formatError(error));
+        }
+        setLoading(false);
+        setTimeout(() => toggleDrawer(0), 3000);
+    }
+
     const handleClick = async() => {
         setLoading(true);
-        setTrxnStatus({message: 'Trxn processing',});
+        setmessage('Trxn processing');
         switch (formType) {
             case 'Permissioned':
                 await handleTransact({
@@ -65,15 +74,10 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     createPermissionedPoolParam,
                 })
                 .then(() => {
-                    setmessage('Trxn Completed');
-                    setLoading(false);
-                    setTimeout(() => toggleDrawer(0), 3000);
+                   callback_final(false);
                 })
                 .catch((error: any) => {
-                    const errorMessage = formatError(error);
-                    setmessage(`Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`);
-                    setLoading(false);
-                    setTimeout(() => toggleDrawer(0), 3000);
+                    callback_final(true, error);
                 }); 
             case 'Permissionless':
                 await handleTransact({
@@ -83,13 +87,10 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     createPermissionlessPoolParam,
                 })
                 .then(() => {
-                    setmessage('Trxn Completed');
-                    // setLoading(false);
+                    callback_final(false);
                 })
                 .catch((error: any) => {
-                    const errorMessage = formatError(error);
-                    setmessage(`Trxn failed with ${errorMessage.length > 120? errorMessage.substring(0, 100) : errorMessage}`);
-                    // setLoading(false);
+                    callback_final(true, error);
                 }); 
                 break;
             default:

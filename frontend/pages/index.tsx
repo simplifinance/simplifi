@@ -14,7 +14,7 @@ import Sidebar from "@/components/Layout/Sidebar";
 import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
-import { useAccount, useConfig } from "wagmi";
+import { useAccount, useConfig, useReadContract, UseReadContractParameters } from "wagmi";
 import { getEpoches } from "@/apis/read/readContract";
 import filterPools from "@/utilities";
 
@@ -62,26 +62,30 @@ export default function SimpliApp() {
       displayAppScreen? children : <OnbaordScreen />
     );
   };
+  const confi : UseReadContractParameters = {
+    
+  }
+  const { } = useReadContract();
 
-  React.useEffect(() => {
-    const ctrl = new AbortController();
-    if(!isConnected){
-      openPopUp && setTimeout(() => {
-        setPopUp(0);
-      }, 6000);
-    } else {
-      if(isConnected && connector) {
-        setTimeout(async() => {
-          const pools = await getEpoches({config});
-          setStorage(pools);
-        }, 6000);
-      }
-    }
-    return () => {
-      clearTimeout(6000);
-      ctrl.abort();
-    };
-  }, [isConnected, connector, openPopUp, togglePopUp]);
+  // React.useEffect(() => {
+  //   const ctrl = new AbortController();
+  //   if(!isConnected){
+  //     openPopUp && setTimeout(() => {
+  //       setPopUp(0);
+  //     }, 6000);
+  //   } else {
+  //     if(isConnected && connector) {
+  //       setTimeout(async() => {
+  //         const pools = await getEpoches({config});
+  //         setStorage(pools);
+  //       }, 6000);
+  //     }
+  //   }
+  //   return () => {
+  //     clearTimeout(6000);
+  //     ctrl.abort();
+  //   };
+  // }, [isConnected, connector, openPopUp, togglePopUp]);
 
   return (
     <StorageContextProvider 

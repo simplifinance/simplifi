@@ -80,7 +80,6 @@ export const FlexCard = (props: PoolColumnProps) => {
         unit
     };
 
-    
     const msg_AddLiq = `Request to add liquidity to epoch ${epochId_toNumber}`;
     const msg_getFin = `Getting finance from epoch ${epochId_toNumber}`;
     const msg_Pay = `Paying back loan at epoch ${epochId_toNumber}`

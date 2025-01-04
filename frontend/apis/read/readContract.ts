@@ -122,7 +122,7 @@ const profileAbi = [
   },
 ] as const;
 
-const getPoolsAbi = [
+export const getPoolsAbi = [
   {
     "inputs": [],
     "name": "getPoolFromAllEpoches",

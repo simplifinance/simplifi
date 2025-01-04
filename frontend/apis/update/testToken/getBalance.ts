@@ -6,7 +6,7 @@ export const getTestTokenBalance = async(args: GetBalanceArg) => {
   const { account, config, target } = args;
   const name = await readContract(config, {
     address: getTokenAddress(),
-    abi: nameAbi,
+    abi: symbolAbi,
     functionName: "symbol",
     account,
     args: []
@@ -24,7 +24,7 @@ export const getTestTokenBalance = async(args: GetBalanceArg) => {
   }
 }
 
-const balanceOfAbi = [
+export const balanceOfAbi = [
     {
         "inputs": [
           {
@@ -46,7 +46,7 @@ const balanceOfAbi = [
     },
 ] as const;
 
-const nameAbi = [
+export const symbolAbi = [
   {
     "inputs": [],
     "name": "symbol",

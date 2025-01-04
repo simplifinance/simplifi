@@ -18,7 +18,7 @@ import Participants from "../userInputsComponents/Participants";
 import { useMediaQuery } from "@mui/material";
 
 export const Permissioned = () => {
-    const [modalOpen, setModalPopUp] = React.useState<boolean>(false);
+    const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
     const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
     const [interest, setInterest] = React.useState<InputProp>({value: '1', open: false});
@@ -28,7 +28,7 @@ export const Permissioned = () => {
     const isLargeScreen = useMediaQuery('(min-width:768px)');
     const { setTrxnStatus } = useAppStorage();
     const account = formatAddr(useAccount().address);
-    const toggleModal = () => setModalPopUp(!modalOpen);
+    const toggleDrawer = (arg:number) => setDrawerState(arg);
 
     const handleDeleteParticipant = (arg: number) => {
         if(participants.length > 0) {
@@ -123,14 +123,14 @@ export const Permissioned = () => {
                 <CustomButton
                     overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
                     disabled={false}
-                    handleButtonClick={toggleModal}
+                    handleButtonClick={() => setDrawerState(1)}
                 >
                     Submit
                 </CustomButton>
             </Stack>
             <ReviewInput
-                handleModalClose={toggleModal}
-                modalOpen={modalOpen}
+                toggleDrawer={toggleDrawer}
+                popUpDrawer={openDrawer}
                 type={'address'}
                 formType={'Permissioned'}
                 participants={participants}

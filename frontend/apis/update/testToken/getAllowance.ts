@@ -13,7 +13,7 @@ export const getAllowance = async(args: {owner: Address, account: Address, spend
   });
 }
 
-const allowanceAbi = [
+export const allowanceAbi = [
   {
     "inputs": [
       {
