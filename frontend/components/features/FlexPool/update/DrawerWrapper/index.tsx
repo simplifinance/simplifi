@@ -2,15 +2,11 @@ import React from "react";
 import { flexSpread, } from "@/constants";
 import { Provider } from './Provider';
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { FormattedData, FormattedPoolContentProps, FuncTag, ToggleDrawer, } from "@/interfaces";
+import { Address, FormattedData, FormattedPoolContentProps, FuncTag, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
-import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
-import Stack from '@mui/material/Stack';
-import { useAccount, useConfig, useReadContracts } from "wagmi";
-import { formatEther } from "viem";
-import { readAllowanceConfig, readSymbolConfig, readBalanceConfig } from "./readContractConfig";
-import { formatAddr, toBN } from "@/utilities";
-import SpinnerWheel from "@/components/SpinnerWheel";
+import { useAccount, } from "wagmi";
+import { formatAddr, } from "@/utilities";
+import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndStrategyBalances";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
@@ -24,6 +20,8 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
         epochId_toNumber,
         allGh_toNumber,
         // asset,
+        quorum_toNumber,
+        cData_formatted,
         colCoverage_InString,
         intPercent_string,
         duration_toNumber,
@@ -31,21 +29,24 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
         intPerSec_InEther,
         stage_toNumber,
         lastPaid,
+        isPermissionless,
         formatted_strategy,
     } = formattedPool;
 
-    const { data, isPending } = useReadContracts({
-        contracts:    [
-            { ...readSymbolConfig({isConnected}) },
-            { ...readBalanceConfig({account: formatted_strategy, isConnected})},
-            { ...readAllowanceConfig({isConnected, owner: formatted_strategy, spender: account})}
-        ],
-        allowFailure: true,
-    });
-
-    const quota = data?.[2].result;
-    const symbol = data?.[0].result;
-    const balances = data?.[1].result;
+    const extractAddresses = () => {
+        let addrs : Address[] = [];
+        cData_formatted.forEach((cd) => {
+            addrs.push(formatAddr(cd.id_toString))
+        });
+        return addrs;
+    }
+    const rekeyParam : RekeyParam = {
+        colCoverage: Number(colCoverage_InString),
+        durationInHours: duration_toNumber,
+        intRate: Number(intPercent_string),
+        contributors: extractAddresses(),
+        allGH: allGh_toNumber
+    }
 
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.2)',}} >
@@ -78,29 +79,14 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <p className="">{`${allGh_toNumber}`}</p>
                     </li>
                 </ul>
-                <Stack className="bg-gray1 p-4 space-y-4 rounded-lg text-orange-400 font-bold text-sm">
-                    <div className={`${flexSpread}`}>
-                        <h1>Bal In Strategy</h1>
-                        {
-                            isPending? <SpinnerWheel /> : <h1>{`${toBN(formatEther(balances || 0n)).decimalPlaces(2).toString()}${symbol || ''}`}</h1>
-                        }
-                    </div>
-                    <div className={`${flexSpread}`}>
-                        <h1>Liquidity Bal</h1>
-                        {
-                            isPending? <SpinnerWheel /> : <h1>{`${toBN(formatEther(quota || 0n)).decimalPlaces(2).toString()}${symbol || ''}`}</h1>
-                        }
-                    </div>
-                    <ButtonTemplate
-                        buttonAContent={'CashOut'}
-                        buttonBContent={'Rekey'}
-                        disableButtonA={false}
-                        disableButtonB={false}
-                        overrideClassName="text-orange-200"
-                        // buttonAFunc={''}
-                        // buttonBFunc={''}
-                    />
-                </Stack>
+                <LiquidityAndStrategyBalances
+                    formatted_strategy={formatted_strategy}
+                    isPermissionless={isPermissionless}
+                    param={rekeyParam}
+                    isCancelledPool={quorum_toNumber === 0 && stage_toNumber === FuncTag.ENDED}
+                    handleCloseDrawer={() => toggleDrawer(0)}
+                />
+
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread} font-semibold`}>
                         <h3>Unit Liquidity</h3>
@@ -154,9 +140,6 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
 }
 
 export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, toggleDrawer, cData_formatted}) => {
-    // const { popUpDrawer, handlePopUpDrawer } = useAppStorage();
-    // const toggleDrawer = () => handlePopUpDrawer('');
-
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.3)', height: "100%"}} >
             <div className="p-0 flex justify-between items-center text-lg md:text-xl font-bold">

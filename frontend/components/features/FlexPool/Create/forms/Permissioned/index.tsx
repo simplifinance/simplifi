@@ -26,7 +26,7 @@ export const Permissioned = () => {
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
     const isLargeScreen = useMediaQuery('(min-width:768px)');
-    const { setTrxnStatus } = useAppStorage();
+    const { setmessage } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleDrawer = (arg:number) => setDrawerState(arg);
 
@@ -52,7 +52,7 @@ export const Permissioned = () => {
                 if(!copy.includes(formattedValue)){
                     copy.push(formattedValue);
                     setParticipant(copy);
-                    setTrxnStatus({message: `${formattedValue} was added`,});
+                    setmessage(`${formattedValue} was added`,);
                 }
             }
         }

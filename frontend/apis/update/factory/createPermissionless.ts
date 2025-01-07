@@ -9,7 +9,7 @@ const tokenAddr = getTokenAddress();
 export const createPermissionlessLiquidityPool = async(param: CreatePermissionLessPoolParams) => {
   const { config, account, quorum, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   const address = getFactoryAddress();
-  callback?.({message: "Launching a Pprmissionless flexPool..."});
+  callback?.("Launching a Pprmissionless flexPool...");
   const { request } = await simulateContract(config, {
     address,
     account,
@@ -21,7 +21,7 @@ export const createPermissionlessLiquidityPool = async(param: CreatePermissionLe
   return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
 }
 
-const createPermissionlessLiquidityPoolAbi = [
+export const createPermissionlessLiquidityPoolAbi = [
   {
     "inputs": [
       {

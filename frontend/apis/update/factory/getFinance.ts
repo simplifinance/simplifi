@@ -6,7 +6,7 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 export const getFinance = async(args: GetFinanceParam ) => {
   const { epochId, daysOfUseInHr, config, callback, account, value } = args;
   const address = getFactoryAddress();
-  callback?.({message: "Creating get-Finance request..."});
+  callback?.("Creating get-Finance request...");
   const { request } = await simulateContract(config, {
     address,
     account,

@@ -32,9 +32,9 @@ library Utils {
 
     /**     @dev Calculation of percentage.
         *   This is how we calculate percentage to arrive at expected value with 
-        *   100% precision.
+        *   precision.
         *   We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
-        *   her interest rate to 0.05%, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
+        *   her interest rate to 0.05% for instance, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
         *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
         *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
         *   The minimum interest rate to set is 0.01% if interest must be set at least.

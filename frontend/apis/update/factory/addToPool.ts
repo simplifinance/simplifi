@@ -7,7 +7,7 @@ import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
 export const addToPool = async(args: CommonParam ) => {
   const { epochId, config, callback, account } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`});
+  callback?.(`Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`);
   const { request } = await simulateContract(config, {
     address,
     account,

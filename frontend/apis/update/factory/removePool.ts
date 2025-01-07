@@ -6,7 +6,7 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 export const removePool = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Removing Flexpool at ${epochId}`});
+  callback?.(`Removing Flexpool at ${epochId}`);
   const {request} = await simulateContract(config, {
     address,
     account,

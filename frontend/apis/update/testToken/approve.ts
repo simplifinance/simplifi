@@ -9,7 +9,7 @@ const factoryAddr = getFactoryAddress();
 export const approve = async(args: ApproveParam) => {
     const { callback, config, account, amountToApprove } = args;
     const address = getTokenAddress();
-    callback?.({message: "Approving spending limit..."});
+    callback?.("Approving spending limit...");
     const {request} = await simulateContract(config, {
         address,
         account,
@@ -21,7 +21,7 @@ export const approve = async(args: ApproveParam) => {
     await waitForConfirmation({config, hash, fetch: false, callback});
 }
 
-const approveAbi = [
+export const approveAbi = [
     {
         "inputs": [
           {

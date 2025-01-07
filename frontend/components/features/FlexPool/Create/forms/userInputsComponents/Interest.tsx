@@ -4,6 +4,7 @@ import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
 import Tooltip from '@mui/material/Tooltip';
 import { InputCategoryProp } from '@/interfaces';
+import { toBN } from '@/utilities';
 
 const rates = () => {
     return [...Array(100).keys()];
@@ -21,7 +22,7 @@ export default function Interest({inputProp: interest, handleChange} : InputCate
                         <h1>Interest</h1>
                     </Tooltip>
                 </span>
-                { interest.value }
+                { interest.value === '0'? 'Zero rate' : `${toBN(interest.value).div(100).toString()}%`}
                 <Chevron open={interest.open} />
             </button>
             <Collapse in={interest.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>

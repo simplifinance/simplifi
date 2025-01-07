@@ -20,14 +20,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { popUpDrawer, values, participants, type, formType, toggleDrawer } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setTrxnStatus, setmessage, message } = useAppStorage();
+    const { setmessage, message } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
 
-    const callback : TransactionCallback = (arg: TrxState) => {
-        setTrxnStatus(arg);
+    const callback = (arg: string) => {
+        setmessage(arg);
     }
 
     const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE"};

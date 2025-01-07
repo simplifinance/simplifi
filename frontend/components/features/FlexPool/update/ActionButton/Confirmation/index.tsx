@@ -1,6 +1,5 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import type { ButtonObj, ButtonText, } from "@/interfaces";
 import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
@@ -10,7 +9,6 @@ import { formatError, } from "@/apis/update/formatError";
 export const Confirmation : 
     React.FC<{
         sendTransaction: () => Promise<void>;
-        // sendTransaction: (arg: {onSuccess: () => void, onError: (errorArg: FormatErrorArgs) => void}) => Promise<void>;
         displayMessage?: string;
         toggleDrawer: (arg: number) => void
         openDrawer: number
@@ -18,28 +16,28 @@ export const Confirmation :
         ({sendTransaction, toggleDrawer, openDrawer, displayMessage}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
-    const { setmessage, message,} = useAppStorage();
+    const {setmessage, message,} = useAppStorage();
     const handleCloseDrawer = () => {
         toggleDrawer(0);
         setmessage('');
     };
 
+    const callback_after = (errored: boolean, error?: any) => {
+        !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
+        setLoading(false);
+        setTimeout(() => handleCloseDrawer(), 10000);
+        clearTimeout(10000);
+    }
+
     const handleSendTransaction = async() => {
         setLoading(true);
         await sendTransaction()
         .then(() => {
-            setmessage('Trxn Completed');
-            setLoading(false);
-            setTimeout(() => handleCloseDrawer(), 10000);
-            clearTimeout(10000);
+           callback_after(false);
         })
         .catch((error: any) => {
-            setmessage(formatError({error, }));
-            setLoading(false);
-            setTimeout(() => handleCloseDrawer(), 10000);
-            clearTimeout(10000);
-        })
-        
+            callback_after(true, formatError({error, }));
+        });
     }
 
     // {

@@ -6,7 +6,7 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 export const withdrawCollateral = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.({message: "Getting back your collateral..."});
+  callback?.("Getting back your collateral...");
   const {request} = await simulateContract(config, {
     address,
     account,

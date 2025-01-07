@@ -4,6 +4,7 @@ import { Chevron } from '@/components/Collapsible';
 import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
 import { InputCategoryProp } from '@/interfaces';
+import { toBN } from '@/utilities';
 
 const collaterals = () => {
     return [...Array(301).keys()];
@@ -21,7 +22,7 @@ export default function CollateralMultiplier({inputProp: collateral, handleChang
                         <h1>Collateral Multiplier</h1>
                     </Tooltip>
                 </span>
-                { collateral.value }
+                { toBN(collateral.value).div(100).toString() }
                 <Chevron open={collateral.open} />
             </button>
             <Collapse in={collateral.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>

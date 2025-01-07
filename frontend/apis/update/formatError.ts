@@ -138,7 +138,7 @@ function defaultErrors(arg: DefaultErrorArgs) {
 
 export const formatError = (arg: FormatErrorArgs) : string => {
     const { error, ...rest } = arg;
-    const errorMessage : string = error?.message || error?.data?.message;
+    const errorMessage : string = error?.message || error?.data?.message || error;
     // console.log("ErrorHEre", errorMessage);
     const filteredMessage = defaultErrors({...rest}).filter(({key,}) => errorMessage.match(key));
     if(filteredMessage.length && filteredMessage.length > 0) return filteredMessage[0].value();

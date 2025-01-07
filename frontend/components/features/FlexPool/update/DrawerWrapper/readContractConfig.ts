@@ -5,7 +5,8 @@ import { getFactoryAddress } from "@/apis/utils/contractAddress";
 import { getTokenAddress } from "@/apis/utils/getTokenAddress";
 import { Address } from "@/interfaces";
 
-const tokenAddr = getTokenAddress();
+export const tokenAddr = getTokenAddress();
+export const factoryAddr = getFactoryAddress();
 
 export const readAllowanceConfig = ({owner, spender, isConnected}: {owner: Address, spender: Address, isConnected: boolean}) => {
     const contractConfig = {
@@ -47,12 +48,12 @@ export const readBalanceConfig = ({account, isConnected}: {account: Address, isC
 
 export const readPoolConfig = ({account, isConnected}: {account: Address, isConnected: boolean}) => {
     const contractConfig = {
-        address: getFactoryAddress(),
+        address: factoryAddr,
         abi: getPoolsAbi,
         functionName: 'getPoolFromAllEpoches',
-        query: {
-            enabled: !!isConnected
-        },
+        // query: {
+        //     enabled: !!isConnected
+        // },
     } as const;
     return contractConfig;
 }

@@ -14,7 +14,7 @@ export const withdrawLoan = async(args: TransferFromParam) => {
   const address = getTokenAddress();
   const allowance = await getAllowance({config, account: spender, spender, owner });
   if(new BigNumber(allowance.toString()).gt(0)) {
-    callback?.({message: `Approving and withdrawal $${formatEther(allowance)} loan to wallet...`});
+    callback?.(`Approving and withdrawal $${formatEther(allowance)} loan to wallet...`);
     const {request} = await simulateContract(config, {
         address,
         account: spender,
@@ -25,11 +25,11 @@ export const withdrawLoan = async(args: TransferFromParam) => {
     const hash = await writeContract(config, { ...request });
     await waitForConfirmation({config, hash, fetch: true, callback});
   } else {
-    callback?.({message: `${allowance} allowance found`});
+    callback?.(`${allowance} allowance found`);
   }
 }
 
-const transferFromAbi = [
+export const transferFromAbi = [
   {
     "inputs": [
       {

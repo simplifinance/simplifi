@@ -10,7 +10,7 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
   const { config, account, contributors, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   console.log("param: ", param)
   const address = getFactoryAddress();
-  callback?.({message: "Launching a permissioned flexPool..."});
+  callback?.("Launching a permissioned flexPool...");
   const { request } = await simulateContract(config, {
     address,
     account,
@@ -22,7 +22,7 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
   return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
 }
 
-const createPermissionedLiquidityPoolAbi = [
+export const createPermissionedLiquidityPoolAbi = [
   {
     "inputs": [
       {
