@@ -73,5 +73,5 @@ interface IStrategy {
     address user
   )
     external
-    returns(bool);
+    returns(uint xfiBalances);
 }

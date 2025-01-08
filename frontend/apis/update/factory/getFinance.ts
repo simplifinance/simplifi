@@ -2,6 +2,7 @@ import { GetFinanceParam } from "@/interfaces";
 import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
+import { getFinanceAbi } from "@/apis/abis";
 
 export const getFinance = async(args: GetFinanceParam ) => {
   const { epochId, daysOfUseInHr, config, callback, account, value } = args;
@@ -10,7 +11,7 @@ export const getFinance = async(args: GetFinanceParam ) => {
   const { request } = await simulateContract(config, {
     address,
     account,
-    abi: setForwarderAbi,
+    abi: getFinanceAbi,
     functionName: "getFinance",
     args: [epochId, daysOfUseInHr],
     value
@@ -18,32 +19,4 @@ export const getFinance = async(args: GetFinanceParam ) => {
   const hash = await writeContract(config, request );
   return await waitForConfirmation({config, hash, fetch: false, callback});
 }
-
-const setForwarderAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "daysOfUseInHr",
-        "type": "uint8"
-      }
-    ],
-    "name": "getFinance",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-] as const;
-
 

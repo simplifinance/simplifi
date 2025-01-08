@@ -12,6 +12,7 @@ import Interest from "../userInputsComponents/Interest";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
 import { useMediaQuery } from "@mui/material";
+import { toBN } from "@/utilities";
 
 export const Permissionless = () => {
     const [popUpDrawer, setDrawerState] = React.useState<number>(0);
@@ -98,23 +99,23 @@ export const Permissionless = () => {
                 values={[
                     {
                         title: 'Quorum',
-                        value: quorum.value
+                        value: quorum.value,
                     },
                     {
                         title: 'Unit Liquidity',
-                        value: unitLiquidity.value
+                        value: unitLiquidity.value,
                     },
                     {
                         title: 'Duration',
-                        value: duration.value,
+                        value: `${duration.value}${duration.value === '0' || duration.value === '1'? ' hr' : ' hrs'}`,
                     },
                     {
-                        title: 'Int. Rate',
-                        value: interest.value,
+                        title: 'Rate',
+                        value: `${toBN(interest.value).div(100).toString()}%`,
                     },
                     {
-                        title: 'Collateral Coverage',
-                        value: ccr.value,
+                        title: 'Collateral Index',
+                        value: toBN(ccr.value).div(100).toString(),
                     },
                 ]}
             />

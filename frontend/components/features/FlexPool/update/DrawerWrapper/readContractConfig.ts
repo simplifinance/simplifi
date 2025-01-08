@@ -1,4 +1,4 @@
-import { getPoolsAbi } from "@/apis/read/readContract";
+import { analyticAbi, getPoolsAbi } from "@/apis/abis";
 import { allowanceAbi } from "@/apis/update/testToken/getAllowance";
 import { balanceOfAbi, symbolAbi } from "@/apis/update/testToken/getBalance";
 import { getFactoryAddress } from "@/apis/utils/contractAddress";
@@ -14,21 +14,21 @@ export const readAllowanceConfig = ({owner, spender, isConnected}: {owner: Addre
         abi: allowanceAbi,
         functionName: 'allowance',
         args: [owner, spender],
-        query: {
-            enabled: !!isConnected
-        }
+        // query: {
+        //     enabled: !!isConnected
+        // }
     } as const;
     return contractConfig;
 } 
 
-export const readSymbolConfig = ({isConnected}: {isConnected: boolean}) => {
+export const readSymbolConfig = () => {
     const contractConfig = {
         abi: symbolAbi,
         address: tokenAddr,
         functionName: 'symbol',
-        query: {
-            enabled: !!isConnected
-        }
+        // query: {
+        //     enabled: !!isConnected
+        // }
     } as const;
     return contractConfig;
 }
@@ -39,9 +39,9 @@ export const readBalanceConfig = ({account, isConnected}: {account: Address, isC
         abi: balanceOfAbi,
         functionName: 'balanceOf',
         args: [account],
-        query: {
-            enabled: !!isConnected
-        }
+        // query: {
+        //     enabled: !!isConnected
+        // }
     } as const;
     return contractConfig;
 }
@@ -51,6 +51,18 @@ export const readPoolConfig = ({account, isConnected}: {account: Address, isConn
         address: factoryAddr,
         abi: getPoolsAbi,
         functionName: 'getPoolFromAllEpoches',
+        // query: {
+        //     enabled: !!isConnected
+        // },
+    } as const;
+    return contractConfig;
+}
+
+export const readAnalyticsConfig = () => {
+    const contractConfig = {
+        address: factoryAddr,
+        abi: analyticAbi,
+        functionName: 'analytics',
         // query: {
         //     enabled: !!isConnected
         // },

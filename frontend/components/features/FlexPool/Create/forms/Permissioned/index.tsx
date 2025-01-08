@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import { Input } from "../../Input";
 import type { Address, InputProp, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
-import { formatAddr } from "@/utilities";
+import { formatAddr, toBN } from "@/utilities";
 import { useAccount } from "wagmi";
 import { zeroAddress } from "viem";
 import Grid from "@mui/material/Grid";
@@ -145,15 +145,15 @@ export const Permissioned = () => {
                     },
                     {
                         title: 'Duration',
-                        value: duration.value,
+                        value: `${duration.value}${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
                     },
                     {
                         title: 'Int. Rate',
-                        value: interest.value
+                        value: `${toBN(interest.value).div(100).toString()}%`
                     },
                     {
-                        title: 'Collateral Coverage',
-                        value: ccr.value,
+                        title: 'Collateral Index',
+                        value: `${toBN(ccr.value).div(100).toString()}`,
                     },
                 ]}
             />

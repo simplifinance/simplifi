@@ -1,6 +1,7 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { getFactoryAddress } from "../utils/contractAddress";
 import { readContract } from "wagmi/actions";
+import { getCurrentDebtAbi } from "../abis";
 
 export const getCurrentDebt = async(args: {config: WagmiConfig, epochId: bigint, account: Address}) => {
   const { config, epochId, account } = args;
@@ -12,29 +13,3 @@ export const getCurrentDebt = async(args: {config: WagmiConfig, epochId: bigint,
   });  
 }
 
-const getCurrentDebtAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      }
-    ],
-    "name": "getCurrentDebt",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-] as const;

@@ -3,6 +3,7 @@ import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
+import { addToPoolAbi } from "@/apis/abis";
 
 export const addToPool = async(args: CommonParam ) => {
   const { epochId, config, callback, account } = args;
@@ -19,26 +20,5 @@ export const addToPool = async(args: CommonParam ) => {
   return await waitForConfirmation({config, hash, fetch: true, callback});
 }
 
-const addToPoolAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      }
-    ],
-    "name": "joinAPool",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-] as const;
 
 

@@ -18,7 +18,7 @@ import { approveAbi } from "@/apis/update/testToken/approve";
 import Message from "./Message";
 import { formatError } from "@/apis/update/formatError";
 
-export default function LiquidityAndStrategyBalances({ isCancelledPool, handleCloseDrawer, formatted_strategy, isPermissionless, param } : BalancesProps) {
+export default function LiquidityAndStrategyBalances({stage, isCancelledPool, handleCloseDrawer, formatted_strategy, isPermissionless, param } : BalancesProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     
     const { address, isConnected } = useAccount();
@@ -56,10 +56,11 @@ export default function LiquidityAndStrategyBalances({ isCancelledPool, handleCl
     const quota = data?.[2].result;
     const symbol = data?.[0].result;
     const balances = data?.[1].result;
-    const disableButton = loading || !quota || quota.toString() === '0';
+    const disableButton = loading || !quota || stage < FuncTag.ENDED || quota.toString() === '0';
 
     const cashout = async() => {
         if(!quota) return null;
+        setLoading(true);
         await withdrawLoan({
             config,
             account: currentUser,
@@ -80,6 +81,12 @@ export default function LiquidityAndStrategyBalances({ isCancelledPool, handleCl
         const unitLiquidity_ = parseEther(unitLiquidity.toString());
         const {colCoverage, contributors, allGH, durationInHours, intRate: rate} = param;
         const intRate = rate * 100;
+
+        if(unitLiquidity === 0 || isCancelledPool) {
+            alert(`${isCancelledPool? 'This Pool cannot be rekeyed.' : 'Invalid balances.'} Please create a new FlexPool`);
+            return null;
+        }
+        setLoading(true);
         const createPermissionedPoolParam : CreatePermissionedPoolParams = {
             account: currentUser,
             colCoverage,
@@ -107,11 +114,6 @@ export default function LiquidityAndStrategyBalances({ isCancelledPool, handleCl
             config,
             txnType: 'CREATE',
             unit: quota?.toString()!,
-        }
-
-        if(unitLiquidity === 0 || isCancelledPool) {
-            alert(`${isCancelledPool? 'This Pool cannot be rekeyed.' : 'Invalid balances.'} Please create a new FlexPool`);
-            return null;
         }
         await handleTransact({
             callback,
@@ -165,9 +167,7 @@ export default function LiquidityAndStrategyBalances({ isCancelledPool, handleCl
                 buttonAFunc={cashout}
                 buttonBFunc={rekey}
             />
-            {
-                message !== '' && <Message message={message} />
-            }
+            <Message />
         </Stack>
     );
 }
@@ -186,4 +186,5 @@ interface BalancesProps {
     param: RekeyParam;
     isCancelledPool: boolean;
     handleCloseDrawer: VoidFunc;
+    stage: number;
 }

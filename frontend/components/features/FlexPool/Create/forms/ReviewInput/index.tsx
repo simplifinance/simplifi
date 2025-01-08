@@ -12,6 +12,7 @@ import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { formatError } from "@/apis/update/formatError";
 import Drawer from "../../../update/ActionButton/Confirmation/Drawer";
+import Message from "../../../update/DrawerWrapper/LiquidityAndStrategyBalances/Message";
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
@@ -20,7 +21,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { popUpDrawer, values, participants, type, formType, toggleDrawer } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setmessage, message } = useAppStorage();
+    const { setmessage, } = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
     const colCoverage = toBN(values[4].value).toNumber();
     const intRate = toBN(values[3].value).toNumber();
@@ -56,15 +57,14 @@ export const ReviewInput = (props: ReviewInputProps) => {
         if(!errored){
             setmessage('Trxn Completed');
         } else {
-            setmessage(formatError(error));
+            setmessage(formatError({error}));
         }
         setLoading(false);
-        setTimeout(() => toggleDrawer(0), 3000);
+        setTimeout(() => toggleDrawer(0), 6000);
     }
 
     const handleClick = async() => {
         setLoading(true);
-        setmessage('Trxn processing');
         switch (formType) {
             case 'Permissioned':
                 await handleTransact({
@@ -96,10 +96,10 @@ export const ReviewInput = (props: ReviewInputProps) => {
             default:
                 break;
         }
-        setLoading(false);
-        setTimeout(() => {
-            toggleDrawer(0);
-        }, 3000);
+        // setLoading(false);
+        // setTimeout(() => {
+        //     toggleDrawer(0);
+        // }, 3000); 
     }
 
     return(
@@ -114,7 +114,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <h1 className="text-lg text-orange-300">Please approve spending cap</h1>
+                <h1 className="text-lg text-orange-300">Please review inputs</h1>
                 <div className="space-y-2">
                     {
                         values.map((item) => {
@@ -145,7 +145,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                 ) : (
                                     <div key={item.title} className="flex justify-between items-center text-sm ">
                                         <h3 >{ item.title }</h3>
-                                        <h3 >{ item.value }</h3>
+                                        <h3 >{`${item.value} ${item.title === 'Unit Liquidity'? '$' : ''}`}</h3>
                                     </div>
                                 )
                             )
@@ -158,17 +158,11 @@ export const ReviewInput = (props: ReviewInputProps) => {
                     onClick={handleClick}
                 >
                     {
-                        loading? <Spinner color={"#F87C00"} /> : 'CreatePool'
+                        loading? <Spinner color={"#F87C00"} /> : 'SendTransaction'
                     }
                 </button>
-                {
-                    message !== '' && 
-                        <div className="border border-gray1 rounded-[16px] bg-gray1 text-orange-400 p-4 font-serif max-h-20 md:max-h-36 overflow-y-auto text-xs md:text-sm text-center">
-                            { message }
-                        </div>
-                }
+                <Message />
             </Box>
-            {/* <Notification message={message} /> */}
         </Drawer>
     );
 }

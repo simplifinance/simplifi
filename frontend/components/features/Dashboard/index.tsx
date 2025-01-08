@@ -9,14 +9,34 @@ import {
 } from '@/components/assets';
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { flexEven, } from '@/constants';
+import { useReadContracts } from 'wagmi';
+import { readAnalyticsConfig, readSymbolConfig } from '../FlexPool/update/DrawerWrapper/readContractConfig';
+import { formatEther } from 'viem';
 
 const Dashboard : React.FC = () => {
-  const { storage: pools, tvl, permissioned, permissionless } = useAppStorage()
+  const { storage: pools, } = useAppStorage();
+  const { data,} = useReadContracts({
+    contracts: [
+      readAnalyticsConfig(),
+      readSymbolConfig()
+    ],
+    allowFailure: true
+  });
+  const tvlInXFI = formatEther(data?.[0].result?.[0] || 0n);
+  const tvlInUSD = formatEther(data?.[0].result?.[1] || 0n);
+  const totalPermissioned = data?.[0].result?.[2];
+  const totalPermissionless = data?.[0].result?.[3];
+  const symbol = data?.[1].result;
 
   const dashboardInfo = [
     {
-      title: 'TVL',
-      value: tvl,
+      title: `TVL - ${symbol || 'USD'}`,
+      value: `${tvlInUSD}`,
+      icon: tvlIcon
+    },
+    {
+      title: `TVL - XFI`,
+      value: `${tvlInXFI}`,
       icon: tvlIcon
     },
     {
@@ -29,20 +49,20 @@ const Dashboard : React.FC = () => {
       value: 'CROSSFI',
       icon: networkIcon
     },
-    {
-      title: 'PROPOSALS',
-      value: 'COMING SOON ...',
-      icon: proposalIcon
+    // {
+    //   title: 'PROPOSALS',
+    //   value: 'COMING SOON ...',
+    //   icon: proposalIcon
       
-    },
+    // },
     {
       title: 'PERMISSION-LESS',
-      value: permissionless.length,
+      value: totalPermissionless?.toString(),
       icon: permissionlessIcon
     },
     {
       title: 'PERMISSIONED',
-      value: permissioned.length,
+      value: totalPermissioned?.toString(),
       icon: permissionedIcon
       
     },

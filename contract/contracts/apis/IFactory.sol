@@ -135,4 +135,11 @@ interface IFactory is Common {
     uint16 makerRate;
     address strategyManager;
   }
+
+  struct Analytics {
+    uint256 tvlInXFI;
+    uint256 tvlInUsd;
+    uint totalPermissioned;
+    uint totalPermissionless;
+  }
 }

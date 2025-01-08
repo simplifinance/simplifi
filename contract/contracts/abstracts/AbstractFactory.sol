@@ -2,6 +2,7 @@
 
 pragma solidity 0.8.24;
 
+import "hardhat/console.sol";
 import { FactoryLib, Data } from "../libraries/FactoryLib.sol";
 import { FuncHandler } from "../peripherals/FuncHandler.sol";
 import { IFactory } from "../apis/IFactory.sol";
@@ -26,6 +27,8 @@ abstract contract AbstractFactory is
 
     // Minimum amount that can be contributed
     uint public minContribution;
+
+    Analytics public analytics;
 
     modifier validateEpochId(uint epochId) {
         data.verifyEpochId(epochId);
@@ -176,6 +179,14 @@ abstract contract AbstractFactory is
         CreatePoolReturnValue memory crp = !isPermissionless ? data
             .createPermissionedPool(cpp)
                 : data.createPermissionlessPool(cpp);
+        Analytics memory alt = analytics;
+        analytics = Analytics(
+            alt.tvlInXFI, 
+            alt.tvlInUsd + unitLiquidity, 
+            isPermissionless? alt.totalPermissioned : alt.totalPermissioned + 1,
+            isPermissionless? alt.totalPermissionless + 1 : alt.totalPermissionless
+        );
+        
         emit BandCreated(crp);
         return crp.pool.uint256s.epochId;
     } 
@@ -217,14 +228,11 @@ abstract contract AbstractFactory is
         internal
         returns(bool)
     {
-        emit NewMemberAdded(
-            data.addToBand(
-                AddTobandParam(
-                    epochId,
-                    isPermissioned
-                )
-            )
-        );
+        CommonEventData memory ced =  data.addToBand(AddTobandParam(epochId, isPermissioned));
+        emit NewMemberAdded(ced);
+        unchecked {
+            analytics.tvlInUsd += ced.pool.uint256s.unit;
+        }
         return true;
     }
 
@@ -252,14 +260,14 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (bool)
     {
-        emit GetFinanced(
-            data.getFinance(
-                epochId, 
-                msg.value,
-                daysOfUseInHr,
-                _getXFIPriceInUSD
-            )
-        );
+        (CommonEventData memory ced) = data.getFinance(epochId, msg.value, daysOfUseInHr, _getXFIPriceInUSD);
+        emit GetFinanced(ced);
+        Analytics memory atl = analytics;
+        unchecked {
+            atl.tvlInXFI += msg.value;
+            atl.tvlInUsd -= ced.pool.uint256s.currentPool;
+        }
+        analytics = atl;
         return true;
     }
 
@@ -276,15 +284,15 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (bool)
     {
-        emit Payback(
-            data.payback(
-                PaybackParam(
-                    epochId,
-                    _msgSender()
-                ),
-                _setPermit
-            )
+        CommonEventData memory ced = data.payback(
+            PaybackParam(
+                epochId,
+                _msgSender()
+            ),
+            _setPermit
         );
+        emit Payback(ced);
+        analytics.tvlInUsd += ced.debtBal;
         return true;
     }
 
@@ -302,9 +310,14 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (bool) 
     {
-        emit Liquidated(
-            data.liquidate(epochId, _setPermit)
-        );
+        CommonEventData memory ced = data.liquidate(epochId, _setPermit);
+        emit Payback(ced);
+        Analytics memory atl = analytics;
+        unchecked {
+            atl.tvlInXFI -= ced.colBal;
+            atl.tvlInUsd += ced.debtBal;
+        }
+        analytics = atl;
         return true;
     }
 
@@ -332,7 +345,12 @@ abstract contract AbstractFactory is
         checkPermit(epochId, FuncTag.WITHDRAW)
         returns(bool)
     {
-        data._withdrawCollateral(epochId);
+        uint bal = data.withdrawCollateral(epochId);
+        console.log("analytics.tvlInXFI", analytics.tvlInXFI);
+        console.log("Bal", bal);
+        unchecked {
+            analytics.tvlInXFI -= bal;
+        }
         return true;
     }
 
@@ -445,11 +463,11 @@ abstract contract AbstractFactory is
         validateEpochId(epochId)
         returns (bool)
     {
-        data.cancelBand(
+        analytics.tvlInUsd -= data.cancelBand(
             epochId, 
             isPermissionLess,
             _setPermit
-        );
+        ); 
         emit Cancellation(epochId);
 
         return true;

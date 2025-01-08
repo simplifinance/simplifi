@@ -174,6 +174,8 @@ interface Common {
 
   struct CommonEventData {
     Pool pool;
+    uint debtBal;
+    uint colBal;
   }
 
   struct ContributorData {

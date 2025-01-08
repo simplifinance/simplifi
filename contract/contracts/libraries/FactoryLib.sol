@@ -768,7 +768,6 @@ library FactoryLib {
     returns (Common.CommonEventData memory ced) 
   {
     Def memory _d = _def();
-    _resetPoolBalance(self.poolArr, arg.epochId);
     address caller = arg.expected;
     Common.ContributorData memory cbt = _getProfile(self, _getSlot(self.slots, arg.expected, arg.epochId), arg.epochId); // Expected contributor
     if(_now() > cbt.cData.turnTime + 1 hours){
@@ -780,9 +779,7 @@ library FactoryLib {
     } else {
       require(_msgSender() == cbt.cData.id, "Turn time has not passed");
     }
-    bool(
-      arg.msgValue >=
-      _computeCollateral(
+    bool(arg.msgValue >= _computeCollateral(
         arg.pool.uint256s.currentPool,
         arg.msgValue,
         uint24(arg.pool.uints.colCoverage),
@@ -808,6 +805,7 @@ library FactoryLib {
     );
     _setNextStage(self.poolArr, arg.epochId, Common.FuncTag.PAYBACK);
     ced.pool = _fetchPool(self, arg.epochId);
+    _resetPoolBalance(self.poolArr, arg.epochId);
   }
 
   /**@dev Reset pool balances
@@ -901,6 +899,7 @@ library FactoryLib {
     _validateAllowance(pb.user, _p.addrs.asset, drv.debt);
     _withdrawAllowanceToStrategy(pb.user, _p.addrs.asset, drv.debt, _p.addrs.strategy);
     ced.pool = _fetchPool(self, pb.epochId);
+    ced = Common.CommonEventData(ced.pool, ced.pool.uint256s.currentPool, ced.pool.cData[drv.slot].cData.colBals);
     _setClaim(
       Common.SetClaimParam(
         ced.pool.cData[drv.slot].cData.colBals,
@@ -1090,7 +1089,7 @@ library FactoryLib {
     setPermit(creator, epochId, true);
     _setNextStage(self.poolArr, epochId, Common.FuncTag.ENDED);
     _setClaim(Common.SetClaimParam(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20));
-    success = epochId;
+    success = _p.uint256s.unit;
   }
 
   function _isAdmin(
@@ -1111,15 +1110,16 @@ library FactoryLib {
    * @param self: storage ref.
    * @param epochId: Epoch Id.
    */
-  function _withdrawCollateral(
+  function withdrawCollateral(
     Data storage self,
     uint epochId
   ) 
     internal
+    returns(uint256)
   {
     address user = _msgSender();
     self.poolArr[epochId].cData[_getSlot(self.slots, user, epochId)].cData.colBals = 0;
-    require(IStrategy(_fetchPool(self, epochId).addrs.strategy).withdraw(epochId, user), "Withdrawal failed");
+    return IStrategy(_fetchPool(self, epochId).addrs.strategy).withdraw(epochId, user);
   }
 
   /**

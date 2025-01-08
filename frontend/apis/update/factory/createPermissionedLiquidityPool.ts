@@ -3,6 +3,7 @@ import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getTokenAddress } from "../../utils/getTokenAddress";
+import { createPermissionedLiquidityPoolAbi } from "@/apis/abis";
 
 const tokenAddr = getTokenAddress();
 
@@ -21,52 +22,3 @@ export const createPermissionedLiquidityPool = async(param: CreatePermissionedPo
   const hash = await writeContract(config, request );
   return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
 }
-
-export const createPermissionedLiquidityPoolAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint16",
-        "name": "intRate",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
-        "name": "durationInHours",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint24",
-        "name": "colCoverage",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint256",
-        "name": "unitLiquidity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "liquidAsset",
-        "type": "address"
-      },
-      {
-        "internalType": "address[]",
-        "name": "contributors",
-        "type": "address[]"
-      }
-    ],
-    "name": "createPermissionedPool",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-] as const;
-
-  

@@ -85,6 +85,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     param={rekeyParam}
                     isCancelledPool={quorum_toNumber === 0 && stage_toNumber === FuncTag.ENDED}
                     handleCloseDrawer={() => toggleDrawer(0)}
+                    stage={stage_toNumber}
                 />
 
                 <ul className={`${BOXSTYLING} text-xs`}>

@@ -27,10 +27,20 @@ export type Operation = 'Open' | 'Closed';
  * @returns : Number of active or inactive pools
  */
 export default function filterPools (pools: Pools) {
-  let tvl : BigNumber = toBN(0);
-  for(let i = 0; i < pools.length; i++){
-    tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
-  }
+  // let tvl : BigNumber = toBN(0);
+  // pools.forEach((pool) => {
+  //   let cp = toBN(pool.uint256s.currentPool.toString());
+  //   if(cp.gt(0)){
+  //     tvl.plus(cp);
+  //   } else {
+  //     // if(toBN(pool.stage) < FuncTag.ENDED){
+
+  //     // }
+  //   }
+  // });
+  // for(let i = 0; i < pools.length; i++){
+  //   tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
+  // }
 
   const filterPool = (op: Operation) => {
     // console.log("Pools", pools)
@@ -49,9 +59,10 @@ export default function filterPools (pools: Pools) {
   }
   const open = filterPool('Open');
   const closed = filterPool('Closed');
-  const permissioned = filterType('Permissioned');
-  const permissionless = filterType('Permissionless');
-  return { open, closed, permissioned, permissionless, tvl: formatEther(toBigInt(tvl.toString())) }
+  // const permissioned = filterType('Permissioned');
+  // const permissionless = filterType('Permissionless');
+  return { open, closed }
+  // tvl: formatEther(toBigInt(tvl.toString()))
 }
 
 /**

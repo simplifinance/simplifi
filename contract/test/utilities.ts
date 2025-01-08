@@ -22,8 +22,8 @@ export const convertStringsToAddresses = (args: string[]) => {
   return returnArr;
 }
 export const DECIMALS = 18;
-export const SYMBOL = "CTRIB";
-export const NAME = "Test Asset";
+export const SYMBOL = "SUSD";
+export const NAME = "Simple Test USD";
 export const TOTALSUPPLY = buildstring('1', '0', 24);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
 export const TEN_THOUSAND_TOKEN = 10000000000000000000000n;

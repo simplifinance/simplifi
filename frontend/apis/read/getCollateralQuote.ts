@@ -1,6 +1,7 @@
 import { WagmiConfig } from "@/interfaces";
 import { getFactoryAddress } from "../utils/contractAddress";
 import { readContract } from "wagmi/actions";
+import { getCollateralQuoteAbi } from "../abis";
 
 export const getCollateralQuote = async(args: {config: WagmiConfig, epochId: bigint}) => {
   const { config, epochId } = args;
@@ -12,29 +13,3 @@ export const getCollateralQuote = async(args: {config: WagmiConfig, epochId: big
   });  
 }
 
-const getCollateralQuoteAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCollaterlQuote",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "collateral",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint24",
-        "name": "colCoverage",
-        "type": "uint24"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-] as const;

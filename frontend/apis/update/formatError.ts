@@ -138,11 +138,12 @@ function defaultErrors(arg: DefaultErrorArgs) {
 
 export const formatError = (arg: FormatErrorArgs) : string => {
     const { error, ...rest } = arg;
-    const errorMessage : string = error?.message || error?.data?.message || error;
-    // console.log("ErrorHEre", errorMessage);
-    const filteredMessage = defaultErrors({...rest}).filter(({key,}) => errorMessage.match(key));
+    const errorMessage : any = error?.message || error?.data?.message || error;
+    // console.log("error", error);
+    console.log("ErrorHEre", errorMessage);
+    const filteredMessage = defaultErrors({...rest}).filter(({key,}) => errorMessage?.match(key));
     if(filteredMessage.length && filteredMessage.length > 0) return filteredMessage[0].value();
-    return errorMessage.length > 100? errorMessage.substring(0, 100) : errorMessage;
+    return errorMessage?.length > 100? errorMessage.substring(0, 100) : errorMessage;
 }
 
 interface DefaultErrorArgs {

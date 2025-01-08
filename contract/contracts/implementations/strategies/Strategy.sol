@@ -183,18 +183,18 @@ contract Strategy is IStrategy, OnlyOwner {
   ) 
     external 
     onlyOwner("Strategy: Not Permitted")
-    returns(bool) 
+    returns(uint xfiBalances) 
   {
-    uint balance = nativeApprovals[user][epochId];
+    xfiBalances = nativeApprovals[user][epochId];
     nativeApprovals[user][epochId] = 0;
-    require(balance > 0, "No claim");
+    require(xfiBalances > 0, "No claim");
     if(address(this).balance == 0) {
       revert InsufficientNativeBalanceInContract(address(this).balance);
     }
-    payable(user).transfer(balance);
+    payable(user).transfer(xfiBalances);
     // (bool sent,) = sender.call{value: balance}("");
     // require(sent,"Op failed");
-    return true;
+    return xfiBalances;
   }
 
   /**

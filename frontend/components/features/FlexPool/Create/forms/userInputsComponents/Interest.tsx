@@ -7,7 +7,7 @@ import { InputCategoryProp } from '@/interfaces';
 import { toBN } from '@/utilities';
 
 const rates = () => {
-    return [...Array(100).keys()];
+    return [...Array(1000).keys()];
 }
 
 export default function Interest({inputProp: interest, handleChange} : InputCategoryProp) {    

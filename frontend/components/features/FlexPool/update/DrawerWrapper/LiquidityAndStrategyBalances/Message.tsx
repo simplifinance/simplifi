@@ -1,24 +1,13 @@
 import React from "react";
-import { Chevron } from "@/components/Collapsible";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
-import Collapse from "@mui/material/Collapse";
-import { flexSpread } from "@/constants";
 
-export default function Message({message} : {message: string }) {
-    const [open, setOpen] = React.useState<boolean>(false);
+export default function Message() {
+    const { message } = useAppStorage();
 
+    if(message === '') return null;
     return(
-        <div className="relative">
-            <button
-                onClick={() => setOpen(!open)}
-                className={`w-full ${flexSpread} rounded-t-lg p-3 bg-green1 text-orange-200`}
-            >
-                <h1 className={`text-orange-200`}>Status</h1>
-                <Chevron open={open} />
-            </button>
-            <Collapse in={open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[10] left-0 z-50 text-center rounded-b-[12px] p-4 w-full'} >
-                <h1 className={`text-xs lowercase max-h-[200px] overflow-auto ${'text-orange-200'}`}>{ message }</h1>
-            </Collapse>
+        <div className="border border-gray1 rounded-[16px] bg-gray1 text-orange-400 p-4 font-serif max-h-20 md:max-h-36 overflow-y-auto text-xs md:text-sm text-center">
+            { message }
         </div>
     )
 }

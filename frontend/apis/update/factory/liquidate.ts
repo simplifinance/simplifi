@@ -2,6 +2,7 @@ import { CommonParam } from "@/interfaces";
 import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
+import { liquidateAbi } from "@/apis/abis";
 
 export const liquidate = async(args: CommonParam) => {
   const { config, callback, account, epochId } = args;
@@ -18,24 +19,3 @@ export const liquidate = async(args: CommonParam) => {
   return await waitForConfirmation({config, fetch: true, hash, callback});
 }
 
-const liquidateAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      }
-    ],
-    "name": "liquidate",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-] as const;

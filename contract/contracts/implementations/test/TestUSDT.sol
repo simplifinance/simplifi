@@ -6,7 +6,7 @@ import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract TestAsset is ERC20 {
 
-  constructor() ERC20("Test Asset", "CTRIB") {
+  constructor() ERC20("Simple Test USD", "SUSD") {
     _mint(msg.sender, 1000000 * (10**18));
   }
 

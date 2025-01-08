@@ -35,9 +35,9 @@ export default function SimpliApp() {
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
 
-  const {data, isPending, isError } = useReadContract(readPoolConfig({account, isConnected}));
+  const {data, isPending, isError, refetch, isPaused } = useReadContract(readPoolConfig({account, isConnected}));
   const storage = (isPending || isError)? POOLS_MOCK : data;
-  const { open, closed, tvl, permissioned, permissionless } = filterPools(storage);
+  const { open, closed } = filterPools(storage);
 
   const displayScreen = () => {
     const children = (
@@ -65,22 +65,26 @@ export default function SimpliApp() {
       openPopUp && setTimeout(() => {
         setPopUp(0);
       }, 6000);
-    } 
+    } else {
+      if(isPaused){
+        const result = refetch();
+      }
+    }
     return () => {
       clearTimeout(6000);
     };
   }, [isConnected]);
   
-  React.useCallback(() => {
+  React.useEffect(() => {
     if(message !== ''){
       setTimeout(() => {
         setmessage('');
-      }, 6000);
+      }, 10000);
     } 
     return () => {
-      clearTimeout(6000);
+      clearTimeout(10000);
     };
-  }, [isConnected]);
+  }, [message]);
 
   
 
@@ -90,11 +94,8 @@ export default function SimpliApp() {
       {
         storage, 
         open,
-        tvl,
         closed,
         message,
-        permissioned,
-        permissionless,
         exitOnboardScreen,
         toggleSidebar,
         showSidebar,

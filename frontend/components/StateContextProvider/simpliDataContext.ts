@@ -12,11 +12,11 @@ export interface DataContextProps {
     togglePopUp: (arg: number) => void;
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
-    tvl: string;
+    // tvl: string;
     open: LiquidityPool[];
     closed: LiquidityPool[];
-    permissioned: LiquidityPool[];
-    permissionless: LiquidityPool[];
+    // permissioned: LiquidityPool[];
+    // permissionless: LiquidityPool[];
     activePath: Path;
     setActivepath: (arg: Path) => void;
 
