@@ -4,10 +4,10 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { withdrawCollateralAbi } from "@/apis/abis";
 
-export const withdrawCollateral = async(args: CommonParam) => {
+export default async function withdrawCollateral(args: CommonParam) {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.("Getting back your collateral...");
+  callback?.({message: "Getting back your collateral..."});
   const {request} = await simulateContract(config, {
     address,
     account,

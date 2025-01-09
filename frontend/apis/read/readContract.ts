@@ -5,8 +5,8 @@ import { getPoolsAbi, profileAbi } from "../abis";
 
 const address = getFactoryAddress();
 
-export async function getProfile({config, epochId, account} : {config: WagmiConfig, epochId: bigint, account: Address}) {
-  console.log("EpochId", epochId);
+export const getProfile = async({config, epochId, account} : {config: WagmiConfig, epochId: bigint, account: Address}) => {
+  // console.log("EpochId", epochId);
   return await read(config, {
     abi: profileAbi,
     address, 
@@ -15,7 +15,7 @@ export async function getProfile({config, epochId, account} : {config: WagmiConf
   });
 }
 
-export async function getEpoches({config} : {config: WagmiConfig}): Promise<Pools> {
+export const getEpoches = async({config} : {config: WagmiConfig}): Promise<Pools> => {
   return await read(config, {
     abi: getPoolsAbi,
     address, 

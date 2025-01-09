@@ -29,13 +29,13 @@ export type Anchor = 'top' | 'left' | 'bottom' | 'right';
 export type Pools = Readonly<LiquidityPool[]>;
 // export type Provider = Common.ContributorStruct;
 export type Profile = Common.ContributorDataStruct;
-export type TransactionCallback = (arg: string) => void;
+export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
 export interface TrxState {
   status?: TrxResult;
   message: string;
-  // contractState?: Pools
+  contractState?: Pools
 }
 
 // export interface TransactionCallbackArg {

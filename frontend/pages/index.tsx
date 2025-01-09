@@ -6,7 +6,7 @@ import FlexPool from "@/components/features/FlexPool";
 import Yield from "@/components/features/Yield";
 import Faq from "@/components/features/Faq";
 import SimpliDao from "@/components/features/SimpliDao";
-import { Path, TrxState, } from "@/interfaces";
+import { Path, Pools, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
 import { MotionDivWrap } from "@/components/MotionDivWrap";
@@ -14,30 +14,33 @@ import Sidebar from "@/components/Layout/Sidebar";
 import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
-import { useAccount, useReadContract, } from "wagmi";
-import filterPools, { formatAddr } from "@/utilities";
-import { readPoolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
+import { useAccount, useConfig,} from "wagmi";
+import filterPools from "@/utilities";
+import { getEpoches } from "@/apis/read/readContract";
 
 export default function SimpliApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<number>(0);
+  // const [lastFetched, setLastFetched] = React.useState<number>(new Date().getTime());
+  const [storage, setStorage] = React.useState<Pools>(POOLS_MOCK);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
-  const { isConnected, address } = useAccount();
-  const account = formatAddr(address);
+  const { isConnected, connector } = useAccount();
+  const config = useConfig();
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = (arg: number) => setPopUp(arg);
   const setmessage = (arg: string) => setMessage(arg);
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
-
-  const {data, isPending, isError, refetch, isPaused } = useReadContract(readPoolConfig({account, isConnected}));
-  const storage = (isPending || isError)? POOLS_MOCK : data;
-  const { open, closed } = filterPools(storage);
+  const setstorage = (arg: TrxState) => {
+    if(arg.message) setMessage(arg.message);
+    if(arg.contractState) setStorage(arg.contractState);
+  };
+  const { open, closed, permissioned, permissionless } = filterPools(storage);
 
   const displayScreen = () => {
     const children = (
@@ -60,21 +63,29 @@ export default function SimpliApp() {
     );
   };
 
-  React.useCallback(() => {
-    if(!isConnected){
+  React.useEffect(() => {
+    const controller = new AbortController();
+    if(isConnected){
+      if(connector) {
+        setTimeout(() => {
+          const refetchStorage = async() => {
+            const result = await getEpoches({config});
+            setStorage(result);
+          }
+          refetchStorage();
+        }, 10000);
+        clearTimeout(10000);
+      }
+    } else {
       openPopUp && setTimeout(() => {
         setPopUp(0);
       }, 6000);
-    } else {
-      if(isPaused){
-        const result = refetch();
-      }
-    }
-    return () => {
       clearTimeout(6000);
-    };
-  }, [isConnected]);
-  
+    }
+    return () => controller.abort();
+  });
+
+  // Whenever `message` variable changes, every 10sec, reset it
   React.useEffect(() => {
     if(message !== ''){
       setTimeout(() => {
@@ -85,17 +96,18 @@ export default function SimpliApp() {
       clearTimeout(10000);
     };
   }, [message]);
-
-  
-
+ 
   return (
     <StorageContextProvider 
     value={
       {
         storage, 
+        setstorage,
         open,
         closed,
         message,
+        permissioned,
+        permissionless,
         exitOnboardScreen,
         toggleSidebar,
         showSidebar,

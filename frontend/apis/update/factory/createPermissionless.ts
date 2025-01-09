@@ -7,10 +7,11 @@ import { createPermissionlessLiquidityPoolAbi } from "@/apis/abis";
 
 const tokenAddr = getTokenAddress();
 
-export const createPermissionlessLiquidityPool = async(param: CreatePermissionLessPoolParams) => {
+export default async function createPermissionlessLiquidityPool(param: CreatePermissionLessPoolParams) {
   const { config, account, quorum, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
-  const address = getFactoryAddress();
-  callback?.("Launching a Pprmissionless flexPool...");
+  const address = getFactoryAddress();  
+  // console.log("Args: ", param)
+  callback?.({message: "Launching a Pprmissionless flexPool..."});
   const { request } = await simulateContract(config, {
     address,
     account,

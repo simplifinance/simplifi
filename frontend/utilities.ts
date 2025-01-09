@@ -1,22 +1,22 @@
 import { type BigNumberish, ethers } from "ethers";
 import { Address, AmountToApproveParam, FormattedData, Pools, FuncTag, PoolType, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, } from "@/interfaces";
-import { getCurrentDebt } from "./apis/read/getCurrentDebt";
-import { getAllowance } from "./apis/update/testToken/getAllowance";
-import { getCollateralQuote } from "./apis/read/getCollateralQuote";
-import { approve } from "./apis/update/testToken/approve";
-import { addToPool } from "./apis/update/factory/addToPool";
-import { getFinance } from "./apis/update/factory/getFinance";
-import { liquidate } from "./apis/update/factory/liquidate";
-import { payback } from "./apis/update/factory/payback";
+import getCurrentDebt from "./apis/read/getCurrentDebt";
+import getAllowance from "./apis/update/testToken/getAllowance";
+import getCollateralQuote from "./apis/read/getCollateralQuote";
+import approve from "./apis/update/testToken/approve";
+import addToPool from "./apis/update/factory/addToPool";
+import getFinance from "./apis/update/factory/getFinance";
+import liquidate from "./apis/update/factory/liquidate";
+import payback from "./apis/update/factory/payback";
 import { formatEther, zeroAddress } from "viem";
 import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
-import { createPermissionedLiquidityPool } from "./apis/update/factory/createPermissionedLiquidityPool";
-import { createPermissionlessLiquidityPool } from "./apis/update/factory/createPermissionless";
+import createPermissioned from "./apis/update/factory/createPermissioned";
+import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
 import { getFactoryAddress } from "./apis/utils/contractAddress";
-import { withdrawLoan } from "./apis/update/testToken/withdrawLoan";
-import { withdrawCollateral } from "./apis/update/factory/withdrawCollateral";
-import { removePool } from "./apis/update/factory/removePool";
+import withdrawLoan from "./apis/update/testToken/withdrawLoan";
+import withdrawCollateral from "./apis/update/factory/withdrawCollateral";
+import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
 
 export type Operation = 'Open' | 'Closed';
@@ -59,9 +59,9 @@ export default function filterPools (pools: Pools) {
   }
   const open = filterPool('Open');
   const closed = filterPool('Closed');
-  // const permissioned = filterType('Permissioned');
-  // const permissionless = filterType('Permissionless');
-  return { open, closed }
+  const permissioned = filterType('Permissioned');
+  const permissionless = filterType('Permissionless');
+  return { open, closed, permissioned, permissionless }
   // tvl: formatEther(toBigInt(tvl.toString()))
 }
 
@@ -122,8 +122,8 @@ export const commonStyle = (props?: {}) => {
 export const getAmountToApprove = async(param: AmountToApproveParam) => {
   const { txnType, unit, intPerSec, lastPaid, epochId, account, config } = param;
   let amtToApprove : BigNumber = toBN(unit.toString());
-  let owner : Address = account;
-  let spender : Address = getFactoryAddress();
+  let owner = account;
+  let spender = getFactoryAddress();
 
   switch (txnType) {
     case 'PAYBACK':
@@ -156,7 +156,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, epochId, txnType } = otherParam;
   // let returnValue : TrxResult = 'success';
-  console.log("amountToApprove", amountToApprove);
+  console.log("param", param);
   if(txnType !== 'GET FINANCE' && txnType !== 'REMOVE') {
     if(amountToApprove.gt(0)) {
       await approve({
@@ -198,12 +198,12 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       assert(router, "Utilities: Router was not provider");
       switch (router) {
         case 'Permissioned':
-          assert(createPermissionedPoolParam !== undefined, "Utilities: createPermissionedPoolParam: Param not found");
-          await createPermissionedLiquidityPool(createPermissionedPoolParam);
+          assert(createPermissionedPoolParam, "Utilities: createPermissionedPoolParam: Param not found");
+          await createPermissioned(createPermissionedPoolParam);
           break;
         case 'Permissionless':
-          assert(createPermissionlessPoolParam !== undefined, "Utilities: createPermissionless parameters not found");
-          await createPermissionlessLiquidityPool(createPermissionlessPoolParam)
+          assert(createPermissionlessPoolParam, "Utilities: createPermissionless parameters not found");
+          await createPermissionless(createPermissionlessPoolParam)
           break;
         default:
           break;

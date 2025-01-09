@@ -6,10 +6,10 @@ import { getFactoryAddress } from "../../utils/contractAddress";
 
 const factoryAddr = getFactoryAddress();
 
-export const approve = async(args: ApproveParam) => {
+export default async function approve(args: ApproveParam) {
     const { callback, config, account, amountToApprove } = args;
     const address = getTokenAddress();
-    callback?.("Approving spending limit...");
+    callback?.({message: "Approving spending limit..."});
     const {request} = await simulateContract(config, {
         address,
         account,

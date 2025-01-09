@@ -4,10 +4,10 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { liquidateAbi } from "@/apis/abis";
 
-export const liquidate = async(args: CommonParam) => {
+export default async function liquidate(args: CommonParam) {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.("Creating liquidation request...");
+  callback?.({message: "Creating liquidation request..."});
   const {request} = await simulateContract(config, {
     address,
     account,

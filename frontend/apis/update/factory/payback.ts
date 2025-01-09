@@ -4,10 +4,10 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { paybackAbi } from "@/apis/abis";
 
-export const payback = async(args: CommonParam) => {
+export default async function payback(args: CommonParam) {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.("Paying back loan...");
+  callback?.({message: "Paying back loan..."});
   const {request} = await simulateContract(config, {
     address,
     account,

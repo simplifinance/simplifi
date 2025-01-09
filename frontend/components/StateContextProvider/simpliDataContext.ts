@@ -1,4 +1,4 @@
-import { LiquidityPool, Path, Pools, VoidFunc } from "@/interfaces";
+import { LiquidityPool, Path, Pools, TrxState, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
     storage: Pools;
@@ -13,10 +13,11 @@ export interface DataContextProps {
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
     // tvl: string;
+    setstorage: (arg: TrxState) => void;
     open: LiquidityPool[];
     closed: LiquidityPool[];
-    // permissioned: LiquidityPool[];
-    // permissionless: LiquidityPool[];
+    permissioned: LiquidityPool[];
+    permissionless: LiquidityPool[];
     activePath: Path;
     setActivepath: (arg: Path) => void;
 

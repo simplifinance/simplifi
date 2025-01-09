@@ -2,7 +2,7 @@ import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { getTokenAddress } from "../../utils/getTokenAddress";
 
-export const getTestTokenBalance = async(args: GetBalanceArg) => {
+export default async function getTestTokenBalance(args: GetBalanceArg) {
   const { account, config, target } = args;
   const name = await readContract(config, {
     address: getTokenAddress(),

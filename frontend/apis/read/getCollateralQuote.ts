@@ -3,7 +3,7 @@ import { getFactoryAddress } from "../utils/contractAddress";
 import { readContract } from "wagmi/actions";
 import { getCollateralQuoteAbi } from "../abis";
 
-export const getCollateralQuote = async(args: {config: WagmiConfig, epochId: bigint}) => {
+export default async function getCollateralQuote(args: {config: WagmiConfig, epochId: bigint}) {
   const { config, epochId } = args;
   return await readContract(config, {
     abi: getCollateralQuoteAbi,

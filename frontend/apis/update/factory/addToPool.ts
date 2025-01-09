@@ -5,10 +5,10 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
 import { addToPoolAbi } from "@/apis/abis";
 
-export const addToPool = async(args: CommonParam ) => {
+export default async function addToPool(args: CommonParam ){
   const { epochId, config, callback, account } = args;
   const address = getFactoryAddress();
-  callback?.(`Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`);
+  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`});
   const { request } = await simulateContract(config, {
     address,
     account,

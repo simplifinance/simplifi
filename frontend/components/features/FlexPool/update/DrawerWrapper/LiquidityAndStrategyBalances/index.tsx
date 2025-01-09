@@ -7,14 +7,10 @@ import React from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useReadContracts, useWriteContract, useConfig } from "wagmi";
 import { readAllowanceConfig, readSymbolConfig, readBalanceConfig, tokenAddr, factoryAddr } from "../readContractConfig";
-import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FuncTag, VoidFunc } from "@/interfaces";
-import { WriteContractErrorType } from "wagmi/actions";
+import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, FuncTag, TrxState, VoidFunc } from "@/interfaces";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
-import { transferFromAbi, withdrawLoan } from "@/apis/update/testToken/withdrawLoan";
-import { createPermissionlessLiquidityPoolAbi } from "@/apis/update/factory/createPermissionless";
-import { createPermissionedLiquidityPoolAbi } from "@/apis/update/factory/createPermissionedLiquidityPool";
+import withdrawLoan from "@/apis/update/testToken/withdrawLoan";
 import { Spinner } from "@/components/Spinner";
-import { approveAbi } from "@/apis/update/testToken/approve";
 import Message from "./Message";
 import { formatError } from "@/apis/update/formatError";
 
@@ -24,7 +20,7 @@ export default function LiquidityAndStrategyBalances({stage, isCancelledPool, ha
     const { address, isConnected } = useAccount();
     const config = useConfig();
     const currentUser = formatAddr(address);
-    const { setmessage, message } = useAppStorage();
+    const { setmessage, setstorage } = useAppStorage();
 
     const callback_after = (errored: boolean, error?: any) => {
         !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
@@ -33,7 +29,10 @@ export default function LiquidityAndStrategyBalances({stage, isCancelledPool, ha
         clearTimeout(10000);
     }
 
-    const callback = (arg:string) => setmessage(arg);
+    const callback = (arg:TrxState) => {
+        setstorage(arg);
+        if(arg.status === 'success') handleCloseDrawer();
+    }
     // const onError = (error: WriteContractErrorType) => setmessage(formatError({error:error.message}));
     // const onSuccess = (hash: Address) => setmessage(`Transaction Completed! Hash: ${hash}`);
 
@@ -46,7 +45,7 @@ export default function LiquidityAndStrategyBalances({stage, isCancelledPool, ha
     
     const { data, isPending } = useReadContracts({
         contracts:    [
-            { ...readSymbolConfig({isConnected}) },
+            { ...readSymbolConfig() },
             { ...readBalanceConfig({account: formatted_strategy, isConnected})},
             { ...readAllowanceConfig({isConnected, owner: formatted_strategy, spender: currentUser})}
         ],
@@ -65,7 +64,7 @@ export default function LiquidityAndStrategyBalances({stage, isCancelledPool, ha
             config,
             account: currentUser,
             strategy: formatted_strategy,
-            callback: (arg: string) => setmessage(arg)
+            callback,
         }).then(() => callback_after(false))
         .catch((error) => callback_after(true, error))
         // writeContractAsync({

@@ -12,6 +12,7 @@ import { flexEven, } from '@/constants';
 import { useReadContracts } from 'wagmi';
 import { readAnalyticsConfig, readSymbolConfig } from '../FlexPool/update/DrawerWrapper/readContractConfig';
 import { formatEther } from 'viem';
+import { toBN } from '@/utilities';
 
 const Dashboard : React.FC = () => {
   const { storage: pools, } = useAppStorage();
@@ -22,7 +23,7 @@ const Dashboard : React.FC = () => {
     ],
     allowFailure: true
   });
-  const tvlInXFI = formatEther(data?.[0].result?.[0] || 0n);
+  const tvlInXFI = toBN(formatEther(data?.[0].result?.[0] || 0n)).decimalPlaces(3);
   const tvlInUSD = formatEther(data?.[0].result?.[1] || 0n);
   const totalPermissioned = data?.[0].result?.[2];
   const totalPermissionless = data?.[0].result?.[3];

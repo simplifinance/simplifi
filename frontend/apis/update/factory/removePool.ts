@@ -4,10 +4,10 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { removeLiquidityPoolAbi } from "@/apis/abis";
 
-export const removePool = async(args: CommonParam) => {
+export default async function removePool(args: CommonParam) {
   const { config, callback, account, epochId } = args;
   const address = getFactoryAddress();
-  callback?.(`Removing Flexpool at ${epochId}`);
+  callback?.({message: `Removing Flexpool at ${epochId}`});
   const {request} = await simulateContract(config, {
     address,
     account,

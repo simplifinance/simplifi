@@ -3,7 +3,7 @@ import { getFactoryAddress } from "../utils/contractAddress";
 import { readContract } from "wagmi/actions";
 import { getCurrentDebtAbi } from "../abis";
 
-export const getCurrentDebt = async(args: {config: WagmiConfig, epochId: bigint, account: Address}) => {
+export default async function getCurrentDebt(args: {config: WagmiConfig, epochId: bigint, account: Address}) {
   const { config, epochId, account } = args;
   return await readContract(config, {
     abi: getCurrentDebtAbi,

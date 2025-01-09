@@ -21,14 +21,17 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { popUpDrawer, values, participants, type, formType, toggleDrawer } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const { setmessage, } = useAppStorage();
+    const { setstorage, setmessage} = useAppStorage();
     const unitLiquidity = toBigInt(toBN(values[1].value).toString());
-    const colCoverage = toBN(values[4].value).toNumber();
-    const intRate = toBN(values[3].value).toNumber();
+    const colCoverage = toBN(values[4].value).times(100).toNumber();
+    const intRate = toBN(values[3].value).times(100).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
-
-    const callback = (arg: string) => {
-        setmessage(arg);
+ 
+    const callback = (arg: TrxState) => {
+        if(arg.status === 'success' && popUpDrawer > 0) {
+            toggleDrawer(0);
+        }
+        setstorage(arg);
     }
 
     const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE"};
@@ -61,14 +64,17 @@ export const ReviewInput = (props: ReviewInputProps) => {
         }
         setLoading(false);
         setTimeout(() => toggleDrawer(0), 6000);
+        clearTimeout(6000);
     }
 
     const handleClick = async() => {
+        const router = formType;
         setLoading(true);
         switch (formType) {
             case 'Permissioned':
+                console.log(router, createPermissionedPoolParam)
                 await handleTransact({
-                    router: 'Permissioned',
+                    router,
                     callback,
                     otherParam,
                     createPermissionedPoolParam,
@@ -81,7 +87,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                 }); 
             case 'Permissionless':
                 await handleTransact({
-                    router: 'Permissionless',
+                    router,
                     callback,
                     otherParam,
                     createPermissionlessPoolParam,
@@ -145,7 +151,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                 ) : (
                                     <div key={item.title} className="flex justify-between items-center text-sm ">
                                         <h3 >{ item.title }</h3>
-                                        <h3 >{`${item.value} ${item.title === 'Unit Liquidity'? '$' : ''}`}</h3>
+                                        <h3 >{`${item.value}${item.affix}`}</h3>
                                     </div>
                                 )
                             )
@@ -168,7 +174,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
 }
 
 interface ReviewInputProps {
-    values: {title: string, value: string}[];
+    values: {title: string, value: string, affix: string}[];
     type: InputSelector;
     participants?: Address[];
     popUpDrawer: number;

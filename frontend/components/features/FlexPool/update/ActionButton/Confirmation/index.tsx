@@ -5,6 +5,7 @@ import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
 import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
 import { formatError, } from "@/apis/update/formatError";
+import Message from "../../DrawerWrapper/LiquidityAndStrategyBalances/Message";
 
 export const Confirmation : 
     React.FC<{
@@ -78,12 +79,13 @@ export const Confirmation :
                     disableButtonB={loading}
                     overrideClassName="border border-gray1"
                 />
-                {
+                <Message />
+                {/* {
                     message !== '' && 
                         <div className="border border-gray1 rounded-[16px] bg-gray1 text-orange-400 p-4 font-serif max-h-20 md:max-h-36 overflow-y-auto text-xs md:text-sm">
                             { message }
                         </div>
-                }
+                } */}
             </Stack>
         </Drawer>
     );

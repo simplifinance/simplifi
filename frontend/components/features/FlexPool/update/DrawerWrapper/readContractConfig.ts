@@ -46,7 +46,7 @@ export const readBalanceConfig = ({account, isConnected}: {account: Address, isC
     return contractConfig;
 }
 
-export const readPoolConfig = ({account, isConnected}: {account: Address, isConnected: boolean}) => {
+export const readPoolConfig = () => {
     const contractConfig = {
         address: factoryAddr,
         abi: getPoolsAbi,

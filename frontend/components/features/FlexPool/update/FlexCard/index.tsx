@@ -170,7 +170,7 @@ export const FlexCard = (props: PoolColumnProps) => {
                     </span>
                     <div className="flex items-center gap-2">
                         <h3>{'Rate:'}</h3>
-                        <h3>{`${Number(intPercent_string) * 100}%`}</h3>
+                        <h3>{`${intPercent_string}%`}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3>{'Stage:'}</h3>

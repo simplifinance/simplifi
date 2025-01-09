@@ -21,7 +21,7 @@ export const ActionButton = (props: RenderActionsProps) => {
         duration_toNumber, } = props;
 
     const maxEpochDuration = duration_toNumber.toString()
-    const { setTrxnStatus, } = useAppStorage();
+    const { setstorage, } = useAppStorage();
     const handleModalClose = () => {
         if(preferredDuration === '0') {
             setPreferredDuration(maxEpochDuration);
@@ -55,7 +55,7 @@ export const ActionButton = (props: RenderActionsProps) => {
         if(arg.status === 'success' && confirmationDrawerOn) {
             closeConfirmationPopUp();
         }
-        setTrxnStatus(arg);
+        setstorage(arg);
     }
 
     // const sendTransaction = async({onSuccess, onError}: {onSuccess: () => void, onError: (errorArg: FormatErrorArgs) => void}) => {

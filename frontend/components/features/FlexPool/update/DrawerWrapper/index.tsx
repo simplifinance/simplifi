@@ -7,6 +7,7 @@ import Drawer from "../ActionButton/Confirmation/Drawer";
 import { useAccount, } from "wagmi";
 import { formatAddr, } from "@/utilities";
 import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndStrategyBalances";
+import { getTokenAddress } from "@/apis/utils/getTokenAddress";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
@@ -62,15 +63,21 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                 <ul className={`bg-gray1 p-4 rounded-lg border border-white1/20 text-orange-400 font-bold text-sm`}>
                     <li className={`${flexSpread}`}>
                         <h3 className="">Asset</h3>
-                        <p className="">{'USDT'}</p>
+                        <AddressWrapper 
+                            size={4} 
+                            copyIconSize="4" 
+                            account={getTokenAddress()}
+                            overrideClassName="text-md" 
+                            display 
+                        />
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3 className="">Strategy</h3>
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
-                            account={account}
-                            overrideClassName="text-xl" 
+                            account={formatted_strategy}
+                            overrideClassName="text-md" 
                             display 
                         />
                     </li>

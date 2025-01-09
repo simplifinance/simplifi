@@ -137,23 +137,28 @@ export const Permissioned = () => {
                 values={[
                     {
                         title: 'Participants',
-                        value: ''
+                        value: '',
+                        affix: ''
                     },
                     {
                         title: 'Unit Liquidity',
-                        value: unitLiquidity.value
+                        value: unitLiquidity.value,
+                        affix: ' $',
                     },
                     {
                         title: 'Duration',
-                        value: `${duration.value}${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
+                        value: duration.value,
+                        affix: `${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
                     },
                     {
                         title: 'Int. Rate',
-                        value: `${toBN(interest.value).div(100).toString()}%`
+                        value: toBN(interest.value).div(100).toString(),
+                        affix: `%`
                     },
                     {
                         title: 'Collateral Index',
-                        value: `${toBN(ccr.value).div(100).toString()}`,
+                        value: toBN(ccr.value).div(100).toString(),
+                        affix: ''
                     },
                 ]}
             />
