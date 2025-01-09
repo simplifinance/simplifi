@@ -75,7 +75,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       serviceRate,
       minContribution,
       setUpFee,
-      deployer, /// feeTo,
+      deployer, /// We use the deployer as feeReceiver /feeTo,
       assertMgr.address,
       strategyManager.address,
       ownershipManager.address

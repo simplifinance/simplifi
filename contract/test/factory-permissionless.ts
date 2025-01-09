@@ -208,7 +208,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       /**
@@ -263,7 +263,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -350,7 +350,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Decrease the duration
@@ -415,7 +415,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Increase the duration
@@ -490,7 +490,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Fastrack block time
@@ -582,7 +582,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Fastrack block time
@@ -614,7 +614,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -726,7 +726,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer3,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       /**
@@ -785,7 +785,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -862,7 +862,7 @@ describe("Factory", function () {
         factory,
         owner: formatAddr(create.pool.addrs.strategy),
         spender: signer1,
-        value: create.pool.uint256s.unit
+        // value: create.pool.uint256s.unit
       });
       /**
        * Calling withdraw collateral should fail if uncommented.

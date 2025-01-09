@@ -17,14 +17,15 @@ export const Confirmation :
         ({sendTransaction, toggleDrawer, openDrawer, displayMessage}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
-    const {setmessage, message,} = useAppStorage();
+    const {setmessage,} = useAppStorage();
     const handleCloseDrawer = () => {
         toggleDrawer(0);
         setmessage('');
     };
 
     const callback_after = (errored: boolean, error?: any) => {
-        !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
+        // !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
+        errored && setmessage(formatError({error, }));
         setLoading(false);
         setTimeout(() => handleCloseDrawer(), 10000);
         clearTimeout(10000);
@@ -41,20 +42,6 @@ export const Confirmation :
         });
     }
 
-    // {
-    //     onSuccess: () => {
-    //         setTrxnStatus({message: 'Trxn Completed',});
-    //         setLoading(false);
-    //         setTimeout(() => handleCloseDrawer(), 5000);
-    //         clearTimeout(5000);
-    //     },
-    //     onError: (errorArg: FormatErrorArgs) => {
-    //         setTrxnStatus({message: formatError(errorArg)});
-    //         setLoading(false);
-    //         setTimeout(() => handleCloseDrawer(), 5000);
-    //         clearTimeout(5000);
-    //     }
-    // } 
     return (
         <Drawer 
             openDrawer={openDrawer} 

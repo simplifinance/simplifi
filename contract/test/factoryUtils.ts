@@ -289,14 +289,15 @@ export async function withdraw(
     asset: TestAssetContract,
     factory: FactoryContract,
     spender: Signer,
-    epochId: bigint,
-    value: bigint
+    epochId: bigint
   }
 ) : Promise<{balancesInStrategy: Common.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
 {
-  const { asset, owner, factory, spender, epochId, value } = x;
+  const { asset, owner, factory, spender, epochId} = x;
+  const allowance = await asset.allowance(owner, spender);
+  console.log("Allowance: ", allowance.toString());
   const signerBalB4 = await asset.balanceOf(spender.address);
-  await asset.connect(spender).transferFrom(owner, spender.address, value);
+  await asset.connect(spender).transferFrom(owner, spender.address, allowance);
   const balancesInStrategy = await factory.getBalances(epochId);
   const signerBalAfter = await asset.balanceOf(spender.address);
   return { balancesInStrategy, signerBalAfter, signerBalB4 };

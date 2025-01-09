@@ -94,9 +94,9 @@ export const toBN = (x: string | number ) => {
   return new BigNumber(x);
 }
 
-export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
-  var newDate = new Date(toBN(onchainUnixTime.toString()).toNumber());
-  return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
+export function getTimeFromEpoch(onchainUnixTime: number) {
+  var now = new Date(onchainUnixTime * 1000);
+  return (onchainUnixTime === 0? 'Not Set' : `${now.toLocaleDateString("en-GB")} ${now.toLocaleTimeString("en-US")}`);
 }
 
 export const commonStyle = (props?: {}) => {
@@ -296,14 +296,14 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
   const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan}, slot, rank: { member, admin }} = param;
   const payDate_InSec = toBN(payDate.toString()).toNumber();
   const slot_toNumber = toBN(slot.toString()).toNumber();
-  const turnTime_InSec = toBN(payDate.toString()).toNumber();
+  const turnTime_InSec = toBN(turnTime.toString()).toNumber();
   const durOfChoice_InSec = toBN(durOfChoice.toString()).toNumber();
   const colBals_InEther = formatEther(toBigInt(toBN(colBals.toString()).toString()));
   const loan_InEther = formatEther(toBigInt(toBN(loan.toString()).toString()));
   const loan_InBN = toBN(loan.toString());
   const expInterest_InEther = formatEther(toBigInt(toBN(expInterest.toString()).toString()));
-  const payDate_InDateFormat = getTimeFromEpoch(payDate);
-  const turnTime_InDateFormat = getTimeFromEpoch(turnTime);
+  const payDate_InDateFormat = getTimeFromEpoch(payDate_InSec);
+  const turnTime_InDateFormat = getTimeFromEpoch(turnTime_InSec);
   const id_lowerCase = id.toString().toLowerCase()
 
   return {

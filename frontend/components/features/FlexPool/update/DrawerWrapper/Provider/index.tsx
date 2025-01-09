@@ -48,12 +48,12 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                         </h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Slot No</h3>
+                        <h3>Slot</h3>
                         <h3>{ slot_toNumber }</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Time Until GetFinance</h3>
-                        <h3>{turnTime_InDateFormat}</h3>
+                        <h3 className="text-end">{turnTime_InDateFormat}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Has Sent Quota</h3>
@@ -64,12 +64,12 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                         <h3>{durOfChoice_InSec > 0? durOfChoice_InSec / 3600 : 0}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Loan</h3>
+                        <h3>Loan Bal</h3>
                         <h3>{`${loan_InEther} USDT`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>PayDate</h3>
-                        <h3>{ payDate_InDateFormat }</h3>
+                        <h3>{'Max. Date To Payback'}</h3>
+                        <h3 className="text-end">{ payDate_InDateFormat }</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{"Col-Bal"}</h3>

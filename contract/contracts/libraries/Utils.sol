@@ -123,7 +123,7 @@ library Utils {
 
     /**
         @dev Computes maker fee.
-        @param makerRate : The amount of fee (in %) charged by the platform
+        @param makerRate : The amount of fee (in %) charged by the platform on the principal given to a borrower.
             Note : Raw rate must multiply by 100 to get the expected value i.e
             if maker rate is 0.1%, it should be parsed as 0.1 * 100 = 10.
             See `_getPercentage()`.

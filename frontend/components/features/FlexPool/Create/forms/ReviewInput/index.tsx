@@ -58,12 +58,15 @@ export const ReviewInput = (props: ReviewInputProps) => {
 
     const callback_final = (errored: boolean, error?: any) => {
         if(!errored){
-            setmessage('Trxn Completed');
+            // setmessage('Trxn Completed');
         } else {
             setmessage(formatError({error}));
         }
         setLoading(false);
-        setTimeout(() => toggleDrawer(0), 6000);
+        setTimeout(() => {
+            setmessage('');
+            toggleDrawer(0)
+        }, 6000);
         clearTimeout(6000);
     }
 

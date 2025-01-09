@@ -790,16 +790,16 @@ library FactoryLib {
     _moveSelectorToTheNext(self.poolArr, arg.epochId);
     _setContributorData(
       self.poolArr[arg.epochId].cData,
-      Common.Contributor(
-        arg.durOfChoice,
-        arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
-        _now().add(arg.durOfChoice),
-        cbt.cData.turnTime,
-        _setClaim(Common.SetClaimParam(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,caller, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20)),
-        arg.msgValue,
-        caller,
-        cbt.cData.sentQuota
-      ),
+      Common.Contributor({
+        durOfChoice: arg.durOfChoice,
+        expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
+        payDate: _now().add(arg.durOfChoice),
+        turnTime: cbt.cData.turnTime,
+        loan: _setClaim(Common.SetClaimParam(arg.pool.uint256s.currentPool, arg.epochId, arg.fee, 0, arg.msgValue ,caller, arg.pool.addrs.strategy, self.pData.feeTo, _d.f,Common.TransactionType.ERC20)),
+        colBals: arg.msgValue,
+        id: caller,
+        sentQuota: cbt.cData.sentQuota
+    }),
       cbt.rank,
       cbt.slot
     );
@@ -901,18 +901,18 @@ library FactoryLib {
     ced.pool = _fetchPool(self, pb.epochId);
     ced = Common.CommonEventData(ced.pool, ced.pool.uint256s.currentPool, ced.pool.cData[drv.slot].cData.colBals);
     _setClaim(
-      Common.SetClaimParam(
-        ced.pool.cData[drv.slot].cData.colBals,
-        pb.epochId,
-        0,
-        drv.debt,
-        0,
-        pb.user,
-        _p.addrs.strategy,
-        address(0),
-        allGF,
-        Common.TransactionType.NATIVE
-      )
+      Common.SetClaimParam({
+        amount: ced.pool.cData[drv.slot].cData.colBals,
+        epochId: pb.epochId,
+        fee: 0,
+        debt: drv.debt,
+        value: 0,
+        contributor: pb.user,
+        strategy: _p.addrs.strategy,
+        feeTo: address(0),
+        allHasGF: allGF,
+        txType: Common.TransactionType.NATIVE
+      })
     );
   }
 
@@ -1088,7 +1088,20 @@ library FactoryLib {
     self.poolArr[epochId].uints.quorum = 0;
     setPermit(creator, epochId, true);
     _setNextStage(self.poolArr, epochId, Common.FuncTag.ENDED);
-    _setClaim(Common.SetClaimParam(_p.uint256s.unit, epochId, 0, 0, 0, creator, _p.addrs.strategy, address(0), _d.f, Common.TransactionType.ERC20));
+    _setClaim(Common.SetClaimParam({
+        amount: _p.uint256s.unit, 
+        epochId: epochId, 
+        fee: 0, 
+        debt: 0, 
+        value: 0, 
+        contributor: creator, 
+        strategy: _p.addrs.strategy, 
+        feeTo: address(0), 
+        allHasGF: _d.f, 
+        txType: Common.TransactionType.ERC20
+      })
+    );
+
     success = _p.uint256s.unit;
   }
 

@@ -162,19 +162,8 @@ describe("Permissioned", function () {
 
       const {
         balances: { erc20, xfi }, 
-        pool: { 
-          addrs: { strategy, lastPaid, asset, admin }, 
-          allGh, 
-          uint256s: { currentPool, unit, fullInterest, intPerSec }, 
-          uints: { quorum, colCoverage, duration, selector }
-        },
-        profile: { 
-          cData: {
-            colBals, id, turnTime, durOfChoice, expInterest,  loan, payDate
-          },
-          rank,
-          slot
-        }
+        pool: { uint256s: { currentPool,}},
+       
       } = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
@@ -208,7 +197,8 @@ describe("Permissioned", function () {
           contributors: getAddressFromSigners([signer1, signer2]),
           deployer
         });
-
+        // 9990000000000000000
+        // 10000000000000000000
       const join = await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
@@ -273,8 +263,8 @@ describe("Permissioned", function () {
         epochId: create.pool.uint256s.epochId,
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
-        spender: signer1,
-        value: gf.profile.cData.loan
+        spender: signer1
+        // value: gf.profile.cData.loan
       });
       
       console.log(`signerBalB4: ${signerBalB4.toString()} \nsignerBalAfter: ${signerBalAfter.toString()}\n `);
@@ -283,7 +273,7 @@ describe("Permissioned", function () {
       
       expect(balancesInStrategy.erc20).to.be.equal(ZERO);
       expect(signerBalAfter).to.be.gt(signerBalB4);
-      expect(signerBalAfter).to.be.gte(gf.profile.cData.loan);
+      expect(signerBalAfter).to.be.lt(gf.profile.cData.loan);
     });
 
     it("Permissioned: Borrower should payback", async function () {
@@ -343,7 +333,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
       
       /**
@@ -418,7 +408,7 @@ describe("Permissioned", function () {
         deployer
       });
 
-      const join = await joinEpoch({
+      await joinEpoch({
         contribution: create.pool.uint256s.unit,
         deployer,
         epochId: create.pool.uint256s.epochId,
@@ -429,7 +419,7 @@ describe("Permissioned", function () {
       });
 
       /**
-       * Signer1 borrow and paback.
+       * Signer1 borrow.
        */
       const gf = await getFinance({
         epochId: create.pool.uint256s.epochId,
@@ -444,7 +434,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       /**
@@ -499,7 +489,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -583,7 +573,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Decrease the duration
@@ -646,7 +636,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Increase the duration
@@ -713,7 +703,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Fastrack block time
@@ -803,7 +793,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer1,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       // Fastrack block time
@@ -835,7 +825,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -945,7 +935,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf.pool.addrs.strategy),
         spender: signer3,
-        value: gf.profile.cData.loan
+        // value: gf.profile.cData.loan
       });
 
       /**
@@ -1004,7 +994,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(gf_2.pool.addrs.strategy),
         spender: signer2,
-        value: gf_2.profile.cData.loan
+        // value: gf_2.profile.cData.loan
       });
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
@@ -1079,7 +1069,7 @@ describe("Permissioned", function () {
         factory,
         owner: formatAddr(create.pool.addrs.strategy),
         spender: signer1,
-        value: create.pool.uint256s.unit
+        // value: create.pool.uint256s.unit
       });
       /**
        * Calling withdraw collateral should fail if uncommented.

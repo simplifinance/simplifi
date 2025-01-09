@@ -21,14 +21,14 @@ import { getEpoches } from "@/apis/read/readContract";
 export default function SimpliApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<number>(0);
-  // const [lastFetched, setLastFetched] = React.useState<number>(new Date().getTime());
+  const [, refresh] = React.useState<number>(new Date().getTime());
   const [storage, setStorage] = React.useState<Pools>(POOLS_MOCK);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
-  const { isConnected, connector } = useAccount();
+  const { isConnected, connector, address } = useAccount();
   const config = useConfig();
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
@@ -87,15 +87,8 @@ export default function SimpliApp() {
 
   // Whenever `message` variable changes, every 10sec, reset it
   React.useEffect(() => {
-    if(message !== ''){
-      setTimeout(() => {
-        setmessage('');
-      }, 10000);
-    } 
-    return () => {
-      clearTimeout(10000);
-    };
-  }, [message]);
+    refresh((prev) => prev + 1);
+  }, [isConnected, address]);
  
   return (
     <StorageContextProvider 

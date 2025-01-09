@@ -100,6 +100,25 @@ contract Strategy is IStrategy, OnlyOwner {
    * See IStrategy.setClaim for doc.
    * @notice 'credit' should only be set if borrower is returning the borrowed fund.
   */ 
+    //          uint amount;
+    // uint epochId;
+    // uint fee;
+    // uint debt;
+    // uint value;
+    // address contributor;
+    // address strategy;
+    // address feeTo;
+    // bool allHasGF;
+    // TransactionType txType;
+    // scp.amount,
+    //     scp.fee,
+    //     scp.debt,
+    //     scp.epochId,
+    //     scp.contributor,
+    //     scp.feeTo,
+    //     scp.allHasGF,
+    //     scp.txType
+
   function setClaim(
     uint claim,
     uint fee,
@@ -113,11 +132,11 @@ contract Strategy is IStrategy, OnlyOwner {
     external
     payable
     onlyOwner("Strategy - setClaim: Not permitted")
-    returns(uint actualClaim)
+    returns(uint)
   {
     address asset = assets[epochId];
     if(txType == Common.TransactionType.ERC20) {
-      actualClaim = claim > fee? claim - fee : claim;
+      uint actualClaim = claim > fee? claim - fee : claim;
       _setAllowance(user, asset, actualClaim);
       if(fee > 0) {
         IERC20(asset).transfer(feeTo, fee);
@@ -129,7 +148,7 @@ contract Strategy is IStrategy, OnlyOwner {
         _roundUp(epochId, assets[epochId]); //-------------------------------------hetr
       }
     }
-    return actualClaim;
+    return claim;
   }
 
   /**
@@ -170,8 +189,7 @@ contract Strategy is IStrategy, OnlyOwner {
   ) 
     private 
   {
-    uint prevAllow = _prevAllowance(asset, to);
-    IERC20(asset).approve(to, prevAllow > 0? amount + prevAllow : amount);
+    IERC20(asset).approve(to, amount + _prevAllowance(asset, to));
   }
 
   /**

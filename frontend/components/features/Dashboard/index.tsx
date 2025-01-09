@@ -9,14 +9,15 @@ import {
 } from '@/components/assets';
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { flexEven, } from '@/constants';
-import { useReadContracts } from 'wagmi';
+import { useAccount, useReadContracts } from 'wagmi';
 import { readAnalyticsConfig, readSymbolConfig } from '../FlexPool/update/DrawerWrapper/readContractConfig';
 import { formatEther } from 'viem';
 import { toBN } from '@/utilities';
 
 const Dashboard : React.FC = () => {
+  const { isConnected } = useAccount();
   const { storage: pools, } = useAppStorage();
-  const { data,} = useReadContracts({
+  const { data, refetch} = useReadContracts({
     contracts: [
       readAnalyticsConfig(),
       readSymbolConfig()
@@ -32,12 +33,12 @@ const Dashboard : React.FC = () => {
   const dashboardInfo = [
     {
       title: `TVL - ${symbol || 'USD'}`,
-      value: `${tvlInUSD}`,
+      value: `${tvlInUSD} ${symbol}`,
       icon: tvlIcon
     },
     {
       title: `TVL - XFI`,
-      value: `${tvlInXFI}`,
+      value: `${tvlInXFI} XFI`,
       icon: tvlIcon
     },
     {
@@ -68,6 +69,10 @@ const Dashboard : React.FC = () => {
       
     },
   ];
+
+  React.useEffect(() => {
+    if(isConnected) refetch()
+  }, [isConnected]);
 
   return (
     <React.Fragment>

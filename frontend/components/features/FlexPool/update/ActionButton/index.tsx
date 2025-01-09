@@ -6,7 +6,6 @@ import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
 import { Confirmation } from "./Confirmation";
 import { CustomButton } from "@/components/CustomButton";
-// import { FormatErrorArgs } from "@/apis/update/formatError";
 
 export const ActionButton = (props: RenderActionsProps) => {
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
@@ -69,24 +68,7 @@ export const ActionButton = (props: RenderActionsProps) => {
                 strategy: formatted_strategy
             }
         ); 
-            // .then(() => onSuccess())
-            // .catch((error) =>{
-            //     console.log("ErrorArg", error);
-            //     onError({
-            //         error,
-            //         amount: formatEther(BigInt(otp.unit.toString())),
-            //         durationInSec: Number(preferredDuration),
-            //         epochId: otp.epochId?.toString(),
-            //         maxEpochDuration: maxEpochDuration || '0'
-            //     })
-            // } )
     }
-
-    // React.useEffect(() => {
-    //     if(modalOpen || openDrawer) {
-    //         // closeInfoDrawer?.(false);
-    //     }
-    // }, [modalOpen, openDrawer]);
 
     return(
         <React.Fragment>
