@@ -47,6 +47,7 @@ export const POOL_MOCK : LiquidityPool = {
     fullInterest: 0n,
     intPerSec: 0n,
     unitId: 0n,
+    rId: 0n
   },
   stage: 0n,
   userCount: {
