@@ -2,9 +2,9 @@
 
 pragma solidity 0.8.24;
 
-import "hardhat/console.sol";
-import { FactoryLib, Data } from "../libraries/FactoryLib.sol";
-import { FuncHandler } from "../peripherals/FuncHandler.sol";
+// import "hardhat/console.sol";
+import { FactoryLibV2, Data } from "../libraries/FactoryLibV2.sol";
+import { Pausable } from "../abstracts/Pausable.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
@@ -15,10 +15,11 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
 
 abstract contract AbstractFactory is
     IFactory,
-    FuncHandler,
-    ReentrancyGuard
+    ReentrancyGuard,
+    Pausable
 {
-    using FactoryLib for Data;
+    using FactoryLibV2 for Data;
+    // error DD(address[] contributors);
 
     Data private data;
 
@@ -29,11 +30,6 @@ abstract contract AbstractFactory is
     uint public minContribution;
 
     Analytics public analytics;
-
-    modifier validateEpochId(uint epochId) {
-        data.verifyEpochId(epochId);
-        _;
-    }
 
     /**
      * @dev Only supported assets are allowed.
@@ -46,6 +42,11 @@ abstract contract AbstractFactory is
         }
         _;
     }
+
+    modifier onlyInitialized(uint256 unit,bool secondCheck) {
+        FactoryLibV2._isInitialized(data.units, unit, secondCheck);
+        _;
+    }
     
     /**
      * See _setUp() for doc
@@ -53,16 +54,14 @@ abstract contract AbstractFactory is
     constructor(
         uint16 serviceRate,
         uint _minContribution,
-        uint setUpFee,
         address feeTo,
         address assetClass,
         address strategyManager,
         address _ownershipManager
-    ) FuncHandler(_ownershipManager){
+    ) Pausable(_ownershipManager) {
         _setUp(
             serviceRate, 
             _minContribution, 
-            setUpFee, 
             feeTo, 
             assetClass, 
             strategyManager
@@ -70,30 +69,18 @@ abstract contract AbstractFactory is
     }
 
     ///@dev Fallback
-    receive() external payable {}
-
-    /**
-     * @dev Withdraws XFI balances of this contract if any. OnlyOwner function
-     * @param value : Amount to withdraw
-     */
-    function withdrawXFI(
-        uint value
-    )
-        public
-        onlyOwner("Factory - withdrawXFI not permitted")
-    {
-        require(value > 0 && address(this).balance >= value, "Value is 0 || 0 balalnce");
-        (bool success,) = data.pData.feeTo.call{value: value}('');
-        require(success,"Withdrawal Failed");
+    receive() external payable {
+        if(msg.value > 15e14 wei) {
+            (bool success,) = data.pData.feeTo.call{value:msg.value}('');
+            require(success,'Reverted');
+        }
     }
-
 
     /** @dev See _setUp() for doc.
      */
     function performSetUp(
         uint16 serviceRate,
         uint _minContribution,
-        uint setUpFee,
         address feeTo,
         address assetClass,
         address strategyManager
@@ -101,7 +88,6 @@ abstract contract AbstractFactory is
         _setUp(
             serviceRate, 
             _minContribution, 
-            setUpFee, 
             feeTo, 
             assetClass, 
             strategyManager
@@ -114,22 +100,19 @@ abstract contract AbstractFactory is
      * how we manage ownership (different from OZ pattern). 
      * @param serviceRate : Platform fee
      * @param _minContribution : Minimum acceptable unit in liquidity pool.
-     * @param setUpFee : Amount charged for setting up a liquidity pool.
      * @param feeTo : Fee recipient.
-     * @param assetClass : Asset manager contract.
-     * @param strategyManager : Strategy manager contract.
+     * @param assetAdmin : Asset manager contract.
+     * @param bankFactory : Strategy manager contract.
      */
     function _setUp(
         uint16 serviceRate,
         uint _minContribution,
-        uint setUpFee,
         address feeTo,
-        address assetClass,
-        address strategyManager
+        address assetAdmin,
+        address bankFactory
     ) private {
         minContribution = _minContribution;
-        data.pData = ContractData(feeTo, assetClass, serviceRate, strategyManager);
-        creationFee = setUpFee;
+        data.setContractData(assetAdmin, feeTo, serviceRate, bankFactory);
     }
 
     /**
@@ -141,7 +124,7 @@ abstract contract AbstractFactory is
       @param colCoverage - Collateral factor - Collateral determinant for contributors to borrow.
                             This is expressed as a multiplier index in the total loanable amount.
       @param unitLiquidity - Unit contribution.
-      @param liquidAsset - Liquidity asset. This will often be an ERC20 compatible asset.
+      @param asset - Liquidity asset. This will often be an ERC20 compatible asset.
       @param contributors : Array contributors addresses
       @param router : We use this to determine which pool to launch. Router can either be permissioned
                     or permissionless.
@@ -153,29 +136,19 @@ abstract contract AbstractFactory is
         uint16 durationInHours,
         uint24 colCoverage,
         uint unitLiquidity,
-        address liquidAsset,
+        address asset,
         address[] memory contributors,
         Router router
     )
         internal 
         whenNotPaused
-        onlySupportedAsset(liquidAsset)
+        onlySupportedAsset(asset)
         returns (uint)
     {
         bool isPermissionless = router == Router.PERMISSIONLESS;
+        // revert DD(contributors);
         isPermissionless? require(quorum > 1, "Router: Quorum is invalid") : require(contributors.length > 1, "Min of 2 members");
-        CreatePoolParam memory cpp = 
-            CreatePoolParam(
-                {
-                    intRate: intRate,
-                    quorum: quorum,
-                    duration: durationInHours,
-                    colCoverage: colCoverage, 
-                    unitContribution: unitLiquidity,
-                    members: contributors,
-                    asset: liquidAsset
-                }
-            );
+        CreatePoolParam memory cpp = CreatePoolParam(intRate, quorum, durationInHours, colCoverage, unitLiquidity, contributors, asset);
         CreatePoolReturnValue memory crp = !isPermissionless ? data
             .createPermissionedPool(cpp)
                 : data.createPermissionlessPool(cpp);
@@ -188,20 +161,25 @@ abstract contract AbstractFactory is
         );
         
         emit BandCreated(crp);
-        return crp.pool.uint256s.epochId;
+        return crp.pool.uint256s.unit;
     } 
 
     /** @dev Return current epoch. 
      * This is also total epoches generated to date 
     */
-    function epoches() 
+    function getEpoches() 
         external 
         view 
         returns(uint)
     {
-        return data._getEpoches();
-        // return _epoches == 0? 0 : _epoches - 1;
+        return data.getEpoches();
     }
+
+    
+  ///@dev Returns epoches
+  function getRecordEpoches() external view returns(uint) {
+    return data.getRecordEpoches();
+  }
 
     /**
         *   @dev Updates minimum liquidity of a pool.
@@ -218,17 +196,17 @@ abstract contract AbstractFactory is
     }
 
     /**@dev Add contributor.
-      @param epochId : Epoch id.
+      @param unit : Contribution amount.
       @param isPermissioned : Whether pool is permissioned or not
    */
     function _joinEpoch(
-        uint epochId,
+        uint256 unit,
         bool isPermissioned
     )
         internal
         returns(bool)
     {
-        CommonEventData memory ced =  data.addToBand(AddTobandParam(epochId, isPermissioned));
+        CommonEventData memory ced =  data.addToBand(AddTobandParam(unit, isPermissioned));
         emit NewMemberAdded(ced);
         unchecked {
             analytics.tvlInUsd += ced.pool.uint256s.unit;
@@ -237,7 +215,7 @@ abstract contract AbstractFactory is
     }
 
     /** @dev Providers borrow from their pool provided the citeria are met.
-        @param epochId : Epoh Id user wants to borrow from. 
+        @param unit : Epoh Id user wants to borrow from. 
         @notice Users can be members of multiple epoches. This enlarges the
         volume of funds they can access. 
 
@@ -251,16 +229,16 @@ abstract contract AbstractFactory is
         before paying back.
   */
     function getFinance(
-        uint epochId,
+        uint256 unit,
         uint8 daysOfUseInHr
     )
         external
         payable
         whenNotPaused
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns (bool)
     {
-        (CommonEventData memory ced) = data.getFinance(epochId, msg.value, daysOfUseInHr, _getXFIPriceInUSD);
+        (CommonEventData memory ced) = data.getFinance(unit, msg.value, daysOfUseInHr, _getXFIPriceInUSD);
         emit GetFinanced(ced);
         Analytics memory atl = analytics;
         unchecked {
@@ -273,26 +251,23 @@ abstract contract AbstractFactory is
 
     /**
     @dev Return borrowed fund.
-      @param epochId : Pool number.
+      @param unit : Contribution
      See FactoryLib.payback().
    */
     function payback(
-        uint epochId
+        uint256 unit
     )
         external
         whenNotPaused
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns (bool)
     {
-        CommonEventData memory ced = data.payback(
-            PaybackParam(
-                epochId,
-                _msgSender()
-            ),
-            _setPermit
-        );
+        CommonEventData memory ced = data.payback(PaybackParam(unit, _msgSender()));
+        unchecked {
+            analytics.tvlInUsd += ced.debtBal;
+            analytics.tvlInXFI -= ced.colBal;
+        }
         emit Payback(ced);
-        analytics.tvlInUsd += ced.debtBal;
         return true;
     }
 
@@ -300,17 +275,15 @@ abstract contract AbstractFactory is
   @dev Liquidate defaulter.
     Note: The expected repayment time for last paid contributor must have passed.
     See FactoryLib.liquidate() for more details.
-    @param epochId : Epoch Id
+    @param unit : Epoch Id
   */
-    function liquidate(
-        uint epochId
-    ) 
+    function liquidate(uint256 unit) 
         external 
         whenNotPaused 
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns (bool) 
     {
-        CommonEventData memory ced = data.liquidate(epochId, _setPermit);
+        CommonEventData memory ced = data.liquidate(unit);
         emit Payback(ced);
         Analytics memory atl = analytics;
         unchecked {
@@ -324,93 +297,74 @@ abstract contract AbstractFactory is
     /**
      * @dev See FactoryLib.enquireLiquidation
      */
-    function enquireLiquidation(
-        uint epochId
-    ) 
+    function enquireLiquidation(uint256 unit) 
         external
         view 
-        validateEpochId(epochId)
-        returns (ContributorData memory, bool, uint) 
+        onlyInitialized(unit, true)
+        returns (Contributor memory, bool, uint, Slot memory, address)
     {
-        return data._enquireLiquidation(epochId);
-    }
-
-    /**
-     * @dev Withdraws Collateral balance if any
-     * @param epochId : Epoch Id
-     */
-    function withdrawCollateral(uint epochId)
-        external
-        validateEpochId(epochId)
-        checkPermit(epochId, FuncTag.WITHDRAW)
-        returns(bool)
-    {
-        uint bal = data.withdrawCollateral(epochId);
-        console.log("analytics.tvlInXFI", analytics.tvlInXFI);
-        console.log("Bal", bal);
-        unchecked {
-            analytics.tvlInXFI -= bal;
-        }
-        return true;
+        return data._enquireLiquidation(unit);
     }
 
     /**
      * @dev Returns collaterl quote for the epoch.
-     * @param epochId : EpochId
+     * @param unit : EpochId
      * @return collateral Collateral
      * @return colCoverage Collateral coverage
      */
     function getCollaterlQuote(
-        uint epochId
+        uint256 unit
     )
         external
         view
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns(uint collateral, uint24 colCoverage)
     {
-        Pool memory pool = data._fetchPool(epochId);
-        (collateral, colCoverage) = (FactoryLib._computeCollateral(
-            pool.uint256s.currentPool,
-            0,
-            uint24(pool.uints.colCoverage),
-            _getXFIPriceInUSD()
-        ), uint24(pool.uints.colCoverage));
+        Pool memory _p = data._getCurrentPool(unit).data;
+        unchecked {
+            (collateral, colCoverage) = (FactoryLibV2._computeCollateral(
+                _p.uint256s.unit * _p.uints.quorum,
+                0,
+                uint24(_p.uints.colCoverage),
+                _getXFIPriceInUSD()
+            ), uint24(_p.uints.colCoverage));
+        }
         return (collateral, colCoverage);
 
     }
 
     /**
      * Returns the current debt of target user.
-     * @param epochId : Epoch Id
+     * @param unit : Epoch Id
      * @param target : Target user.
      */
     function getCurrentDebt(
-        uint epochId,
+        uint256 unit,
         address target
     ) 
         external
         view 
-        validateEpochId(epochId)
-        returns (uint) 
+        onlyInitialized(unit, true)
+        returns (uint256) 
     {
-        return data._getCurrentDebt(epochId, target).debt;
+        return data._getCurrentDebt(unit, target).debt;
     }
 
     /**
      * @dev Returns the profile of user
-     * @param epochId : Epoch Id
+     * @param unit : unit contribution
      * @param user : User
      */
     function getProfile(
-        uint epochId,
+        uint256 unit,
         address user
     )
         external
         view
-        validateEpochId(epochId)
-        returns(ContributorData memory) 
+        onlyInitialized(unit, false)
+        returns(Contributor memory) 
     {
-        return data.getProfile(user, epochId);
+        return data.getProfile(user, unit);
     }
 
     /**
@@ -424,97 +378,105 @@ abstract contract AbstractFactory is
         address feeTo,
         address assetAdmin,
         uint16 serviceRate,
-        uint256 _creationFee
+        address bankFactory
     ) 
         public
         onlyOwner("Factory - setContractData not permitted")
         returns(bool)
     {
-        if(creationFee == 0) {
-            creationFee = _creationFee;
-        }
-        return data.setContractData(assetAdmin, feeTo, serviceRate);
+        return data.setContractData(assetAdmin, feeTo, serviceRate, bankFactory);
     }
 
     /**
      * @dev Returns both ERC20 and Native balances locked in an epoch
-     * @param epochId : Epoch Id
+     * @param unit : Epoch Id
      */
     function getBalances(
-        uint epochId
+        uint256 unit
     )   
         external
         view
-        validateEpochId(epochId)
+        onlyInitialized(unit, false)
         returns(Balances memory)
     {
-        return data._getBalancesOfStrategy(epochId);
+        return data._getBalancesInBank(unit);
+    }
+
+    function getStatus(uint256 unit) external view returns(Unit memory _unit) {
+        _unit = data.units[unit];
+        return _unit;
     }
 
     /**
      * @dev See FactoryLib._cancelBand()
      */
     function _removeLiquidityPool(
-        uint epochId,
+        uint256 unit,
         bool isPermissionLess
     ) 
-        internal 
+        internal
         whenNotPaused 
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns (bool)
     {
-        analytics.tvlInUsd -= data.cancelBand(
-            epochId, 
-            isPermissionLess,
-            _setPermit
-        ); 
-        emit Cancellation(epochId);
+        analytics.tvlInUsd -= data.removeLiquidity(unit, isPermissionLess).data.uint256s.unit; 
+        emit Cancellation(unit);
 
         return true;
     }
 
     /**
-     * @dev Returns a single pool for 'epochId'
-     * @param epochId : Epoch id.
+     * @dev Returns a single pool for 'unit'
+     * @param unitId : Contribution Id.
      */
     function getPoolData(
-        uint epochId
+        uint unitId
     ) 
         external 
         view 
-        validateEpochId(epochId)
         returns(Pool memory) 
     {
-        return data._fetchPool(epochId);
+        return data.getData(unitId);
     }
 
-    /**@dev Returns pool from all epoched array */
-    function getPoolFromAllEpoches() 
-        public
+    /// @dev Return past pools using unitId. @notice The correct unitId must be parsed.
+    function getRecord(uint uId) external view returns(Pool memory pool) {
+        pool = data.getRecord(uId);
+        return pool;
+    }
+
+    function getPoint(address user) external view returns(Point memory point) {
+        point = data.getPoints(user);
+        return point;
+    }
+
+    function getSlot(address user, uint256 unit) 
+        external 
         view 
-        returns(Pool[] memory pools) 
+        onlyInitialized(unit, false)
+        returns(Slot memory) 
     {
-        return data.fetchPools();
+        return data.getSlot(user, unit);
     }
 
-    function getContractData()
+    function getFactoryData()
         public
         view
-        returns(ContractData memory result)
+        returns(ViewFactoryData memory)
     {
-        result = data.pData; 
+        return ViewFactoryData(analytics, data.pData, data.getEpoches(), data.getRecordEpoches());
     }
     
     /**
      * @dev Get price of SIMT in USD.
      * @notice from price oracle
-     * Assuming the price of XFI is 0.5$
+     * Assuming the price of XFI is 10$
      */
     function _getXFIPriceInUSD() 
         internal 
         pure 
         returns (uint _price) 
     {
-        _price = 9900000000000000000; // ================================================> We use oracle here
+        _price = 10000000000000000000; // ================================================> We use oracle here
     }
 }

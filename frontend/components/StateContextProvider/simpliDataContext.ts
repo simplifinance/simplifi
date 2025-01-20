@@ -1,7 +1,6 @@
-import { LiquidityPool, Path, Pools, TrxState, VoidFunc } from "@/interfaces";
+import { Analytics, LiquidityPool, Path, TrxState, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
-    storage: Pools;
     exitOnboardScreen: VoidFunc;
     toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
@@ -12,13 +11,15 @@ export interface DataContextProps {
     togglePopUp: (arg: number) => void;
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
-    // tvl: string;
     setstorage: (arg: TrxState) => void;
-    open: LiquidityPool[];
-    closed: LiquidityPool[];
-    permissioned: LiquidityPool[];
-    permissionless: LiquidityPool[];
+    // open: LiquidityPool[];
+    // closed: LiquidityPool[];
+    // permissioned: LiquidityPool[];
+    // permissionless: LiquidityPool[];
     activePath: Path;
     setActivepath: (arg: Path) => void;
-
+    analytics: Analytics;
+    currentEpoches: bigint;
+    recordEpoches: bigint;
+    symbol: string;
 }

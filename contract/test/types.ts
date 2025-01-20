@@ -1,7 +1,7 @@
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { ContractTransactionResponse, ethers } from "ethers";
 import { Hex, Address as ContractAddress } from "viem";
-import type { AssetClass, Attorney, Factory, OwnerShip, SimpliToken, StrategyManager, TestAsset, TokenDistributor, Strategy, } from "../typechain-types";
+import type { AssetClass, Factory, OwnerShip, BankFactory, TestAsset, Bank, } from "../typechain-types";
 import { Common } from "../typechain-types/contracts/apis/IFactory";
 
 export type BigNumber = ethers.BigNumberish
@@ -11,16 +11,8 @@ export type Addresses = Array<Address>;
 export type Null = Promise<void>;
 export type NullNoPromise = void;
 export type Address = ContractAddress;
-// export type PromiHex = Promise<Hex>;
-// export type PromiAddress = Promise<Address>;
-// export type PromiBigNumber = Promise<BigNumber>;
-// export type PromiObject = Promise<Object>;
-// export type BigIntArray = Array<bigint>;
-// export type PromiString = Promise<Array<string>>;
-// export type ContractResponse = Promise<import("ethers").ContractTransactionResponse>;
 export type StrBigHex = string | BigNumber | Hex | bigint | number;
 export type Signers = Promise<Signer[]>;
-// export type GetFinanceReturn = FactoryTxReturn[];
 
 export interface SignersObj {
   deployer: Signer; 
@@ -49,7 +41,7 @@ export interface CreateRouterParam {
 }
 
 export interface FunctionParam {
-  epochId: number; 
+  unit: bigint; 
   from: Signer;
   factory: FactoryContract;
   account?: Address;
@@ -78,7 +70,7 @@ export interface PermissionLessBandParam {
 export interface RemoveLiquidityParam {
   factory: FactoryContract;
   signer: Signer;
-  epochId: bigint;
+  unit: bigint;
 }
 
 export interface PermissionedBandParam {
@@ -94,7 +86,7 @@ export interface PermissionedBandParam {
 }
 
 export interface BandParam {
-  epochId: bigint;
+  unit: bigint;
   hrsOfUse_choice?: number;
   factory: FactoryContract;
   signers: Signer[];
@@ -111,9 +103,9 @@ export interface SetVariableParam {
 
 export interface FactoryTxReturn {
   pool: Common.PoolStructOutput;
-  epochId: bigint;
   balances?: Common.BalancesStructOutput;
-  profile: Common.ContributorDataStructOutput;
+  profile: Common.ContributorStructOutput;
+  slot: Common.SlotStruct;
 }
 
 export interface FundAccountParam {
@@ -130,7 +122,7 @@ export interface JoinABandParam {
   factoryAddr: Address;
   signers: SignersArr;
   deployer: Signer;
-  epochId: bigint;
+  unit: bigint;
   contribution: bigint;
 }
 
@@ -138,9 +130,12 @@ export interface LiquidateParam extends BandParam {
   debt?: bigint;
   asset: TestAssetContract;
   deployer: Signer;
+  // unit: bigint;
 }
 
-export interface GetFinanceParam extends BandParam {}
+export interface GetFinanceParam extends BandParam {
+  colQuote: bigint;
+}
 
 export interface PaybackParam extends LiquidateParam {
   asset: TestAssetContract;
@@ -149,20 +144,13 @@ export interface PaybackParam extends LiquidateParam {
 export interface GetPaidParam {
   factory: FactoryContract;
   signers: SignersArr;
-  epochId: number;
+  unit: bigint;
   runPayback: boolean;
   tcUSD: TestAssetContract;
   signerAddrs: Addresses;
   strategies: Addresses;
   trusteeAddr: Address;
 }
-
-// export interface GetPaidResultParam {
-//   tokenB4: BigIntArray;
-//   tokenAfter: BigIntArray;
-//   usdB4: BigIntArray;
-//   usdAfter: BigIntArray;
-// }
 
 export type FactoryContract = Factory & {
   deploymentTransaction(): ContractTransactionResponse;
@@ -176,11 +164,11 @@ export type TestAssetContract = TestAsset & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type StrategyManagerContract = StrategyManager & {
+export type BankFactoryContract = BankFactory & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type StrategyContract = Strategy & {
+export type BankContract = Bank & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 

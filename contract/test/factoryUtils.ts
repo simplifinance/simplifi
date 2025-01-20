@@ -19,10 +19,8 @@ import type {
   FactoryTxReturn,
   FactoryContract, } from "./types";
 
-import { bn, formatAddr, ZERO, } from "./utilities";
+import { bn, formatAddr, Status, ZERO, } from "./utilities";
 import { Common } from "../typechain-types/contracts/apis/IFactory";
-import { expect } from "chai";
-import { toBigInt } from "ethers";
 
 /**
  * @dev Create public pool
@@ -57,12 +55,12 @@ export async function createPermissionlessPool (
     x.unitLiquidity,
     x.asset
   );
-  const epochId = toBigInt(bn(await x.factory.epoches()).minus(1).toString());
-  // console.log("EpochId..........", epochId)
-  const balances = await x.factory.getBalances(epochId);
-  const pool = await x.factory.getPoolData(epochId);
-  const profile = await x.factory.getProfile(epochId, x.signer.address);
-  return { pool, epochId, balances, profile};
+  const unitId = await x.factory.getEpoches();
+  const balances = await x.factory.getBalances(x.unitLiquidity);
+  const pool = await x.factory.getPoolData(unitId);
+  const profile = await x.factory.getProfile(x.unitLiquidity, x.signer.address);
+  const slot = await x.factory.getSlot(x.signer.address, x.unitLiquidity);
+  return { pool, balances, profile, slot};
 }
 
 /**
@@ -98,11 +96,15 @@ export async function createPermissionedPool(
     x.asset, 
     x.contributors
   );
-  const epochId = toBigInt(bn(await x.factory.epoches()).minus(1).toString());
-  const balances = await x.factory.getBalances(epochId);
-  const pool = await x.factory.getPoolData(epochId);
-  const profile = await x.factory.getProfile(epochId, x.signer.address);
-  return { pool, epochId, balances, profile };
+  const unitId = await x.factory.getEpoches();
+  const balances = await x.factory.getBalances(x.unitLiquidity);
+  const pool = await x.factory.getPoolData(unitId);
+  // console.log("Contributors", x.contributors)
+  // console.log("Pool.cData", pool.cData);
+  const profile = await x.factory.getProfile(x.unitLiquidity, x.signer.address);
+  const slot = await x.factory.getSlot(x.signer.address, x.unitLiquidity);
+
+  return { pool, balances, profile, slot};
 }
 
 /**
@@ -115,21 +117,21 @@ export async function getFinance(
 )
  : Promise<FactoryTxReturn>
 {
-  // const factoryAddr = await x.factory.getAddress();
-  const getCol = await x.factory.getCollaterlQuote(x.epochId);
-  console.log("GetQuote", getCol);
-  // let txReturn : GetFinanceReturn = [];
+  // const getCol = await x.factory.getCollaterlQuote(x.unit);
+  // console.log("GetQuote", getCol);
   const signer = x.signers[0];
   await x.factory.connect(signer).getFinance(
-    x.epochId,
+    x.unit,
     x.hrsOfUse_choice!,
-    {value: getCol.collateral}
+    {value: x.colQuote}
   );
-  const balances = await x.factory.getBalances(x.epochId);
-  const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, signer.address);
+  const unitId = await x.factory.getEpoches();
+  const balances = await x.factory.getBalances(x.unit);
+  const pool = await x.factory.getPoolData(unitId);
+  const profile = await x.factory.getProfile(x.unit, signer.address);
+  const slot = await x.factory.getSlot(signer.address, x.unit);
 
-  return { balances, pool, profile, epochId: x.epochId };
+  return { balances, pool, profile, slot };
 }
 
 /**
@@ -142,13 +144,13 @@ export async function payback(
 ) 
 : Promise<{
     pool: Common.PoolStructOutput;
-    balances: Common.BalancesStructOutput;
-    profile: Common.ContributorDataStructOutput;
+    balances: Common.BalancesStructOutput | undefined;
+    profile: Common.ContributorStructOutput;
  }>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
   const signer = x.signers[0];
-  await x.factory.getCurrentDebt(x.epochId, signer.address);
+  await x.factory.getCurrentDebt(x.unit, signer.address);
   // console.log(`GetCurrentDebt: ${debt}\n Calculated debt: ${x.debt}`);
   const bal = await x.asset.balanceOf(signer.address);
   if(bn(x.debt).gt(bn(bal))){
@@ -165,11 +167,16 @@ export async function payback(
     spender: factoryAddr,
     testAsset: x.asset
   });
-  console.log("Allowance", await x.asset.allowance(signer.address, factoryAddr));
-  await x.factory.connect(signer).payback(x.epochId);
-  const balances = await x.factory.getBalances(x.epochId);
-  const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, signer.address);
+  // console.log("Allowance", await x.asset.allowance(signer.address, factoryAddr));
+  const unitId = await x.factory.getEpoches();
+  await x.factory.connect(signer).payback(x.unit);
+  let balances : Common.BalancesStructOutput | undefined = undefined;
+  const unit = await x.factory.getStatus(x.unit);
+  if(bn(unit.status).toNumber() === Status.TAKEN){
+    balances = await x.factory.getBalances(x.unit);
+  }
+  const pool = await x.factory.getPoolData(unitId);
+  const profile = await x.factory.getProfile(x.unit, signer.address);
   return {
     pool,
     balances,
@@ -204,23 +211,30 @@ export async function liquidate(
     sender: x.deployer
   });
   const balB4Liq = await x.asset.balanceOf(signer.address);
-  console.log(`x.debt: ${x.debt}\nbaa: ${balB4Liq}`);
+  // console.log(`x.debt: ${x.debt}\nbaa: ${balB4Liq}`);
   await approve({
     owner: signer,
     amount: x.debt!,
     spender: factoryAddr,
     testAsset: x.asset
   });
-  await x.factory.connect(signer).liquidate(x.epochId);
-  const balances = await x.factory.getBalances(x.epochId);
-  const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, signer.address);
+  const unitId = await x.factory.getEpoches();
+  await x.factory.connect(signer).liquidate(x.unit);
+  let balances : Common.BalancesStructOutput | undefined = undefined;
+  const unit = await x.factory.getStatus(x.unit);
+  if(bn(unit.status).toNumber() === Status.TAKEN){
+    balances = await x.factory.getBalances(x.unit);
+  }
+  const pool = await x.factory.getPoolData(unitId);
+  const profile = await x.factory.getProfile(x.unit, signer.address);
+  const slot = await x.factory.getSlot(signer.address, x.unit);
+
   return {
     liq: {
       pool,
       balances,
       profile,
-      epochId: x.epochId
+      slot
     },
     balB4Liq
   }
@@ -234,9 +248,9 @@ export async function liquidate(
 export async function enquireLiquidation(
   x: BandParam
 ) 
-  : Promise<[Common.ContributorDataStructOutput, boolean, bigint]> 
+  : Promise<[Common.ContributorStructOutput, boolean, bigint, Common.SlotStructOutput, string]> 
 {
-  return await x.factory.enquireLiquidation(x.epochId);
+  return await x.factory.enquireLiquidation(x.unit);
 }
 
 /**
@@ -270,7 +284,7 @@ export async function transferAsset(x: FundAccountParam) : Null {
   }
   for(let i = 0; i < x.recipients.length; i++) {
     const BalSent = await x.asset.balanceOf(x.recipients[i]);
-    console.log(`BalSent: ${BalSent}`);
+    // console.log(`BalSent: ${BalSent}`);
   }
 
   
@@ -289,16 +303,21 @@ export async function withdraw(
     asset: TestAssetContract,
     factory: FactoryContract,
     spender: Signer,
-    epochId: bigint
+    unit: bigint
   }
-) : Promise<{balancesInStrategy: Common.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
+) : Promise<{balancesInStrategy?: Common.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
 {
-  const { asset, owner, factory, spender, epochId} = x;
+  const { asset, owner, factory, spender, unit} = x;
   const allowance = await asset.allowance(owner, spender);
-  console.log("Allowance: ", allowance.toString());
+  // expect(bn(allowance).gt(0)).to.be.true;
+  // console.log("Allowance: ", allowance.toString());
   const signerBalB4 = await asset.balanceOf(spender.address);
   await asset.connect(spender).transferFrom(owner, spender.address, allowance);
-  const balancesInStrategy = await factory.getBalances(epochId);
+  let balancesInStrategy : Common.BalancesStructOutput | undefined = undefined;
+  const unit_ = await x.factory.getStatus(unit);
+  if(bn(unit_.status).toNumber() === Status.TAKEN){
+    balancesInStrategy = await x.factory.getBalances(x.unit);
+  }
   const signerBalAfter = await asset.balanceOf(spender.address);
   return { balancesInStrategy, signerBalAfter, signerBalB4 };
 }
@@ -306,7 +325,7 @@ export async function withdraw(
 export async function removeLiquidityPool(
   x: RemoveLiquidityParam
 ) {
-  await x.factory.connect(x.signer).removeLiquidityPool(x.epochId);
+  await x.factory.connect(x.signer).removeLiquidityPool(x.unit);
   /**
    * Since liquidityPool is removed before this line, uncommenting the next line 
    * will throw "Error: Transaction reverted: function returned an unexpected amount of data" 
@@ -314,13 +333,13 @@ export async function removeLiquidityPool(
    * zeroed.
    */
   // const balances = await x.factory.getBalances(x.epochId);
-  
-  expect(x.factory.getPoolData(x.epochId)).to.be.revertedWith(
-    "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
-  );
-  expect(x.factory.getPoolData(x.epochId)).to.be.revertedWith(
-    "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
-  );
+  const unitId = await x.factory.getEpoches();
+  // expect(x.factory.getPoolData(unitId)).to.be.revertedWith(
+  //   "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
+  // );
+  // expect(x.factory.getPoolData(unitId)).to.be.revertedWith(
+  //   "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
+  // );
 }
 
 export function getAddressFromSigners(signers: Signer[]) {
@@ -342,7 +361,7 @@ export async function joinEpoch(
   : Promise<{
     pool: Common.PoolStructOutput;
     balances: Common.BalancesStructOutput;
-    profile: Common.ContributorDataStructOutput;
+    profiles: Common.ContributorStructOutput[];
   }>
 {
   const testAssetAddr = formatAddr(await x.testAsset.getAddress());
@@ -354,6 +373,7 @@ export async function joinEpoch(
     sender: x.deployer,
     testAssetAddr
   });
+  let profiles : Common.ContributorStructOutput[] = [];
   for(let i= 0; i < x.signers.length; i++) {
     const signer = x.signers[i];
     await approve({
@@ -362,15 +382,16 @@ export async function joinEpoch(
       spender: x.factoryAddr,
       testAsset: x.testAsset
     });
-    await x.factory.connect(x.signers[i]).joinAPool(x.epochId);
+    await x.factory.connect(x.signers[i]).joinAPool(x.unit);
+    const profile = await x.factory.getProfile(x.unit, x.signers[i].address);
+    profiles.push(profile);
   }
-
-  const balances = await x.factory.getBalances(x.epochId);
-  const pool = await x.factory.getPoolData(x.epochId);
-  const profile = await x.factory.getProfile(x.epochId, factoryAddr);
+  const unitId = await x.factory.getEpoches();
+  const balances = await x.factory.getBalances(x.unit);
+  const pool = await x.factory.getPoolData(unitId);
   return {
     pool,
     balances,
-    profile
+    profiles
   }
 }

@@ -133,6 +133,10 @@ function defaultErrors(arg: DefaultErrorArgs) {
             key: 'The request took too long to respond',
             value: () => 'Cannot complete request. Please check your internet connection'
         },
+        {
+            key: '0xb8bd6758',
+            value: () => 'Invalid contribution amount'
+        },
     ]
 }
 

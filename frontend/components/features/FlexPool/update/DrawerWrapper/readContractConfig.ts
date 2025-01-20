@@ -1,6 +1,14 @@
-import { analyticAbi, getPoolsAbi } from "@/apis/abis";
-import { allowanceAbi } from "@/apis/update/testToken/getAllowance";
-import { balanceOfAbi, symbolAbi } from "@/apis/update/testToken/getBalance";
+import { 
+    getBankDataAbi, 
+    getFactoryDataAbi, 
+    getPoolDataAbi, 
+    getRecordAbi, 
+    getUserDataAbi,
+    allowanceAbi,
+    symbolAbi,
+    balanceOfAbi,
+    getCollateralQuoteAbi
+} from "@/apis/abis";
 import { getFactoryAddress } from "@/apis/utils/contractAddress";
 import { getTokenAddress } from "@/apis/utils/getTokenAddress";
 import { Address } from "@/interfaces";
@@ -8,15 +16,32 @@ import { Address } from "@/interfaces";
 export const tokenAddr = getTokenAddress();
 export const factoryAddr = getFactoryAddress();
 
-export const readAllowanceConfig = ({owner, spender, isConnected}: {owner: Address, spender: Address, isConnected: boolean}) => {
+export const readBankDataConfig = ({bank}: {bank: Address}) => {
+    const contractConfig = {
+        address: bank,
+        abi: getBankDataAbi,
+        functionName: "getData",
+        args: [bank],
+    } as const;
+    return contractConfig;
+}
+
+export const readUserDataConfig = ({user, bank}: {user: Address, bank: Address}) => {
+    const contractConfig = {
+        address: bank,
+        abi: getUserDataAbi,
+        functionName: "getUserData",
+        args: [user],
+    } as const;
+    return contractConfig;
+}
+
+export const readAllowanceConfig = ({owner, spender}: {owner: Address, spender: Address}) => {
     const contractConfig = {
         address: tokenAddr,
         abi: allowanceAbi,
         functionName: 'allowance',
         args: [owner, spender],
-        // query: {
-        //     enabled: !!isConnected
-        // }
     } as const;
     return contractConfig;
 } 
@@ -26,43 +51,55 @@ export const readSymbolConfig = () => {
         abi: symbolAbi,
         address: tokenAddr,
         functionName: 'symbol',
-        // query: {
-        //     enabled: !!isConnected
-        // }
     } as const;
     return contractConfig;
 }
 
-export const readBalanceConfig = ({account, isConnected}: {account: Address, isConnected: boolean}) => {
+export const readBalanceConfig = ({account}: {account: Address}) => {
     const contractConfig = {
         address: tokenAddr,
         abi: balanceOfAbi,
         functionName: 'balanceOf',
         args: [account],
-        // query: {
-        //     enabled: !!isConnected
-        // }
     } as const;
     return contractConfig;
 }
 
-export const readPoolConfig = () => {
+export const readPoolConfig = (unitId: bigint) => {
     const contractConfig = {
         address: factoryAddr,
-        abi: getPoolsAbi,
-        functionName: 'getPoolFromAllEpoches',
-        // query: {
-        //     enabled: !!isConnected
-        // },
+        abi: getPoolDataAbi,
+        functionName: "getPoolData",
+        args: [unitId]
     } as const;
     return contractConfig;
 }
 
-export const readAnalyticsConfig = () => {
+export const readRecordConfig = (unit: bigint) => {
     const contractConfig = {
         address: factoryAddr,
-        abi: analyticAbi,
-        functionName: 'analytics',
+        abi: getRecordAbi,
+        functionName: "getRecord",
+        args: [unit]
+    } as const;
+    return contractConfig;
+}
+
+export const collateralQuoteConfig = (unit: bigint) => {
+    const contractConfig = {
+        address: factoryAddr,
+        abi: getCollateralQuoteAbi,
+        functionName: "getCollaterlQuote",
+        args: [unit]
+    } as const;
+    return contractConfig;
+}
+
+export const getFactoryDataConfig = () => {
+    const contractConfig = {
+        address: factoryAddr,
+        abi: getFactoryDataAbi,
+        functionName: 'getFactoryData',
         // query: {
         //     enabled: !!isConnected
         // },

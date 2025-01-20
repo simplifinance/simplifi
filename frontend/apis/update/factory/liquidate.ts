@@ -5,7 +5,7 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { liquidateAbi } from "@/apis/abis";
 
 export default async function liquidate(args: CommonParam) {
-  const { config, callback, account, epochId } = args;
+  const { config, callback, account, unit } = args;
   const address = getFactoryAddress();
   callback?.({message: "Creating liquidation request..."});
   const {request} = await simulateContract(config, {
@@ -13,9 +13,9 @@ export default async function liquidate(args: CommonParam) {
     account,
     abi: liquidateAbi,
     functionName: "liquidate",
-    args: [epochId]
+    args: [unit]
   });
   const hash = await writeContract(config, { ...request });
-  return await waitForConfirmation({config, fetch: true, hash, callback});
+  return await waitForConfirmation({config, hash, callback});
 }
 

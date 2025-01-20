@@ -5,7 +5,8 @@ import { Hex } from "viem";
 import { expect } from "chai";
 
 export const locker = { LOCKED: "LOCKED", UNLOCKED: "UNLOCKED" };
-export enum FuncTag { JOIN, GET, PAYBACK, WITHDRAW };
+export enum FuncTag { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED };
+export enum Status { AVAILABLE, TAKEN };
 export const bigintToStr = (x:bigint) => x.toString();
 export const toHex = (x: any) => Web3.utils.numberToHex(x);
 export const buildstring = (affx: string, start: string, times: number) => `${affx}${`${start}`.repeat(times)}`;
@@ -26,18 +27,18 @@ export const SYMBOL = "SUSD";
 export const NAME = "Simple Test USD";
 export const TOTALSUPPLY = buildstring('1', '0', 24);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
-export const TEN_THOUSAND_TOKEN = 10000000000000000000000n;
-export const ONE_THOUSAND_TOKEN = 1000000000000000000000n;
-export const ONE_HUNDRED_TOKEN = 100000000000000000000n;
-export const ONE_TOKEN = 1000000000000000000n;
+export const TEN_THOUSAND_TOKEN = BigInt('10000000000000000000000');
+export const ONE_THOUSAND_TOKEN = BigInt('1000000000000000000000');
+export const ONE_HUNDRED_TOKEN = BigInt('100000000000000000000');
+export const ONE_TOKEN = BigInt('1000000000000000000');
 export const INITIAL_ACCOUNT_BALANCE = ethers.parseEther("1.0");
-export const CREATION_FEE = ethers.parseEther("0.02");
+// export const CREATION_FEE = ethers.parseEther("0.02");
 export const VALUE_TO_SEND = ethers.parseEther("2.0");
-export const AMOUNT_SENT_TO_ACCOUNT_ONE = 300000000000000000000000n; //300,000 token
-export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = 100000000000000000000000n; // 100,000 token
-export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = 100000000000000000000000n; // 100,000 token
+export const AMOUNT_SENT_TO_ACCOUNT_ONE = BigInt('300000000000000000000000'); //300,000 token
+export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = BigInt('100000000000000000000000'); // 100,000 token
+export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = BigInt('100000000000000000000000'); // 100,000 token
 export const ZERO_ADDRESS = buildstring('0x', '0', 40);
-export const ZERO = 0n;
+export const ZERO = BigInt('0');
 
 /**
  * Wraps `arg` into a big number
@@ -79,19 +80,19 @@ export const COLLATER_COVERAGE_RATIO = 150;
 /**
  * Minimum contribution 2USD
 */
-export const MINIMUM_LIQUIDITY = 2000000000000000000n;
+export const MINIMUM_LIQUIDITY = BigInt('2000000000000000000');
 
 /**
  * Contribution amount $5USD
 */
-export const UNIT_LIQUIDITY = 5000000000000000000n; 
-export const TOTAL_LIQUIDITY = 15000000000000000000n; // unit * 3
+export const UNIT_LIQUIDITY = BigInt('5000000000000000000'); 
+export const TOTAL_LIQUIDITY = BigInt('15000000000000000000'); // unit * 3
 
 /**
  * Transfer amount: 10,000 Token
  */
-export const AMOUNT = 10000000000000000000000n;
-export const FEE = 10000000000000000n; //0.01
+export const AMOUNT = BigInt('10000000000000000000000');
+export const FEE = BigInt('10000000000000000'); //0.01
 export const USD_XFI_TESTNET: Address = "0x874069fa1eb16d44d622f2e0ca25eea172369bc1";
 
 /**

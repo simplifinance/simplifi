@@ -1,5 +1,5 @@
 import React from "react";
-import { AmountToApproveParam, ButtonObj, ButtonText, FormattedPoolContentProps, FuncTag, TransactionCallback, TrxState, VoidFunc, } from "@/interfaces";
+import { AmountToApproveParam, ButtonObj, FormattedPoolContentProps, TransactionCallback, TrxState, } from "@/interfaces";
 import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
@@ -11,7 +11,7 @@ export const ActionButton = (props: RenderActionsProps) => {
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
     const { 
         buttonObj,
-        formatted_strategy, 
+        formatted_bank, 
         otherParam, 
         inputModalOn,
         confirmationDrawerOn,
@@ -65,7 +65,7 @@ export const ActionButton = (props: RenderActionsProps) => {
                 callback,
                 preferredDuration,
                 otherParam,
-                strategy: formatted_strategy
+                bank: formatted_bank
             }
         ); 
     }
@@ -114,6 +114,5 @@ export interface RenderActionsProps extends FormattedPoolContentProps{
     confirmationDrawerOn: number;
     setDrawerState: (arg: number) => void
     setInputModal: (arg: boolean) => void
-    // isInfoDrawerOpen: boolean;
 }
 

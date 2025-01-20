@@ -11,7 +11,7 @@ export default async function createPermissionlessLiquidityPool(param: CreatePer
   const { config, account, quorum, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
   const address = getFactoryAddress();  
   // console.log("Args: ", param)
-  callback?.({message: "Launching a Pprmissionless flexPool..."});
+  callback?.({message: "Launching a Permissionless flexPool..."});
   const { request } = await simulateContract(config, {
     address,
     account,
@@ -20,6 +20,6 @@ export default async function createPermissionlessLiquidityPool(param: CreatePer
     args: [intRate, quorum, durationInHours, colCoverage, unitLiquidity, tokenAddr],
   });
   const hash = await writeContract(config, request );
-  return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
+  return await waitForConfirmation({config, hash, callback: callback!});
 }
 

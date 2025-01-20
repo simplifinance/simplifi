@@ -1,6 +1,7 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { getTokenAddress } from "../../utils/getTokenAddress";
+import { allowanceAbi } from "@/apis/abis";
 
 export default async function getAllowance(args: {owner: Address, account: Address, spender: Address, config: WagmiConfig}) {
   const { owner, spender, account, config } = args;
@@ -12,33 +13,6 @@ export default async function getAllowance(args: {owner: Address, account: Addre
     args: [owner, spender]
   });
 }
-
-export const allowanceAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      }
-    ],
-    "name": "allowance",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-] as const;
 
 export interface GetBalanceArg {
   target: Address;

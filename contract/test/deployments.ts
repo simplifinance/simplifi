@@ -6,11 +6,12 @@ import type {
    OwnershipManagerContract, 
    Signer, 
    Signers,
-   StrategyManagerContract,
+   BankFactoryContract,
    TestAssetContract
    } from "./types";
-import { CREATION_FEE, FEETO, formatAddr, MAKER_RATE, MINIMUM_LIQUIDITY, QUORUM,} from "./utilities";
+import { FEETO, formatAddr, MAKER_RATE, MINIMUM_LIQUIDITY, } from "./utilities";
 import { expect } from "chai";
+import { abi } from "../artifacts/contracts/implementations/strategies/Bank.sol/Bank.json";
 
 /**
  * Deploys and return an instance of the Reserve contract
@@ -23,13 +24,13 @@ export async function deployOwnershipManager(deployer: Signer) : Promise<Ownersh
 }
 
 /**
- * Deploys and return an instance of the StrategyAdmin contract.
+ * Deploys and return an instance of the BankFactory contract.
  * @param deployer : Deployer address
  * @returns Contract instance
  */
-export async function deployStrategyManager(ownershipManager: Address, deployer: Signer) : Promise<StrategyManagerContract> {
-  const StrategyAdmin = await ethers.getContractFactory("StrategyManager");
-  return (await StrategyAdmin.connect(deployer).deploy(ownershipManager)).waitForDeployment();
+export async function deployBankFactory(ownershipManager: Address, deployer: Signer) : Promise<BankFactoryContract> {
+  const BankFactory = await ethers.getContractFactory("BankFactory");
+  return (await BankFactory.connect(deployer).deploy(ownershipManager)).waitForDeployment();
 }
 
 /**
@@ -43,17 +44,17 @@ export async function deployAssetClass(testAddr: Address, ownershipManager: Addr
 }
 
 /**
- * Deploys and return an address instance of the AcountStrategy
+ * Deploys and return an address instance of the Bank
  * @param deployer : Deployer address
  * @returns Contract address
  */
-export async function deployStrategy(ownershipManager: Address, deployer: Signer) {
-  const SmartStrategy = await ethers.getContractFactory("Strategy");
-  return await (await (await SmartStrategy.connect(deployer).deploy(ownershipManager)).waitForDeployment()).getAddress();
+export async function deployBank(ownershipManager: Address, deployer: Signer) {
+  const SmartBank = await ethers.getContractFactory("Bank");
+  return await (await (await SmartBank.connect(deployer).deploy(ownershipManager)).waitForDeployment()).getAddress();
 }
 
 /**
- * Deploys and return an address instance of the AcountStrategy
+ * Deploys and return an address instance of the Bank
  * @param deployer : Deployer address
  * @returns Contract address
  */
@@ -66,7 +67,7 @@ export async function deployTestAsset(deployer: Signer): Promise<TestAssetContra
  * @returns : Library address : Type - Address
  */
 export async function deployLibrary(): Promise<Address> {
-  const RouterLib = await ethers.getContractFactory("FactoryLib");
+  const RouterLib = await ethers.getContractFactory("FactoryLibV2");
   return formatAddr(await (await (await RouterLib.deploy()).waitForDeployment()).getAddress());
 }
 
@@ -76,10 +77,10 @@ export async function deployLibrary(): Promise<Address> {
  * @param deployer : Deployer.
  * @param token : JFT Token contract.
  * @param assetMgr : Asset contract.
- * @param strategyMgr : Strategy admin contract.
+ * @param bankFactory : Bank admin contract.
  * @returns Contract instance.
  */
-export async function deployFactory(assetMgr: Address, strategyMgr: Address, library: Address, ownershipMgr: Address, deployer: Signer) : Promise<FactoryContract> {
+export async function deployFactory(assetMgr: Address, bankFactory: Address, library: Address, ownershipMgr: Address, deployer: Signer) : Promise<FactoryContract> {
   const Factory = await ethers.getContractFactory("Factory", {
     // libraries: {
     //   factoryLib: library
@@ -88,12 +89,15 @@ export async function deployFactory(assetMgr: Address, strategyMgr: Address, lib
   return (await Factory.connect(deployer).deploy(
     MAKER_RATE, 
     MINIMUM_LIQUIDITY, 
-    CREATION_FEE, 
     FEETO, 
     assetMgr, 
-    strategyMgr, 
+    bankFactory, 
     ownershipMgr
   )).waitForDeployment();
+}
+
+export async function retrieveContract(bank: Address) {
+  return ethers.getContractAt('Bank', bank);
 }
 
 export async function deployContracts(getSigners_: () => Signers) {
@@ -108,38 +112,38 @@ export async function deployContracts(getSigners_: () => Signers) {
   const assetMgr = await deployAssetClass(formatAddr(testAssetAddr), formatAddr(ownershipMgrAddr), deployer);
   const assetMgrAddr = await assetMgr.getAddress();
 
-  // const strategy = await deployStrategy(formatAddr(ownershipMgrAddr), deployer);
-  const strategyMgr = await deployStrategyManager(
+  // const strategy = await deployBank(formatAddr(ownershipMgrAddr), deployer);
+  const bankFactory = await deployBankFactory(
     formatAddr(ownershipMgrAddr), 
       // formatAddr(strategy),
       deployer
   );
-  const strategyMgrAddr = await strategyMgr.getAddress();
+  const bankFactoryAddr = await bankFactory.getAddress();
 
   const factory = await deployFactory(
     formatAddr(assetMgrAddr), 
-      formatAddr(strategyMgrAddr), 
+      formatAddr(bankFactoryAddr), 
         formatAddr(libAddr), 
           formatAddr(ownershipMgrAddr),
           deployer
   );
 
   const factoryAddr = await factory.getAddress();
-  await ownershipMgr.connect(deployer).setPermission([factoryAddr, strategyMgrAddr]);
+  await ownershipMgr.connect(deployer).setPermission([factoryAddr, bankFactoryAddr]);
   const isSupported = await assetMgr.isSupportedAsset(testAssetAddr);
   const isListed = await assetMgr.listed(testAssetAddr);
   expect(isListed).to.be.true;
   expect(isSupported).to.be.true;
 
   return {
-    strategyMgr,
+    bankFactory,
     assetMgr,
     testAssetAddr,
     tAsset,
     factory,
     assetMgrAddr,
     factoryAddr,
-    strategyMgrAddr,
+    bankFactoryAddr,
     signers: { deployer, alc1, alc2, alc3, routeTo, feeTo, signer1, signer2, signer3, devAddr }
   };
 }

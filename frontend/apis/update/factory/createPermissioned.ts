@@ -9,7 +9,6 @@ const tokenAddr = getTokenAddress();
 
 export default async function createPermissioned(param: CreatePermissionedPoolParams) {
   const { config, account, contributors, unitLiquidity, intRate, callback, durationInHours, colCoverage } = param;
-  // console.log("param: ", param)
   const address = getFactoryAddress();
   callback?.({message: "Launching a permissioned flexPool..."});
   const { request } = await simulateContract(config, {
@@ -20,5 +19,5 @@ export default async function createPermissioned(param: CreatePermissionedPoolPa
     args: [intRate, durationInHours, colCoverage, unitLiquidity, tokenAddr, contributors],
   });
   const hash = await writeContract(config, request );
-  return await waitForConfirmation({config, hash, fetch: true, callback: callback!});
+  return await waitForConfirmation({config, hash, callback: callback!});
 }

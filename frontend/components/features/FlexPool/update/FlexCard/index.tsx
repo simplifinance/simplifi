@@ -1,7 +1,7 @@
 import React from "react";
-import { ButtonObj, FuncTag, type Address, type AmountToApproveParam, type FormattedData, type PoolColumnProps, type ScreenUserResult,} from "@/interfaces";
+import type { ButtonObj, Address, AmountToApproveParam, FormattedData, LiquidityPool, } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
-import { FORMATTEDDATA_MOCK } from "@/constants";
+import { FORMATTEDDATA_MOCK, FuncTag } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Providers } from '../DrawerWrapper';
@@ -19,26 +19,21 @@ import { CustomButton } from "@/components/CustomButton";
 const filterUser = (
     cData: FormattedData[], 
     currentUser: Address
-) : ScreenUserResult => {
-    let result : ScreenUserResult = { isMember: false, isAdmin : false, data: FORMATTEDDATA_MOCK};
+) : FormattedData => {
+    let result : FormattedData = FORMATTEDDATA_MOCK;
     const filtered = cData.filter(({id_lowerCase}) => id_lowerCase === currentUser.toString().toLowerCase());
     if(filtered?.length > 0) {
-        result = {
-            isMember: true,
-            data: filtered[0],
-            isAdmin: filtered[0].isAdmin
-        }
+        result = filtered[0];
     }
     return result;
 }
 
-export const FlexCard = (props: PoolColumnProps) => {
+export const FlexCard = (props: LiquidityPool) => {
     const [inputModalOn, setInputModal] = React.useState<boolean>(false);
     const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
-    // const [dim, setDimInfoDrawer] = React.useState<number | undefined>(undefined);
 
     const[buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'ADD LIQUIDITY', disable: false});
     const account = formatAddr(useAccount().address);
@@ -46,9 +41,8 @@ export const FlexCard = (props: PoolColumnProps) => {
     
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
-    // const isInfoDrawerOpen = infoDrawer > 0;
 
-    const formattedPool = formatPoolContent(props.pool, true);
+    const formattedPool = formatPoolContent(props, true, account);
     const {
         pair,
         unit,
@@ -57,34 +51,36 @@ export const FlexCard = (props: PoolColumnProps) => {
         cData_formatted, 
         stage_toNumber, 
         isPermissionless,
-        epochId_toNumber,
-        epochId_bigint,
+        unitId_toNumber,
+        // unitId_bigint,
         quorum_toNumber,
-        formatted_strategy,
+        // formatted_bank,
         intPercent_string,
         unit_InEther,
         intPerSec,
         lastPaid,
-        duration_toNumber,
+        isMember,
+        isAdmin,
+        // duration_toNumber,
         userCount_toNumber,
     } = formattedPool;
 
-    const { isMember, isAdmin, data: { payDate_InSec, loan_InBN, sentQuota }} = filterUser(cData_formatted, account);
+    const { payDate_InSec, loan_InBN, sentQuota } = filterUser(cData_formatted, account);
     const otherParam: AmountToApproveParam = {
         config,
         account,
-        epochId: epochId_bigint,
+        // epochId: epochId_bigint,
         intPerSec,
         lastPaid,
         txnType: buttonObj.value,
-        unit
+        unit: BigInt(unit.toString())
     };
 
-    const msg_AddLiq = `Request to add liquidity to epoch ${epochId_toNumber}`;
-    const msg_getFin = `Getting finance from epoch ${epochId_toNumber}`;
-    const msg_Pay = `Paying back loan at epoch ${epochId_toNumber}`
-    const msg_Liq = `Setting liquidation at epoch ${epochId_toNumber}`;
-    const msg_Remv = `Request to remove Flexpool at epoch ${epochId_toNumber}`;
+    const msg_AddLiq = `Request to add liquidity to epoch ${unitId_toNumber}`;
+    const msg_getFin = `Getting finance from epoch ${unitId_toNumber}`;
+    const msg_Pay = `Paying back loan at epoch ${unitId_toNumber}`
+    const msg_Liq = `Setting liquidation at epoch ${unitId_toNumber}`;
+    const msg_Remv = `Request to remove Flexpool at epoch ${unitId_toNumber}`;
 
     React.useEffect(() => {
         switch (stage_toNumber) {
@@ -165,8 +161,8 @@ export const FlexCard = (props: PoolColumnProps) => {
                 </div>
                 <div className="text-orangec font-medium">
                     <span className="flex items-center gap-2">
-                        <h1>{'Epoch:'}</h1>
-                        <h1>{epochId_toNumber}</h1>
+                        <h1>{'Unit Id:'}</h1>
+                        <h1>{unitId_toNumber}</h1>
                     </span>
                     <div className="flex items-center gap-2">
                         <h3>{'Rate:'}</h3>
@@ -197,12 +193,10 @@ export const FlexCard = (props: PoolColumnProps) => {
                         >
                             More Info
                         </CustomButton>
-                        <ActionButton 
+                        <ActionButton
                             {
                                 ...{
                                     sentQuota,
-                                    isMember,
-                                    isAdmin,
                                     loan_InBN,
                                     payDate_InSec,
                                     otherParam,
@@ -212,7 +206,6 @@ export const FlexCard = (props: PoolColumnProps) => {
                                     confirmationDrawerOn,
                                     setDrawerState: (arg:number) => setDrawerState(arg),
                                     setInputModal: (arg:boolean) => setInputModal(arg)
-                                    // isInfoDrawerOpen
                                 }
                             }
                         />
@@ -246,8 +239,6 @@ export const FlexCard = (props: PoolColumnProps) => {
                                 {
                                     ...{
                                         sentQuota,
-                                        isMember,
-                                        isAdmin,
                                         loan_InBN,
                                         payDate_InSec,
                                         otherParam,

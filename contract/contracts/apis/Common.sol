@@ -7,15 +7,41 @@ interface Common {
   /**
    * @dev Tags/Placeholders for functions available in the implementation contract.
    */
+
   enum FuncTag {
     JOIN, 
     GET, 
     PAYBACK, 
     WITHDRAW,
+    CANCELED,
     ENDED
   }
 
-  enum TransactionType { NATIVE, ERC20 }
+  ////////////////////////////////////////////////////////// V2
+  enum Status { AVAILABLE, TAKEN }
+
+  enum Router { PERMISSIONLESS, PERMISSIONED }
+
+  struct Unit {
+    bool isInitialized;
+    Status status;
+  }
+
+  struct Pool {
+    Counters.Counter userCount;
+    Uints uints;
+    Uint256s uint256s;
+    Addresses addrs;
+    uint allGh;
+    Contributor[] cData;
+    Router router;
+    FuncTag stage;
+  }
+
+  struct Point {
+    uint contributor;
+    uint creator; 
+  }
 
   /**
    *  @dev Data for each pool. 
@@ -41,29 +67,36 @@ interface Common {
     bool sentQuota;
   }
 
-  struct Rank {
-    bool admin;
-    bool member;
+  // struct Rank {
+  //   bool admin;
+  //   bool member;
+  // }
+
+  
+  struct UpdateMemberDataParam {
+    uint24 durOfChoice;
+    address expected;
+    uint256 unit;
+    uint uId;
+    uint fee;
+    uint msgValue;
+    uint xfiUSDPriceInDecimals;
+    Pool pool;
   }
 
-  /**
-   *  @dev Pool data
-   *  @param uints : Structured data of all unsigned integers type uint8.
-   *  @param uint256s: Structured data of all unsigned integers type uint256.
-   *  @param addrs : Structured data of all address type
-   *  @param allGh : Total members already got financed.
-   *  @param isPermissionless : A tag for each pool showing whether permissionless or otherwise.
-   *  @param cData : Participants i.e Providers and Borrowers.
-   */
-  struct Pool {
-    Counters.Counter userCount;
-    Uints uints;
-    Uint256s uint256s;
-    Addresses addrs;
-    uint allGh;
-    bool isPermissionless;
-    ContributorData[] cData;
-    FuncTag stage;
+  struct AddTobandParam {
+    uint unit;
+    bool isPermissioned;
+  }
+
+  struct GetPoolResult {
+    Pool data;
+    uint uId;
+  }
+
+  struct PaybackParam {
+    uint unit;
+    address user;
   }
 
   /**
@@ -89,7 +122,7 @@ interface Common {
     uint8 quorum;
     uint16 duration;
     uint24 colCoverage; 
-    uint unitContribution;
+    uint unit;
     address[] members;
     address asset;
   }
@@ -104,7 +137,8 @@ interface Common {
     uint intPerSec;
     uint256 unit;
     uint256 currentPool;
-    uint epochId;
+    uint unitId;
+    // uint slot;
   }
 
   /**
@@ -129,41 +163,21 @@ interface Common {
    * @notice Structured types - Address
    * @param asset : Contract address of the asset in use.
    * @param lastPaid: Last contributor who got finance.
-   * @param strategy : Strategy for each pool or epoch. See Strategy.sol for more details.
+   * @param bank : Strategy for each pool or epoch. See Strategy.sol for more details.
    * @param admin : Pool creator.
    * 
    */
   struct Addresses {
     address asset;
     address lastPaid;
-    address strategy;
+    address bank;
     address admin;
   }
   
-  struct AddTobandParam {
-    uint epochId;
-    bool isPermissioned;
-  }
 
   struct CreatePoolReturnValue {
-    Pool pool; 
-    ContributorData cData; 
-    // uint epochId;
-  }
-
-  struct PaybackParam {
-    uint epochId;
-    address user;
-  }
-
-  struct UpdateMemberDataParam {
-    uint24 durOfChoice;
-    address expected;
-    uint epochId; 
-    uint fee;
-    uint msgValue;
-    uint xfiUSDPriceInDecimals;
     Pool pool;
+    Contributor cData; 
   }
 
   struct InterestReturn {
@@ -178,11 +192,11 @@ interface Common {
     uint colBal;
   }
 
-  struct ContributorData {
-    Contributor cData;
-    Rank rank;
-    uint8 slot;
-  }
+  // struct Contributor {
+  //   Contributor cData;
+  //   // Rank rank;
+  //   // uint8 slot;
+  // }
 
   struct Balances {
     uint xfi;
@@ -191,23 +205,33 @@ interface Common {
 
   struct DebtReturnValue {
     uint debt;
-    uint slot;
+    uint pos;
   }
 
-  struct SetClaimParam {
-    uint amount;
-    uint epochId;
-    uint fee;
-    uint debt;
+  struct SwapProfileArg {
+    Slot expSlot;
+    address expCaller;
+    address actCaller;
+    uint unit;
+    uint uId;
+    Contributor expcData;
+  }
+
+  struct Slot {
     uint value;
-    address contributor;
-    address strategy;
-    address feeTo;
-    bool allHasGF;
-    TransactionType txType;
+    bool isMember;
+    bool isAdmin;
   }
 
-  error UpdateStrategyError();
+  struct UpdateUserParam {
+    Contributor cData;
+    Slot slot;
+    uint uId;
+    uint256 unit;
+    address user;
+  }
+  
+  // error UpdateStrategyError();
   error CollateralCoverageCannotGoBelow_100(uint24 ccr);
 
 }

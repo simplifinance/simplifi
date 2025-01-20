@@ -16,32 +16,31 @@ import { AbstractFactory } from "../abstracts/AbstractFactory.sol";
 contract Factory is AbstractFactory {
     mapping(uint => Router) public routers;
 
-  /** @dev Initializes state variables.
-    * @param serviceRate : Platform fee in %
-    * @param minContribution : Minimum contribution amount.
-    * @param setUpFee : Amount to charge for setting a liquidity pool.
-    * @param feeTo : Account to receive fees.
-    * @param assetClass : Asset manager contract.
-    * @param strategyManager : Strategy manager contract.
-    * @param ownerShipManager : Accessibility manager contract
-    */
+    /** @dev Initializes state variables.
+     * @param serviceRate : Platform fee in %
+     * @param minContribution : Minimum contribution amount.
+     * @param feeTo : Account to receive fees.
+     * @param assetClass : Asset manager contract.
+     * @param bankFactory : BankFactory contract.
+     * @param ownerShipManager : Accessibility manager contract
+     */
     constructor(
         uint16 serviceRate,
         uint minContribution,
-        uint setUpFee,
         address feeTo,
         address assetClass,
-        address strategyManager,
+        address bankFactory,
         address ownerShipManager
-    ) AbstractFactory(
-        serviceRate,
-        minContribution,
-        setUpFee,
-        feeTo,
-        assetClass,
-        strategyManager,
-        ownerShipManager
-    ) { }
+    )
+        AbstractFactory(
+            serviceRate,
+            minContribution,
+            feeTo,
+            assetClass,
+            bankFactory,
+            ownerShipManager
+        )
+    {}
 
     /**@dev Create permissioned pool
         See AbstractFactory.sol 
@@ -51,12 +50,9 @@ contract Factory is AbstractFactory {
         uint16 durationInHours,
         uint24 colCoverage,
         uint unitLiquidity,
-        address liquidAsset,
+        address asset,
         address[] memory contributors
-    ) 
-        external 
-        returns(bool) 
-    {
+    ) external returns (bool) {
         Router router = Router.PERMISSIONED;
         uint quorum = contributors.length;
         routers[
@@ -66,7 +62,7 @@ contract Factory is AbstractFactory {
                 durationInHours,
                 colCoverage,
                 unitLiquidity,
-                liquidAsset,
+                asset,
                 contributors,
                 router
             )
@@ -83,11 +79,8 @@ contract Factory is AbstractFactory {
         uint16 durationInHours,
         uint24 colCoverage,
         uint unitLiquidity,
-        address liquidAsset
-    ) 
-        external 
-        returns(bool) 
-    {
+        address asset
+    ) external returns (bool) {
         Router _router = Router.PERMISSIONLESS;
         address[] memory contributors = new address[](1);
         contributors[0] = _msgSender();
@@ -98,7 +91,7 @@ contract Factory is AbstractFactory {
                 durationInHours,
                 colCoverage,
                 unitLiquidity,
-                liquidAsset,
+                asset,
                 contributors,
                 _router
             )
@@ -108,42 +101,30 @@ contract Factory is AbstractFactory {
 
     /**
      * @dev Remove liquidity pool
-     * @param epochId : Epoch/Poool id
+     * @param unit : Epoch/Poool id
      */
-    function removeLiquidityPool(
-        uint epochId
-    )
-        external
-        validateEpochId(epochId)
-        returns(bool)
-    {
-        _removeLiquidityPool(epochId, routers[epochId] == Router.PERMISSIONLESS);
+    function removeLiquidityPool(uint256 unit) external returns (bool) {
+        _removeLiquidityPool(unit, routers[unit] == Router.PERMISSIONLESS);
         return true;
     }
-    
+
     /**@dev See AbstractFactory.sol */
-    function joinAPool(
-        uint epochId
-    ) 
+    function joinAPool(uint256 unit) 
         external 
         whenNotPaused
-        validateEpochId(epochId)
+        onlyInitialized(unit, true)
         returns(bool) 
     {
-        return _joinEpoch(epochId, routers[epochId] == Router.PERMISSIONED);
+        return _joinEpoch(unit, routers[unit] == Router.PERMISSIONED);
     }
 
-    /**@dev Return the router for an epochId. 
-    */
-    function getRouter(
-        uint epochId
-    ) 
-        external 
-        view 
-        validateEpochId(epochId)
-        returns(string memory) 
-    {
-        return routers[epochId] == Router.PERMISSIONLESS ? "PERMISSIONLESS" : "PERMISSIONED";
+    /**@dev Return the router for an unit.
+     */
+    function getRouter(uint256 unit) external view returns (string memory) {
+        return
+            routers[unit] == Router.PERMISSIONLESS
+                ? "PERMISSIONLESS"
+                : "PERMISSIONED";
     }
 
 }

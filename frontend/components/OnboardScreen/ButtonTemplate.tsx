@@ -29,11 +29,11 @@ export default function ButtonTemplate (
     const { toggleDisplayOnboardUser, displayOnboardUser, exitOnboardScreen } = useAppStorage();
 
     return(
-        <div className={`${flexEven} ${padContainer || 'p-1'} rounded-full bg-green1 ${overrideClassName}`}>
+        <div className={`${flexEven} ${padContainer || 'p-1'} ${overrideClassName}`}>
             <CustomButton 
                 disabled={disableButtonA}
                 handleButtonClick={buttonAFunc || toggleDisplayOnboardUser} 
-                overrideClassName={`${displayOnboardUser? 'bg-gray1' : 'bg-green1'} p-3 rounded-l-full ${!displayOnboardUser && 'hover:shadow-sm hover:shadow-orange-200 animate-none text-xs md:text-md uppercase'}`}
+                overrideClassName={`${displayOnboardUser? 'bg-gray1' : 'bg-green1'} border border-green1 p-3 rounded-l-full ${!displayOnboardUser && 'hover:shadow-sm hover:shadow-orange-200 animate-none text-xs md:text-md uppercase'}`}
             >
                 {buttonAContent}
             </CustomButton>
@@ -41,7 +41,7 @@ export default function ButtonTemplate (
             <CustomButton 
                 disabled={disableButtonB}
                 handleButtonClick={buttonBFunc || exitOnboardScreen} 
-                overrideClassName={`w-full ${!displayOnboardUser? 'bg-gray1' : 'bg-green1'} p-3 rounded-r-full ${!displayOnboardUser && 'hover:shadow-sm hover:shadow-orange-200 text-xs md:text-md uppercase'}`} 
+                overrideClassName={`w-full ${!displayOnboardUser? 'bg-gray1' : 'bg-green1'} border border-green1 p-3 rounded-r-full ${!displayOnboardUser && 'hover:shadow-sm hover:shadow-orange-200 text-xs md:text-md uppercase'}`} 
             >
                 {buttonBContent}
             </CustomButton>

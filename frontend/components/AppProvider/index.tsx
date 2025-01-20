@@ -66,53 +66,53 @@ export const mockConnector = mock({
   }
 });
 
-const config = createConfig({
-  chains: [crossFiTestnet, crossFiMainnet],
-  connectors: [
-    // mockConnector,
-    injected(),
-    metaMask({
-      dappMetadata: {
-        name: 'Simplifinance', 
-        url: 'https://simplifi-glxp.vercel.app',
-        // iconUrl: 'https://favicon-32x32.png'
-      }
-    }),
-    coinbaseWallet({
-      appName: 'Simplifinance',
-      appLogoUrl: '/favicon-32x32.png',
-      darkMode: true,
-      enableMobileWalletLink: true,
-      // overrideIsMetaMask: false,
-      reloadOnDisconnect: true
-    }),
-    walletConnect({
-      projectId,
-      metadata: {
-        name: 'Simplifinance',
-        description: 'A decentralized p2p, DeFi protocol',
-        icons: ['/favicon-32x32.png'],
-        url: 'https://simplifi-glxp.vercel.app',
-      }
-    }),
-  ],
-  transports: {
-    [crossFiTestnet.id]: fallback([
-      http("https://rpc.testnet.ms"),
-      http(`https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`)
-    ]),
-    [crossFiMainnet.id]: http(),
-  }
-});
-// const config = getDefaultConfig({
-//   appName: 'Simplifinance',
-//   projectId,
-//   appIcon: '/favicon-32x32.png',
-//   appDescription: 'A decentralized p2p, DeFi protocol',
-//   appUrl: 'https://simplifi-glxp.vercel.app',
+// const config = createConfig({
 //   chains: [crossFiTestnet, crossFiMainnet],
-  
+//   connectors: [
+//     // mockConnector,
+//     injected(),
+//     metaMask({
+//       dappMetadata: {
+//         name: 'Simplifinance', 
+//         url: 'https://simplifi-glxp.vercel.app',
+//         // iconUrl: 'https://favicon-32x32.png'
+//       }
+//     }),
+//     coinbaseWallet({
+//       appName: 'Simplifinance',
+//       appLogoUrl: '/favicon-32x32.png',
+//       darkMode: true,
+//       enableMobileWalletLink: true,
+//       // overrideIsMetaMask: false,
+//       reloadOnDisconnect: true
+//     }),
+//     walletConnect({
+//       projectId,
+//       metadata: {
+//         name: 'Simplifinance',
+//         description: 'A decentralized p2p, DeFi protocol',
+//         icons: ['/favicon-32x32.png'],
+//         url: 'https://simplifi-glxp.vercel.app',
+//       }
+//     }),
+//   ],
+//   transports: {
+//     [crossFiTestnet.id]: fallback([
+//       http("https://rpc.testnet.ms"),
+//       http(`https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`)
+//     ]),
+//     [crossFiMainnet.id]: http(),
+//   }
 // });
+const config = getDefaultConfig({
+  appName: 'Simplifinance',
+  projectId,
+  appIcon: '/favicon-32x32.png',
+  appDescription: 'A decentralized p2p, DeFi protocol',
+  appUrl: 'https://simplifi-glxp.vercel.app',
+  chains: [crossFiTestnet, crossFiMainnet],
+  
+});
 
 const theme = lightTheme(
   {

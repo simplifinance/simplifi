@@ -12,7 +12,7 @@ import { Spinner } from "@/components/Spinner";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { formatError } from "@/apis/update/formatError";
 import Drawer from "../../../update/ActionButton/Confirmation/Drawer";
-import Message from "../../../update/DrawerWrapper/LiquidityAndStrategyBalances/Message";
+import Message from "../../../update/DrawerWrapper/Message";
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [open, setOpen] = React.useState<boolean>(false);

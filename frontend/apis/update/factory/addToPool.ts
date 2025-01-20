@@ -4,20 +4,21 @@ import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
 import { addToPoolAbi } from "@/apis/abis";
+import { formatEther } from "viem";
 
 export default async function addToPool(args: CommonParam ){
-  const { epochId, config, callback, account } = args;
+  const { unit, config, callback, account } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool ${epochId.toString()}`});
+  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool at ${formatEther(unit)}`});
   const { request } = await simulateContract(config, {
     address,
     account,
     abi: addToPoolAbi,
     functionName: "joinAPool",
-    args: [epochId]
+    args: [unit]
   });
   const hash = await writeContract(config, request );
-  return await waitForConfirmation({config, hash, fetch: true, callback});
+  return await waitForConfirmation({config, hash, callback});
 }
 
 

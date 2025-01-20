@@ -5,7 +5,7 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { paybackAbi } from "@/apis/abis";
 
 export default async function payback(args: CommonParam) {
-  const { config, callback, account, epochId } = args;
+  const { config, callback, account, unit } = args;
   const address = getFactoryAddress();
   callback?.({message: "Paying back loan..."});
   const {request} = await simulateContract(config, {
@@ -13,9 +13,9 @@ export default async function payback(args: CommonParam) {
     account,
     abi: paybackAbi,
     functionName: "payback",
-    args: [epochId]
+    args: [unit]
   });
   const hash = await writeContract(config, { ...request });
-  return await waitForConfirmation({config, fetch: false, hash, callback});
+  return await waitForConfirmation({config, hash, callback});
 }
 

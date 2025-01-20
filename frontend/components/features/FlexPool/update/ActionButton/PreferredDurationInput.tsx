@@ -20,9 +20,16 @@ export const PreferredDurationInput :
         <PopUp { ...{modalOpen, handleModalClose } } > 
             <Container maxWidth="xs" className="space-y-4">
                 <Stack className="p-4 md:p-8 rounded-lg space-y-12 text-md bg-gray1 text-orange-300 shadow shadow-orange-200 text-center text-wrap ">
-                    <Tooltip title={title}>
-                        <h3 className="text-xl font-bold opacity-80">{"Your preferred duration (In hrs) "}</h3>
-                    </Tooltip>
+                    <div className={`${flexSpread}`}>
+                        <button onClick={() => handleModalClose()} className="w-2/4">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        <Tooltip title={title}>
+                            <h3 className="text-xl font-bold opacity-80">{"How long do you want to use the fund? (In hrs) "}</h3>
+                        </Tooltip>
+                    </div>
                     <Box className={`${flexSpread}`}>
                         <input 
                             id="Duration"

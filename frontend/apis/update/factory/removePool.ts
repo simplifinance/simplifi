@@ -3,19 +3,20 @@ import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { removeLiquidityPoolAbi } from "@/apis/abis";
+import { formatEther } from "viem";
 
 export default async function removePool(args: CommonParam) {
-  const { config, callback, account, epochId } = args;
+  const { config, callback, account, unit } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Removing Flexpool at ${epochId}`});
+  callback?.({message: `Removing Flexpool at ${formatEther(unit)}`});
   const {request} = await simulateContract(config, {
     address,
     account,
     abi: removeLiquidityPoolAbi,
     functionName: "removeLiquidityPool",
-    args: [epochId]
+    args: [unit]
   });
   const hash = await writeContract(config, { ...request });
-  return await waitForConfirmation({config, fetch: true, hash, callback});
+  return await waitForConfirmation({config, hash, callback});
 }
 

@@ -2,7 +2,6 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 
-const CONTEXT = "TEST";
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
@@ -44,40 +43,39 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`AssertMgr deployed to: ${assertMgr.address}`);
   
   /**
-   * Deploy Strategy Manager
+   * Deploy BankFactory
    */
-  const strategyManager = await deploy("StrategyManager", {
+  const bankFactory = await deploy("BankFactory", {
     from: deployer,
     args: [ownershipManager.address],
     log: true,
   });
-  console.log(`strategyManager deployed to: ${strategyManager.address}`);  
+  console.log(`BankFactory deployed to: ${bankFactory.address}`);  
 
   /**
    * Deploy FactoryLib
    */
-  const factoryLib = await deploy("FactoryLib", {
+  const factoryLibV2 = await deploy("FactoryLibV2", {
     from: deployer,
     args: [],
     log: true,
   });
-  console.log(`factoryLib deployed to: ${factoryLib.address}`);
+  console.log(`factoryLibV2 deployed to: ${factoryLibV2.address}`);
   
   /**
    * Deploy Strategy Manager
    */
   const factory = await deploy("Factory", {
     libraries: {
-      FactoryLib: factoryLib.address
+      FactoryLib: factoryLibV2.address
     },
     from: deployer,
     args: [
       serviceRate,
       minContribution,
-      setUpFee,
       deployer, /// We use the deployer as feeReceiver /feeTo,
       assertMgr.address,
-      strategyManager.address,
+      bankFactory.address,
       ownershipManager.address
     ],
     log: true,
@@ -85,10 +83,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`Factory deployed to: ${factory.address}`);
 
   await execute("OwnerShip", {from: deployer}, "setPermission", [factory.address, ownershipManager.address]);
-  const cData = await read("Factory", "getContractData");
+  const cData = await read("Factory", "getFactoryData");
   console.log(cData);
 };
 
 export default func;
 
-func.tags = ["OwnerShip", "TestAsset", "AssetClass", "StrategyManager", "Factory"];
+func.tags = ["OwnerShip", "TestAsset", "AssetClass", "BankFactory", "Factory"];

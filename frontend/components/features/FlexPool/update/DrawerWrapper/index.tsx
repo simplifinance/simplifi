@@ -1,26 +1,24 @@
 import React from "react";
-import { flexSpread, } from "@/constants";
+import { flexSpread, FuncTag, } from "@/constants";
 import { Provider } from './Provider';
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { Address, FormattedData, FormattedPoolContentProps, FuncTag, } from "@/interfaces";
+import { Address, FormattedData, FormattedPoolContentProps, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
-import { useAccount, } from "wagmi";
 import { formatAddr, } from "@/utilities";
-import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndStrategyBalances";
+import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndBankBalances";
 import { getTokenAddress } from "@/apis/utils/getTokenAddress";
+import AccessAndCollateralBalances from "./AccessAndCollateralBalances";
+import CollateralQuote from "./CollateralQuote";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
 export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer } : InfoDisplayProps) => {
-    const { address, isConnected } = useAccount();
-    const account = formatAddr(address);
-
+    // const { address,} = useAccount();
     const {
         unit_InEther,
         currentPool_InEther,
-        epochId_toNumber,
+        unitId_toNumber,
         allGh_toNumber,
-        // asset,
         quorum_toNumber,
         cData_formatted,
         colCoverage_InString,
@@ -31,7 +29,8 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
         stage_toNumber,
         lastPaid,
         isPermissionless,
-        formatted_strategy,
+        formatted_bank,
+        unit
     } = formattedPool;
 
     const extractAddresses = () => {
@@ -51,7 +50,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
 
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.2)',}} >
-            <div className={`space-y-4 uppercase`}>
+            <div className={`space-y-4`}>
                 <div className={`${flexSpread} gap-6`}>
                     <button onClick={() => toggleDrawer(0)} className="w-2/4">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
@@ -60,7 +59,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     </button>
                     { actions }
                 </div>
-                <ul className={`bg-gray1 p-4 rounded-lg border border-white1/20 text-orange-400 font-bold text-sm`}>
+                <ul className={`bg-gray1 p-4 rounded-lg border border-white1/20 text-orange-400 font-normal text-sm`}>
                     <li className={`${flexSpread}`}>
                         <h3 className="">Asset</h3>
                         <AddressWrapper 
@@ -72,11 +71,11 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         />
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3 className="">Strategy</h3>
+                        <h3 className="">Bank</h3>
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
-                            account={formatted_strategy}
+                            account={formatted_bank}
                             overrideClassName="text-md" 
                             display 
                         />
@@ -86,8 +85,9 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <p className="">{`${allGh_toNumber}`}</p>
                     </li>
                 </ul>
+                <CollateralQuote unit={BigInt(unit.toString())} />
                 <LiquidityAndStrategyBalances
-                    formatted_strategy={formatted_strategy}
+                    formatted_bank={formatted_bank}
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
                     isCancelledPool={quorum_toNumber === 0 && stage_toNumber === FuncTag.ENDED}
@@ -95,49 +95,54 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     stage={stage_toNumber}
                 />
 
+                <AccessAndCollateralBalances 
+                    formatted_bank={formatted_bank}
+                    handleCloseDrawer={() => toggleDrawer(0)}
+                />
+
                 <ul className={`${BOXSTYLING} text-xs`}>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Liquidity</h3>
                         <p>{`$${unit_InEther}`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Total Pooled Liquidity</h3>
                         <p>{`$${currentPool_InEther}`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
-                        <h3>Epoch Id</h3>
-                        <p>{epochId_toNumber}</p>
+                    <li className={`w-full ${flexSpread}`}>
+                        <h3>Unit Id</h3>
+                        <p>{unitId_toNumber}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Last Paid</h3>
                         <AddressWrapper size={3} account={lastPaid} display />
                     </li>
                 </ul>
                 <ul className={`${BOXSTYLING} text-xs`}>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Interest Percent</h3>
                         <p>{intPercent_string}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Collateral Coverage Ratio</h3>
                         <p>{colCoverage_InString}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Duration</h3>
                         <p>{`${duration_toNumber} hrs`}</p>
                     </li>
                 </ul>
 
                 <ul className={`${BOXSTYLING} text-xs`}>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>{"Int/Sec"}</h3>
                         <p className="px-2 text-xs md:textsm">{`${intPerSec_InEther} XFI`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Full Interest</h3>
                         <p>{`${fullInterest_InEther} XFI`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread} font-semibold`}>
+                    <li className={`w-full ${flexSpread}`}>
                         <h3>Stage</h3>
                         <p>{FuncTag[stage_toNumber]}</p>
                     </li>

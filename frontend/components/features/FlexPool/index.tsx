@@ -2,19 +2,21 @@ import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
 import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { CustomButton } from '@/components/CustomButton';
-import { PoolWrapper } from './PoolWrapper';
 import { Create } from './Create';
 import { flexStart, flexSpread } from '@/constants';
-import AddressWrapper from '@/components/AddressFormatter/AddressWrapper';
 import USDBalances from './USDBalances';
+import { toBN } from '@/utilities';
+import { PastEpoches } from './PoolWrapper/PastEpoches';
+import { CurrentEpoches } from './PoolWrapper/CurrentEpoches';
 
 const FlexPool = () => {
-  const [isPermissioned, setPermissionType] = React.useState<boolean>(false);
+  const [isPastEpoches, setEpochType] = React.useState<boolean>(false);
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
   
-  const { storage: pools, permissioned, permissionless } = useAppStorage();
+  const { currentEpoches, recordEpoches } = useAppStorage();
   const closeDisplayForm = () => setDisplayForm(false);
-  const poolIsEmpty = isPermissioned? (!permissioned?.length || permissioned?.length === 0) : (!permissionless?.length || permissionless?.length === 0);
+  const activePools = toBN(currentEpoches.toString()).toNumber();
+  const pastPools = toBN(recordEpoches.toString()).toNumber();
   
   return (
     <React.Fragment>
@@ -24,23 +26,23 @@ const FlexPool = () => {
             <div className="flex justify-between items-center gap-2">
               <div className={`${flexSpread} gap-2`}>
                 <div className={`md:hidden w-[fit-content] ${flexStart}`}>
-                  <button disabled={!isPermissioned} onClick={() => setPermissionType(false)} className={`${flexSpread} gap-2 ${isPermissioned? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${isPermissioned && 'hover:shadow-sm hover:shadow-orange-200'}`}>
+                  <button disabled={!isPastEpoches} onClick={() => setEpochType(false)} className={`${flexSpread} gap-2 ${isPastEpoches? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${isPastEpoches && 'hover:shadow-sm hover:shadow-orange-200'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5V6.75a4.5 4.5 0 1 1 9 0v3.75M3.75 21.75h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H3.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                     </svg>
                   </button>
-                  <button disabled={isPermissioned} onClick={() => setPermissionType(true)} className={`${flexSpread} gap-2 ${!isPermissioned? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${!isPermissioned && 'hover:shadow-sm hover:shadow-orange-200'}`}>
+                  <button disabled={isPastEpoches} onClick={() => setEpochType(true)} className={`${flexSpread} gap-2 ${!isPastEpoches? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${!isPastEpoches && 'hover:shadow-sm hover:shadow-orange-200'}`}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
                     </svg>
                   </button>
                 </div>
                 <div className={`hidden md:flex items-center w-[fit-content] text-xs uppercase`}>
-                  <button disabled={!isPermissioned} onClick={() => setPermissionType(false)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${isPermissioned? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-l-full`}>
-                    Permissionless
+                  <button disabled={!isPastEpoches} onClick={() => setEpochType(false)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${isPastEpoches? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-l-full`}>
+                    ActiveEpoches
                   </button>
-                  <button disabled={isPermissioned} onClick={() => setPermissionType(true)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${!isPermissioned? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-r-full`}>
-                    Permissioned
+                  <button disabled={isPastEpoches} onClick={() => setEpochType(true)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${!isPastEpoches? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-r-full`}>
+                    PastEpoches
                   </button>
                 </div>
                 <USDBalances />
@@ -62,26 +64,7 @@ const FlexPool = () => {
                 </CustomButton>
               </div>
             </div>
-            {
-              poolIsEmpty?
-                <div className="absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] flex flex-col justify-center items-center text-center">
-                  <h1>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-[150px] md:size-[250px] text-green1">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.182 16.318A4.486 4.486 0 0 0 12.016 15a4.486 4.486 0 0 0-3.198 1.318M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
-                    </svg>
-                  </h1>
-                  <h1 className="text-2xl md:text-[36px] text-orange-300 font-black">{`Found 0 ${isPermissioned? 'Permissioned' : 'Permissionless'} Pool`}</h1>
-                </div>
-                  :
-                isPermissioned? 
-                  <PoolWrapper 
-                    filteredPool={permissioned}
-                    totalPool={pools.length}
-                  /> : <PoolWrapper 
-                      filteredPool={permissionless}
-                      totalPool={pools.length}
-                  />
-                }
+            { isPastEpoches? <PastEpoches /> : <CurrentEpoches />}
           </div> : <Create back={closeDisplayForm} />
       }
     </React.Fragment>

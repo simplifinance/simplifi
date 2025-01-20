@@ -1,16 +1,14 @@
 import React from "react";
 import { getTokenAddress } from "@/apis/utils/getTokenAddress";
 import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
-import { getTestTokenBalance } from "@/apis/update/testToken/getBalance";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
-import { useAccount, useConfig, useReadContracts } from "wagmi";
-import { formatAddr, toBN } from "@/utilities";
+import { useAccount, useReadContracts } from "wagmi";
 import { formatEther, zeroAddress } from "viem";
 import { flexSpread, flexStart } from "@/constants";
 import Collapse from '@mui/material/Collapse';
 import { Chevron } from "@/components/Collapsible";
 import Stack from '@mui/material/Stack';
 import { readBalanceConfig, readSymbolConfig } from "../update/DrawerWrapper/readContractConfig";
+import { formatAddr, toBN } from "@/utilities";
 
 export default function USDBalances() {
     const [open, setOpen] = React.useState<boolean>(false);
@@ -19,8 +17,8 @@ export default function USDBalances() {
     const account = formatAddr(address);
     const { data, isPending } = useReadContracts({
         contracts: [
-            { ...readBalanceConfig({account, isConnected}) },
-            { ...readSymbolConfig({isConnected})}
+            { ...readBalanceConfig({account}) },
+            { ...readSymbolConfig()}
         ],
         allowFailure: true,
     });

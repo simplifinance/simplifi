@@ -20,11 +20,11 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const handleCollapse = () => setOpen(!open);
     const { 
-        isAdmin, 
+        // isAdmin, 
         sentQuota,
         id_toString, 
         loan_InEther,
-        slot_toNumber, 
+        // slot_toNumber, 
         colBals_InEther,
         durOfChoice_InSec,
         expInterest_InEther,
@@ -43,14 +43,14 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                     <li className={`${flexSpread} underline underline-offset-4`}>
                         <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
                         <AddressWrapper size={3} account={id_toString} display overrideClassName="text-sm" copyIconSize="4"/>
-                        <h3 className="absolute right-[40%]">
+                        {/* <h3 className="absolute right-[40%]">
                             { adminBadge(isAdmin) }
-                        </h3>
+                        </h3> */}
                     </li>
-                    <li className={`${flexSpread}`}>
+                    {/* <li className={`${flexSpread}`}>
                         <h3>Slot</h3>
                         <h3>{ slot_toNumber }</h3>
-                    </li>
+                    </li> */}
                     <li className={`${flexSpread}`}>
                         <h3>Time Until GetFinance</h3>
                         <h3 className="text-end">{turnTime_InDateFormat}</h3>

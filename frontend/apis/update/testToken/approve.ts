@@ -18,7 +18,7 @@ export default async function approve(args: ApproveParam) {
         args: [factoryAddr, amountToApprove]
     });
     const hash = await writeContract(config, { ...request });
-    await waitForConfirmation({config, hash, fetch: false, callback});
+    await waitForConfirmation({config, hash,  callback});
 }
 
 export const approveAbi = [
