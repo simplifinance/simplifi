@@ -2,7 +2,7 @@ import React from 'react';
 import '../styles/globals.css';
 import '@rainbow-me/rainbowkit/styles.css';
 import type { AppProps } from 'next/app';
-import SimplifiProvider from '../SimpliProvider';
+import AppProvider from '../components/AppProvider';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import SEOHead from '@/components/SEOHead';
 import Layout from '@/components/Layout';
@@ -17,11 +17,11 @@ export default function App({ Component, pageProps }: AppProps) {
         {
           isMounted? 
             <ErrorBoundary fallback={<p>Something went wrong</p>}>
-              <SimplifiProvider>
+              <AppProvider>
                 <Layout>
                   <Component {...pageProps}/>
                 </Layout> 
-              </SimplifiProvider>
+              </AppProvider>
             </ErrorBoundary> : null
         }
       </React.Fragment>

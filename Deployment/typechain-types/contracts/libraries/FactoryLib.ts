@@ -93,6 +93,7 @@ export declare namespace Common {
     loan: BigNumberish;
     colBals: BigNumberish;
     id: AddressLike;
+    sentQuota: boolean;
   };
 
   export type ContributorStructOutput = [
@@ -102,7 +103,8 @@ export declare namespace Common {
     turnTime: bigint,
     loan: bigint,
     colBals: bigint,
-    id: string
+    id: string,
+    sentQuota: boolean
   ] & {
     durOfChoice: bigint;
     expInterest: bigint;
@@ -111,6 +113,7 @@ export declare namespace Common {
     loan: bigint;
     colBals: bigint;
     id: string;
+    sentQuota: boolean;
   };
 
   export type RankStruct = { admin: boolean; member: boolean };

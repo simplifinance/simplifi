@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { MotionDivWrap } from '../MotionDivWrap';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
-import Footer from './Footer';
-import NotConnectedPopUp from './NotConnectedPopUp';
-import useAppStorage from '../StateContextProvider/useAppStorage';
+import Sidebar from '../Layout/Sidebar';
+import Navbar from '../Layout/Navbar';
+import Footer from '../Layout/Footer';
+// import NotConnectedPopUp from './NotConnectedPopUp';
+// import useAppStorage from '../StateContextProvider/useAppStorage';
 
 export default function App() {
-  const { openPopUp, togglePopUp } = useAppStorage();
+  // const { openPopUp, togglePopUp } = useAppStorage();
   const navigate = useNavigate();
 
   React.useEffect(() => {
@@ -25,7 +25,7 @@ export default function App() {
         </MotionDivWrap>
         <Footer />
       </main>
-      <NotConnectedPopUp handleClosePopUp={togglePopUp} openPopUp={openPopUp} />
+      {/* <NotConnectedPopUp handleClosePopUp={togglePopUp} openPopUp={openPopUp} /> */}
     </div>
   );
 } 

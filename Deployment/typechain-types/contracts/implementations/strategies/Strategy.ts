@@ -206,7 +206,7 @@ export interface Strategy extends BaseContract {
 
   withdraw: TypedContractMethod<
     [epochId: BigNumberish, user: AddressLike],
-    [boolean],
+    [bigint],
     "nonpayable"
   >;
 
@@ -274,7 +274,7 @@ export interface Strategy extends BaseContract {
     nameOrSignature: "withdraw"
   ): TypedContractMethod<
     [epochId: BigNumberish, user: AddressLike],
-    [boolean],
+    [bigint],
     "nonpayable"
   >;
 

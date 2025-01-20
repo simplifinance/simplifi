@@ -151,7 +151,6 @@ export async function payback(
   const factoryAddr = formatAddr(await x.factory.getAddress());
   const signer = x.signers[0];
   await x.factory.getCurrentDebt(x.unit, signer.address);
-  // console.log(`GetCurrentDebt: ${debt}\n Calculated debt: ${x.debt}`);
   const bal = await x.asset.balanceOf(signer.address);
   if(bn(x.debt).gt(bn(bal))){
     await transferAsset({

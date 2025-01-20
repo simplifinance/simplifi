@@ -138,7 +138,7 @@ interface Common {
     uint256 unit;
     uint256 currentPool;
     uint unitId;
-    // uint slot;
+    uint rId;
   }
 
   /**

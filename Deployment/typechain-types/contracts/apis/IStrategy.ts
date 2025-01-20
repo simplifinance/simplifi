@@ -149,7 +149,7 @@ export interface IStrategy extends BaseContract {
 
   withdraw: TypedContractMethod<
     [epochId: BigNumberish, user: AddressLike],
-    [boolean],
+    [bigint],
     "nonpayable"
   >;
 
@@ -198,7 +198,7 @@ export interface IStrategy extends BaseContract {
     nameOrSignature: "withdraw"
   ): TypedContractMethod<
     [epochId: BigNumberish, user: AddressLike],
-    [boolean],
+    [bigint],
     "nonpayable"
   >;
 

@@ -188,9 +188,9 @@ const _abi = [
     name: "withdraw",
     outputs: [
       {
-        internalType: "bool",
-        name: "",
-        type: "bool",
+        internalType: "uint256",
+        name: "xfiBalances",
+        type: "uint256",
       },
     ],
     stateMutability: "nonpayable",

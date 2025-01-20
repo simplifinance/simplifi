@@ -79,7 +79,7 @@ export default function SimpliApp() {
       refetch();
     }
 
-  }, [isConnected, address, connector, isDisconnected]);
+  }, [isConnected, address, connector, isDisconnected, openPopUp]);
 
   // Whenever `message` variable changes, every 10sec, reset it
   // React.useEffect(() => {

@@ -1,64 +1,52 @@
 import React from "react";
 import OnbaordScreen from "@/components/OnboardScreen";
-import { POOLS_MOCK, } from "@/constants";
-import Dashboard from "@/components/topComponents/Dashboard";
-import FlexPool from "@/components/topComponents/finance";
-import Yield from "@/components/topComponents/Yield";
-import Faq from "@/components/topComponents/Faq";
-import SimpliDao from "@/components/topComponents/SimpliDao";
-import { DrawerAnchor, Path, Pools, TrxState, } from "@/interfaces";
+import { ANALYTICS, } from "@/constants";
+import Dashboard from "@/components/features/Dashboard";
+import FlexPool from "@/components/features/FlexPool";
+import Yield from "@/components/features/Yield";
+import Faq from "@/components/features/Faq";
+import SimpliDao from "@/components/features/SimpliDao";
+import { Path, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/StateContextProvider";
 import Notification from "@/components/Notification";
-import filterPools from "@/components/topComponents/finance/commonUtilities";
 import { MotionDivWrap } from "@/components/MotionDivWrap";
-import Sidebar from "@/components/App/Sidebar";
-import Navbar from "@/components/App/Navbar";
-import Footer from "@/components/App/Footer";
+import Sidebar from "@/components/Layout/Sidebar";
+import Navbar from "@/components/Layout/Navbar";
+import Footer from "@/components/Layout/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
-import { useAccount, useConfig } from "wagmi";
-import { getEpoches } from "@/apis/read/readContract";
+import { useAccount, useConfig, useReadContracts,} from "wagmi";
+import { getFactoryDataConfig, readSymbolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
 
 export default function SimpliApp() {
-  const [storage, setStorage] = React.useState<Pools>(POOLS_MOCK);
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
-  const [openPopUp, setPopUp] = React.useState<boolean>(false);
+  const [openPopUp, setPopUp] = React.useState<number>(0);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
-  const [drawerState, setDrawerState] = React.useState<boolean>(false);
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
-  const [popUpDrawer, setPopUpDrawer] = React.useState<DrawerAnchor>('');
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   
-  const { isConnected, connector,  } = useAccount();
-  const config = useConfig();
-  const handlePopUpDrawer = (arg: DrawerAnchor) => setPopUpDrawer(arg);
+  const { data, refetch } = useReadContracts({
+    contracts: [
+      {...readSymbolConfig()},
+      {...getFactoryDataConfig()}
+    ],
+    allowFailure: true
+  });
+
+  const { isConnected, address, connector, isDisconnected,  } = useAccount();
+  // const config = useConfig();
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
-  const setdrawerState = (arg: boolean) => setDrawerState(arg);
   const exitOnboardScreen = () => setDisplay(true);
-  const togglePopUp = () => setPopUp(!openPopUp);
+  const togglePopUp = (arg: number) => setPopUp(arg);
   const setmessage = (arg: string) => setMessage(arg);
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
   const setActivepath = (arg:Path) => setActivePath(arg);
-  const setTrxnStatus = (arg: TrxState) => {
+  const setstorage = (arg: TrxState) => {
     if(arg.message) setMessage(arg.message);
-    if(arg.contractState) setStorage(arg.contractState);
+    refetch();
   };
 
-  const { open, closed, tvl, permissioned, permissionless } = filterPools(storage);
-
-  const toggleTransactionWindow =
-    (value: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-    if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-        (event as React.KeyboardEvent).key === 'Shift')
-    ) {
-        return;
-    }
-
-    setdrawerState(value );
-  };
+  // const { open, closed, permissioned, permissionless } = filterPools(storage);
 
   const displayScreen = () => {
     const children = (
@@ -73,7 +61,7 @@ export default function SimpliApp() {
         </MotionDivWrap>
         <Footer />
       </main>
-      <NotConnectedPopUp handleClosePopUp={togglePopUp} openPopUp={openPopUp} />
+      <NotConnectedPopUp toggleDrawer={togglePopUp} openDrawer={openPopUp} />
     </div>
     );
     return (
@@ -82,53 +70,46 @@ export default function SimpliApp() {
   };
 
   React.useEffect(() => {
-    const ctrl = new AbortController();
-    if(!isConnected){
+    if(!isConnected) {
       openPopUp && setTimeout(() => {
-        setPopUp(false);
+        setPopUp(0);
       }, 6000);
-    } else {
-      if(isConnected && connector) {
-        setTimeout(async() => {
-          const pools = await getEpoches({config});
-          setStorage(pools);
-        }, 6000);
-      }
-    }
-    return () => {
       clearTimeout(6000);
-      ctrl.abort();
-    };
-  }, [isConnected, connector, openPopUp, togglePopUp]);
+    } else {
+      refetch();
+    }
 
+  }, [isConnected, address, connector, isDisconnected]);
+
+  // Whenever `message` variable changes, every 10sec, reset it
+  // React.useEffect(() => {
+  //   refresh((prev) => prev + 1);
+  // }, [isConnected, address]);
+ 
   return (
     <StorageContextProvider 
     value={
       {
-        storage, 
-        open,
-        tvl,
-        closed,
+        currentEpoches: data?.[1].result?.currentEpoches || 0n,
+        recordEpoches: data?.[1].result?.recordEpoches || 0n, 
+        analytics: data?.[1].result?.analytics || ANALYTICS,
+        symbol: data?.[0].result || 'USD',
+        setstorage,
+        // open,
+        // closed,
         message,
-        permissioned,
-        permissionless,
+        // permissioned,
+        // permissionless,
         exitOnboardScreen,
         toggleSidebar,
         showSidebar,
-        setTrxnStatus,
-        // txnStatus,
         setmessage,
         displayAppScreen,
-        drawerState,
-        popUpDrawer,
         openPopUp,
         displayOnboardUser,
         activePath,
         setActivepath,
-        setdrawerState,
         togglePopUp,
-        handlePopUpDrawer,
-        toggleTransactionWindow,
         toggleDisplayOnboardUser,
       }}
     >

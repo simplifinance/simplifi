@@ -17,11 +17,6 @@ const _abi = [
     name: "CollateralCoverageCannotGoBelow_100",
     type: "error",
   },
-  {
-    inputs: [],
-    name: "UpdateStrategyError",
-    type: "error",
-  },
 ] as const;
 
 export class Common__factory {

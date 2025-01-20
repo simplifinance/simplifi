@@ -130,8 +130,8 @@ library FactoryLibV2 {
   }
 
   ///@dev Increment the number of liquidity providers in a bank
-  function _addUpToBank(address bank, address user) internal {
-    IBank(bank).addUp(user);
+  function _addUpToBank(address bank, address user, uint rId) internal {
+    IBank(bank).addUp(user, rId);
   }
 
   /**
@@ -157,9 +157,8 @@ library FactoryLibV2 {
     bool(cpp.colCoverage >= 100).assertTrue("Col coverage is too low");
     Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
     _validateAllowance(user, cpp.asset, cpp.unit);
-    _updatePoolSlot(self.current, cpp, bank, router, unitId);
     _withdrawAllowanceToBank(user, cpp.asset, cpp.unit, bank);
-    _addUpToBank(bank, user);
+    _addUpToBank(bank, user, _updatePoolSlot(self, cpp, bank, router, unitId));
     _awardPoint(self.points, user, _d.t);
     pool = _getCurrentPool(self, cpp.unit).data;
   }
@@ -201,21 +200,29 @@ library FactoryLibV2 {
     require(IERC20(assetInUse).transferFrom(user, bank, unitContribution), "FactoryLib: Transfer failed");
   }
 
+  /**
+   * @dev Initializes the slot for pool user intend to create.
+   * @notice To maintain storage orderliness especially when an epoch has ended and we need to 
+   * keep record of the pool, we create a slot ahead for the initialized pool so we can move current
+   * pool to it when it is finalized.
+   */
   function _initializePool(
-    mapping(uint => Common.Pool) storage self, 
+    Data storage self, 
     Common.CreatePoolParam memory cpp,
     Common.InterestReturn memory itr,
     address bank,
     uint uId,
     uint24 durInSec,
     Common.Router router
-  ) internal {
+  ) internal returns(uint rId) {
     Def memory _d = _defaults();
-    self[uId].uints = Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate);
-    self[uId].uint256s = Common.Uint256s(itr.fullInterest, itr.intPerSec, cpp.unit, cpp.unit, uId);
-    self[uId].addrs = Common.Addresses(cpp.asset, _d.zeroAddr, bank, cpp.members[0]);
-    self[uId].router = router;
-    self[uId].stage = Common.FuncTag.JOIN;
+    self.pastEpoches.increment();
+    rId = self.pastEpoches.current();
+    self.current[uId].uints = Common.Uints(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate);
+    self.current[uId].uint256s = Common.Uint256s(itr.fullInterest, itr.intPerSec, cpp.unit, cpp.unit, uId, rId);
+    self.current[uId].addrs = Common.Addresses(cpp.asset, _d.zeroAddr, bank, cpp.members[0]);
+    self.current[uId].router = router;
+    self.current[uId].stage = Common.FuncTag.JOIN;
   }
 
   /*** @dev Update the storage with pool information
@@ -226,17 +233,17 @@ library FactoryLibV2 {
    * @param bank: Strategy contract.
    */
   function _updatePoolSlot(
-    mapping(uint => Common.Pool) storage self,
+    Data storage self,
     Common.CreatePoolParam memory cpp,
     address bank,
     Common.Router router,
     uint uId
   ) 
-    private
+    private returns(uint rId)
   {
     uint24 durInSec = _convertDurationToSec(uint16(cpp.duration));
     Common.InterestReturn memory itr = cpp.unit.mul(cpp.quorum).computeInterestsBasedOnDuration(cpp.intRate, durInSec, durInSec);
-    _initializePool(self, cpp, itr, bank, uId, durInSec, router);
+    rId = _initializePool(self, cpp, itr, bank, uId, durInSec, router);
   }
 
   /**@dev Create permissioned band
@@ -469,7 +476,7 @@ library FactoryLibV2 {
     }
     _validateAllowance(_msgSender(), gpr.data.addrs.asset, gpr.data.uint256s.unit);
     _withdrawAllowanceToBank(_msgSender(), gpr.data.addrs.asset, gpr.data.uint256s.unit, gpr.data.addrs.bank);
-    _addUpToBank(gpr.data.addrs.bank, _msgSender());
+    _addUpToBank(gpr.data.addrs.bank, _msgSender(), gpr.data.uint256s.rId);
     ced.pool = _getCurrentPool(self, _ab.unit).data;
   }
 
@@ -766,7 +773,7 @@ library FactoryLibV2 {
       expInterest: arg.pool.uint256s.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.uints.intRate), uint24(arg.pool.uints.duration) ,arg.durOfChoice).intPerChoiceOfDur,
       payDate: _now().add(arg.durOfChoice),
       turnTime: cbt.turnTime,
-      loan: IBank(arg.pool.addrs.bank).borrow{value: arg.msgValue}( caller, arg.pool.addrs.asset, arg.pool.uint256s.currentPool, arg.fee, computedCollateral),
+      loan: IBank(arg.pool.addrs.bank).borrow{value: arg.msgValue}( caller, arg.pool.addrs.asset, arg.pool.uint256s.currentPool, arg.fee, computedCollateral, arg.pool.uint256s.rId),
       colBals: arg.msgValue,
       id: caller,
       sentQuota: cbt.sentQuota
@@ -928,13 +935,13 @@ library FactoryLibV2 {
       ced = Common.CommonEventData(_getCurrentPool(self, pb.unit).data, _p.data.cData[drv.pos].loan, _p.data.cData[drv.pos].colBals);
     } else {
       ced = Common.CommonEventData(_getCurrentPool(self, pb.unit).data, _p.data.cData[drv.pos].loan, _p.data.cData[drv.pos].colBals);
-      _shuffle(self, _p.uId, pb.unit);
+      _shuffle(self, _p.uId, pb.unit, _p.data.uint256s.rId);
       _setNextStage(self.current[_p.uId], Common.FuncTag.ENDED);
     }
     uint attestedInitialBal = IERC20(_p.data.addrs.asset).balanceOf(_p.data.addrs.bank);
     _validateAllowance(pb.user, _p.data.addrs.asset, drv.debt);
     _withdrawAllowanceToBank(pb.user, _p.data.addrs.asset, drv.debt, _p.data.addrs.bank);
-    IBank(_p.data.addrs.bank).payback(pb.user, _p.data.addrs.asset, drv.debt, attestedInitialBal, allGF, _p.data.cData, isSwapped, defaulted);
+    IBank(_p.data.addrs.bank).payback(pb.user, _p.data.addrs.asset, drv.debt, attestedInitialBal, allGF, _p.data.cData, isSwapped, defaulted, _p.data.uint256s.rId);
   }
 
   /**
@@ -992,33 +999,10 @@ library FactoryLibV2 {
    * @dev Shuffle between pools i.e moves a finalized pool to the records ledger.
    * This action resets the data at 'uId' after moving it to records for viewing purpose.
    */
-  function _shuffle(Data storage self, uint uId, uint256 unit) internal {
-    self.pastEpoches.increment();
-    uint rId = self.pastEpoches.current();
+  function _shuffle(Data storage self, uint uId, uint256 unit, uint rId) internal {
     self.records[rId] = self.current[uId];
     self.units[unit] = Common.Unit(true, Common.Status.AVAILABLE);
     self.current[uId] = self.current[0];
-    // console.log("self.records[rId]: ", self.current[uId].uint256s.unit);
-    // console.log("self.records[rId]: ", self.current[uId].cData.length);
-
-    // address[] memory gff = new address[](2);
-    // _createPool(
-    //   self,
-    //   Common.CreatePoolParam(
-    //     0,
-    //     3,
-    //     4,
-    //     120, 
-    //     unit,
-    //     gff,
-    //     self.records[rId].addrs.asset
-    //   ),
-    //   self.records[rId].addrs.bank,
-    //   _msgSender(),
-    //   Common.Router.PERMISSIONLESS
-    // );
-    // console.log("self.current[uId]: ", self.current[uId].uint256s.unit);
-
   }
 
   /**
@@ -1048,8 +1032,8 @@ library FactoryLibV2 {
       bool(_p.data.uint256s.currentPool <= _p.data.uint256s.unit).assertTrue("FactoryLib - Priv: Cannot cancel");
     }
     self.current[_p.uId].stage = Common.FuncTag.CANCELED;
-    _shuffle(self, _p.uId, unit);
-    IBank(_p.data.addrs.bank).cancel(creator, _p.data.addrs.asset, _p.data.uint256s.unit);
+    _shuffle(self, _p.uId, unit, _p.data.uint256s.rId);
+    IBank(_p.data.addrs.bank).cancel(creator, _p.data.addrs.asset, _p.data.uint256s.unit, _p.data.uint256s.rId);
   }
 
   function _isAdmin(

@@ -52,7 +52,7 @@ export const Collapsible = (props: CollapsibleProps) => {
           setActivepath(path);
         }
       }
-      togglePopUp();
+      togglePopUp(1);
     } else {
       setActivepath(path);
     }

@@ -244,7 +244,7 @@ describe("Permissioned", function () {
 
       const bankContract = await retrieveContract(formatAddr(gf.pool.addrs.bank));
       const { aggregateFee,} = await bankContract.getData();
-      const userData = await bankContract.getUserData(signer1.address);
+      const userData = await bankContract.getUserData(signer1.address, gf.pool.uint256s.rId);
       expect(bn(aggregateFee).gt(0)).to.be.true;
       expect(userData.access).to.be.true;
       expect(userData.collateral.balance).to.be.eq(quoted.collateral);
@@ -348,7 +348,7 @@ describe("Permissioned", function () {
 
       // We check the user's collateral balances with the bank are intact
       const bankContract = await retrieveContract(formatAddr(gf.pool.addrs.bank));
-      const { access, collateral: { balance, withdrawable }} = await bankContract.getUserData(signer1.address);
+      const { access, collateral: { balance, withdrawable }} = await bankContract.getUserData(signer1.address, create.pool.uint256s.rId);
       expect(access).to.be.true;
       expect(balance).to.be.eq(0n);
       expect(withdrawable).to.be.eq(gf.profile.colBals);
@@ -357,8 +357,8 @@ describe("Permissioned", function () {
       const balB4Withdrawal = await signer1.provider.getBalance(signer1.address);
       
       // Withdraw collateral from the bank and test
-      await bankContract.connect(signer1).withdrawCollateral();
-      const rs = await bankContract.getUserData(signer1.address);
+      await bankContract.connect(signer1).withdrawCollateral(create.pool.uint256s.rId);
+      const rs = await bankContract.getUserData(signer1.address, create.pool.uint256s.rId);
       expect(rs.collateral.withdrawable).to.be.eq(0n);
       expect(rs.collateral.balance).to.be.eq(0n);
       
@@ -501,8 +501,8 @@ describe("Permissioned", function () {
 
       // We check the user's collateral balances with the bank are intact
       const bankContract = await retrieveContract(formatAddr(gf.pool.addrs.bank));
-      const s1 = await bankContract.getUserData(signer1.address);
-      const s2 = await bankContract.getUserData(signer2.address);
+      const s1 = await bankContract.getUserData(signer1.address, create.pool.uint256s.rId);
+      const s2 = await bankContract.getUserData(signer2.address, create.pool.uint256s.rId);
       expect(s1.access).to.be.true;
       expect(s2.access).to.be.true;
       expect(s1.collateral.balance).to.be.eq(ZERO);
@@ -510,11 +510,11 @@ describe("Permissioned", function () {
       expect(s1.collateral.withdrawable).to.be.gt(ZERO);
       expect(s2.collateral.withdrawable).to.be.gt(ZERO);
 
-      await bankContract.connect(signer1).withdrawCollateral();
-      await bankContract.connect(signer2).withdrawCollateral();
+      await bankContract.connect(signer1).withdrawCollateral(create.pool.uint256s.rId);
+      await bankContract.connect(signer2).withdrawCollateral(create.pool.uint256s.rId);
 
-      const s1After = await bankContract.getUserData(signer1.address);
-      const s2After = await bankContract.getUserData(signer2.address);
+      const s1After = await bankContract.getUserData(signer1.address, create.pool.uint256s.rId);
+      const s2After = await bankContract.getUserData(signer2.address, create.pool.uint256s.rId);
 
       expect(s1After.access).to.be.false;
       expect(s2After.access).to.be.false;
@@ -736,7 +736,7 @@ describe("Permissioned", function () {
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.uint256s.intPerSec).times(bn(ONE_HOUR_ONE_MINUTE + 3))).toString());
       // const defaulter = await factory.getProfile(create.pool.uint256s.unit, signer1.address);
       const bankContract = await retrieveContract(formatAddr(gf.pool.addrs.bank));
-      const s3BfLiq = await bankContract.getUserData(signer3.address);
+      const s3BfLiq = await bankContract.getUserData(signer3.address, create.pool.uint256s.rId);
       expect(s3BfLiq.access).to.be.false;
       const { liq: { balances: bal, pool: pl, profile: pr }, balB4Liq } = await liquidate({
         asset: tAsset,
@@ -746,7 +746,7 @@ describe("Permissioned", function () {
         signers: [signer3],
         debt: debt,
       });
-      const s3AfterLiq = await bankContract.getUserData(signer3.address);
+      const s3AfterLiq = await bankContract.getUserData(signer3.address, create.pool.uint256s.rId);
       expect(s3AfterLiq.access).to.be.true;
       expect(s3AfterLiq.collateral.balance).to.be.eq(ZERO);
       expect(s3AfterLiq.collateral.withdrawable).to.be.eq(gf.profile.colBals);
@@ -762,7 +762,7 @@ describe("Permissioned", function () {
       expect(balAferLiq).to.be.lessThan(balB4Liq);
       
       const xfiB4Withdrawal = await signer3.provider.getBalance(signer3.address);
-      await bankContract.connect(signer3).withdrawCollateral();
+      await bankContract.connect(signer3).withdrawCollateral(create.pool.uint256s.rId);
 
       // const balAfterWithdrawal = await tAsset.balanceOf(signer3.address);
       // expect(balAfterWithdrawal).to.be.lt(balB4Liq);
@@ -770,8 +770,8 @@ describe("Permissioned", function () {
       expect(xfiBalAfterWithdrawal).to.be.gt(xfiB4Withdrawal);
       expect(pl.uint256s.currentPool).to.be.equal(join.pool.uint256s.currentPool);
 
-      const s1 = await bankContract.getUserData(signer1.address);
-      const s3AfterWit = await bankContract.getUserData(signer3.address);
+      const s1 = await bankContract.getUserData(signer1.address, create.pool.uint256s.rId);
+      const s3AfterWit = await bankContract.getUserData(signer3.address, create.pool.uint256s.rId);
 
       expect(s1.access).to.be.false;
       expect(s1.collateral.balance).to.be.eq(ZERO);
@@ -847,7 +847,7 @@ describe("Permissioned", function () {
       });
 
       const bankContract = await retrieveContract(formatAddr(gf.pool.addrs.bank));
-      await bankContract.connect(signer3).withdrawCollateral();
+      await bankContract.connect(signer3).withdrawCollateral(create.pool.uint256s.rId);
       const quote2 = await factory.getCollaterlQuote(create.pool.uint256s.unit);
       const gf_2 = await getFinance({
         unit: create.pool.uint256s.unit,
@@ -1012,7 +1012,7 @@ describe("Permissioned", function () {
         debt,
         signers: [signer3]
       }); 
-      await bankContract.connect(signer3).withdrawCollateral();
+      await bankContract.connect(signer3).withdrawCollateral(create.pool.uint256s.rId);
       // const profB4 = await factory.getProfile(create.pool.uint256s.unit, signer3.address);
       // Before withdrawing collateral, the balance should be intact.
       expect(pay.profile.colBals).to.be.equal(ZERO);
@@ -1061,7 +1061,7 @@ describe("Permissioned", function () {
         debt: debt_2,
         signers: [signer2]
       }); 
-      await bankContract.connect(signer2).withdrawCollateral();
+      await bankContract.connect(signer2).withdrawCollateral(create.pool.uint256s.rId);
       expect(pay_2.profile.colBals).to.be.equal(ZERO);
 
       // Since the pool is not finalized, the currentPool amount to be retained

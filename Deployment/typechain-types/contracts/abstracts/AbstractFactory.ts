@@ -57,7 +57,8 @@ export declare namespace Common {
     intPerSec: BigNumberish;
     unit: BigNumberish;
     currentPool: BigNumberish;
-    epochId: BigNumberish;
+    unitId: BigNumberish;
+    rId: BigNumberish;
   };
 
   export type Uint256sStructOutput = [
@@ -65,28 +66,30 @@ export declare namespace Common {
     intPerSec: bigint,
     unit: bigint,
     currentPool: bigint,
-    epochId: bigint
+    unitId: bigint,
+    rId: bigint
   ] & {
     fullInterest: bigint;
     intPerSec: bigint;
     unit: bigint;
     currentPool: bigint;
-    epochId: bigint;
+    unitId: bigint;
+    rId: bigint;
   };
 
   export type AddressesStruct = {
     asset: AddressLike;
     lastPaid: AddressLike;
-    strategy: AddressLike;
+    bank: AddressLike;
     admin: AddressLike;
   };
 
   export type AddressesStructOutput = [
     asset: string,
     lastPaid: string,
-    strategy: string,
+    bank: string,
     admin: string
-  ] & { asset: string; lastPaid: string; strategy: string; admin: string };
+  ] & { asset: string; lastPaid: string; bank: string; admin: string };
 
   export type ContributorStruct = {
     durOfChoice: BigNumberish;
@@ -96,6 +99,7 @@ export declare namespace Common {
     loan: BigNumberish;
     colBals: BigNumberish;
     id: AddressLike;
+    sentQuota: boolean;
   };
 
   export type ContributorStructOutput = [
@@ -105,7 +109,8 @@ export declare namespace Common {
     turnTime: bigint,
     loan: bigint,
     colBals: bigint,
-    id: string
+    id: string,
+    sentQuota: boolean
   ] & {
     durOfChoice: bigint;
     expInterest: bigint;
@@ -114,29 +119,7 @@ export declare namespace Common {
     loan: bigint;
     colBals: bigint;
     id: string;
-  };
-
-  export type RankStruct = { admin: boolean; member: boolean };
-
-  export type RankStructOutput = [admin: boolean, member: boolean] & {
-    admin: boolean;
-    member: boolean;
-  };
-
-  export type ContributorDataStruct = {
-    cData: Common.ContributorStruct;
-    rank: Common.RankStruct;
-    slot: BigNumberish;
-  };
-
-  export type ContributorDataStructOutput = [
-    cData: Common.ContributorStructOutput,
-    rank: Common.RankStructOutput,
-    slot: bigint
-  ] & {
-    cData: Common.ContributorStructOutput;
-    rank: Common.RankStructOutput;
-    slot: bigint;
+    sentQuota: boolean;
   };
 
   export type PoolStruct = {
@@ -145,8 +128,8 @@ export declare namespace Common {
     uint256s: Common.Uint256sStruct;
     addrs: Common.AddressesStruct;
     allGh: BigNumberish;
-    isPermissionless: boolean;
-    cData: Common.ContributorDataStruct[];
+    cData: Common.ContributorStruct[];
+    router: BigNumberish;
     stage: BigNumberish;
   };
 
@@ -156,8 +139,8 @@ export declare namespace Common {
     uint256s: Common.Uint256sStructOutput,
     addrs: Common.AddressesStructOutput,
     allGh: bigint,
-    isPermissionless: boolean,
-    cData: Common.ContributorDataStructOutput[],
+    cData: Common.ContributorStructOutput[],
+    router: bigint,
     stage: bigint
   ] & {
     userCount: Counters.CounterStructOutput;
@@ -165,29 +148,44 @@ export declare namespace Common {
     uint256s: Common.Uint256sStructOutput;
     addrs: Common.AddressesStructOutput;
     allGh: bigint;
-    isPermissionless: boolean;
-    cData: Common.ContributorDataStructOutput[];
+    cData: Common.ContributorStructOutput[];
+    router: bigint;
     stage: bigint;
   };
 
   export type CreatePoolReturnValueStruct = {
     pool: Common.PoolStruct;
-    cData: Common.ContributorDataStruct;
+    cData: Common.ContributorStruct;
   };
 
   export type CreatePoolReturnValueStructOutput = [
     pool: Common.PoolStructOutput,
-    cData: Common.ContributorDataStructOutput
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorDataStructOutput;
+    cData: Common.ContributorStructOutput
+  ] & { pool: Common.PoolStructOutput; cData: Common.ContributorStructOutput };
+
+  export type CommonEventDataStruct = {
+    pool: Common.PoolStruct;
+    debtBal: BigNumberish;
+    colBal: BigNumberish;
   };
 
-  export type CommonEventDataStruct = { pool: Common.PoolStruct };
+  export type CommonEventDataStructOutput = [
+    pool: Common.PoolStructOutput,
+    debtBal: bigint,
+    colBal: bigint
+  ] & { pool: Common.PoolStructOutput; debtBal: bigint; colBal: bigint };
 
-  export type CommonEventDataStructOutput = [pool: Common.PoolStructOutput] & {
-    pool: Common.PoolStructOutput;
+  export type SlotStruct = {
+    value: BigNumberish;
+    isMember: boolean;
+    isAdmin: boolean;
   };
+
+  export type SlotStructOutput = [
+    value: bigint,
+    isMember: boolean,
+    isAdmin: boolean
+  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
 
   export type BalancesStruct = { xfi: BigNumberish; erc20: BigNumberish };
 
@@ -195,45 +193,105 @@ export declare namespace Common {
     xfi: bigint;
     erc20: bigint;
   };
+
+  export type PointStruct = {
+    contributor: BigNumberish;
+    creator: BigNumberish;
+  };
+
+  export type PointStructOutput = [contributor: bigint, creator: bigint] & {
+    contributor: bigint;
+    creator: bigint;
+  };
+
+  export type UnitStruct = { isInitialized: boolean; status: BigNumberish };
+
+  export type UnitStructOutput = [isInitialized: boolean, status: bigint] & {
+    isInitialized: boolean;
+    status: bigint;
+  };
 }
 
 export declare namespace IFactory {
+  export type AnalyticsStruct = {
+    tvlInXFI: BigNumberish;
+    tvlInUsd: BigNumberish;
+    totalPermissioned: BigNumberish;
+    totalPermissionless: BigNumberish;
+  };
+
+  export type AnalyticsStructOutput = [
+    tvlInXFI: bigint,
+    tvlInUsd: bigint,
+    totalPermissioned: bigint,
+    totalPermissionless: bigint
+  ] & {
+    tvlInXFI: bigint;
+    tvlInUsd: bigint;
+    totalPermissioned: bigint;
+    totalPermissionless: bigint;
+  };
+
   export type ContractDataStruct = {
     feeTo: AddressLike;
     assetAdmin: AddressLike;
     makerRate: BigNumberish;
-    strategyManager: AddressLike;
+    bankFactory: AddressLike;
   };
 
   export type ContractDataStructOutput = [
     feeTo: string,
     assetAdmin: string,
     makerRate: bigint,
-    strategyManager: string
+    bankFactory: string
   ] & {
     feeTo: string;
     assetAdmin: string;
     makerRate: bigint;
-    strategyManager: string;
+    bankFactory: string;
+  };
+
+  export type ViewFactoryDataStruct = {
+    analytics: IFactory.AnalyticsStruct;
+    contractData: IFactory.ContractDataStruct;
+    currentEpoches: BigNumberish;
+    recordEpoches: BigNumberish;
+  };
+
+  export type ViewFactoryDataStructOutput = [
+    analytics: IFactory.AnalyticsStructOutput,
+    contractData: IFactory.ContractDataStructOutput,
+    currentEpoches: bigint,
+    recordEpoches: bigint
+  ] & {
+    analytics: IFactory.AnalyticsStructOutput;
+    contractData: IFactory.ContractDataStructOutput;
+    currentEpoches: bigint;
+    recordEpoches: bigint;
   };
 }
 
 export interface AbstractFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "analytics"
       | "createPermissionedPool"
       | "createPermissionlessPool"
       | "creationFee"
       | "enquireLiquidation"
-      | "epoches"
       | "getBalances"
       | "getCollaterlQuote"
-      | "getContractData"
       | "getCurrentDebt"
+      | "getEpoches"
+      | "getFactoryData"
       | "getFinance"
+      | "getPoint"
       | "getPoolData"
-      | "getPoolFromAllEpoches"
       | "getProfile"
+      | "getRecord"
+      | "getRecordEpoches"
+      | "getSlot"
+      | "getStatus"
       | "joinAPool"
       | "liquidate"
       | "minContribution"
@@ -242,14 +300,11 @@ export interface AbstractFactoryInterface extends Interface {
       | "paused"
       | "payback"
       | "performSetUp"
-      | "permits"
       | "removeLiquidityPool"
       | "setContractData"
       | "setMinimumLiquidityPerProvider"
       | "setOwnershipManager"
       | "unpause"
-      | "withdrawCollateral"
-      | "withdrawXFI"
   ): FunctionFragment;
 
   getEvent(
@@ -266,6 +321,7 @@ export interface AbstractFactoryInterface extends Interface {
       | "Unpaused"
   ): EventFragment;
 
+  encodeFunctionData(functionFragment: "analytics", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "createPermissionedPool",
     values: [
@@ -296,7 +352,6 @@ export interface AbstractFactoryInterface extends Interface {
     functionFragment: "enquireLiquidation",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "epoches", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getBalances",
     values: [BigNumberish]
@@ -306,28 +361,48 @@ export interface AbstractFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getContractData",
+    functionFragment: "getCurrentDebt",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEpoches",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getCurrentDebt",
-    values: [BigNumberish, AddressLike]
+    functionFragment: "getFactoryData",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getFinance",
     values: [BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "getPoint",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPoolData",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getPoolFromAllEpoches",
+    functionFragment: "getProfile",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRecord",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getRecordEpoches",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getProfile",
-    values: [BigNumberish, AddressLike]
+    functionFragment: "getSlot",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getStatus",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "joinAPool",
@@ -353,18 +428,7 @@ export interface AbstractFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "performSetUp",
-    values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      AddressLike,
-      AddressLike,
-      AddressLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "permits",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish, BigNumberish, AddressLike, AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidityPool",
@@ -372,7 +436,7 @@ export interface AbstractFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setContractData",
-    values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
+    values: [AddressLike, AddressLike, BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setMinimumLiquidityPerProvider",
@@ -383,15 +447,8 @@ export interface AbstractFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "withdrawCollateral",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "withdrawXFI",
-    values: [BigNumberish]
-  ): string;
 
+  decodeFunctionResult(functionFragment: "analytics", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "createPermissionedPool",
     data: BytesLike
@@ -408,7 +465,6 @@ export interface AbstractFactoryInterface extends Interface {
     functionFragment: "enquireLiquidation",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "epoches", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getBalances",
     data: BytesLike
@@ -418,23 +474,28 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getContractData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getCurrentDebt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getFactoryData",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getFinance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPoint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPoolData",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getProfile", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getRecord", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "getPoolFromAllEpoches",
+    functionFragment: "getRecordEpoches",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getProfile", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getSlot", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "joinAPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
   decodeFunctionResult(
@@ -452,7 +513,6 @@ export interface AbstractFactoryInterface extends Interface {
     functionFragment: "performSetUp",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "permits", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeLiquidityPool",
     data: BytesLike
@@ -470,14 +530,6 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawCollateral",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawXFI",
-    data: BytesLike
-  ): Result;
 }
 
 export namespace BandCreatedEvent {
@@ -645,6 +697,19 @@ export interface AbstractFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  analytics: TypedContractMethod<
+    [],
+    [
+      [bigint, bigint, bigint, bigint] & {
+        tvlInXFI: bigint;
+        tvlInUsd: bigint;
+        totalPermissioned: bigint;
+        totalPermissionless: bigint;
+      }
+    ],
+    "view"
+  >;
+
   createPermissionedPool: TypedContractMethod<
     [
       intRate: BigNumberish,
@@ -674,72 +739,92 @@ export interface AbstractFactory extends BaseContract {
   creationFee: TypedContractMethod<[], [bigint], "view">;
 
   enquireLiquidation: TypedContractMethod<
-    [epochId: BigNumberish],
-    [[Common.ContributorDataStructOutput, boolean, bigint]],
+    [unit: BigNumberish],
+    [
+      [
+        Common.ContributorStructOutput,
+        boolean,
+        bigint,
+        Common.SlotStructOutput,
+        string
+      ]
+    ],
     "view"
   >;
 
-  epoches: TypedContractMethod<[], [bigint], "view">;
-
   getBalances: TypedContractMethod<
-    [epochId: BigNumberish],
+    [unit: BigNumberish],
     [Common.BalancesStructOutput],
     "view"
   >;
 
   getCollaterlQuote: TypedContractMethod<
-    [epochId: BigNumberish],
+    [unit: BigNumberish],
     [[bigint, bigint] & { collateral: bigint; colCoverage: bigint }],
     "view"
   >;
 
-  getContractData: TypedContractMethod<
-    [],
-    [IFactory.ContractDataStructOutput],
-    "view"
-  >;
-
   getCurrentDebt: TypedContractMethod<
-    [epochId: BigNumberish, target: AddressLike],
+    [unit: BigNumberish, target: AddressLike],
     [bigint],
     "view"
   >;
 
+  getEpoches: TypedContractMethod<[], [bigint], "view">;
+
+  getFactoryData: TypedContractMethod<
+    [],
+    [IFactory.ViewFactoryDataStructOutput],
+    "view"
+  >;
+
   getFinance: TypedContractMethod<
-    [epochId: BigNumberish, daysOfUseInHr: BigNumberish],
+    [unit: BigNumberish, daysOfUseInHr: BigNumberish],
     [boolean],
     "payable"
   >;
 
+  getPoint: TypedContractMethod<
+    [user: AddressLike],
+    [Common.PointStructOutput],
+    "view"
+  >;
+
   getPoolData: TypedContractMethod<
-    [epochId: BigNumberish],
+    [unitId: BigNumberish],
     [Common.PoolStructOutput],
     "view"
   >;
 
-  getPoolFromAllEpoches: TypedContractMethod<
-    [],
-    [Common.PoolStructOutput[]],
-    "view"
-  >;
-
   getProfile: TypedContractMethod<
-    [epochId: BigNumberish, user: AddressLike],
-    [Common.ContributorDataStructOutput],
+    [unit: BigNumberish, user: AddressLike],
+    [Common.ContributorStructOutput],
     "view"
   >;
 
-  joinAPool: TypedContractMethod<
-    [epochId: BigNumberish],
-    [boolean],
-    "nonpayable"
+  getRecord: TypedContractMethod<
+    [uId: BigNumberish],
+    [Common.PoolStructOutput],
+    "view"
   >;
 
-  liquidate: TypedContractMethod<
-    [epochId: BigNumberish],
-    [boolean],
-    "nonpayable"
+  getRecordEpoches: TypedContractMethod<[], [bigint], "view">;
+
+  getSlot: TypedContractMethod<
+    [user: AddressLike, unit: BigNumberish],
+    [Common.SlotStructOutput],
+    "view"
   >;
+
+  getStatus: TypedContractMethod<
+    [unit: BigNumberish],
+    [Common.UnitStructOutput],
+    "view"
+  >;
+
+  joinAPool: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
+
+  liquidate: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
 
   minContribution: TypedContractMethod<[], [bigint], "view">;
 
@@ -749,17 +834,12 @@ export interface AbstractFactory extends BaseContract {
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  payback: TypedContractMethod<
-    [epochId: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
+  payback: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
 
   performSetUp: TypedContractMethod<
     [
       serviceRate: BigNumberish,
       _minContribution: BigNumberish,
-      setUpFee: BigNumberish,
       feeTo: AddressLike,
       assetClass: AddressLike,
       strategyManager: AddressLike
@@ -768,14 +848,8 @@ export interface AbstractFactory extends BaseContract {
     "nonpayable"
   >;
 
-  permits: TypedContractMethod<
-    [arg0: BigNumberish, arg1: AddressLike],
-    [boolean],
-    "view"
-  >;
-
   removeLiquidityPool: TypedContractMethod<
-    [epochId: BigNumberish],
+    [unit: BigNumberish],
     [boolean],
     "nonpayable"
   >;
@@ -785,7 +859,7 @@ export interface AbstractFactory extends BaseContract {
       feeTo: AddressLike,
       assetAdmin: AddressLike,
       serviceRate: BigNumberish,
-      _creationFee: BigNumberish
+      bankFactory: AddressLike
     ],
     [boolean],
     "nonpayable"
@@ -805,18 +879,24 @@ export interface AbstractFactory extends BaseContract {
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
 
-  withdrawCollateral: TypedContractMethod<
-    [epochId: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
-
-  withdrawXFI: TypedContractMethod<[value: BigNumberish], [void], "nonpayable">;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
+  getFunction(
+    nameOrSignature: "analytics"
+  ): TypedContractMethod<
+    [],
+    [
+      [bigint, bigint, bigint, bigint] & {
+        tvlInXFI: bigint;
+        tvlInUsd: bigint;
+        totalPermissioned: bigint;
+        totalPermissionless: bigint;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "createPermissionedPool"
   ): TypedContractMethod<
@@ -851,67 +931,103 @@ export interface AbstractFactory extends BaseContract {
   getFunction(
     nameOrSignature: "enquireLiquidation"
   ): TypedContractMethod<
-    [epochId: BigNumberish],
-    [[Common.ContributorDataStructOutput, boolean, bigint]],
+    [unit: BigNumberish],
+    [
+      [
+        Common.ContributorStructOutput,
+        boolean,
+        bigint,
+        Common.SlotStructOutput,
+        string
+      ]
+    ],
     "view"
   >;
   getFunction(
-    nameOrSignature: "epoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "getBalances"
   ): TypedContractMethod<
-    [epochId: BigNumberish],
+    [unit: BigNumberish],
     [Common.BalancesStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getCollaterlQuote"
   ): TypedContractMethod<
-    [epochId: BigNumberish],
+    [unit: BigNumberish],
     [[bigint, bigint] & { collateral: bigint; colCoverage: bigint }],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getContractData"
-  ): TypedContractMethod<[], [IFactory.ContractDataStructOutput], "view">;
-  getFunction(
     nameOrSignature: "getCurrentDebt"
   ): TypedContractMethod<
-    [epochId: BigNumberish, target: AddressLike],
+    [unit: BigNumberish, target: AddressLike],
     [bigint],
     "view"
   >;
   getFunction(
+    nameOrSignature: "getEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getFactoryData"
+  ): TypedContractMethod<[], [IFactory.ViewFactoryDataStructOutput], "view">;
+  getFunction(
     nameOrSignature: "getFinance"
   ): TypedContractMethod<
-    [epochId: BigNumberish, daysOfUseInHr: BigNumberish],
+    [unit: BigNumberish, daysOfUseInHr: BigNumberish],
     [boolean],
     "payable"
   >;
   getFunction(
+    nameOrSignature: "getPoint"
+  ): TypedContractMethod<
+    [user: AddressLike],
+    [Common.PointStructOutput],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
-    [epochId: BigNumberish],
+    [unitId: BigNumberish],
     [Common.PoolStructOutput],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getPoolFromAllEpoches"
-  ): TypedContractMethod<[], [Common.PoolStructOutput[]], "view">;
-  getFunction(
     nameOrSignature: "getProfile"
   ): TypedContractMethod<
-    [epochId: BigNumberish, user: AddressLike],
-    [Common.ContributorDataStructOutput],
+    [unit: BigNumberish, user: AddressLike],
+    [Common.ContributorStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getRecord"
+  ): TypedContractMethod<
+    [uId: BigNumberish],
+    [Common.PoolStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getRecordEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getSlot"
+  ): TypedContractMethod<
+    [user: AddressLike, unit: BigNumberish],
+    [Common.SlotStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getStatus"
+  ): TypedContractMethod<
+    [unit: BigNumberish],
+    [Common.UnitStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "joinAPool"
-  ): TypedContractMethod<[epochId: BigNumberish], [boolean], "nonpayable">;
+  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "liquidate"
-  ): TypedContractMethod<[epochId: BigNumberish], [boolean], "nonpayable">;
+  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "minContribution"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -926,14 +1042,13 @@ export interface AbstractFactory extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "payback"
-  ): TypedContractMethod<[epochId: BigNumberish], [boolean], "nonpayable">;
+  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "performSetUp"
   ): TypedContractMethod<
     [
       serviceRate: BigNumberish,
       _minContribution: BigNumberish,
-      setUpFee: BigNumberish,
       feeTo: AddressLike,
       assetClass: AddressLike,
       strategyManager: AddressLike
@@ -942,15 +1057,8 @@ export interface AbstractFactory extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "permits"
-  ): TypedContractMethod<
-    [arg0: BigNumberish, arg1: AddressLike],
-    [boolean],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "removeLiquidityPool"
-  ): TypedContractMethod<[epochId: BigNumberish], [boolean], "nonpayable">;
+  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "setContractData"
   ): TypedContractMethod<
@@ -958,7 +1066,7 @@ export interface AbstractFactory extends BaseContract {
       feeTo: AddressLike,
       assetAdmin: AddressLike,
       serviceRate: BigNumberish,
-      _creationFee: BigNumberish
+      bankFactory: AddressLike
     ],
     [boolean],
     "nonpayable"
@@ -972,12 +1080,6 @@ export interface AbstractFactory extends BaseContract {
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "withdrawCollateral"
-  ): TypedContractMethod<[epochId: BigNumberish], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "withdrawXFI"
-  ): TypedContractMethod<[value: BigNumberish], [void], "nonpayable">;
 
   getEvent(
     key: "BandCreated"

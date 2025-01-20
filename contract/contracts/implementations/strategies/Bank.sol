@@ -35,13 +35,15 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
 
   uint private aggregateFee;
 
-  mapping (address => bool) private access;
+  // Mapping of user to unitId to access
+  mapping (address => mapping(uint => bool)) private access;
 
-  mapping (address => Collateral) private collateralBalances;
+  // Mapping of users to unitId to Collateral
+  mapping (address => mapping(uint => Collateral)) private collateralBalances;
 
   ///@dev Only users with access role are allowed
-  modifier hasAccess(address user) {
-    if(!access[user]) revert UserDoesNotHaveAccess();
+  modifier hasAccess(address user, uint unitId) {
+    if(!access[user][unitId]) revert UserDoesNotHaveAccess();
     _;
   }
 
@@ -52,37 +54,37 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
   constructor (address _ownershipManager) OnlyOwner(_ownershipManager)  {}
 
   receive() external payable {
-    _depositCollateral(msg.value);
+    revert('Please use the deposit() function');
   }
 
   /**
    * @dev Registers new user
    * @param user New user
    */
-  function _registerClient(address user) private {
-    if(access[user]) revert AlreadyACustomer(user);
-    access[user] = true;
+  function _registerClient(address user, uint rId) private {
+    if(access[user][rId]) revert AlreadyACustomer(user);
+    access[user][rId] = true;
   }
 
   /**
    * @dev Implementation of IBank.addUp
    * See IBank.addUp
   */
-  function addUp(address user) 
+  function addUp(address user, uint rId) 
     external
     onlyOwner("Bank - addUp: Not permitted")
   {
     clients ++;
-    _registerClient(user);
+    _registerClient(user, rId);
   }
 
   /**
    * @dev UnLocks collateral balances
    * @param user Existing user
    */
-  function _unRegisterClient(address user) private {
-    if(!access[user]) revert NotACustomer(user);
-    access[user] = false;
+  function _unRegisterClient(address user, uint rId) private {
+    if(!access[user][rId]) revert NotACustomer(user);
+    access[user][rId] = false;
   }
 
   /**
@@ -128,7 +130,8 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     address asset, 
     uint256 loan, 
     uint fee, 
-    uint256 calculatedCol
+    uint256 calculatedCol,
+    uint rId
   ) 
     external 
     payable 
@@ -136,7 +139,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     returns(uint) 
   {
     assert(asset != address(0) && user != address(0));
-    Collateral memory col = collateralBalances[user];
+    Collateral memory col = collateralBalances[user][rId];
     uint primaryBal = col.balance.add(msg.value);
     if(calculatedCol <= primaryBal){
       col.withdrawable = col.withdrawable.add(primaryBal.sub(calculatedCol));
@@ -146,9 +149,8 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
       col.withdrawable = agBalance.sub(calculatedCol);
     }
     col.balance = calculatedCol;
-    collateralBalances[user] = col;
+    collateralBalances[user][rId] = col;
     primaryBal = loan;
-    // console.log("Allowance: ", loan);
     if(fee > 0) {
       unchecked {
         aggregateFee += fee;
@@ -161,9 +163,6 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
 
     }
     _setAllowance(user, asset, primaryBal);
-    // console.log("Allowance: ", loan);
-    // console.log("aggregateFe: ", aggregateFee);
-    // console.log("fee: ", fee);
     return loan;
   }
 
@@ -175,75 +174,79 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     bool allGF, 
     Common.Contributor[] memory cData,
     bool isSwapped,
-    address defaulted
+    address defaulted,
+    uint rId
   ) external payable onlyOwner("Bank: Not Permitted"){
     assert(IERC20(asset).balanceOf(address(this)) >= (attestedInitialBal + debt));
-    Collateral memory col = collateralBalances[user];
+    Collateral memory col = collateralBalances[user][rId];
     if(isSwapped) {
-      col = collateralBalances[defaulted];
-      delete collateralBalances[defaulted];
-      collateralBalances[user] = col; 
-      _unRegisterClient(defaulted);
-      _registerClient(user);
+      col = collateralBalances[defaulted][rId];
+      delete collateralBalances[defaulted][rId];
+      collateralBalances[user][rId] = col; 
+      _unRegisterClient(defaulted, rId);
+      _registerClient(user, rId);
 
     }
-    collateralBalances[user] = Collateral(0, col.withdrawable.add(col.balance));
+    collateralBalances[user][rId] = Collateral(0, col.withdrawable.add(col.balance));
     if(allGF) { _tryRoundUp(asset, cData); }
   }
 
   /**
-   *  @dev Withdraw Collateral. 
+   *  @dev Withdraw Collateral.
+   * @param rId : Record Slot
    */
-  function withdrawCollateral() 
+  function withdrawCollateral(uint rId) 
     public 
-    hasAccess(_msgSender())
+    hasAccess(_msgSender(), rId)
     nonReentrant
     returns(bool) 
   {
     address caller = _msgSender();
-    Collateral memory col = collateralBalances[caller];
+    Collateral memory col = collateralBalances[caller][rId];
     uint balances = address(this).balance;
     if(col.withdrawable == 0) revert ZeroWithdrawable();
     if(col.balance == 0){
-      _unRegisterClient(caller);
-      delete collateralBalances[caller];
+      _unRegisterClient(caller, rId);
+      delete collateralBalances[caller][rId];
     } else {
-      collateralBalances[caller].withdrawable = 0;
+      collateralBalances[caller][rId].withdrawable = 0;
     }
     require(balances >= col.withdrawable, "Balance Anomaly");
     payable(caller).transfer(col.withdrawable);
     return true;
   }
 
-  function depositCollateral() 
+  function depositCollateral(uint rId) 
     external 
     payable 
     returns(bool)
   {
-    _depositCollateral(msg.value);
+    _depositCollateral(msg.value, rId);
     return true;
   }
 
   /**
    * @notice User can deposit collateral ahead of time
    * @param amount msg.value
+   * @param rId : Record Slot
    */
-  function _depositCollateral(uint amount) 
+  function _depositCollateral(uint amount, uint rId) 
     internal
-    hasAccess(_msgSender())
+    hasAccess(_msgSender(), rId)
   {
     unchecked {
-      collateralBalances[_msgSender()].withdrawable += amount;
+      collateralBalances[_msgSender()][rId].withdrawable += amount;
     }
   }
 
   function cancel(
     address user, 
     address asset, 
-    uint erc20Balances
-  ) external {
+    uint erc20Balances,
+    uint rId
+  ) external onlyOwner("Bank: Not permitted")  {
     _setAllowance(user, asset, erc20Balances);
-    _unRegisterClient(user);
+    _unRegisterClient(user, rId);
   }
 
   function withdrawFee(
@@ -265,10 +268,10 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     return ViewData(clients, aggregateFee);
   }
 
-  function getUserData(address user) external view returns(ViewUserData memory) {
+  function getUserData(address user, uint rId) external view returns(ViewUserData memory) {
     return ViewUserData(
-      access[user],
-      collateralBalances[user]
+      access[user][rId],
+      collateralBalances[user][rId]
     );
   }
 

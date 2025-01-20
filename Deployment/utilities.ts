@@ -1,23 +1,70 @@
-import { type BigNumberish, ethers } from "ethers";
-import type { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, TrxResult,} from "@/interfaces";
-import BigNumber from 'bignumber.js';
-import { getCurrentDebt } from "./apis/read/getCurrentDebt";
-import { getAllowance } from "./apis/transact/testToken/getAllowance";
-import { getCollateralQuote } from "./apis/read/getCollateralQuote";
-import { approve } from "./apis/transact/testToken/approve";
-import { addToPool } from "./apis/transact/factory/addToPool";
-import { getFinance } from "./apis/transact/factory/getFinance";
-import { liquidate } from "./apis/transact/factory/liquidate";
-import { payback } from "./apis/transact/factory/payback";
-import { formatEther, zeroAddress } from "viem";
+import { ethers } from "ethers";
+import { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, } from "@/interfaces";
+import getCurrentDebt from "./apis/read/getCurrentDebt";
+import getAllowance from "./apis/update/testToken/getAllowance";
+import getCollateralQuote from "./apis/read/getCollateralQuote";
+import approve from "./apis/update/testToken/approve";
+import addToPool from "./apis/update/factory/addToPool";
+import getFinance from "./apis/update/factory/getFinance";
+import liquidate from "./apis/update/factory/liquidate";
+import payback from "./apis/update/factory/payback";
+import { formatEther,} from "viem";
 import { Common } from "./typechain-types/contracts/apis/IFactory";
-import { createPermissionedLiquidityPool } from "./apis/transact/factory/createPermissionedLiquidityPool";
-import { createPermissionlessLiquidityPool } from "./apis/transact/factory/createPermissionless";
+import createPermissioned from "./apis/update/factory/createPermissioned";
+import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
-import { getFactoryAddress } from "./apis/contractAddress";
-import { withdrawLoan } from "./apis/transact/testToken/withdrawLoan";
-import { withdrawCollateral } from "./apis/transact/factory/withdrawCollateral";
-import { removePool } from "./apis/transact/factory/removePool";
+import { getFactoryAddress } from "./apis/utils/contractAddress";
+import withdrawLoan from "./apis/update/testToken/withdrawLoan";
+import removePool from "./apis/update/factory/removePool";
+import BigNumber from "bignumber.js";
+import withdrawCollateral from "./apis/update/bank/withdrawCollateral";
+import { ROUTER } from "./constants";
+
+export type Operation = 'Open' | 'Closed';
+
+/**
+ * Exposes number of active or inactive pools
+ * @param pools : type pool
+ * @returns : Number of active or inactive pools
+ */
+// export default function filterPools (pools: Pools) {
+//   // let tvl : BigNumber = toBN(0);
+//   // pools.forEach((pool) => {
+//   //   let cp = toBN(pool.uint256s.currentPool.toString());
+//   //   if(cp.gt(0)){
+//   //     tvl.plus(cp);
+//   //   } else {
+//   //     // if(toBN(pool.stage) < FuncTag.ENDED){
+
+//   //     // }
+//   //   }
+//   // });
+//   // for(let i = 0; i < pools.length; i++){
+//   //   tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
+//   // }
+
+//   const filterPool = (op: Operation) => {
+//     // console.log("Pools", pools)
+//     return pools?.filter((pool) => {
+//       const stage = toBN(pool.stage.toString()).toNumber();
+//       const stageEnded = stage === FuncTag.ENDED;
+//       const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();
+//       const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
+//       const isClosed : boolean = stageEnded || allGH || quorumIsZero;
+//       return op === 'Closed'? isClosed : !isClosed;
+//     });
+//   }
+
+//   const filterType = (type: PoolType) => {
+//     return pools.filter((pool) => type === 'Permissionless'? pool.isPermissionless : !pool.isPermissionless);
+//   }
+//   const open = filterPool('Open');
+//   const closed = filterPool('Closed');
+//   const permissioned = filterType('Permissioned');
+//   const permissionless = filterType('Permissionless');
+//   return { open, closed, permissioned, permissionless }
+//   // tvl: formatEther(toBigInt(tvl.toString()))
+// }
 
 /**
  * Converts value of 'value' of type string to 'ether' representation.
@@ -48,9 +95,9 @@ export const toBN = (x: string | number ) => {
   return new BigNumber(x);
 }
 
-export function getTimeFromEpoch(onchainUnixTime: bigint | BigNumberish) {
-  var newDate = new Date(toBN(onchainUnixTime.toString()).toString());
-  return `${newDate.toLocaleDateString("en-GB")} ${newDate.toLocaleTimeString("en-US")}`;
+export function getTimeFromEpoch(onchainUnixTime: number) {
+  var now = new Date(onchainUnixTime * 1000);
+  return (onchainUnixTime === 0? 'Not Set' : `${now.toLocaleDateString("en-GB")} ${now.toLocaleTimeString("en-US")}`);
 }
 
 export const commonStyle = (props?: {}) => {
@@ -74,44 +121,42 @@ export const commonStyle = (props?: {}) => {
  * @returns 
 */
 export const getAmountToApprove = async(param: AmountToApproveParam) => {
-  const { txnType, unit, intPerSec, lastPaid, epochId, account, config } = param;
+  const { txnType, unit, intPerSec, lastPaid, account, config } = param;
   let amtToApprove : BigNumber = toBN(unit.toString());
-  let owner : Address = account;
-  let spender : Address = getFactoryAddress();
+  let owner = account;
+  let spender = getFactoryAddress();
 
   switch (txnType) {
     case 'PAYBACK':
-      assert(epochId !== undefined && intPerSec !== undefined, "Utilities: EpochId or Interest per second not given");
-      const estCurDebt = toBN((await getCurrentDebt({config, epochId, account})).toString());
+      assert(intPerSec !== undefined, "Utilities: Interest per second is undefined");
+      const estCurDebt = toBN((await getCurrentDebt({config, unit, account})).toString());
       amtToApprove = estCurDebt.plus(toBN(intPerSec.toString()).times(60)); 
       break;
     case 'LIQUIDATE':
-      assert(epochId !== undefined && intPerSec !== undefined && lastPaid, "Utilities: EpochId and IntPerSec parameters missing.");
-      const debtOfLastPaid = toBN((await getCurrentDebt({config, epochId, account: lastPaid})).toString());
+      assert(intPerSec !== undefined && lastPaid, "Utilities: IntPerSec parameter is missing.");
+      const debtOfLastPaid = toBN((await getCurrentDebt({config, unit, account: lastPaid})).toString());
       amtToApprove = debtOfLastPaid.plus(toBN(intPerSec.toString()).times(60));
       break;
     case 'GET FINANCE':
-      assert(epochId !== undefined, "Utilities: EpochId not given");
-      const collateral = await getCollateralQuote({config, epochId});
+      const collateral = await getCollateralQuote({config, unit});
       amtToApprove = toBN(collateral[0].toString());
-      const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
-      if(prevAllowance.gte(amtToApprove)) {
-        amtToApprove = toBN(0);
-      }
       break;
     default:
       break;
-  }
+    }
+    const prevAllowance = toBN((await getAllowance({config, account, owner, spender})).toString());
+    if(prevAllowance.gte(amtToApprove)) {
+      amtToApprove = toBN(0);
+    }
   return amtToApprove;
 }
 
 export const handleTransact = async(param: HandleTransactionParam) => {
-  const { callback, strategy, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
+  const { callback, bank, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
   const amountToApprove = await getAmountToApprove(otherParam);
-  const { account, config, epochId, txnType } = otherParam;
-  // let returnValue : TrxResult = 'success';
-
-  if(txnType !== 'GET FINANCE') {
+  const { account, config, unit, txnType } = otherParam;
+  console.log("param", param);
+  if(txnType !== 'GET FINANCE' && txnType !== 'REMOVE') {
     if(amountToApprove.gt(0)) {
       await approve({
           account,
@@ -123,40 +168,36 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   }
   switch (txnType) {
     case 'ADD LIQUIDITY':
-      assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await addToPool({account, config, epochId, callback});
+      await addToPool({account, config, unit, callback});
       break;
     case 'GET FINANCE':
-      assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      assert(preferredDuration !== undefined && strategy !== undefined, "Utilities: PreferredDuration not set");
-      const get = await getFinance({account, value: toBigInt(amountToApprove.toString()), config, epochId, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
-      if(get === 'success') await withdrawLoan({config, account, strategy, callback});
+      assert(preferredDuration !== undefined && bank !== undefined, "Utilities: PreferredDuration not set");
+      const get = await getFinance({account, value: toBigInt(amountToApprove.toString()), config, unit, daysOfUseInHr: toBN(preferredDuration).toNumber(), callback});
+      if(get === 'success') await withdrawLoan({config, account, bank, callback});
       break;
     case 'PAYBACK':
-      assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      const pay = await payback({account, config, epochId, callback});
-      if(pay === 'success') { 
-        await withdrawCollateral({account, config, epochId, callback});
-      }  
+      assert(bank !== undefined, "Bank address is undefined");
+      await payback({account, config, unit, callback});
+      // if(pay === 'success') { 
+      //   await withdrawCollateral({account, config, bank, callback});
+      // }  
       break;
     case 'REMOVE':
-      assert(epochId !== undefined, "Utilities: EpochId is missing.");
-      await removePool({account, config, epochId}); 
+      await removePool({account, config, unit}); 
       break;
     case 'LIQUIDATE':
-      assert(epochId !== undefined, "Utilities: EpochId and IntPerSec parameters missing.");
-      await liquidate({account, config, epochId, callback});
+      await liquidate({account, config, unit, callback});
       break;
     case 'CREATE':
       assert(router, "Utilities: Router was not provider");
       switch (router) {
         case 'Permissioned':
-          assert(createPermissionedPoolParam !== undefined, "Utilities: createPermissionedPoolParam: Param not found");
-          await createPermissionedLiquidityPool(createPermissionedPoolParam);
+          assert(createPermissionedPoolParam, "Utilities: createPermissionedPoolParam: Param not found");
+          await createPermissioned(createPermissionedPoolParam);
           break;
         case 'Permissionless':
-          assert(createPermissionlessPoolParam !== undefined, "Utilities: createPermissionless parameters not found");
-          await createPermissionlessLiquidityPool(createPermissionlessPoolParam);
+          assert(createPermissionlessPoolParam, "Utilities: createPermissionless parameters not found");
+          await createPermissionless(createPermissionlessPoolParam)
           break;
         default:
           break;
@@ -172,12 +213,12 @@ export const handleTransact = async(param: HandleTransactionParam) => {
  * @param pool : Pool data
  * @returns : Formatted data
  */
-export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) : FormattedPoolContentProps => {
+export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
   const {
-    uint256s: { unit, currentPool, intPerSec, fullInterest, epochId: epochId_, },
+    uint256s: { unit, currentPool, intPerSec, rId, fullInterest, unitId: unitId_, },
     uints: { intRate, quorum, duration, colCoverage, selector },
-    addrs: { admin, asset, lastPaid, strategy },
-    isPermissionless,
+    addrs: { admin, asset, lastPaid, bank },
+    router,
     stage,
     cData,
     allGh,
@@ -185,6 +226,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
   } = pool;
 
   let cData_formatted : FormattedData[] = [];
+  const isPermissionless = toBN(router.toString()).toNumber() === ROUTER.PERMISSIONLESS;
   const selector_toNumber = toBN(selector.toString()).toNumber();
   const colCoverage_InString = toBN(colCoverage.toString()).toString();
   const fullInterest_InEther = formatEther(toBigInt(toBN(fullInterest.toString()).toString()));
@@ -192,9 +234,9 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
   const currentPool_InEther = formatEther(toBigInt(toBN(currentPool.toString()).toString()));
   const allGET_bool  = toBN(allGh.toString()).eq(toBN(userCount.toString()));
   const allGh_toNumber = toBN(allGh.toString()).toNumber();
-  const epochId_toNumber = toBN(epochId_.toString()).toNumber();
+  const unitId_toNumber = toBN(unitId_.toString()).toNumber();
   const quorum_toNumber = toBN(quorum.toString()).toNumber();
-  const epochId_bigint = toBigInt(epochId_);
+  const unitId_bigint = toBigInt(unitId_);
   const stage_toNumber = toBN(stage.toString()).toNumber();
   const expectedPoolAmt_bigint = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
   const unit_InEther =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
@@ -202,24 +244,28 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
   const intPercent_string = toBN(intRate.toString()).div(100).toString();
   const duration_toNumber = toBN(duration.toString()).div(3600).toNumber();
   const poolFilled = userCount_toNumber === quorum_toNumber;
+  let isMember = false;
 
-  if(formatProfiles) {
+  if(formatProfiles && cData.length > 0) {
     cData.forEach((data) => {
-      if(data.cData.id !== zeroAddress) {
-        cData_formatted.push(formatProfileData(data));
+      cData_formatted.push(formatProfileData(data));
+      if(data.id.toString().toLowerCase() === currentUser.toString().toLowerCase()) {
+        isMember = true;
       }
     });
   }
 
   return {
     unit,
+    unit_bigint: BigInt(unit.toString()),
+    rId: BigInt(rId.toString()),
     pair: "USDT/XFI",
     quorum_toNumber,
     userCount_toNumber,
     allGET_bool,
     allGh_toNumber,
-    epochId_toNumber,
-    epochId_bigint,
+    unitId_toNumber,
+    unitId_bigint,
     stage_toNumber,
     expectedPoolAmt_bigint,
     unit_InEther,
@@ -238,31 +284,31 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean) 
     asset_lowerCase: asset.toString().toLowerCase(),
     admin,
     asset,
+    isMember,
+    isAdmin: currentUser.toString().toLowerCase() === admin.toString().toLowerCase(),
     cData_formatted,
     intPerSec,
-    formatted_strategy: formatAddr(strategy.toString()),
+    formatted_bank: formatAddr(bank.toString()),
     lastPaid: formatAddr(lastPaid.toString())
   }
 }
 
-export const formatProfileData = (param: Common.ContributorDataStruct) : FormattedData => {
-  const { cData : { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan}, slot, rank: { member, admin }} = param;
+export const formatProfileData = (param: Common.ContributorStruct) : FormattedData => {
+  const { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan, } = param;
   const payDate_InSec = toBN(payDate.toString()).toNumber();
-  const slot_toNumber = toBN(slot.toString()).toNumber();
-  const turnTime_InSec = toBN(payDate.toString()).toNumber();
+  const turnTime_InSec = toBN(turnTime.toString()).toNumber();
   const durOfChoice_InSec = toBN(durOfChoice.toString()).toNumber();
   const colBals_InEther = formatEther(toBigInt(toBN(colBals.toString()).toString()));
   const loan_InEther = formatEther(toBigInt(toBN(loan.toString()).toString()));
   const loan_InBN = toBN(loan.toString());
   const expInterest_InEther = formatEther(toBigInt(toBN(expInterest.toString()).toString()));
-  const payDate_InDateFormat = getTimeFromEpoch(payDate);
-  const turnTime_InDateFormat = getTimeFromEpoch(turnTime);
+  const payDate_InDateFormat = getTimeFromEpoch(payDate_InSec);
+  const turnTime_InDateFormat = getTimeFromEpoch(turnTime_InSec);
   const id_lowerCase = id.toString().toLowerCase()
 
   return {
     payDate_InDateFormat,
     payDate_InSec,
-    slot_toNumber,
     turnTime_InDateFormat,
     turnTime_InSec,
     durOfChoice_InSec,
@@ -271,17 +317,7 @@ export const formatProfileData = (param: Common.ContributorDataStruct) : Formatt
     expInterest_InEther,
     id_lowerCase,
     id_toString: id.toString(),
-    isMember: member,
-    isAdmin: admin,
     loan_InBN,
     sentQuota
   }
 }
-
-
-// case 'ADD LIQUIDITY':
-//   amtToApprove = amtToApprove;
-//   break;
-// case 'APPROVE':
-//   amtToApprove = amtToApprove;
-//   break;

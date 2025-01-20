@@ -12,13 +12,14 @@ interface IBank {
   error NoFeeToWithdraw();
   error TokenAddressIsZero();
   
-  function addUp(address user) external;
+  function addUp(address user, uint rId) external;
   function borrow(
     address user, 
     address asset, 
     uint256 loan, 
     uint fee, 
-    uint256 calculatedCol
+    uint256 calculatedCol,
+    uint rId
   ) 
     external 
     payable 
@@ -32,11 +33,12 @@ interface IBank {
     bool allGH,
     Common.Contributor[] memory cData,
     bool isSwapped,
-    address defaulted
+    address defaulted,
+    uint rId
   ) external payable;
 
-  function depositCollateral() external payable returns(bool);
-  function cancel(address user, address asset, uint erc20Balances) external;
+  function depositCollateral(uint rId) external payable returns(bool);
+  function cancel(address user, address asset, uint erc20Balances, uint rId) external;
   function withdrawFee(address recipient, address asset) external;
   function getData() external view returns(ViewData memory);
 

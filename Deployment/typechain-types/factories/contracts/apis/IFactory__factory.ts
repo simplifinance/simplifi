@@ -41,11 +41,6 @@ const _abi = [
     type: "error",
   },
   {
-    inputs: [],
-    name: "UpdateStrategyError",
-    type: "error",
-  },
-  {
     anonymous: false,
     inputs: [
       {
@@ -120,7 +115,12 @@ const _abi = [
                   },
                   {
                     internalType: "uint256",
-                    name: "epochId",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
                     type: "uint256",
                   },
                 ],
@@ -142,7 +142,7 @@ const _abi = [
                   },
                   {
                     internalType: "address",
-                    name: "strategy",
+                    name: "bank",
                     type: "address",
                   },
                   {
@@ -160,94 +160,6 @@ const _abi = [
                 name: "allGh",
                 type: "uint256",
               },
-              {
-                internalType: "bool",
-                name: "isPermissionless",
-                type: "bool",
-              },
-              {
-                components: [
-                  {
-                    components: [
-                      {
-                        internalType: "uint256",
-                        name: "durOfChoice",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "expInterest",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "payDate",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "turnTime",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "loan",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "colBals",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "address",
-                        name: "id",
-                        type: "address",
-                      },
-                    ],
-                    internalType: "struct Common.Contributor",
-                    name: "cData",
-                    type: "tuple",
-                  },
-                  {
-                    components: [
-                      {
-                        internalType: "bool",
-                        name: "admin",
-                        type: "bool",
-                      },
-                      {
-                        internalType: "bool",
-                        name: "member",
-                        type: "bool",
-                      },
-                    ],
-                    internalType: "struct Common.Rank",
-                    name: "rank",
-                    type: "tuple",
-                  },
-                  {
-                    internalType: "uint8",
-                    name: "slot",
-                    type: "uint8",
-                  },
-                ],
-                internalType: "struct Common.ContributorData[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            components: [
               {
                 components: [
                   {
@@ -285,35 +197,75 @@ const _abi = [
                     name: "id",
                     type: "address",
                   },
+                  {
+                    internalType: "bool",
+                    name: "sentQuota",
+                    type: "bool",
+                  },
                 ],
-                internalType: "struct Common.Contributor",
+                internalType: "struct Common.Contributor[]",
                 name: "cData",
-                type: "tuple",
+                type: "tuple[]",
               },
               {
-                components: [
-                  {
-                    internalType: "bool",
-                    name: "admin",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "member",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Rank",
-                name: "rank",
-                type: "tuple",
+                internalType: "enum Common.Router",
+                name: "router",
+                type: "uint8",
               },
               {
-                internalType: "uint8",
-                name: "slot",
+                internalType: "enum Common.FuncTag",
+                name: "stage",
                 type: "uint8",
               },
             ],
-            internalType: "struct Common.ContributorData",
+            internalType: "struct Common.Pool",
+            name: "pool",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "durOfChoice",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "expInterest",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "payDate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "turnTime",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "loan",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colBals",
+                type: "uint256",
+              },
+              {
+                internalType: "address",
+                name: "id",
+                type: "address",
+              },
+              {
+                internalType: "bool",
+                name: "sentQuota",
+                type: "bool",
+              },
+            ],
+            internalType: "struct Common.Contributor",
             name: "cData",
             type: "tuple",
           },
@@ -415,7 +367,12 @@ const _abi = [
                   },
                   {
                     internalType: "uint256",
-                    name: "epochId",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
                     type: "uint256",
                   },
                 ],
@@ -437,7 +394,7 @@ const _abi = [
                   },
                   {
                     internalType: "address",
-                    name: "strategy",
+                    name: "bank",
                     type: "address",
                   },
                   {
@@ -456,80 +413,56 @@ const _abi = [
                 type: "uint256",
               },
               {
-                internalType: "bool",
-                name: "isPermissionless",
-                type: "bool",
-              },
-              {
                 components: [
                   {
-                    components: [
-                      {
-                        internalType: "uint256",
-                        name: "durOfChoice",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "expInterest",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "payDate",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "turnTime",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "loan",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "colBals",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "address",
-                        name: "id",
-                        type: "address",
-                      },
-                    ],
-                    internalType: "struct Common.Contributor",
-                    name: "cData",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "durOfChoice",
+                    type: "uint256",
                   },
                   {
-                    components: [
-                      {
-                        internalType: "bool",
-                        name: "admin",
-                        type: "bool",
-                      },
-                      {
-                        internalType: "bool",
-                        name: "member",
-                        type: "bool",
-                      },
-                    ],
-                    internalType: "struct Common.Rank",
-                    name: "rank",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "expInterest",
+                    type: "uint256",
                   },
                   {
-                    internalType: "uint8",
-                    name: "slot",
-                    type: "uint8",
+                    internalType: "uint256",
+                    name: "payDate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "turnTime",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "loan",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colBals",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "id",
+                    type: "address",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "sentQuota",
+                    type: "bool",
                   },
                 ],
-                internalType: "struct Common.ContributorData[]",
+                internalType: "struct Common.Contributor[]",
                 name: "cData",
                 type: "tuple[]",
+              },
+              {
+                internalType: "enum Common.Router",
+                name: "router",
+                type: "uint8",
               },
               {
                 internalType: "enum Common.FuncTag",
@@ -540,6 +473,16 @@ const _abi = [
             internalType: "struct Common.Pool",
             name: "pool",
             type: "tuple",
+          },
+          {
+            internalType: "uint256",
+            name: "debtBal",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBal",
+            type: "uint256",
           },
         ],
         indexed: false,
@@ -626,7 +569,12 @@ const _abi = [
                   },
                   {
                     internalType: "uint256",
-                    name: "epochId",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
                     type: "uint256",
                   },
                 ],
@@ -648,7 +596,7 @@ const _abi = [
                   },
                   {
                     internalType: "address",
-                    name: "strategy",
+                    name: "bank",
                     type: "address",
                   },
                   {
@@ -667,80 +615,56 @@ const _abi = [
                 type: "uint256",
               },
               {
-                internalType: "bool",
-                name: "isPermissionless",
-                type: "bool",
-              },
-              {
                 components: [
                   {
-                    components: [
-                      {
-                        internalType: "uint256",
-                        name: "durOfChoice",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "expInterest",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "payDate",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "turnTime",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "loan",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "colBals",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "address",
-                        name: "id",
-                        type: "address",
-                      },
-                    ],
-                    internalType: "struct Common.Contributor",
-                    name: "cData",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "durOfChoice",
+                    type: "uint256",
                   },
                   {
-                    components: [
-                      {
-                        internalType: "bool",
-                        name: "admin",
-                        type: "bool",
-                      },
-                      {
-                        internalType: "bool",
-                        name: "member",
-                        type: "bool",
-                      },
-                    ],
-                    internalType: "struct Common.Rank",
-                    name: "rank",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "expInterest",
+                    type: "uint256",
                   },
                   {
-                    internalType: "uint8",
-                    name: "slot",
-                    type: "uint8",
+                    internalType: "uint256",
+                    name: "payDate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "turnTime",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "loan",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colBals",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "id",
+                    type: "address",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "sentQuota",
+                    type: "bool",
                   },
                 ],
-                internalType: "struct Common.ContributorData[]",
+                internalType: "struct Common.Contributor[]",
                 name: "cData",
                 type: "tuple[]",
+              },
+              {
+                internalType: "enum Common.Router",
+                name: "router",
+                type: "uint8",
               },
               {
                 internalType: "enum Common.FuncTag",
@@ -751,6 +675,16 @@ const _abi = [
             internalType: "struct Common.Pool",
             name: "pool",
             type: "tuple",
+          },
+          {
+            internalType: "uint256",
+            name: "debtBal",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBal",
+            type: "uint256",
           },
         ],
         indexed: false,
@@ -837,7 +771,12 @@ const _abi = [
                   },
                   {
                     internalType: "uint256",
-                    name: "epochId",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
                     type: "uint256",
                   },
                 ],
@@ -859,7 +798,7 @@ const _abi = [
                   },
                   {
                     internalType: "address",
-                    name: "strategy",
+                    name: "bank",
                     type: "address",
                   },
                   {
@@ -878,80 +817,56 @@ const _abi = [
                 type: "uint256",
               },
               {
-                internalType: "bool",
-                name: "isPermissionless",
-                type: "bool",
-              },
-              {
                 components: [
                   {
-                    components: [
-                      {
-                        internalType: "uint256",
-                        name: "durOfChoice",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "expInterest",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "payDate",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "turnTime",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "loan",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "colBals",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "address",
-                        name: "id",
-                        type: "address",
-                      },
-                    ],
-                    internalType: "struct Common.Contributor",
-                    name: "cData",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "durOfChoice",
+                    type: "uint256",
                   },
                   {
-                    components: [
-                      {
-                        internalType: "bool",
-                        name: "admin",
-                        type: "bool",
-                      },
-                      {
-                        internalType: "bool",
-                        name: "member",
-                        type: "bool",
-                      },
-                    ],
-                    internalType: "struct Common.Rank",
-                    name: "rank",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "expInterest",
+                    type: "uint256",
                   },
                   {
-                    internalType: "uint8",
-                    name: "slot",
-                    type: "uint8",
+                    internalType: "uint256",
+                    name: "payDate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "turnTime",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "loan",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colBals",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "id",
+                    type: "address",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "sentQuota",
+                    type: "bool",
                   },
                 ],
-                internalType: "struct Common.ContributorData[]",
+                internalType: "struct Common.Contributor[]",
                 name: "cData",
                 type: "tuple[]",
+              },
+              {
+                internalType: "enum Common.Router",
+                name: "router",
+                type: "uint8",
               },
               {
                 internalType: "enum Common.FuncTag",
@@ -962,6 +877,16 @@ const _abi = [
             internalType: "struct Common.Pool",
             name: "pool",
             type: "tuple",
+          },
+          {
+            internalType: "uint256",
+            name: "debtBal",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBal",
+            type: "uint256",
           },
         ],
         indexed: false,
@@ -1048,7 +973,12 @@ const _abi = [
                   },
                   {
                     internalType: "uint256",
-                    name: "epochId",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
                     type: "uint256",
                   },
                 ],
@@ -1070,7 +1000,7 @@ const _abi = [
                   },
                   {
                     internalType: "address",
-                    name: "strategy",
+                    name: "bank",
                     type: "address",
                   },
                   {
@@ -1089,80 +1019,56 @@ const _abi = [
                 type: "uint256",
               },
               {
-                internalType: "bool",
-                name: "isPermissionless",
-                type: "bool",
-              },
-              {
                 components: [
                   {
-                    components: [
-                      {
-                        internalType: "uint256",
-                        name: "durOfChoice",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "expInterest",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "payDate",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "turnTime",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "loan",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "uint256",
-                        name: "colBals",
-                        type: "uint256",
-                      },
-                      {
-                        internalType: "address",
-                        name: "id",
-                        type: "address",
-                      },
-                    ],
-                    internalType: "struct Common.Contributor",
-                    name: "cData",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "durOfChoice",
+                    type: "uint256",
                   },
                   {
-                    components: [
-                      {
-                        internalType: "bool",
-                        name: "admin",
-                        type: "bool",
-                      },
-                      {
-                        internalType: "bool",
-                        name: "member",
-                        type: "bool",
-                      },
-                    ],
-                    internalType: "struct Common.Rank",
-                    name: "rank",
-                    type: "tuple",
+                    internalType: "uint256",
+                    name: "expInterest",
+                    type: "uint256",
                   },
                   {
-                    internalType: "uint8",
-                    name: "slot",
-                    type: "uint8",
+                    internalType: "uint256",
+                    name: "payDate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "turnTime",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "loan",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colBals",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "address",
+                    name: "id",
+                    type: "address",
+                  },
+                  {
+                    internalType: "bool",
+                    name: "sentQuota",
+                    type: "bool",
                   },
                 ],
-                internalType: "struct Common.ContributorData[]",
+                internalType: "struct Common.Contributor[]",
                 name: "cData",
                 type: "tuple[]",
+              },
+              {
+                internalType: "enum Common.Router",
+                name: "router",
+                type: "uint8",
               },
               {
                 internalType: "enum Common.FuncTag",
@@ -1173,6 +1079,16 @@ const _abi = [
             internalType: "struct Common.Pool",
             name: "pool",
             type: "tuple",
+          },
+          {
+            internalType: "uint256",
+            name: "debtBal",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBal",
+            type: "uint256",
           },
         ],
         indexed: false,
@@ -1282,7 +1198,12 @@ const _abi = [
               },
               {
                 internalType: "uint256",
-                name: "epochId",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
                 type: "uint256",
               },
             ],
@@ -1304,7 +1225,7 @@ const _abi = [
               },
               {
                 internalType: "address",
-                name: "strategy",
+                name: "bank",
                 type: "address",
               },
               {
@@ -1323,80 +1244,56 @@ const _abi = [
             type: "uint256",
           },
           {
-            internalType: "bool",
-            name: "isPermissionless",
-            type: "bool",
-          },
-          {
             components: [
               {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Contributor",
-                name: "cData",
-                type: "tuple",
+                internalType: "uint256",
+                name: "durOfChoice",
+                type: "uint256",
               },
               {
-                components: [
-                  {
-                    internalType: "bool",
-                    name: "admin",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "member",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Rank",
-                name: "rank",
-                type: "tuple",
+                internalType: "uint256",
+                name: "expInterest",
+                type: "uint256",
               },
               {
-                internalType: "uint8",
-                name: "slot",
-                type: "uint8",
+                internalType: "uint256",
+                name: "payDate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "turnTime",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "loan",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colBals",
+                type: "uint256",
+              },
+              {
+                internalType: "address",
+                name: "id",
+                type: "address",
+              },
+              {
+                internalType: "bool",
+                name: "sentQuota",
+                type: "bool",
               },
             ],
-            internalType: "struct Common.ContributorData[]",
+            internalType: "struct Common.Contributor[]",
             name: "cData",
             type: "tuple[]",
+          },
+          {
+            internalType: "enum Common.Router",
+            name: "router",
+            type: "uint8",
           },
           {
             internalType: "enum Common.FuncTag",
@@ -1505,7 +1402,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
     ],
@@ -1514,71 +1411,47 @@ const _abi = [
       {
         components: [
           {
-            components: [
-              {
-                internalType: "uint256",
-                name: "durOfChoice",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "expInterest",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "payDate",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "turnTime",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "loan",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "colBals",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "id",
-                type: "address",
-              },
-            ],
-            internalType: "struct Common.Contributor",
-            name: "cData",
-            type: "tuple",
+            internalType: "uint256",
+            name: "durOfChoice",
+            type: "uint256",
           },
           {
-            components: [
-              {
-                internalType: "bool",
-                name: "admin",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
-                name: "member",
-                type: "bool",
-              },
-            ],
-            internalType: "struct Common.Rank",
-            name: "rank",
-            type: "tuple",
+            internalType: "uint256",
+            name: "expInterest",
+            type: "uint256",
           },
           {
-            internalType: "uint8",
-            name: "slot",
-            type: "uint8",
+            internalType: "uint256",
+            name: "payDate",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "turnTime",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "loan",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBals",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "id",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "sentQuota",
+            type: "bool",
           },
         ],
-        internalType: "struct Common.ContributorData",
+        internalType: "struct Common.Contributor",
         name: "_liq",
         type: "tuple",
       },
@@ -1592,18 +1465,32 @@ const _abi = [
         name: "currentDebt",
         type: "uint256",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "epoches",
-    outputs: [
       {
-        internalType: "uint256",
+        components: [
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isMember",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "isAdmin",
+            type: "bool",
+          },
+        ],
+        internalType: "struct Common.Slot",
+        name: "slot",
+        type: "tuple",
+      },
+      {
+        internalType: "address",
         name: "",
-        type: "uint256",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -1613,7 +1500,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
     ],
@@ -1644,7 +1531,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
       {
@@ -1665,10 +1552,23 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getEpoches",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
       {
@@ -1691,8 +1591,39 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getPoint",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "contributor",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "creator",
+            type: "uint256",
+          },
+        ],
+        internalType: "struct Common.Point",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
-        name: "epochId",
+        name: "unitId",
         type: "uint256",
       },
     ],
@@ -1768,7 +1699,12 @@ const _abi = [
               },
               {
                 internalType: "uint256",
-                name: "epochId",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
                 type: "uint256",
               },
             ],
@@ -1790,7 +1726,7 @@ const _abi = [
               },
               {
                 internalType: "address",
-                name: "strategy",
+                name: "bank",
                 type: "address",
               },
               {
@@ -1808,113 +1744,6 @@ const _abi = [
             name: "allGh",
             type: "uint256",
           },
-          {
-            internalType: "bool",
-            name: "isPermissionless",
-            type: "bool",
-          },
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Contributor",
-                name: "cData",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "bool",
-                    name: "admin",
-                    type: "bool",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "member",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Rank",
-                name: "rank",
-                type: "tuple",
-              },
-              {
-                internalType: "uint8",
-                name: "slot",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.ContributorData[]",
-            name: "cData",
-            type: "tuple[]",
-          },
-          {
-            internalType: "enum Common.FuncTag",
-            name: "stage",
-            type: "uint8",
-          },
-        ],
-        internalType: "struct Common.Pool",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "epochId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
-    ],
-    name: "getProfile",
-    outputs: [
-      {
-        components: [
           {
             components: [
               {
@@ -1952,35 +1781,28 @@ const _abi = [
                 name: "id",
                 type: "address",
               },
+              {
+                internalType: "bool",
+                name: "sentQuota",
+                type: "bool",
+              },
             ],
-            internalType: "struct Common.Contributor",
+            internalType: "struct Common.Contributor[]",
             name: "cData",
-            type: "tuple",
+            type: "tuple[]",
           },
           {
-            components: [
-              {
-                internalType: "bool",
-                name: "admin",
-                type: "bool",
-              },
-              {
-                internalType: "bool",
-                name: "member",
-                type: "bool",
-              },
-            ],
-            internalType: "struct Common.Rank",
-            name: "rank",
-            type: "tuple",
+            internalType: "enum Common.Router",
+            name: "router",
+            type: "uint8",
           },
           {
-            internalType: "uint8",
-            name: "slot",
+            internalType: "enum Common.FuncTag",
+            name: "stage",
             type: "uint8",
           },
         ],
-        internalType: "struct Common.ContributorData",
+        internalType: "struct Common.Pool",
         name: "",
         type: "tuple",
       },
@@ -1992,7 +1814,158 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getProfile",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "durOfChoice",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "expInterest",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "payDate",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "turnTime",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "loan",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "colBals",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "id",
+            type: "address",
+          },
+          {
+            internalType: "bool",
+            name: "sentQuota",
+            type: "bool",
+          },
+        ],
+        internalType: "struct Common.Contributor",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getRecordEpoches",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "unit",
+        type: "uint256",
+      },
+    ],
+    name: "getSlot",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+          {
+            internalType: "bool",
+            name: "isMember",
+            type: "bool",
+          },
+          {
+            internalType: "bool",
+            name: "isAdmin",
+            type: "bool",
+          },
+        ],
+        internalType: "struct Common.Slot",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "unit",
+        type: "uint256",
+      },
+    ],
+    name: "getStatus",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "bool",
+            name: "isInitialized",
+            type: "bool",
+          },
+          {
+            internalType: "enum Common.Status",
+            name: "status",
+            type: "uint8",
+          },
+        ],
+        internalType: "struct Common.Unit",
+        name: "_unit",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "unit",
         type: "uint256",
       },
     ],
@@ -2011,7 +1984,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
     ],
@@ -2030,7 +2003,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
     ],
@@ -2049,30 +2022,11 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "epochId",
+        name: "unit",
         type: "uint256",
       },
     ],
     name: "removeLiquidityPool",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "epochId",
-        type: "uint256",
-      },
-    ],
-    name: "withdrawCollateral",
     outputs: [
       {
         internalType: "bool",

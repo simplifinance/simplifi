@@ -215,7 +215,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
  */
 export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
   const {
-    uint256s: { unit, currentPool, intPerSec, fullInterest, unitId: unitId_, },
+    uint256s: { unit, currentPool, intPerSec, rId, fullInterest, unitId: unitId_, },
     uints: { intRate, quorum, duration, colCoverage, selector },
     addrs: { admin, asset, lastPaid, bank },
     router,
@@ -257,6 +257,8 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, 
 
   return {
     unit,
+    unit_bigint: BigInt(unit.toString()),
+    rId: BigInt(rId.toString()),
     pair: "USDT/XFI",
     quorum_toNumber,
     userCount_toNumber,

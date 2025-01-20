@@ -1,40 +1,15 @@
 import { Address, WagmiConfig } from "@/interfaces";
-import { getFactoryAddress } from "../contractAddress";
+import { getFactoryAddress } from "../utils/contractAddress";
 import { readContract } from "wagmi/actions";
+import { getCurrentDebtAbi } from "../abis";
 
-export const getCurrentDebt = async(args: {config: WagmiConfig, epochId: bigint, account: Address}) => {
-  const { config, epochId, account } = args;
+export default async function getCurrentDebt(args: {config: WagmiConfig, unit: bigint, account: Address}) {
+  const { config, unit, account } = args;
   return await readContract(config, {
     abi: getCurrentDebtAbi,
     address: getFactoryAddress(), 
     functionName: "getCurrentDebt",
-    args: [epochId, account]
+    args: [unit, account]
   });  
 }
 
-const getCurrentDebtAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "epochId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
-      }
-    ],
-    "name": "getCurrentDebt",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-] as const;

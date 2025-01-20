@@ -69,6 +69,7 @@ export interface Config {
 
 export interface DepositCollateralParam extends Config {
   bank: Address;
+  rId: bigint;
 }
 
 export interface CommonParam extends Config {
@@ -103,6 +104,8 @@ export interface FormattedData {
 
 export interface FormattedPoolContentProps {
   unit: BigNumberish;
+  unit_bigint: bigint;
+  rId: bigint;
   pair: string;
   quorum_toNumber: number;
   userCount_toNumber: number;
