@@ -36,3 +36,12 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 <!-- Pay4Me coming soon... -->
+<!-- "viem": "2.10.5", -->
+<!-- PxCCxYGyRZmogFNMD4byaq5z-OYeLEL8   apikey
+a5e40120-e164-4ea0-af53-25bb3a2b4b38 gaspolicy Id -->
+<!-- https://crossfi-testnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->
+<!-- https://crossfi-mainnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->
+
+<!-- websocket -->
+<!-- wss://crossfi-mainnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->
+<!-- wss://crossfi-testnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->

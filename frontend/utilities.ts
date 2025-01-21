@@ -155,7 +155,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   const { callback, bank, preferredDuration, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
   const amountToApprove = await getAmountToApprove(otherParam);
   const { account, config, unit, txnType } = otherParam;
-  console.log("param", param);
+  // console.log("param", param);
   if(txnType !== 'GET FINANCE' && txnType !== 'REMOVE') {
     if(amountToApprove.gt(0)) {
       await approve({

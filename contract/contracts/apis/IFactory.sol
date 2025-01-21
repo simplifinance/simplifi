@@ -9,6 +9,7 @@ interface IFactory is Common {
   error AllMemberIsPaid();
   error QuorumIsInvalid();
   error OwnershipManagerIsNotSet();
+  error AmountLowerThanMinimumContribution();
 
   event BandCreated(CreatePoolReturnValue);
   event NewMemberAdded(CommonEventData);

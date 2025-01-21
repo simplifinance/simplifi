@@ -19,16 +19,14 @@ abstract contract AbstractFactory is
     Pausable
 {
     using FactoryLibV2 for Data;
-    // error DD(address[] contributors);
 
+    // Storage of type FactoryLibV2.Data
     Data private data;
-
-    // Creation fee
-    uint public creationFee;
 
     // Minimum amount that can be contributed
     uint public minContribution;
 
+    // Frontend analytics
     Analytics public analytics;
 
     /**
@@ -43,8 +41,15 @@ abstract contract AbstractFactory is
         _;
     }
 
+    ///@dev Unit contribution must have been initialized before they can be interacted with.
     modifier onlyInitialized(uint256 unit,bool secondCheck) {
         FactoryLibV2._isInitialized(data.units, unit, secondCheck);
+        _;
+    }
+
+    ///@dev Unit contribution must not be less than the minimum contribution.
+    modifier isMinimumContribution(uint256 unit) {
+        if(unit < minContribution) revert AmountLowerThanMinimumContribution();
         _;
     }
     

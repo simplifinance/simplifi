@@ -39,10 +39,10 @@ const FlexPool = () => {
                 </div>
                 <div className={`hidden md:flex items-center w-[fit-content] text-xs uppercase`}>
                   <button disabled={!isPastEpoches} onClick={() => setEpochType(false)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${isPastEpoches? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-l-full`}>
-                    ActiveEpoches
+                    Active Pools
                   </button>
                   <button disabled={isPastEpoches} onClick={() => setEpochType(true)} className={`${flexSpread} gap-2 uppercase text-orange-300 border border-green1 ${!isPastEpoches? 'bg-gray1 animate-pulse hover:text-orangec' : 'bg-green1 '} p-3 rounded-r-full`}>
-                    PastEpoches
+                    Past Pools
                   </button>
                 </div>
                 <USDBalances />
@@ -55,8 +55,8 @@ const FlexPool = () => {
                   overrideClassName={`bg-green1 rounded-full w-[38px] h-[38px] hover:shadow-sm hover:shadow-orange-200`}
                   handleButtonClick={() => setDisplayForm(true)}
                 >
-                  <h1 className='text-orange-200 font-bold absolute top-6 text-[10px]'>New FlexPool</h1>
-                  <Tooltip title="Open New FlexPool">
+                  {/* <h1 className='hidden md:block text-orange-200 font-bold absolute -top-8 text-[8px]'>New FlexPool</h1> */}
+                  <Tooltip title="New Pool">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5 md:size-6 text-orange-300 animate-pulse hover:animate-none">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
