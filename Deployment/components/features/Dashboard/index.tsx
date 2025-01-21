@@ -65,11 +65,11 @@ const Dashboard : React.FC = () => {
       <ul className={`w-full md:text-lg text-orange-200 ${flexEven} shadow shadow-green1 p-4 rounded-[26px] mb-4 md:gap-2`}>
         <li className={`flex flex-col justify-center items-center text-center`}>
           <h3 className={"text-center text-[16px] md:text-[26px] rounded-full"}>{currentEpoches.toString()}</h3>
-          <h3>Active Epoches</h3>
+          <h3>Active Pools</h3>
         </li>
         <li className={`flex flex-col justify-center items-center text-center`}>
           <h3 className={"text-center text-[16px] md:text-[26px] rounded-full"}>{recordEpoches.toString()}</h3>
-          <h3>Past Epoches</h3>
+          <h3>Past Pools</h3>
         </li>
         {/* <li className={`flex flex-col justify-center items-center text-center`}>
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-[24px] md:size-[40px] text-orange-300">

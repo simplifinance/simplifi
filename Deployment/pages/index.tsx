@@ -14,10 +14,11 @@ import Sidebar from "@/components/Layout/Sidebar";
 import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
 import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
-import { useAccount, useConfig, useReadContracts,} from "wagmi";
+import { useAccount, useReadContracts,} from "wagmi";
 import { getFactoryDataConfig, readSymbolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
 
 export default function SimpliApp() {
+  // const {data: blockNumber, } = useBlockNumber({watch: true, query: {refetchInterval: 3000}});
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<number>(0);
   const [showSidebar, setShowSidebar] = React.useState(false);
@@ -30,8 +31,10 @@ export default function SimpliApp() {
       {...readSymbolConfig()},
       {...getFactoryDataConfig()}
     ],
-    allowFailure: true
+    allowFailure: true,
+    query: {refetchInterval: 5000}
   });
+  // console.log("data", data?.[0].result);
 
   const { isConnected, address, connector, isDisconnected,  } = useAccount();
   // const config = useConfig();
@@ -79,7 +82,7 @@ export default function SimpliApp() {
       refetch();
     }
 
-  }, [isConnected, address, connector, isDisconnected]);
+  }, [isConnected, address, connector, isDisconnected, openPopUp]);
 
   // Whenever `message` variable changes, every 10sec, reset it
   // React.useEffect(() => {

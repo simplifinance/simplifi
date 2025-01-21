@@ -8,7 +8,7 @@ import { errorMessage } from "../formatError";
 export default async function getFinance(args: GetFinanceParam ) {
   const { unit, daysOfUseInHr, config, callback, account, value } = args;
   const address = getFactoryAddress();
-  let returnValue : TrxResult = 'reverted'; 
+  let returnValue : TrxResult = 'success'; 
   await simulateContract(config, {
     address,
     account,
@@ -20,7 +20,10 @@ export default async function getFinance(args: GetFinanceParam ) {
     const hash = await writeContract(config, request );
     callback?.({message: "Creating get-Finance request..."});
         returnValue = await waitForConfirmation({config, hash, callback: callback!});
-      }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      }).catch((error: any) => {
+        returnValue = 'reverted';
+        callback?.({message: errorMessage(error)});
+      });
   
     return returnValue;
 }

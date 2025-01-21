@@ -2,7 +2,6 @@ import type { WagmiConfig, } from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
 import { getFactoryAddress } from "../utils/contractAddress";
 import { getFactoryDataAbi } from "../abis";
-// import { getPoolsAbi, profileAbi } from "../abis";
 
 const address = getFactoryAddress();
 

@@ -19,6 +19,7 @@ export const ActionButton = (props: RenderActionsProps) => {
         setDrawerState,
         duration_toNumber, } = props;
 
+    const openDrawer = () => setDrawerState(1);
     const maxEpochDuration = duration_toNumber.toString()
     const { setstorage, } = useAppStorage();
     const handleModalClose = () => {
@@ -26,21 +27,25 @@ export const ActionButton = (props: RenderActionsProps) => {
             setPreferredDuration(maxEpochDuration);
         }
         setInputModal(false);
-        setDrawerState(1);
+        openDrawer();
     }
 
     const closeConfirmationPopUp = () => setDrawerState(0);
     const useEpochDuration = () => {
         setPreferredDuration(maxEpochDuration);
         setInputModal(false);
-        setDrawerState(1);
+        openDrawer();
     };
 
     const handleClick = () => {
         if(buttonObj.value === 'GET FINANCE') {
-            setInputModal(true);
+            if(duration_toNumber > 1){
+                setInputModal(true);
+            } else {
+                openDrawer();
+            }
         } else {
-            setDrawerState(1);
+            openDrawer();
         }
     }
 
@@ -59,6 +64,8 @@ export const ActionButton = (props: RenderActionsProps) => {
 
     // const sendTransaction = async({onSuccess, onError}: {onSuccess: () => void, onError: (errorArg: FormatErrorArgs) => void}) => {
     const sendTransaction = async() => {
+        // console.log("Other param: ", otherParam);
+        // console.log("formatted_bank: ", formatted_bank);
         // const otherParam : AmountToApproveParam = {...otp, txnType: buttonObj.value};
         await handleTransact(
             {

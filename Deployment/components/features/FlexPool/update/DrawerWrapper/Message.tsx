@@ -6,7 +6,7 @@ export default function Message() {
 
     if(message === '') return null;
     return(
-        <div className="border lowercase border-gray1 rounded-[16px] bg-gray1 text-orange-400 p-4 font-serif max-h-20 md:max-h-36 overflow-y-auto text-xs md:text-sm text-center">
+        <div className="border border-gray1 rounded-[16px] bg-gray1 text-orange-400 p-4 font-serif max-h-20 md:max-h-36 overflow-y-auto text-xs md:text-sm text-center">
             { message }
         </div>
     )

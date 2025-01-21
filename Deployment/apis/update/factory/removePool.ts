@@ -1,22 +1,27 @@
-import { CommonParam } from "@/interfaces";
+import { CommonParam, TrxResult } from "@/interfaces";
 import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { removeLiquidityPoolAbi } from "@/apis/abis";
 import { formatEther } from "viem";
+import { errorMessage } from "../formatError";
 
 export default async function removePool(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Removing Flexpool at ${formatEther(unit)}`});
-  const {request} = await simulateContract(config, {
+  let returnValue : TrxResult = 'reverted'; 
+  await simulateContract(config, {
     address,
     account,
     abi: removeLiquidityPoolAbi,
     functionName: "removeLiquidityPool",
     args: [unit]
-  });
-  const hash = await writeContract(config, { ...request });
-  return await waitForConfirmation({config, hash, callback});
+  }).then(async({request}) => {
+    const hash = await writeContract(config, request );
+    callback?.({message: `Removing Flexpool at ${formatEther(unit)}`});
+    returnValue = await waitForConfirmation({config, hash, callback: callback!});
+  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+        
+  return returnValue;
 }
 

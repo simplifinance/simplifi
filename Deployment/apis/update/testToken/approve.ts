@@ -1,24 +1,27 @@
-import { Address, ButtonContent, Config } from "@/interfaces";
+import { Address, ButtonContent, Config, TrxResult } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getTokenAddress  } from "../../utils/getTokenAddress";
 import { getFactoryAddress } from "../../utils/contractAddress";
+import { errorMessage } from "../formatError";
 
 const factoryAddr = getFactoryAddress();
 
 export default async function approve(args: ApproveParam) {
     const { callback, config, account, amountToApprove } = args;
     const address = getTokenAddress();
-    callback?.({message: "Approving spending limit..."});
-    const {request} = await simulateContract(config, {
-        address,
-        account,
-        abi: approveAbi,
-        functionName: "approve", 
-        args: [factoryAddr, amountToApprove]
-    });
-    const hash = await writeContract(config, { ...request });
-    await waitForConfirmation({config, hash,  callback});
+    await simulateContract(config, {
+      address,
+      account,
+      abi: approveAbi,
+      functionName: "approve", 
+      args: [factoryAddr, amountToApprove]
+    })
+    .then(async({request}) => {
+        callback?.({message: "Approving spending limit..."});
+        const hash = await writeContract(config, request );
+        await waitForConfirmation({config, hash, callback: callback!});
+  }).catch((error: any) => callback?.({message: errorMessage(error)}));       
 }
 
 export const approveAbi = [

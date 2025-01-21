@@ -9,12 +9,12 @@ const Content = ({title, content, subparagraph} : {title: React.ReactNode, conte
 
   return(
     <div>
-      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:shadow-sm hover:shadow-orange-200 rounded-t-md hover:bg-gray1/50 focus:bg-gray1/50`}>
-        <span className={`text-md`}>{ title }</span>
+      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:bg-green1/70 rounded-t-md focus:bg-gray1/50`}>
+        <span className={`text-xl`}>{ title }</span>
         <Chevron open={open} />
       </button> 
       <Collapse in={open} timeout="auto" unmountOnExit className={'w-full '}>
-        <div className="text-orange-100 border border-green1 rounded-b-[26px] p-4 bg-green1">
+        <div className="text-white1/80 font-thin border border-green1 rounded-b-[26px] p-4 text-lg bg-green1">
           <span>{content}</span>
           <span>{subparagraph}</span>
         </div>

@@ -150,6 +150,10 @@ export const formatError = (arg: FormatErrorArgs) : string => {
     return errorMessage?.length > 100? errorMessage.substring(0, 100) : errorMessage;
 }
 
+export const errorMessage = (error: any) => {
+    return (`This transaction will likely fail! Reason: ${formatError({error})}`)
+}
+
 interface DefaultErrorArgs {
     durationInSec?: number;
     amount?: string;
