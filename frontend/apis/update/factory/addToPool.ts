@@ -1,25 +1,29 @@
-import { CommonParam } from "@/interfaces";
+import { CommonParam, TrxResult } from "@/interfaces";
 import { getFactoryAddress } from "../../utils/contractAddress";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
 import { addToPoolAbi } from "@/apis/abis";
 import { formatEther } from "viem";
+import { errorMessage } from "../formatError";
 
-export default async function addToPool(args: CommonParam ){
+export default async function addToPool(args: CommonParam) : Promise<TrxResult> {
   const { unit, config, callback, account } = args;
   const address = getFactoryAddress();
-  callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool at ${formatEther(unit)}`});
-  const { request } = await simulateContract(config, {
+  let returnValue : TrxResult = 'reverted';
+  await simulateContract(config, {
     address,
     account,
     abi: addToPoolAbi,
     functionName: "joinAPool",
     args: [unit]
+  }).then(async({request}) => {
+    callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool at ${formatEther(unit)}`});
+    const hash = await writeContract(config, request );
+    returnValue = await waitForConfirmation({config, hash, callback})
+  }).catch((error: any) => {
+    callback?.({message: errorMessage(error)});
   });
-  const hash = await writeContract(config, request );
-  return await waitForConfirmation({config, hash, callback});
+
+  return returnValue;
 }
-
-
-

@@ -31,7 +31,8 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
         isPermissionless,
         formatted_bank,
         unit_bigint,
-        rId
+        rId,
+        // isAdmin
     } = formattedPool;
 
     const extractAddresses = () => {
@@ -158,7 +159,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
     );
 }
 
-export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, toggleDrawer, cData_formatted}) => {
+export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggleDrawer, cData_formatted}) => {
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.3)', height: "100%"}} >
             <div className="p-0 flex justify-between items-center text-lg md:text-xl font-bold">
@@ -171,11 +172,12 @@ export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, toggleDrawer, 
             </div>
             <React.Fragment>
                 {
-                    cData_formatted.map((item, i) => (
+                    cData_formatted.map((data, i) => (
                         <Provider
-                            formattedData={item}
+                            formattedData={data}
                             key={i} 
                             index={i}
+                            isAdmin={isAdmin}
                         />
                     ))
                 }
@@ -195,4 +197,5 @@ interface ProvidersProps {
     cData_formatted: FormattedData[];
     popUpDrawer: number;
     toggleDrawer: (arg: number) => void;
+    isAdmin: boolean;
 }

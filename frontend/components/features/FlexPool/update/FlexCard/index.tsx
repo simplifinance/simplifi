@@ -223,7 +223,8 @@ export const FlexCard = (props: LiquidityPool) => {
                         "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
                 }
             </PermissionPopUp>
-            <Providers 
+            <Providers
+                isAdmin={isAdmin}
                 popUpDrawer={providerDrawer}
                 toggleDrawer={showProviderDetails}
                 cData_formatted={cData_formatted} 

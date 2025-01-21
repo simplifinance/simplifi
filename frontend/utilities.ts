@@ -23,50 +23,6 @@ import { ROUTER } from "./constants";
 export type Operation = 'Open' | 'Closed';
 
 /**
- * Exposes number of active or inactive pools
- * @param pools : type pool
- * @returns : Number of active or inactive pools
- */
-// export default function filterPools (pools: Pools) {
-//   // let tvl : BigNumber = toBN(0);
-//   // pools.forEach((pool) => {
-//   //   let cp = toBN(pool.uint256s.currentPool.toString());
-//   //   if(cp.gt(0)){
-//   //     tvl.plus(cp);
-//   //   } else {
-//   //     // if(toBN(pool.stage) < FuncTag.ENDED){
-
-//   //     // }
-//   //   }
-//   // });
-//   // for(let i = 0; i < pools.length; i++){
-//   //   tvl.plus(toBN(pools[i].uint256s.currentPool.toString()));
-//   // }
-
-//   const filterPool = (op: Operation) => {
-//     // console.log("Pools", pools)
-//     return pools?.filter((pool) => {
-//       const stage = toBN(pool.stage.toString()).toNumber();
-//       const stageEnded = stage === FuncTag.ENDED;
-//       const quorumIsZero = toBN(pool.uints.quorum.toString()).isZero();
-//       const allGH = toBN(pool.allGh.toString()).eq(toBN(pool.userCount._value.toString()));
-//       const isClosed : boolean = stageEnded || allGH || quorumIsZero;
-//       return op === 'Closed'? isClosed : !isClosed;
-//     });
-//   }
-
-//   const filterType = (type: PoolType) => {
-//     return pools.filter((pool) => type === 'Permissionless'? pool.isPermissionless : !pool.isPermissionless);
-//   }
-//   const open = filterPool('Open');
-//   const closed = filterPool('Closed');
-//   const permissioned = filterType('Permissioned');
-//   const permissionless = filterType('Permissionless');
-//   return { open, closed, permissioned, permissionless }
-//   // tvl: formatEther(toBigInt(tvl.toString()))
-// }
-
-/**
  * Converts value of 'value' of type string to 'ether' representation.
  * @param value : Value to convert.
  * @returns Formatted value.
@@ -96,8 +52,8 @@ export const toBN = (x: string | number ) => {
 }
 
 export function getTimeFromEpoch(onchainUnixTime: number) {
-  var now = new Date(onchainUnixTime * 1000);
-  return (onchainUnixTime === 0? 'Not Set' : `${now.toLocaleDateString("en-GB")} ${now.toLocaleTimeString("en-US")}`);
+  var date = new Date(onchainUnixTime * 1000);
+  return (onchainUnixTime === 0? 'Not Set' : `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-US")}`);
 }
 
 export const commonStyle = (props?: {}) => {

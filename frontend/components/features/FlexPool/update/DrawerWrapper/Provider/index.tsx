@@ -14,9 +14,10 @@ import { Chevron } from "@/components/Collapsible";
 interface ProviderProps {
     formattedData: FormattedData;
     index: number;
+    isAdmin: boolean;
 }
 
-export const Provider = ({ formattedData, index }: ProviderProps) => {
+export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const handleCollapse = () => setOpen(!open);
     const { 
@@ -43,9 +44,9 @@ export const Provider = ({ formattedData, index }: ProviderProps) => {
                     <li className={`${flexSpread} underline underline-offset-4`}>
                         <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
                         <AddressWrapper size={3} account={id_toString} display overrideClassName="text-sm" copyIconSize="4"/>
-                        {/* <h3 className="absolute right-[40%]">
+                        <h3 className="absolute right-[40%]">
                             { adminBadge(isAdmin) }
-                        </h3> */}
+                        </h3>
                     </li>
                     {/* <li className={`${flexSpread}`}>
                         <h3>Slot</h3>
