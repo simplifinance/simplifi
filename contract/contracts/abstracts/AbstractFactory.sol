@@ -6,6 +6,7 @@ pragma solidity 0.8.24;
 import { FactoryLibV2, Data } from "../libraries/FactoryLibV2.sol";
 import { Pausable } from "../abstracts/Pausable.sol";
 import { IFactory } from "../apis/IFactory.sol";
+import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
@@ -62,7 +63,8 @@ abstract contract AbstractFactory is
         address feeTo,
         address assetClass,
         address strategyManager,
-        address _ownershipManager
+        address _ownershipManager,
+        address _diaOracleAddress
     ) Pausable(_ownershipManager) {
         _setUp(
             serviceRate, 
@@ -71,6 +73,7 @@ abstract contract AbstractFactory is
             assetClass, 
             strategyManager
         );
+        diaOracleAddress = _diaOracleAddress;
     }
 
     ///@dev Fallback
@@ -243,7 +246,7 @@ abstract contract AbstractFactory is
         onlyInitialized(unit, true)
         returns (bool)
     {
-        (CommonEventData memory ced) = data.getFinance(unit, msg.value, daysOfUseInHr, _getXFIPriceInUSD);
+        (CommonEventData memory ced) = data.getFinance(unit, msg.value, daysOfUseInHr, diaOracleAddress == address(0)? 18 : 8, _getXFIPriceInUSD);
         emit GetFinanced(ced);
         Analytics memory atl = analytics;
         unchecked {
@@ -331,7 +334,8 @@ abstract contract AbstractFactory is
                 _p.uint256s.unit * _p.uints.quorum,
                 0,
                 uint24(_p.uints.colCoverage),
-                _getXFIPriceInUSD()
+                _getXFIPriceInUSD(),
+                diaOracleAddress == address(0)? 18 : 8
             ), uint24(_p.uints.colCoverage));
         }
         return (collateral, colCoverage);
@@ -390,6 +394,11 @@ abstract contract AbstractFactory is
         returns(bool)
     {
         return data.setContractData(assetAdmin, feeTo, serviceRate, bankFactory);
+    }
+
+    function setOracleAddress(address newOracleAddr) public onlyOwner("Factory - setContractData not permitted") {
+        require(newOracleAddr != address(0), 'Oracle addr is zero');
+        diaOracleAddress = newOracleAddr;
     }
 
     /**
@@ -473,15 +482,21 @@ abstract contract AbstractFactory is
     }
     
     /**
-     * @dev Get price of SIMT in USD.
+     * @dev Get price of XFI in USD.
      * @notice from price oracle
-     * Assuming the price of XFI is 10$
      */
     function _getXFIPriceInUSD() 
         internal 
-        pure 
-        returns (uint _price) 
+        view 
+        returns (uint128 _price) 
     {
-        _price = 10000000000000000000; // ================================================> We use oracle here
+        if(diaOracleAddress != address(0)) {
+            (uint128 price,) = IDIAOracleV2(diaOracleAddress).getValue('XFI/USD');
+            _price = price;
+        } else {
+            _price = 10000000000000000000;
+        }
     }
+
+    address public diaOracleAddress;
 }

@@ -6,11 +6,12 @@ dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, } = deployments;
-	const {deployer} = await getNamedAccounts();
+	const {deployer, diaOracle} = await getNamedAccounts();
   const serviceRate = 10; // 0.1%
   const minContribution = 1_000_000_000_000_000;
   const setUpFee = 0;
 
+  console.log("Dia Oracle: ", diaOracle);
   /**
    * Deploy Ownership Manager
    */
@@ -76,7 +77,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       deployer, /// We use the deployer as feeReceiver /feeTo,
       assertMgr.address,
       bankFactory.address,
-      ownershipManager.address
+      ownershipManager.address,
+      diaOracle
     ],
     log: true,
   });

@@ -5,6 +5,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-web3";
 import "@nomicfoundation/hardhat-viem";
+import { zeroAddress } from "viem";
 
 dotconfig();
 const PRIVATE_KEY = process.env.PRIVATE_KEY_CROSS_0xD7c;
@@ -48,6 +49,10 @@ const config: HardhatUserConfig = {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
     },
+    diaOracle: {
+      default: zeroAddress,
+      4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233'
+    }
   },
 
   solidity: {

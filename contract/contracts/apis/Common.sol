@@ -80,8 +80,9 @@ interface Common {
     uint uId;
     uint fee;
     uint msgValue;
-    uint xfiUSDPriceInDecimals;
+    uint128 xfiUSDPriceInDecimals;
     Pool pool;
+    uint8 priceDecimals;
   }
 
   struct AddTobandParam {
@@ -229,6 +230,11 @@ interface Common {
     uint uId;
     uint256 unit;
     address user;
+  }
+
+  struct XFIPrice {
+    uint128 price;
+    uint8 decimals;
   }
   
   // error UpdateStrategyError();

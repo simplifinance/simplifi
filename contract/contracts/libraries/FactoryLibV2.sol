@@ -623,7 +623,8 @@ library FactoryLibV2 {
     uint256 unit,
     uint256 msgValue,
     uint16 daysOfUseInHr,
-    function () internal returns(uint) getXFIPriceInUSD
+    uint8 priceDecimals,
+    function () internal returns(uint128) getXFIPriceInUSD
   ) 
     internal
     returns(Common.CommonEventData memory ced)
@@ -643,7 +644,8 @@ library FactoryLibV2 {
         _p.uint256s.currentPool.computeFee(self.pData.makerRate),
         msgValue,
         getXFIPriceInUSD(),
-        _p
+        _p,
+        priceDecimals
       )
     );
   }
@@ -689,19 +691,18 @@ library FactoryLibV2 {
     uint loanAmount,
     uint amountOfXFISent,
     uint24 ccr,
-    uint xfiPriceInUSD
+    uint128 xfiPriceInUSD,
+    uint8 priceDecimals
   )
     internal
     pure
     returns(uint collateral)
   { 
-    collateral = amountOfXFISent.computeCollateral(
-      18,
+    collateral = Common.XFIPrice(xfiPriceInUSD, priceDecimals).computeCollateral(
+      amountOfXFISent,
       ccr,
-      xfiPriceInUSD,
       loanAmount,
       false
-      // amountOfXFISent > 0
     );
   }
 
@@ -765,7 +766,7 @@ library FactoryLibV2 {
     } else {
       require(_msgSender() == cbt.id, "Turn time has not passed");
     }
-    uint computedCollateral = _computeCollateral(arg.pool.uint256s.currentPool, arg.msgValue, uint24(arg.pool.uints.colCoverage), arg.xfiUSDPriceInDecimals);
+    uint computedCollateral = _computeCollateral(arg.pool.uint256s.currentPool, arg.msgValue, uint24(arg.pool.uints.colCoverage), arg.xfiUSDPriceInDecimals, arg.priceDecimals);
     self.current[arg.uId].addrs.lastPaid = caller;
     _incrementSelector(self.current, arg.uId);
     Common.Contributor memory cData = Common.Contributor({

@@ -75,10 +75,9 @@ library Utils {
 
     /**
      * @dev Computes collateral on the requested loan amount
-     * @param xfiBaseDecimals : Decimals on which XFI is based e.g 18. USDT for instance is 18.
      * @param ccr : Collateral ratio. Must be multiply by 100 before parsing as input i.e if raw ccr
      *              is 1.2, it should be rendered as 1.2 * 100 = 120.
-     * @param xfiUSDPriceInDecimals : Price of XFI in the right decimal.
+     * @param xfi : Price of Collateral token base with decimals.
      * @param loanReqInDecimals : Total requested contribution in USD
      * @param amountOfXFISent : Amount sent in XFI as collateral.
      * @notice Based on Simplifi mvp, loans are collaterized in XFI until we add more pairs
@@ -100,10 +99,9 @@ library Utils {
      *   
      */
     function computeCollateral(
+        Common.XFIPrice memory xfi,
         uint amountOfXFISent,
-        uint8 xfiBaseDecimals,
         uint24 ccr,
-        uint xfiUSDPriceInDecimals,
         uint loanReqInDecimals,
         bool performCheck
     ) 
@@ -111,10 +109,10 @@ library Utils {
         pure 
         returns(uint256 expColInXFI) 
     {
-        uint8 mantissa = 100;
-        if(ccr < mantissa) revert Common.CollateralCoverageCannotGoBelow_100(ccr);
+        uint8 minCCR = 100;
+        if(ccr < minCCR) revert Common.CollateralCoverageCannotGoBelow_100(ccr);
         uint48 _ccr = uint48(uint(ccr).mul(100));
-        uint totalLoanInXFI = loanReqInDecimals.mul(10**xfiBaseDecimals).div(xfiUSDPriceInDecimals);
+        uint totalLoanInXFI = loanReqInDecimals.mul(10**xfi.decimals).div(xfi.price);
         expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
         if(performCheck) {
             assertTrue(amountOfXFISent >= expColInXFI, "Insufficient XFI");

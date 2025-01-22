@@ -30,7 +30,8 @@ contract Factory is AbstractFactory {
         address feeTo,
         address assetClass,
         address bankFactory,
-        address ownerShipManager
+        address ownerShipManager,
+        address diaOracleAddress
     )
         AbstractFactory(
             serviceRate,
@@ -38,7 +39,8 @@ contract Factory is AbstractFactory {
             feeTo,
             assetClass,
             bankFactory,
-            ownerShipManager
+            ownerShipManager,
+            diaOracleAddress
         )
     {}
 

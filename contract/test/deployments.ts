@@ -12,6 +12,7 @@ import type {
 import { FEETO, formatAddr, MAKER_RATE, MINIMUM_LIQUIDITY, } from "./utilities";
 import { expect } from "chai";
 import { abi } from "../artifacts/contracts/implementations/strategies/Bank.sol/Bank.json";
+import { zeroAddress } from "viem";
 
 /**
  * Deploys and return an instance of the Reserve contract
@@ -92,7 +93,8 @@ export async function deployFactory(assetMgr: Address, bankFactory: Address, lib
     FEETO, 
     assetMgr, 
     bankFactory, 
-    ownershipMgr
+    ownershipMgr,
+    zeroAddress
   )).waitForDeployment();
 }
 
