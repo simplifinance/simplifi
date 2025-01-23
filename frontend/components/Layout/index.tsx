@@ -23,7 +23,7 @@ const Layout = ({children} : {children: React.ReactNode}) => {
         ].join(" ")}
       >
         <Stack className="place-items-center space-y-4 text-orange-300">
-          <h1 className="text-2xl font-black">{'Loading...'}</h1>
+          {/* <h1 className="text-2xl font-black">{'Loading...'}</h1> */}
           <Spinner color="#fed7aa" />
         </Stack>
       </section>
