@@ -13,7 +13,8 @@ import { MotionDivWrap } from "@/components/MotionDivWrap";
 import Sidebar from "@/components/Layout/Sidebar";
 import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
-import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
+import Typed from "react-typed";
+import NotConnectedPopUp from "@/components/NotConnectedPopUp";
 import { useAccount, useReadContracts,} from "wagmi";
 import { getFactoryDataConfig, readSymbolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
 
@@ -34,10 +35,8 @@ export default function SimpliApp() {
     allowFailure: true,
     query: {refetchInterval: 5000}
   });
-  // console.log("data", data?.[0].result);
 
   const { isConnected, address, connector, isDisconnected,  } = useAccount();
-  // const config = useConfig();
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = (arg: number) => setPopUp(arg);
@@ -49,15 +48,18 @@ export default function SimpliApp() {
     refetch();
   };
 
-  // const { open, closed, permissioned, permissionless } = filterPools(storage);
-
   const displayScreen = () => {
     const children = (
       <div className='appContainer'>
       <Navbar />
       <Sidebar />
-      <main className='md:pl-4 md:py-[26px] md:pr-[22px] space-y-4'>
-        <MotionDivWrap className={`minHeight md:border-4 border-white1/20 md:rounded-[56px] px-4 py-6 md:py-10 bg-gray1 relative`} >
+      <main className='md:pl-4 md:py-[26px] md:pr-[22px] space-y-4 relative'>
+        <Typed 
+          strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
+          className='fixed top-16 z-50 md:hidden text-red-400 font-extrabold px-4 py-1 text-center text-xs'
+          typeSpeed={100} backSpeed={100} loop showCursor={false}              
+        />    
+        <MotionDivWrap className={`minHeight md:rounded-[56px] px-4 py-6 md:py-10 bg-gray1 relative`} >
           {
             CHILDREN.filter(({path}) => path === activePath).at(0)?.element
           }
@@ -83,11 +85,6 @@ export default function SimpliApp() {
     }
 
   }, [isConnected, address, connector, isDisconnected, openPopUp]);
-
-  // Whenever `message` variable changes, every 10sec, reset it
-  // React.useEffect(() => {
-  //   refresh((prev) => prev + 1);
-  // }, [isConnected, address]);
  
   return (
     <StorageContextProvider 
@@ -98,11 +95,7 @@ export default function SimpliApp() {
         analytics: data?.[1].result?.analytics || ANALYTICS,
         symbol: data?.[0].result || 'USD',
         setstorage,
-        // open,
-        // closed,
         message,
-        // permissioned,
-        // permissionless,
         exitOnboardScreen,
         toggleSidebar,
         showSidebar,

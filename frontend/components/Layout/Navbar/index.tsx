@@ -1,14 +1,15 @@
-import React from "react";
-import { flexSpread } from "@/constants";
+import React from 'react';
+import { flexSpread } from '@/constants';
 import Link from 'next/link';
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
-import { ConnectWallet } from "@/components/ConnectWallet";
+import Typed from 'react-typed';
+import useAppStorage from '@/components/StateContextProvider/useAppStorage';
+import { ConnectWallet } from '@/components/ConnectWallet';
 
 export default function Navbar() {
     const { showSidebar, toggleSidebar } = useAppStorage();
     return(
         <nav className={`${flexSpread} bg-green1 p-4 z-50`}>
-          <div className='hidden md:block'>
+          <div className='hidden w-full md:flex justify-between items-center'>
             <Link href="/" passHref>
                 <img 
                     src="/logoSimplifi.png"
@@ -17,6 +18,11 @@ export default function Navbar() {
                     height={100}
                 />
             </Link>
+            <Typed 
+              strings={['Alert! This is testnet version', 'Alert! Coins and/or Tokens used are not real', 'Alert! Do not send or use real token']}
+              className='text-red-400 font-extrabold bg-gray1 px-3 py-2 rounded-full text-sm'
+              typeSpeed={100} backSpeed={100} loop showCursor={false}              
+            />                     
           </div>
           <div className={`flex justify-between md:w-full md:justify-end w-full md:px-4 lg:gap-4`}>
             <button className='md:hidden hover:text-orange-400' onClick={() => toggleSidebar(!showSidebar)}>

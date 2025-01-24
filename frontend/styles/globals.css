@@ -192,10 +192,10 @@ footer{
   .poweredbycrossfi::before, .poweredbycrossfi::after {
     font-size: 10px;
     position: absolute;
-    top: 8%;
+    top: 4%;
     right: 5%;
     background-color: #121212;
-    padding: 6px;
+    padding: 2px;
     border-radius: 0 12px 0 12px;
   }
 }
