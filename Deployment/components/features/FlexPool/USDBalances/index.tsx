@@ -13,14 +13,15 @@ import { formatAddr, toBN } from "@/utilities";
 export default function USDBalances() {
     const [open, setOpen] = React.useState<boolean>(false);
 
-    const { address, isConnected,} = useAccount();
+    const { address,} = useAccount();
     const account = formatAddr(address);
-    const { data, isPending } = useReadContracts({
+    const { data, } = useReadContracts({
         contracts: [
             { ...readBalanceConfig({account}) },
             { ...readSymbolConfig()}
         ],
         allowFailure: true,
+        query: {refetchInterval: 5000}
     });
 
     const balances = data?.[0].result;

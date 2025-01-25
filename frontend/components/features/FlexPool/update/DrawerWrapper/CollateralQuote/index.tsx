@@ -2,14 +2,16 @@ import { flexSpread, } from "@/constants";
 import Box from "@mui/material/Box";
 import React from "react";
 import { formatEther, } from "viem";
-import { useAccount, useReadContract,} from "wagmi";
+import { useReadContract,} from "wagmi";
 import { collateralQuoteConfig, } from "../readContractConfig";
-import { Address, VoidFunc } from "@/interfaces";
 import { Spinner } from "@/components/Spinner";
 import { toBN } from "@/utilities";
 
 export default function CollateralQuote({unit} : {unit: bigint}) {
-    const { data, isPending } = useReadContract({...collateralQuoteConfig(unit)});
+    const { data, isPending } = useReadContract({
+        ...collateralQuoteConfig(unit),
+        query: {refetchInterval: 5000}
+    });
 
     return(
         <Box className={`${flexSpread} bg-gray1 p-4 space-y-4 rounded-lg text-orange-400 font-noraml text-sm`}>

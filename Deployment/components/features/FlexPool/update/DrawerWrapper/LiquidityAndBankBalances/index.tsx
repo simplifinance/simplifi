@@ -42,6 +42,7 @@ export default function LiquidityAndBankBalances({stage, isCancelledPool, handle
             { ...readAllowanceConfig({owner: formatted_bank, spender: currentUser})}
         ],
         allowFailure: true,
+        query: {refetchInterval: 5000}
     });
     
     const quota = data?.[1].result;

@@ -44,12 +44,15 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
         setstorage(arg);
         if(arg.status === 'success') handleCloseDrawer();
     }
-
-    const { data, isPending } = useReadContract(readUserDataConfig({
-        user: currentUser, 
-        bank: formatted_bank,
-        rId
-    }));
+    
+    const { data, isPending } = useReadContract({
+        ...readUserDataConfig({
+            user: currentUser, 
+            bank: formatted_bank,
+            rId
+        }),
+        query: {refetchInterval: 5000}
+    });
 
     const handleSubmit = async() => {
         if(amount === '0') return null;
