@@ -54,11 +54,13 @@ export default function SimpliApp() {
       <Navbar />
       <Sidebar />
       <main className='md:pl-4 md:py-[26px] md:pr-[22px] space-y-4 relative'>
-        <Typed 
-          strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
-          className='fixed top-16 z-50 md:hidden text-red-400 font-extrabold px-4 py-1 text-center text-xs'
-          typeSpeed={100} backSpeed={100} loop showCursor={false}              
-        />    
+        <MotionDivWrap className="flex justify-center items-center">
+          <Typed 
+            strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
+            className='fixed top-16 z-50 md:hidden text-red-400 font-extrabold px-4 py-1 text-center text-xs'
+            typeSpeed={100} backSpeed={100} loop showCursor={false}              
+          />    
+        </MotionDivWrap>
         <MotionDivWrap className={`minHeight md:rounded-[56px] px-4 py-6 md:py-10 bg-gray1 relative`} >
           {
             CHILDREN.filter(({path}) => path === activePath).at(0)?.element
@@ -141,31 +143,3 @@ const CHILDREN : {path: Path, element: JSX.Element}[] = [
   }
 ];
 
-
-  // const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //     <Route 
-  //       path={'/'} 
-  //       element={ <App /> } 
-  //     >
-  //       { renderAppChildComponents() }
-  //     </Route>
-  //   )
-  // );
-
-// const renderLiquidityChildComponents = () => [
-//   // {
-//   //   path: ROUTE_ENUM.CREATE,
-//   //   element: () => (<Create />),
-//   // },
-//   // {
-//   //   path: ROUTE_ENUM.OPEN,
-//   //   element: () => (<Open />),
-//   // },
-//   // {
-//   //   path: ROUTE_ENUM.CLOSED,
-//   //   element: () => (<Closed />)
-//   // }
-// ].map(({path, element}) => (
-//   <Route key={path} {...{path, element: element()}} />
-// ));
