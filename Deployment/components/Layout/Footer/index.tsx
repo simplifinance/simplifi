@@ -1,19 +1,29 @@
-import React from "react"
-import Socials from "../socials";
-import Link from "next/link";
+import React from "react";
+import Socials from "../Socials";
 
 const Footer = () => {
   return (
-    <footer id="footer" className="pt-[10px] relative">
-      <div className="md:border-4  border-white1/20 sm:rounded-[26px] md:rounded-[56px] bg-gray1/80 py-6 lg:py-[4rem] text-white font-inter poweredbycrossfi">
-        <div className="wrapper flex flex-col md:flex-row justify-between gap-4">
+    <footer id="footer" className="pt-[10px relative">
+      <div className="border-white1/20 md:rounded-[56px] bg-gray1 py-6 lg:py-[4rem] text-white font-inter poweredbycrossfi">
+        <Socials />
+        <div className="text-center pt-[30px] text-orangec text-sm">
+          &copy;2025 SimpliFinance. All rights reserved.
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer
+
+        {/* <div className="wrapper flex flex-col md:flex-row justify-between gap-4">
           <ul className="mb-[40px]">
             <li>
               <h1 className="font-nova-square text-2xl lg:text-4xl mb-[16px] lg:mb-[24px] text-orangec">
                 SimpliFinance
               </h1>
             </li>
-            <Socials />
+            
             <li className="mt-[16px] md:text-md lg:text-xl">
               {" "}
               <a
@@ -64,13 +74,4 @@ const Footer = () => {
                   </li>
               </ul>
           </div>
-        </div>
-        <div className="text-center pt-[30px] text-orangec text-sm">
-          &copy;2024 SimpliFinance. All rights reserved.
-        </div>
-      </div>
-    </footer>
-  )
-}
-
-export default Footer
+        </div> */}

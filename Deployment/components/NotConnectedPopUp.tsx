@@ -1,5 +1,4 @@
-import { VoidFunc } from "@/interfaces";
-import Drawer from "../features/FlexPool/update/ActionButton/Confirmation/Drawer";
+import Drawer from "./features/FlexPool/update/ActionButton/Confirmation/Drawer";
 
 export default function NotConnectedPopUp({openDrawer, toggleDrawer} : {openDrawer: number, toggleDrawer: (arg: number) => void}) {
 
