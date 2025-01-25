@@ -13,7 +13,7 @@ import { MotionDivWrap } from "@/components/MotionDivWrap";
 import Sidebar from "@/components/Layout/Sidebar";
 import Navbar from "@/components/Layout/Navbar";
 import Footer from "@/components/Layout/Footer";
-import NotConnectedPopUp from "@/components/App/NotConnectedPopUp";
+import NotConnectedPopUp from "@/components/NotConnectedPopUp";
 import { useAccount, useReadContracts,} from "wagmi";
 import { getFactoryDataConfig, readSymbolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
 
