@@ -10,14 +10,14 @@ export default function Sidebar() {
 
   const DRAWER_CONTENT : {
     title: string, 
-    collapsible: boolean, 
+    disabled: boolean, 
     displayChevron: boolean, 
     path: Path, 
     icon: JSX.Element
   }[] = [
     {
       title: 'Home',
-      collapsible: false,
+      disabled: false,
       path: '/dashboard',
       displayChevron: false,
       icon: 
@@ -28,7 +28,7 @@ export default function Sidebar() {
     },
     {
       title: 'Flex',
-      collapsible: false,
+      disabled: false,
       path: '/flexpool',
       displayChevron: false,
       icon: 
@@ -43,7 +43,7 @@ export default function Sidebar() {
     },
     {
       title: 'Yield',
-      collapsible: true,
+      disabled: true,
       path: '/yield',
       displayChevron: false,
       icon: 
@@ -54,7 +54,7 @@ export default function Sidebar() {
     },
     {
       title: 'Dao',
-      collapsible: false,
+      disabled: true,
       path: '/simplidao',
       displayChevron: false,
       icon: 
@@ -65,7 +65,7 @@ export default function Sidebar() {
     },
     {
       title: 'Faq',
-      collapsible: false,
+      disabled: false,
       path: 'faq',
       displayChevron: false,
       icon: 
@@ -80,7 +80,7 @@ export default function Sidebar() {
     <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[22px]`}>
       <div className="w-full md:rounded-[56px] min-h-[fit-content] animateSidebar">
         {
-          DRAWER_CONTENT.map(({collapsible, path, icon, title, displayChevron }) => (
+          DRAWER_CONTENT.map(({disabled, path, icon, title, displayChevron }) => (
             <Collapsible 
               key={title}
                 {
@@ -89,7 +89,7 @@ export default function Sidebar() {
                       title,
                       icon, 
                       displayChevron,
-                      collapsible
+                      disabled
                   }
                 }
               />
