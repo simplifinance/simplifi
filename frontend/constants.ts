@@ -50,16 +50,15 @@ export const POOL_MOCK : LiquidityPool = {
     rId: 0n
   },
   stage: 0n,
-  userCount: {
-    _value: 0n
-  },
-  cData: [{...PROFILE_MOCK}],
   uints: {
     intRate: 0n,
     quorum: 0n,
     selector: 0n,
     colCoverage: 0n,
     duration: 0n,
+    cSlot: 0n,
+    allGh: 0n,
+    userCount: 0n
   },
   addrs: {
     lastPaid: zeroAddress,
@@ -68,7 +67,7 @@ export const POOL_MOCK : LiquidityPool = {
     bank: zeroAddress,
   },
   router: 'PERMISSIONLESS',
-  allGh: 0n
+  status: 0n
 }
 
 export const FORMATTEDDATA_MOCK : FormattedData = {
