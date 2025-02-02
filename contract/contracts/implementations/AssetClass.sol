@@ -51,7 +51,7 @@ contract AssetClass is IAssetClass, OnlyOwner {
     address _asset
   ) 
     public 
-    onlyOwner("AssetClass - supportAsset: Not permitted")
+    onlyOwner
   {
     _supportAsset(_asset); 
   }
@@ -76,7 +76,7 @@ contract AssetClass is IAssetClass, OnlyOwner {
     address newAsset
   ) 
     public 
-    onlyOwner("AssetClass: Not permitted")
+    onlyOwner
   {
     supportedAssets[newAsset] = false;
   }

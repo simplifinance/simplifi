@@ -252,7 +252,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct Common.Contributor[]",
+        internalType: "struct C3.Contributor[]",
         name: "cData",
         type: "tuple[]",
       },

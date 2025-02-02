@@ -35,7 +35,7 @@ function defaultErrors(arg: DefaultErrorArgs) {
         },
         {
             key: 'Admin spotted twice',
-            value: () => `Pool operator cannot appear twice in a pool`
+            value: () => `An operator cannot operate more than one position in a pool`
         },
         {
             key: 'Amount exist',

@@ -151,7 +151,7 @@ contract TokenDistributor is
 
     function setToken(IERC20 newToken) 
         public 
-        onlyOwner("TokenDistributor - setToken: Not permitted")
+        onlyOwner
     {
         address(newToken).cannotBeEmptyAddress();
         token = newToken;

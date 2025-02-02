@@ -20,6 +20,16 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "ManagerAddressIsZero",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotPermittedToCall",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {

@@ -1,14 +1,12 @@
 import type { WagmiConfig, } from "@/interfaces";
 import { readContract as read } from "wagmi/actions";
-import { getFactoryAddress } from "../utils/contractAddress";
+import { getContractData } from "../utils/getContractData";
 import { getFactoryDataAbi } from "../abis";
-
-const address = getFactoryAddress();
 
 export const getFactoryData = async({config} : {config: WagmiConfig}) => {
   return await read(config, {
     abi: getFactoryDataAbi,
-    address, 
+    address: getContractData(config.state.chainId).factory, 
     functionName: 'getFactoryData',
     args: []
   });

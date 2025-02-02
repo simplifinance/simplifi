@@ -54,6 +54,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AbstractFactory__factory>;
     getContractFactory(
+      name: "DIAOracleV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DIAOracleV2__factory>;
+    getContractFactory(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDIAOracleV2__factory>;
+    getContractFactory(
       name: "OnlyOwner",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OnlyOwner__factory>;
@@ -62,13 +70,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Pausable__factory>;
     getContractFactory(
-      name: "IDIAOracleV2",
+      name: "C3",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IDIAOracleV2__factory>;
-    getContractFactory(
-      name: "IntegrationSample",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IntegrationSample__factory>;
+    ): Promise<Contracts.C3__factory>;
     getContractFactory(
       name: "Common",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -85,6 +89,10 @@ declare module "hardhat/types/runtime" {
       name: "IBankFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IBankFactory__factory>;
+    getContractFactory(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDIAOracleV2__factory>;
     getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -150,9 +158,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TokenDistributor__factory>;
     getContractFactory(
-      name: "FactoryLibV2",
+      name: "FactoryLibV3",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FactoryLibV2__factory>;
+    ): Promise<Contracts.FactoryLibV3__factory>;
     getContractFactory(
       name: "Lib",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -221,6 +229,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.AbstractFactory>;
     getContractAt(
+      name: "DIAOracleV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DIAOracleV2>;
+    getContractAt(
+      name: "IDIAOracleV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDIAOracleV2>;
+    getContractAt(
       name: "OnlyOwner",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -231,15 +249,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Pausable>;
     getContractAt(
-      name: "IDIAOracleV2",
+      name: "C3",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IDIAOracleV2>;
-    getContractAt(
-      name: "IntegrationSample",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IntegrationSample>;
+    ): Promise<Contracts.C3>;
     getContractAt(
       name: "Common",
       address: string | ethers.Addressable,
@@ -260,6 +273,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IBankFactory>;
+    getContractAt(
+      name: "IDIAOracleV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDIAOracleV2>;
     getContractAt(
       name: "IERC20",
       address: string | ethers.Addressable,
@@ -341,10 +359,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TokenDistributor>;
     getContractAt(
-      name: "FactoryLibV2",
+      name: "FactoryLibV3",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.FactoryLibV2>;
+    ): Promise<Contracts.FactoryLibV3>;
     getContractAt(
       name: "Lib",
       address: string | ethers.Addressable,
@@ -407,6 +425,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AbstractFactory>;
     deployContract(
+      name: "DIAOracleV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DIAOracleV2>;
+    deployContract(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
+    deployContract(
       name: "OnlyOwner",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OnlyOwner>;
@@ -415,13 +441,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Pausable>;
     deployContract(
-      name: "IDIAOracleV2",
+      name: "C3",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDIAOracleV2>;
-    deployContract(
-      name: "IntegrationSample",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IntegrationSample>;
+    ): Promise<Contracts.C3>;
     deployContract(
       name: "Common",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -438,6 +460,10 @@ declare module "hardhat/types/runtime" {
       name: "IBankFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IBankFactory>;
+    deployContract(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
     deployContract(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -503,9 +529,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TokenDistributor>;
     deployContract(
-      name: "FactoryLibV2",
+      name: "FactoryLibV3",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FactoryLibV2>;
+    ): Promise<Contracts.FactoryLibV3>;
     deployContract(
       name: "Lib",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -574,6 +600,16 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AbstractFactory>;
     deployContract(
+      name: "DIAOracleV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DIAOracleV2>;
+    deployContract(
+      name: "IDIAOracleV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
+    deployContract(
       name: "OnlyOwner",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -584,15 +620,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Pausable>;
     deployContract(
-      name: "IDIAOracleV2",
+      name: "C3",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDIAOracleV2>;
-    deployContract(
-      name: "IntegrationSample",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IntegrationSample>;
+    ): Promise<Contracts.C3>;
     deployContract(
       name: "Common",
       args: any[],
@@ -613,6 +644,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IBankFactory>;
+    deployContract(
+      name: "IDIAOracleV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
     deployContract(
       name: "IERC20",
       args: any[],
@@ -694,10 +730,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TokenDistributor>;
     deployContract(
-      name: "FactoryLibV2",
+      name: "FactoryLibV3",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FactoryLibV2>;
+    ): Promise<Contracts.FactoryLibV3>;
     deployContract(
       name: "Lib",
       args: any[],

@@ -2,24 +2,26 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "./Common.sol";
+import { C3 } from "./C3.sol";
 
-interface IFactory is Common {
+interface IFactory is C3 {
   error InsufficientFund();
   error AllMemberIsPaid();
   error QuorumIsInvalid();
+  error OracleAddressIsZero();
   error OwnershipManagerIsNotSet();
+  error MinimumParticipantIsTwo();
   error AmountLowerThanMinimumContribution();
 
-  event BandCreated(CreatePoolReturnValue);
-  event NewMemberAdded(CommonEventData);
-  event GetFinanced(CommonEventData);
-  event Payback(CommonEventData);
-  event Liquidated(CommonEventData);
+  event PoolCreated(Pool);
+  event NewContributorAdded(Pool);
+  event GetFinanced(Pool);
+  event Payback(Pool);
+  event Liquidated(Pool);
   event Cancellation(uint epochId);
 
-  event RoundUp(uint, Pool);
-  event Rekeyed(address indexed, address indexed);
+  // event RoundUp(uint, Pool);
+  // event Rekeyed(address indexed, address indexed);
   
   function getEpoches() external view returns(uint);
   function createPermissionlessPool(
@@ -49,15 +51,17 @@ interface IFactory is Common {
   function liquidate(uint256 unit) external returns(bool);
   function removeLiquidityPool(uint256 unit) external returns(bool);
   function getFinance(uint256 unit, uint8 daysOfUseInHr) external payable returns(bool);
-  function getPoolData(uint256 unitId) external view returns(Pool memory);
-  function enquireLiquidation(uint256 unit)external view returns(Common.Contributor memory _liq, bool defaulted, uint currentDebt, Slot memory slot, address); 
+  function getPoolData(uint256 unitId) external view returns(ReadDataReturnValue memory);
+  function getRecord(uint256 rId) external view returns(ReadDataReturnValue memory);
+  function enquireLiquidation(uint256 unit)external view returns(Contributor memory _liq, bool defaulted, uint currentDebt, Slot memory slot, address); 
   function getCurrentDebt( uint256 unit, address target) external view returns(uint debtToDate); 
   function getProfile(uint256 unit, address user) external view returns(Contributor memory);
   function getBalances(uint256 unit) external view returns(Balances memory);
   function getPoint(address user) external view returns(Point memory);
   function getRecordEpoches() external view returns(uint);
   function getSlot(address user, uint256 unit) external view returns(Slot memory);
-  function getStatus(uint256 unit) external view returns(Unit memory _unit);
+  function getStatus(uint256 unit) external view returns(string memory);
+  // function getCData(uint unit) external view returns(Contributor[] memory);
   
   /**
    * @notice sendFee: will be used as flag to auto-withdraw fee from each strategy. If sendFee is true, 

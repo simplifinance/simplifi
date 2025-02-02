@@ -4,7 +4,6 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { depositCollateralAbi, } from "@/apis/abis";
 import { formatEther, zeroAddress } from "viem";
 import assert from "assert";
-import { revalidateTag } from "next/cache";
 import { errorMessage } from "../formatError";
 
 export default async function depositCollateral(args: DepositCollateralParam ) {

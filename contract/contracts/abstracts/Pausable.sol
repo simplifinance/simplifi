@@ -106,7 +106,7 @@ abstract contract Pausable is OnlyOwner {
      */
     function pause() 
         public 
-        onlyOwner("Pausable: OnlyOwner can pause") 
+        onlyOwner
         whenNotPaused 
     {
         _paused = true; 
@@ -122,7 +122,7 @@ abstract contract Pausable is OnlyOwner {
      */
     function unpause() 
         public 
-        onlyOwner("Pausable: OnlyOwner can unpause") 
+        onlyOwner 
         whenPaused 
     {
         _paused = false;

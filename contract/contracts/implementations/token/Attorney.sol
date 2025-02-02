@@ -46,7 +46,7 @@ contract Attorney is Pausable {
 
   function setToken(IERC20 _token) 
     public 
-    onlyOwner("Attorney: setToken Not Permitted")
+    onlyOwner
   {
     address(_token).cannotBeEmptyAddress();
     token = _token;

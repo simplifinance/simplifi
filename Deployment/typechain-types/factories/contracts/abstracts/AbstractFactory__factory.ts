@@ -15,6 +15,16 @@ const _abi = [
     type: "error",
   },
   {
+    inputs: [],
+    name: "AmountLowerThanMinimumContribution",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "AmountNotInitialized",
+    type: "error",
+  },
+  {
     inputs: [
       {
         internalType: "uint24",
@@ -23,6 +33,11 @@ const _abi = [
       },
     ],
     name: "CollateralCoverageCannotGoBelow_100",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "CurrentReceiverIsNotADefaulter",
     type: "error",
   },
   {
@@ -42,12 +57,42 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "InvalidContributionAmount",
+    name: "ManagerAddressIsZero",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "MinimumParticipantIsTwo",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoDebtFound",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotAMember",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotPermittedToCall",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "OracleAddressIsZero",
     type: "error",
   },
   {
     inputs: [],
     name: "OwnershipManagerIsNotSet",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "PoolNotComplete",
     type: "error",
   },
   {
@@ -61,243 +106,9 @@ const _abi = [
     type: "error",
   },
   {
-    anonymous: false,
-    inputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "_value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Counters.Counter",
-                name: "userCount",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "quorum",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "selector",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colCoverage",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "duration",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intRate",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uints",
-                name: "uints",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "fullInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intPerSec",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unit",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "currentPool",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unitId",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "rId",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uint256s",
-                name: "uint256s",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address",
-                    name: "asset",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "lastPaid",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "bank",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "admin",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Addresses",
-                name: "addrs",
-                type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "allGh",
-                type: "uint256",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "sentQuota",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Contributor[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.Router",
-                name: "router",
-                type: "uint8",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "durOfChoice",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "expInterest",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "payDate",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "turnTime",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "loan",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "colBals",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "id",
-                type: "address",
-              },
-              {
-                internalType: "bool",
-                name: "sentQuota",
-                type: "bool",
-              },
-            ],
-            internalType: "struct Common.Contributor",
-            name: "cData",
-            type: "tuple",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Common.CreatePoolReturnValue",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    name: "BandCreated",
-    type: "event",
+    inputs: [],
+    name: "TurnTimeHasNotPassed",
+    type: "error",
   },
   {
     anonymous: false,
@@ -317,864 +128,6 @@ const _abi = [
     inputs: [
       {
         components: [
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "_value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Counters.Counter",
-                name: "userCount",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "quorum",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "selector",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colCoverage",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "duration",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intRate",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uints",
-                name: "uints",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "fullInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intPerSec",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unit",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "currentPool",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unitId",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "rId",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uint256s",
-                name: "uint256s",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address",
-                    name: "asset",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "lastPaid",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "bank",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "admin",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Addresses",
-                name: "addrs",
-                type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "allGh",
-                type: "uint256",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "sentQuota",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Contributor[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.Router",
-                name: "router",
-                type: "uint8",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "debtBal",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "colBal",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Common.CommonEventData",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    name: "GetFinanced",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "_value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Counters.Counter",
-                name: "userCount",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "quorum",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "selector",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colCoverage",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "duration",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intRate",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uints",
-                name: "uints",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "fullInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intPerSec",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unit",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "currentPool",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unitId",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "rId",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uint256s",
-                name: "uint256s",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address",
-                    name: "asset",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "lastPaid",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "bank",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "admin",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Addresses",
-                name: "addrs",
-                type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "allGh",
-                type: "uint256",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "sentQuota",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Contributor[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.Router",
-                name: "router",
-                type: "uint8",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "debtBal",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "colBal",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Common.CommonEventData",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    name: "Liquidated",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "_value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Counters.Counter",
-                name: "userCount",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "quorum",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "selector",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colCoverage",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "duration",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intRate",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uints",
-                name: "uints",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "fullInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intPerSec",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unit",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "currentPool",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unitId",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "rId",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uint256s",
-                name: "uint256s",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address",
-                    name: "asset",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "lastPaid",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "bank",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "admin",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Addresses",
-                name: "addrs",
-                type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "allGh",
-                type: "uint256",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "sentQuota",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Contributor[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.Router",
-                name: "router",
-                type: "uint8",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "debtBal",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "colBal",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Common.CommonEventData",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    name: "NewMemberAdded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "Paused",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        components: [
-          {
-            components: [
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "_value",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Counters.Counter",
-                name: "userCount",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "quorum",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "selector",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colCoverage",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "duration",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intRate",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uints",
-                name: "uints",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "fullInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "intPerSec",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unit",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "currentPool",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "unitId",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "rId",
-                    type: "uint256",
-                  },
-                ],
-                internalType: "struct Common.Uint256s",
-                name: "uint256s",
-                type: "tuple",
-              },
-              {
-                components: [
-                  {
-                    internalType: "address",
-                    name: "asset",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "lastPaid",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "bank",
-                    type: "address",
-                  },
-                  {
-                    internalType: "address",
-                    name: "admin",
-                    type: "address",
-                  },
-                ],
-                internalType: "struct Common.Addresses",
-                name: "addrs",
-                type: "tuple",
-              },
-              {
-                internalType: "uint256",
-                name: "allGh",
-                type: "uint256",
-              },
-              {
-                components: [
-                  {
-                    internalType: "uint256",
-                    name: "durOfChoice",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "expInterest",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "payDate",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "turnTime",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "loan",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "uint256",
-                    name: "colBals",
-                    type: "uint256",
-                  },
-                  {
-                    internalType: "address",
-                    name: "id",
-                    type: "address",
-                  },
-                  {
-                    internalType: "bool",
-                    name: "sentQuota",
-                    type: "bool",
-                  },
-                ],
-                internalType: "struct Common.Contributor[]",
-                name: "cData",
-                type: "tuple[]",
-              },
-              {
-                internalType: "enum Common.Router",
-                name: "router",
-                type: "uint8",
-              },
-              {
-                internalType: "enum Common.FuncTag",
-                name: "stage",
-                type: "uint8",
-              },
-            ],
-            internalType: "struct Common.Pool",
-            name: "pool",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "debtBal",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "colBal",
-            type: "uint256",
-          },
-        ],
-        indexed: false,
-        internalType: "struct Common.CommonEventData",
-        name: "",
-        type: "tuple",
-      },
-    ],
-    name: "Payback",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
-    name: "Rekeyed",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-      {
-        components: [
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "_value",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct Counters.Counter",
-            name: "userCount",
-            type: "tuple",
-          },
           {
             components: [
               {
@@ -1202,8 +155,23 @@ const _abi = [
                 name: "intRate",
                 type: "uint256",
               },
+              {
+                internalType: "uint256",
+                name: "cSlot",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "allGh",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "userCount",
+                type: "uint256",
+              },
             ],
-            internalType: "struct Common.Uints",
+            internalType: "struct C3.Uints",
             name: "uints",
             type: "tuple",
           },
@@ -1240,7 +208,7 @@ const _abi = [
                 type: "uint256",
               },
             ],
-            internalType: "struct Common.Uint256s",
+            internalType: "struct C3.Uint256s",
             name: "uint256s",
             type: "tuple",
           },
@@ -1267,80 +235,610 @@ const _abi = [
                 type: "address",
               },
             ],
-            internalType: "struct Common.Addresses",
+            internalType: "struct C3.Addresses",
             name: "addrs",
             type: "tuple",
           },
           {
-            internalType: "uint256",
-            name: "allGh",
-            type: "uint256",
+            internalType: "enum C3.Status",
+            name: "status",
+            type: "uint8",
           },
           {
-            components: [
-              {
-                internalType: "uint256",
-                name: "durOfChoice",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "expInterest",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "payDate",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "turnTime",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "loan",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "colBals",
-                type: "uint256",
-              },
-              {
-                internalType: "address",
-                name: "id",
-                type: "address",
-              },
-              {
-                internalType: "bool",
-                name: "sentQuota",
-                type: "bool",
-              },
-            ],
-            internalType: "struct Common.Contributor[]",
-            name: "cData",
-            type: "tuple[]",
-          },
-          {
-            internalType: "enum Common.Router",
+            internalType: "enum C3.Router",
             name: "router",
             type: "uint8",
           },
           {
-            internalType: "enum Common.FuncTag",
+            internalType: "enum C3.FuncTag",
             name: "stage",
             type: "uint8",
           },
         ],
         indexed: false,
-        internalType: "struct Common.Pool",
+        internalType: "struct C3.Pool",
         name: "",
         type: "tuple",
       },
     ],
-    name: "RoundUp",
+    name: "GetFinanced",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "quorum",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "selector",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colCoverage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "duration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intRate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "cSlot",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "allGh",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "userCount",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uints",
+            name: "uints",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "fullInterest",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intPerSec",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "currentPool",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uint256s",
+            name: "uint256s",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "asset",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "lastPaid",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "bank",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "admin",
+                type: "address",
+              },
+            ],
+            internalType: "struct C3.Addresses",
+            name: "addrs",
+            type: "tuple",
+          },
+          {
+            internalType: "enum C3.Status",
+            name: "status",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.Router",
+            name: "router",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.FuncTag",
+            name: "stage",
+            type: "uint8",
+          },
+        ],
+        indexed: false,
+        internalType: "struct C3.Pool",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    name: "Liquidated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "quorum",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "selector",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colCoverage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "duration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intRate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "cSlot",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "allGh",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "userCount",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uints",
+            name: "uints",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "fullInterest",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intPerSec",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "currentPool",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uint256s",
+            name: "uint256s",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "asset",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "lastPaid",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "bank",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "admin",
+                type: "address",
+              },
+            ],
+            internalType: "struct C3.Addresses",
+            name: "addrs",
+            type: "tuple",
+          },
+          {
+            internalType: "enum C3.Status",
+            name: "status",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.Router",
+            name: "router",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.FuncTag",
+            name: "stage",
+            type: "uint8",
+          },
+        ],
+        indexed: false,
+        internalType: "struct C3.Pool",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    name: "NewContributorAdded",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "Paused",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "quorum",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "selector",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colCoverage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "duration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intRate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "cSlot",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "allGh",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "userCount",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uints",
+            name: "uints",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "fullInterest",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intPerSec",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "currentPool",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uint256s",
+            name: "uint256s",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "asset",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "lastPaid",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "bank",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "admin",
+                type: "address",
+              },
+            ],
+            internalType: "struct C3.Addresses",
+            name: "addrs",
+            type: "tuple",
+          },
+          {
+            internalType: "enum C3.Status",
+            name: "status",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.Router",
+            name: "router",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.FuncTag",
+            name: "stage",
+            type: "uint8",
+          },
+        ],
+        indexed: false,
+        internalType: "struct C3.Pool",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    name: "Payback",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        components: [
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "quorum",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "selector",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "colCoverage",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "duration",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intRate",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "cSlot",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "allGh",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "userCount",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uints",
+            name: "uints",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "uint256",
+                name: "fullInterest",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "intPerSec",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unit",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "currentPool",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "unitId",
+                type: "uint256",
+              },
+              {
+                internalType: "uint256",
+                name: "rId",
+                type: "uint256",
+              },
+            ],
+            internalType: "struct C3.Uint256s",
+            name: "uint256s",
+            type: "tuple",
+          },
+          {
+            components: [
+              {
+                internalType: "address",
+                name: "asset",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "lastPaid",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "bank",
+                type: "address",
+              },
+              {
+                internalType: "address",
+                name: "admin",
+                type: "address",
+              },
+            ],
+            internalType: "struct C3.Addresses",
+            name: "addrs",
+            type: "tuple",
+          },
+          {
+            internalType: "enum C3.Status",
+            name: "status",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.Router",
+            name: "router",
+            type: "uint8",
+          },
+          {
+            internalType: "enum C3.FuncTag",
+            name: "stage",
+            type: "uint8",
+          },
+        ],
+        indexed: false,
+        internalType: "struct C3.Pool",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    name: "PoolCreated",
     type: "event",
   },
   {
@@ -1474,12 +972,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "creationFee",
+    name: "diaOracleAddress",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "address",
         name: "",
-        type: "uint256",
+        type: "address",
       },
     ],
     stateMutability: "view",
@@ -1538,7 +1036,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct Common.Contributor",
+        internalType: "struct C3.Contributor",
         name: "",
         type: "tuple",
       },
@@ -1570,7 +1068,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct Common.Slot",
+        internalType: "struct C3.Slot",
         name: "",
         type: "tuple",
       },
@@ -1606,7 +1104,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct Common.Balances",
+        internalType: "struct C3.Balances",
         name: "",
         type: "tuple",
       },
@@ -1801,7 +1299,7 @@ const _abi = [
             type: "uint256",
           },
         ],
-        internalType: "struct Common.Point",
+        internalType: "struct C3.Point",
         name: "point",
         type: "tuple",
       },
@@ -1824,115 +1322,135 @@ const _abi = [
           {
             components: [
               {
-                internalType: "uint256",
-                name: "_value",
-                type: "uint256",
+                components: [
+                  {
+                    internalType: "uint256",
+                    name: "quorum",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "selector",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colCoverage",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "duration",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "intRate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "cSlot",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "allGh",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "userCount",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct C3.Uints",
+                name: "uints",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint256",
+                    name: "fullInterest",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "intPerSec",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "unit",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "currentPool",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct C3.Uint256s",
+                name: "uint256s",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "address",
+                    name: "asset",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "lastPaid",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "bank",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "admin",
+                    type: "address",
+                  },
+                ],
+                internalType: "struct C3.Addresses",
+                name: "addrs",
+                type: "tuple",
+              },
+              {
+                internalType: "enum C3.Status",
+                name: "status",
+                type: "uint8",
+              },
+              {
+                internalType: "enum C3.Router",
+                name: "router",
+                type: "uint8",
+              },
+              {
+                internalType: "enum C3.FuncTag",
+                name: "stage",
+                type: "uint8",
               },
             ],
-            internalType: "struct Counters.Counter",
-            name: "userCount",
+            internalType: "struct C3.Pool",
+            name: "pool",
             type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "quorum",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "selector",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "colCoverage",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "duration",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "intRate",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct Common.Uints",
-            name: "uints",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "fullInterest",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "intPerSec",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "unit",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "currentPool",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "unitId",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "rId",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct Common.Uint256s",
-            name: "uint256s",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "address",
-                name: "asset",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "lastPaid",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "bank",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "admin",
-                type: "address",
-              },
-            ],
-            internalType: "struct Common.Addresses",
-            name: "addrs",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "allGh",
-            type: "uint256",
           },
           {
             components: [
@@ -1977,22 +1495,12 @@ const _abi = [
                 type: "bool",
               },
             ],
-            internalType: "struct Common.Contributor[]",
+            internalType: "struct C3.Contributor[]",
             name: "cData",
             type: "tuple[]",
           },
-          {
-            internalType: "enum Common.Router",
-            name: "router",
-            type: "uint8",
-          },
-          {
-            internalType: "enum Common.FuncTag",
-            name: "stage",
-            type: "uint8",
-          },
         ],
-        internalType: "struct Common.Pool",
+        internalType: "struct C3.ReadDataReturnValue",
         name: "",
         type: "tuple",
       },
@@ -2058,7 +1566,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct Common.Contributor",
+        internalType: "struct C3.Contributor",
         name: "",
         type: "tuple",
       },
@@ -2070,7 +1578,7 @@ const _abi = [
     inputs: [
       {
         internalType: "uint256",
-        name: "uId",
+        name: "rId",
         type: "uint256",
       },
     ],
@@ -2081,115 +1589,135 @@ const _abi = [
           {
             components: [
               {
-                internalType: "uint256",
-                name: "_value",
-                type: "uint256",
+                components: [
+                  {
+                    internalType: "uint256",
+                    name: "quorum",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "selector",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "colCoverage",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "duration",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "intRate",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "cSlot",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "allGh",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "userCount",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct C3.Uints",
+                name: "uints",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "uint256",
+                    name: "fullInterest",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "intPerSec",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "unit",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "currentPool",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "unitId",
+                    type: "uint256",
+                  },
+                  {
+                    internalType: "uint256",
+                    name: "rId",
+                    type: "uint256",
+                  },
+                ],
+                internalType: "struct C3.Uint256s",
+                name: "uint256s",
+                type: "tuple",
+              },
+              {
+                components: [
+                  {
+                    internalType: "address",
+                    name: "asset",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "lastPaid",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "bank",
+                    type: "address",
+                  },
+                  {
+                    internalType: "address",
+                    name: "admin",
+                    type: "address",
+                  },
+                ],
+                internalType: "struct C3.Addresses",
+                name: "addrs",
+                type: "tuple",
+              },
+              {
+                internalType: "enum C3.Status",
+                name: "status",
+                type: "uint8",
+              },
+              {
+                internalType: "enum C3.Router",
+                name: "router",
+                type: "uint8",
+              },
+              {
+                internalType: "enum C3.FuncTag",
+                name: "stage",
+                type: "uint8",
               },
             ],
-            internalType: "struct Counters.Counter",
-            name: "userCount",
+            internalType: "struct C3.Pool",
+            name: "pool",
             type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "quorum",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "selector",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "colCoverage",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "duration",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "intRate",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct Common.Uints",
-            name: "uints",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "uint256",
-                name: "fullInterest",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "intPerSec",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "unit",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "currentPool",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "unitId",
-                type: "uint256",
-              },
-              {
-                internalType: "uint256",
-                name: "rId",
-                type: "uint256",
-              },
-            ],
-            internalType: "struct Common.Uint256s",
-            name: "uint256s",
-            type: "tuple",
-          },
-          {
-            components: [
-              {
-                internalType: "address",
-                name: "asset",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "lastPaid",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "bank",
-                type: "address",
-              },
-              {
-                internalType: "address",
-                name: "admin",
-                type: "address",
-              },
-            ],
-            internalType: "struct Common.Addresses",
-            name: "addrs",
-            type: "tuple",
-          },
-          {
-            internalType: "uint256",
-            name: "allGh",
-            type: "uint256",
           },
           {
             components: [
@@ -2234,23 +1762,13 @@ const _abi = [
                 type: "bool",
               },
             ],
-            internalType: "struct Common.Contributor[]",
+            internalType: "struct C3.Contributor[]",
             name: "cData",
             type: "tuple[]",
           },
-          {
-            internalType: "enum Common.Router",
-            name: "router",
-            type: "uint8",
-          },
-          {
-            internalType: "enum Common.FuncTag",
-            name: "stage",
-            type: "uint8",
-          },
         ],
-        internalType: "struct Common.Pool",
-        name: "pool",
+        internalType: "struct C3.ReadDataReturnValue",
+        name: "",
         type: "tuple",
       },
     ],
@@ -2303,7 +1821,7 @@ const _abi = [
             type: "bool",
           },
         ],
-        internalType: "struct Common.Slot",
+        internalType: "struct C3.Slot",
         name: "",
         type: "tuple",
       },
@@ -2322,21 +1840,9 @@ const _abi = [
     name: "getStatus",
     outputs: [
       {
-        components: [
-          {
-            internalType: "bool",
-            name: "isInitialized",
-            type: "bool",
-          },
-          {
-            internalType: "enum Common.Status",
-            name: "status",
-            type: "uint8",
-          },
-        ],
-        internalType: "struct Common.Unit",
-        name: "_unit",
-        type: "tuple",
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",
@@ -2540,6 +2046,19 @@ const _abi = [
       },
     ],
     name: "setMinimumLiquidityPerProvider",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOracleAddr",
+        type: "address",
+      },
+    ],
+    name: "setOracleAddress",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

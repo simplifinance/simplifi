@@ -501,7 +501,7 @@ abstract contract ERC20Abstract is CallContext, IERC20, Pausable {
    * @dev Replaces the attorney account. Only authorized owner account can perform
    * this action.
    */
-  function setAttorney(address newAttorney) public onlyOwner("Token: setAttorney: Not permitted") {
+  function setAttorney(address newAttorney) public onlyOwner {
     newAttorney.cannotBeEmptyAddress();
     tokenInfo.attorney = newAttorney;
   }

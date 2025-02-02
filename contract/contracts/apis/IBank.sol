@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "./Common.sol";
+import { C3 } from "./C3.sol";
 
 interface IBank {
   error NotACustomer(address);
@@ -31,7 +31,7 @@ interface IBank {
     uint256 debt,
     uint256 attestedInitialBal,
     bool allGH,
-    Common.Contributor[] memory cData,
+    C3.Contributor[] memory cData,
     bool isSwapped,
     address defaulted,
     uint rId

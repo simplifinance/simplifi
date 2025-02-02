@@ -1,5 +1,5 @@
 import { GetFinanceParam, TrxResult } from "@/interfaces";
-import { getFactoryAddress } from "../../utils/contractAddress";
+import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getFinanceAbi } from "@/apis/abis";
@@ -7,7 +7,7 @@ import { errorMessage } from "../formatError";
 
 export default async function getFinance(args: GetFinanceParam ) {
   const { unit, daysOfUseInHr, config, callback, account, value } = args;
-  const address = getFactoryAddress();
+  const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'success'; 
   await simulateContract(config, {
     address,

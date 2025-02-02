@@ -11,6 +11,16 @@ import type {
 const _abi = [
   {
     inputs: [],
+    name: "ManagerAddressIsZero",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotPermittedToCall",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "ownershipManager",
     outputs: [
       {

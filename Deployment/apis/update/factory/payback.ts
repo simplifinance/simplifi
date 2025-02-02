@@ -1,5 +1,5 @@
 import { CommonParam, TrxResult } from "@/interfaces";
-import { getFactoryAddress } from "../../utils/contractAddress";
+import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { paybackAbi } from "@/apis/abis";
@@ -7,7 +7,7 @@ import { errorMessage } from "../formatError";
 
 export default async function payback(args: CommonParam) {
   const { config, callback, account, unit } = args;
-  const address = getFactoryAddress();
+  const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'reverted'; 
   await simulateContract(config, {
     address,

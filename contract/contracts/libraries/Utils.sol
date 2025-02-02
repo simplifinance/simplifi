@@ -5,7 +5,7 @@ pragma solidity 0.8.24;
 import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { Common } from "../apis/Common.sol";
+import { C3 } from "../apis/C3.sol";
 
 library Utils {
     using Address for address;
@@ -99,7 +99,7 @@ library Utils {
      *   
      */
     function computeCollateral(
-        Common.XFIPrice memory xfi,
+        C3.XFIPrice memory xfi,
         uint amountOfXFISent,
         uint24 ccr,
         uint loanReqInDecimals,
@@ -110,7 +110,7 @@ library Utils {
         returns(uint256 expColInXFI) 
     {
         uint8 minCCR = 100;
-        if(ccr < minCCR) revert Common.CollateralCoverageCannotGoBelow_100(ccr);
+        if(ccr < minCCR) revert C3.CollateralCoverageCannotGoBelow_100(ccr);
         uint48 _ccr = uint48(uint(ccr).mul(100));
         uint totalLoanInXFI = loanReqInDecimals.mul(10**xfi.decimals).div(xfi.price);
         expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
@@ -156,9 +156,9 @@ library Utils {
     )
         internal 
         pure 
-        returns(Common.InterestReturn memory _itr) 
+        returns(C3.InterestReturn memory _itr) 
     {
-        Common.InterestReturn memory it;
+        C3.InterestReturn memory it;
         assertTrue_2((fullDurationInSec <= _maxDurationInSec() && uint(durOfChoiceInSec).mod(60) == 0), (durOfChoiceInSec <= fullDurationInSec && uint(fullDurationInSec).mod(60) == 0), "Utils: FullDur or DurOfChoice oerflow");
         it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
         if(it.fullInterest > 0) {

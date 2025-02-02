@@ -1,5 +1,5 @@
 import { CommonParam, TrxResult } from "@/interfaces";
-import { getFactoryAddress } from "../../utils/contractAddress";
+import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
@@ -9,7 +9,7 @@ import { errorMessage } from "../formatError";
 
 export default async function addToPool(args: CommonParam) : Promise<TrxResult> {
   const { unit, config, callback, account } = args;
-  const address = getFactoryAddress();
+  const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'reverted';
   await simulateContract(config, {
     address,

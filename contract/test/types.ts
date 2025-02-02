@@ -2,7 +2,7 @@ import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signer
 import { ContractTransactionResponse, ethers } from "ethers";
 import { Hex, Address as ContractAddress } from "viem";
 import type { AssetClass, Factory, OwnerShip, BankFactory, TestAsset, Bank, } from "../typechain-types";
-import { Common } from "../typechain-types/contracts/apis/IFactory";
+import { C3 } from "../typechain-types/contracts/apis/IFactory";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -102,10 +102,12 @@ export interface SetVariableParam {
 }
 
 export interface FactoryTxReturn {
-  pool: Common.PoolStructOutput;
-  balances?: Common.BalancesStructOutput;
-  profile: Common.ContributorStructOutput;
-  slot: Common.SlotStruct;
+  pool: C3.ReadDataReturnValueStructOutput;
+  balances?: C3.BalancesStructOutput;
+  profile: C3.ContributorStructOutput;
+  slot: C3.SlotStruct;
+  // cData: C3.ContributorStructOutput[];
+  
 }
 
 export interface FundAccountParam {

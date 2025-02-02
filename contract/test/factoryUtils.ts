@@ -20,7 +20,7 @@ import type {
   FactoryContract, } from "./types";
 
 import { bn, formatAddr, Status, ZERO, } from "./utilities";
-import { Common } from "../typechain-types/contracts/apis/IFactory";
+import { C3 } from "../typechain-types/contracts/apis/IFactory";
 
 /**
  * @dev Create public pool
@@ -99,12 +99,10 @@ export async function createPermissionedPool(
   const unitId = await x.factory.getEpoches();
   const balances = await x.factory.getBalances(x.unitLiquidity);
   const pool = await x.factory.getPoolData(unitId);
-  // console.log("Contributors", x.contributors)
-  // console.log("Pool.cData", pool.cData);
   const profile = await x.factory.getProfile(x.unitLiquidity, x.signer.address);
   const slot = await x.factory.getSlot(x.signer.address, x.unitLiquidity);
 
-  return { pool, balances, profile, slot};
+  return { pool, balances, profile, slot };
 }
 
 /**
@@ -143,9 +141,9 @@ export async function payback(
   x: PaybackParam
 ) 
 : Promise<{
-    pool: Common.PoolStructOutput;
-    balances: Common.BalancesStructOutput | undefined;
-    profile: Common.ContributorStructOutput;
+    pool: C3.ReadDataReturnValueStructOutput;
+    balances: C3.BalancesStructOutput | undefined;
+    profile: C3.ContributorStructOutput;
  }>
 {
   const factoryAddr = formatAddr(await x.factory.getAddress());
@@ -169,9 +167,9 @@ export async function payback(
   // console.log("Allowance", await x.asset.allowance(signer.address, factoryAddr));
   const unitId = await x.factory.getEpoches();
   await x.factory.connect(signer).payback(x.unit);
-  let balances : Common.BalancesStructOutput | undefined = undefined;
-  const unit = await x.factory.getStatus(x.unit);
-  if(bn(unit.status).toNumber() === Status.TAKEN){
+  let balances : C3.BalancesStructOutput | undefined = undefined;
+  const status = await x.factory.getStatus(x.unit);
+  if(status === 'TAKEN'){
     balances = await x.factory.getBalances(x.unit);
   }
   const pool = await x.factory.getPoolData(unitId);
@@ -219,9 +217,9 @@ export async function liquidate(
   });
   const unitId = await x.factory.getEpoches();
   await x.factory.connect(signer).liquidate(x.unit);
-  let balances : Common.BalancesStructOutput | undefined = undefined;
-  const unit = await x.factory.getStatus(x.unit);
-  if(bn(unit.status).toNumber() === Status.TAKEN){
+  let balances : C3.BalancesStructOutput | undefined = undefined;
+  const status = await x.factory.getStatus(x.unit);
+  if(status === 'TAKEN'){
     balances = await x.factory.getBalances(x.unit);
   }
   const pool = await x.factory.getPoolData(unitId);
@@ -247,7 +245,7 @@ export async function liquidate(
 export async function enquireLiquidation(
   x: BandParam
 ) 
-  : Promise<[Common.ContributorStructOutput, boolean, bigint, Common.SlotStructOutput, string]> 
+  : Promise<[C3.ContributorStructOutput, boolean, bigint, C3.SlotStructOutput, string]> 
 {
   return await x.factory.enquireLiquidation(x.unit);
 }
@@ -304,7 +302,7 @@ export async function withdraw(
     spender: Signer,
     unit: bigint
   }
-) : Promise<{balancesInStrategy?: Common.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
+) : Promise<{balancesInStrategy?: C3.BalancesStructOutput, signerBalB4: bigint, signerBalAfter: bigint}>
 {
   const { asset, owner, factory, spender, unit} = x;
   const allowance = await asset.allowance(owner, spender);
@@ -312,9 +310,9 @@ export async function withdraw(
   // console.log("Allowance: ", allowance.toString());
   const signerBalB4 = await asset.balanceOf(spender.address);
   await asset.connect(spender).transferFrom(owner, spender.address, allowance);
-  let balancesInStrategy : Common.BalancesStructOutput | undefined = undefined;
-  const unit_ = await x.factory.getStatus(unit);
-  if(bn(unit_.status).toNumber() === Status.TAKEN){
+  let balancesInStrategy : C3.BalancesStructOutput | undefined = undefined;
+  const status = await x.factory.getStatus(unit);
+  if(status === 'TAKEN'){
     balancesInStrategy = await x.factory.getBalances(x.unit);
   }
   const signerBalAfter = await asset.balanceOf(spender.address);
@@ -325,20 +323,7 @@ export async function removeLiquidityPool(
   x: RemoveLiquidityParam
 ) {
   await x.factory.connect(x.signer).removeLiquidityPool(x.unit);
-  /**
-   * Since liquidityPool is removed before this line, uncommenting the next line 
-   * will throw "Error: Transaction reverted: function returned an unexpected amount of data" 
-   * error in contract since the pool is set to default values, strategy address will 
-   * zeroed.
-   */
-  // const balances = await x.factory.getBalances(x.epochId);
-  const unitId = await x.factory.getEpoches();
-  // expect(x.factory.getPoolData(unitId)).to.be.revertedWith(
-  //   "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
-  // );
-  // expect(x.factory.getPoolData(unitId)).to.be.revertedWith(
-  //   "Error: VM Exception while processing transaction: reverted with panic code 0x32 (Array accessed at an out-of-bounds or negative index)"
-  // );
+  // const unitId = await x.factory.getEpoches();
 }
 
 export function getAddressFromSigners(signers: Signer[]) {
@@ -358,13 +343,13 @@ export async function joinEpoch(
   x: JoinABandParam
 ) 
   : Promise<{
-    pool: Common.PoolStructOutput;
-    balances: Common.BalancesStructOutput;
-    profiles: Common.ContributorStructOutput[];
+    pool: C3.ReadDataReturnValueStructOutput;
+    balances: C3.BalancesStructOutput;
+    profiles: C3.ContributorStructOutput[];
   }>
 {
   const testAssetAddr = formatAddr(await x.testAsset.getAddress());
-  const factoryAddr = await x.factory.getAddress();
+  // const factoryAddr = await x.factory.getAddress();
   await transferAsset({
     amount: x.contribution,
     asset: x.testAsset,
@@ -372,7 +357,7 @@ export async function joinEpoch(
     sender: x.deployer,
     testAssetAddr
   });
-  let profiles : Common.ContributorStructOutput[] = [];
+  let profiles : C3.ContributorStructOutput[] = [];
   for(let i= 0; i < x.signers.length; i++) {
     const signer = x.signers[i];
     await approve({

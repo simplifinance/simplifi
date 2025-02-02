@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "../apis/Common.sol";
+import { C3 } from "../apis/C3.sol";
 import { Pausable } from "../abstracts/Pausable.sol";
 
 contract FuncHandler is Pausable {
@@ -19,7 +19,7 @@ contract FuncHandler is Pausable {
       @param tag - Function handle.
       @param epochId - Pool index.
   */
-  modifier checkPermit(uint epochId, Common.FuncTag tag) {
+  modifier checkPermit(uint epochId, C3.FuncTag tag) {
     address caller = _msgSender();
     require(permits[epochId][caller], "FuncHandler: No Permission detected");
    

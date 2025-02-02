@@ -43,15 +43,23 @@ const config: HardhatUserConfig = {
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
     },
+    alfajores: {
+      url: "https://alfajores-forno.celo-testnet.org",
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 44787,
+    } 
   },
   namedAccounts: {
     deployer: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
+      44787: `privatekey://${PRIVATE_KEY}`,
     },
-    diaOracle: {
+    oracle: {
       default: zeroAddress,
-      4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233'
+      4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233',
+      44787: zeroAddress
+      // 44787: '0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946'  // Chainlink oracle on Celo alfajores
     }
   },
 

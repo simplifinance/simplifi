@@ -16,7 +16,7 @@ import Footer from "@/components/Layout/Footer";
 import Typed from "react-typed";
 import NotConnectedPopUp from "@/components/NotConnectedPopUp";
 import { useAccount, useReadContracts,} from "wagmi";
-import { getFactoryDataConfig, readSymbolConfig } from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
+import getReadFunctions from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
 
 export default function SimpliApp() {
   // const {data: blockNumber, } = useBlockNumber({watch: true, query: {refetchInterval: 3000}});
@@ -26,6 +26,10 @@ export default function SimpliApp() {
   const [message, setMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [activePath, setActivePath] = React.useState<Path>('/dashboard');
+  const [displayForm, setDisplayForm] = React.useState<boolean>(false);
+    
+  const { isConnected, address, connector, isDisconnected, chainId } = useAccount();
+  const { getFactoryDataConfig, readSymbolConfig } = getReadFunctions({chainId});
   
   const { data, refetch } = useReadContracts({
     contracts: [
@@ -33,10 +37,14 @@ export default function SimpliApp() {
       {...getFactoryDataConfig()}
     ],
     allowFailure: true,
-    query: {refetchInterval: 5000}
+    query: {
+      refetchInterval: 4000, 
+      refetchOnReconnect: 'always', 
+    }
   });
-
-  const { isConnected, address, connector, isDisconnected,  } = useAccount();
+  
+  const closeDisplayForm = () => setDisplayForm(false);
+  const openDisplayForm = () => setDisplayForm(true);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = (arg: number) => setPopUp(arg);
@@ -97,6 +105,9 @@ export default function SimpliApp() {
         analytics: data?.[1].result?.analytics || ANALYTICS,
         symbol: data?.[0].result || 'USD',
         setstorage,
+        displayForm,
+        closeDisplayForm,
+        openDisplayForm,
         message,
         exitOnboardScreen,
         toggleSidebar,
@@ -143,3 +154,31 @@ const CHILDREN : {path: Path, element: JSX.Element}[] = [
   }
 ];
 
+
+  // const router = createBrowserRouter(
+  //   createRoutesFromElements(
+  //     <Route 
+  //       path={'/'} 
+  //       element={ <App /> } 
+  //     >
+  //       { renderAppChildComponents() }
+  //     </Route>
+  //   )
+  // );
+
+// const renderLiquidityChildComponents = () => [
+//   // {
+//   //   path: ROUTE_ENUM.CREATE,
+//   //   element: () => (<Create />),
+//   // },
+//   // {
+//   //   path: ROUTE_ENUM.OPEN,
+//   //   element: () => (<Open />),
+//   // },
+//   // {
+//   //   path: ROUTE_ENUM.CLOSED,
+//   //   element: () => (<Closed />)
+//   // }
+// ].map(({path, element}) => (
+//   <Route key={path} {...{path, element: element()}} />
+// ));

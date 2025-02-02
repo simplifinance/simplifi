@@ -68,7 +68,7 @@ export async function deployTestAsset(deployer: Signer): Promise<TestAssetContra
  * @returns : Library address : Type - Address
  */
 export async function deployLibrary(): Promise<Address> {
-  const RouterLib = await ethers.getContractFactory("FactoryLibV2");
+  const RouterLib = await ethers.getContractFactory("FactoryLibV3");
   return formatAddr(await (await (await RouterLib.deploy()).waitForDeployment()).getAddress());
 }
 

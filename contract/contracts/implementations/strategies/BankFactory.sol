@@ -78,7 +78,7 @@ contract BankFactory is IBankFactory, OnlyOwner {
     uint256 unit
   )
     external
-    onlyOwner("BankFactory - createBank: Not permitted")
+    onlyOwner
     returns(address _bank) 
   {
     if(!_hasBank(unit)){

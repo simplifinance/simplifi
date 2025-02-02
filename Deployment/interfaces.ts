@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { BigNumberish, ethers } from "ethers";
-import { Common, Counters } from "./typechain-types/contracts/apis/IFactory";
+import { C3 } from "./typechain-types/contracts/apis/IFactory";
 
 export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
 export type WagmiConfig = import("wagmi").Config;
@@ -19,7 +19,7 @@ export type ToggleDrawer = (value: number, setState: (value: number) => void) =>
 export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type PoolType = 'Permissioned' | 'Permissionless';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
-export type Profile = Common.ContributorStruct;
+export type Profile = C3.ContributorStruct;
 export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
@@ -28,16 +28,20 @@ export interface TrxState {
   message: string;
 }
 
+export interface ReadDataReturnValue {
+  pool: LiquidityPool;
+  cData: Readonly<C3.ContributorStruct[]>;
+}
+
 export interface LiquidityPool {
-  userCount: Counters.CounterStruct;
-  uints: Common.UintsStruct;
-  uint256s: Common.Uint256sStruct;
-  addrs: Common.AddressesStruct;
-  allGh: BigNumberish;
-  cData: Readonly<Common.ContributorStruct[]>;
+  uints: C3.UintsStruct;
+  uint256s: C3.Uint256sStruct;
+  addrs: C3.AddressesStruct;
+  status: BigNumberish;
   router: BigNumberish;
   stage: BigNumberish;
 }
+// cData: Readonly<C3.ContributorStruct[]>;
 
 export interface CreatePermissionedPoolParams extends Config{
   intRate: number;
@@ -106,7 +110,7 @@ export interface FormattedPoolContentProps {
   unit: BigNumberish;
   unit_bigint: bigint;
   rId: bigint;
-  pair: string;
+  // pair: string;
   quorum_toNumber: number;
   userCount_toNumber: number;
   allGET_bool: boolean;

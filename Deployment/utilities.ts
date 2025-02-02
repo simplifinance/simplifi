@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, } from "@/interfaces";
+import { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, ReadDataReturnValue, } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/testToken/getAllowance";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -9,15 +9,14 @@ import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
 import { formatEther,} from "viem";
-import { Common } from "./typechain-types/contracts/apis/IFactory";
+import { C3 } from "./typechain-types/contracts/apis/IFactory";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
-import { getFactoryAddress } from "./apis/utils/contractAddress";
+import { getContractData } from "./apis/utils/getContractData";
 import withdrawLoan from "./apis/update/testToken/withdrawLoan";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import withdrawCollateral from "./apis/update/bank/withdrawCollateral";
 import { ROUTER } from "./constants";
 
 export type Operation = 'Open' | 'Closed';
@@ -80,7 +79,7 @@ export const getAmountToApprove = async(param: AmountToApproveParam) => {
   const { txnType, unit, intPerSec, lastPaid, account, config } = param;
   let amtToApprove : BigNumber = toBN(unit.toString());
   let owner = account;
-  let spender = getFactoryAddress();
+  let spender = getContractData(config.state.chainId).factory;
 
   switch (txnType) {
     case 'PAYBACK':
@@ -169,16 +168,16 @@ export const handleTransact = async(param: HandleTransactionParam) => {
  * @param pool : Pool data
  * @returns : Formatted data
  */
-export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
+export const formatPoolContent = (pool: ReadDataReturnValue, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
   const {
-    uint256s: { unit, currentPool, intPerSec, rId, fullInterest, unitId: unitId_, },
-    uints: { intRate, quorum, duration, colCoverage, selector },
-    addrs: { admin, asset, lastPaid, bank },
-    router,
-    stage,
-    cData,
-    allGh,
-    userCount : { _value : userCount }
+    pool: {
+      uint256s: { unit, currentPool, intPerSec, rId, fullInterest, unitId: unitId_, },
+      uints: { intRate, quorum, allGh, userCount, duration, colCoverage, selector },
+      addrs: { admin, asset, lastPaid, bank },
+      router,
+      stage
+    },
+    cData
   } = pool;
 
   let cData_formatted : FormattedData[] = [];
@@ -215,7 +214,6 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, 
     unit,
     unit_bigint: BigInt(unit.toString()),
     rId: BigInt(rId.toString()),
-    pair: "USDT/XFI",
     quorum_toNumber,
     userCount_toNumber,
     allGET_bool,
@@ -249,7 +247,7 @@ export const formatPoolContent = (pool: LiquidityPool, formatProfiles: boolean, 
   }
 }
 
-export const formatProfileData = (param: Common.ContributorStruct) : FormattedData => {
+export const formatProfileData = (param: C3.ContributorStruct) : FormattedData => {
   const { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan, } = param;
   const payDate_InSec = toBN(payDate.toString()).toNumber();
   const turnTime_InSec = toBN(turnTime.toString()).toNumber();

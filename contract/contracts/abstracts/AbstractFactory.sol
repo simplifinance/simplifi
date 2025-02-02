@@ -3,8 +3,8 @@
 pragma solidity 0.8.24;
 
 // import "hardhat/console.sol";
-import { FactoryLibV2, Data } from "../libraries/FactoryLibV2.sol";
-import { Pausable } from "../abstracts/Pausable.sol";
+import { FactoryLibV3, Data } from "../libraries/FactoryLibV3.sol";
+import { Pausable } from "./Pausable.sol";
 import { IFactory } from "../apis/IFactory.sol";
 import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
 import { IAssetClass } from "../apis/IAssetClass.sol";
@@ -19,9 +19,9 @@ abstract contract AbstractFactory is
     ReentrancyGuard,
     Pausable
 {
-    using FactoryLibV2 for Data;
+    using FactoryLibV3 for Data;
 
-    // Storage of type FactoryLibV2.Data
+    // Storage of type FactoryLibV3.Data
     Data private data;
 
     // Minimum amount that can be contributed
@@ -44,7 +44,7 @@ abstract contract AbstractFactory is
 
     ///@dev Unit contribution must have been initialized before they can be interacted with.
     modifier onlyInitialized(uint256 unit,bool secondCheck) {
-        FactoryLibV2._isInitialized(data.units, unit, secondCheck);
+        data._isInitialized(unit, secondCheck);
         _;
     }
 
@@ -80,7 +80,7 @@ abstract contract AbstractFactory is
     receive() external payable {
         if(msg.value > 15e14 wei) {
             (bool success,) = data.pData.feeTo.call{value:msg.value}('');
-            require(success,'Reverted');
+            if(!success) revert ();
         }
     }
 
@@ -92,7 +92,7 @@ abstract contract AbstractFactory is
         address feeTo,
         address assetClass,
         address strategyManager
-    ) public onlyOwner("Factory - performSetUp not permitted") {
+    ) public onlyOwner {
         _setUp(
             serviceRate, 
             _minContribution, 
@@ -154,12 +154,17 @@ abstract contract AbstractFactory is
         returns (uint)
     {
         bool isPermissionless = router == Router.PERMISSIONLESS;
-        // revert DD(contributors);
-        isPermissionless? require(quorum > 1, "Router: Quorum is invalid") : require(contributors.length > 1, "Min of 2 members");
+        if(isPermissionless) {
+            if(quorum <= 1) revert MinimumParticipantIsTwo();
+        } else {
+            if(contributors.length <= 1) revert MinimumParticipantIsTwo();
+        }
         CreatePoolParam memory cpp = CreatePoolParam(intRate, quorum, durationInHours, colCoverage, unitLiquidity, contributors, asset);
-        CreatePoolReturnValue memory crp = !isPermissionless ? data
+        emit PoolCreated(
+            !isPermissionless ? data
             .createPermissionedPool(cpp)
-                : data.createPermissionlessPool(cpp);
+                : data.createPermissionlessPool(cpp)
+        );
         Analytics memory alt = analytics;
         analytics = Analytics(
             alt.tvlInXFI, 
@@ -167,9 +172,7 @@ abstract contract AbstractFactory is
             isPermissionless? alt.totalPermissioned : alt.totalPermissioned + 1,
             isPermissionless? alt.totalPermissionless + 1 : alt.totalPermissionless
         );
-        
-        emit BandCreated(crp);
-        return crp.pool.uint256s.unit;
+        return unitLiquidity;
     } 
 
     /** @dev Return current epoch. 
@@ -198,7 +201,7 @@ abstract contract AbstractFactory is
         uint256 minLiquidity
     ) 
         public 
-        onlyOwner("Factory - setMinimumLiquidityPerProvider not permitted")
+        onlyOwner
     {
         minContribution = minLiquidity;
     }
@@ -214,11 +217,12 @@ abstract contract AbstractFactory is
         internal
         returns(bool)
     {
-        CommonEventData memory ced =  data.addToBand(AddTobandParam(unit, isPermissioned));
-        emit NewMemberAdded(ced);
         unchecked {
-            analytics.tvlInUsd += ced.pool.uint256s.unit;
+            analytics.tvlInUsd += unit;
         }
+        emit NewContributorAdded(
+            data.addContributor(AddTobandParam(unit, isPermissioned))
+        );
         return true;
     }
 
@@ -246,14 +250,14 @@ abstract contract AbstractFactory is
         onlyInitialized(unit, true)
         returns (bool)
     {
-        (CommonEventData memory ced) = data.getFinance(unit, msg.value, daysOfUseInHr, diaOracleAddress == address(0)? 18 : 8, _getXFIPriceInUSD);
-        emit GetFinanced(ced);
+        (Pool memory _p, uint256 amtFinanced) = data.getFinance(unit, msg.value, daysOfUseInHr, diaOracleAddress == address(0)? 18 : 8, _getXFIPriceInUSD);
         Analytics memory atl = analytics;
         unchecked {
             atl.tvlInXFI += msg.value;
-            atl.tvlInUsd -= ced.pool.uint256s.currentPool;
+            atl.tvlInUsd -= amtFinanced;
         }
         analytics = atl;
+        emit GetFinanced(_p);
         return true;
     }
 
@@ -270,12 +274,12 @@ abstract contract AbstractFactory is
         onlyInitialized(unit, true)
         returns (bool)
     {
-        CommonEventData memory ced = data.payback(PaybackParam(unit, _msgSender()));
+        (uint amtPayBackInUSD, uint colWithdrawn, Pool memory _p) = data.payback(PaybackParam(unit, _msgSender()));
         unchecked {
-            analytics.tvlInUsd += ced.debtBal;
-            analytics.tvlInXFI -= ced.colBal;
+            analytics.tvlInUsd += amtPayBackInUSD;
+            analytics.tvlInXFI -= colWithdrawn;
         }
-        emit Payback(ced);
+        emit Payback(_p);
         return true;
     }
 
@@ -291,12 +295,12 @@ abstract contract AbstractFactory is
         onlyInitialized(unit, true)
         returns (bool) 
     {
-        CommonEventData memory ced = data.liquidate(unit);
-        emit Payback(ced);
+        (uint amtPayBackInUSD, uint colWithdrawn, Pool memory _p) = data.liquidate(unit);
+        emit Payback(_p);
         Analytics memory atl = analytics;
         unchecked {
-            atl.tvlInXFI -= ced.colBal;
-            atl.tvlInUsd += ced.debtBal;
+            atl.tvlInXFI -= colWithdrawn;
+            atl.tvlInUsd += amtPayBackInUSD;
         }
         analytics = atl;
         return true;
@@ -330,7 +334,7 @@ abstract contract AbstractFactory is
     {
         Pool memory _p = data._getCurrentPool(unit).data;
         unchecked {
-            (collateral, colCoverage) = (FactoryLibV2._computeCollateral(
+            (collateral, colCoverage) = (FactoryLibV3._computeCollateral(
                 _p.uint256s.unit * _p.uints.quorum,
                 0,
                 uint24(_p.uints.colCoverage),
@@ -390,14 +394,14 @@ abstract contract AbstractFactory is
         address bankFactory
     ) 
         public
-        onlyOwner("Factory - setContractData not permitted")
+        onlyOwner
         returns(bool)
     {
         return data.setContractData(assetAdmin, feeTo, serviceRate, bankFactory);
     }
 
-    function setOracleAddress(address newOracleAddr) public onlyOwner("Factory - setContractData not permitted") {
-        require(newOracleAddr != address(0), 'Oracle addr is zero');
+    function setOracleAddress(address newOracleAddr) public onlyOwner {
+        if(newOracleAddr == address(0)) revert OracleAddressIsZero();
         diaOracleAddress = newOracleAddr;
     }
 
@@ -416,9 +420,8 @@ abstract contract AbstractFactory is
         return data._getBalancesInBank(unit);
     }
 
-    function getStatus(uint256 unit) external view returns(Unit memory _unit) {
-        _unit = data.units[unit];
-        return _unit;
+    function getStatus(uint256 unit) external view returns(string memory) {
+        return data._getCurrentPool(unit).data.status == Status.AVAILABLE? 'AVAILABLE' : 'TAKEN';
     }
 
     /**
@@ -433,7 +436,11 @@ abstract contract AbstractFactory is
         onlyInitialized(unit, true)
         returns (bool)
     {
-        analytics.tvlInUsd -= data.removeLiquidity(unit, isPermissionLess).data.uint256s.unit; 
+        uint256 tvlInUsd = analytics.tvlInUsd;
+        unchecked {
+            if(tvlInUsd > unit) analytics.tvlInUsd = tvlInUsd - unit; 
+        }
+        data.removeLiquidity(unit, isPermissionLess);
         emit Cancellation(unit);
 
         return true;
@@ -448,15 +455,14 @@ abstract contract AbstractFactory is
     ) 
         external 
         view 
-        returns(Pool memory) 
+        returns(ReadDataReturnValue memory) 
     {
         return data.getData(unitId);
     }
 
     /// @dev Return past pools using unitId. @notice The correct unitId must be parsed.
-    function getRecord(uint uId) external view returns(Pool memory pool) {
-        pool = data.getRecord(uId);
-        return pool;
+    function getRecord(uint rId) external view returns(ReadDataReturnValue memory) {
+        return data.getRecord(rId);
     }
 
     function getPoint(address user) external view returns(Point memory point) {

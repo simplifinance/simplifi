@@ -4,7 +4,7 @@
     "test": "npx hardhat test",
     "deploy": "npx hardhat deploy --network hardhat",
     "deploy-testnet": "hardhat deploy --network crossTest --export deployments/contracts.json",
-    "deploy-tester": "hardhat deploy --network tester --export deployments/contracts.json",
+    "deploy-alfa": "hardhat deploy --network alfajores --export deployments/contracts.json",
     "deploy-reset-watch": "hardhat deploy --reset --watch --export-all deployments/hardhat_contracts.json",
     "watch": "node scripts/watch.js",
     "flat-factory": "npx hardhat flatten contracts/implementations/Factory.sol > contracts/implementations/flattened/FactoryFlattened.sol",

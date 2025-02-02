@@ -1,0 +1,269 @@
+{
+  "address": "0x4976c4999187416eE499F3Fb9974966C74747eAd",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "ownerId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "isOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "owners",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ownersCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "removeOwner",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnerShip",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "newOwners",
+          "type": "address[]"
+        }
+      ],
+      "name": "setPermission",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xa8debec6113290fe35afd18b41ef46ede0ee30bbbee043f2fc9a7ed9c6f25c32",
+  "receipt": {
+    "to": null,
+    "from": "0xD7c271d20c9E323336bFC843AEb8deC23B346352",
+    "contractAddress": "0x4976c4999187416eE499F3Fb9974966C74747eAd",
+    "transactionIndex": 1,
+    "gasUsed": "416060",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x64a937f71ca1aae7e216b7e196b28334d332b5aa5287d5d94224a4c6794f8a3a",
+    "transactionHash": "0xa8debec6113290fe35afd18b41ef46ede0ee30bbbee043f2fc9a7ed9c6f25c32",
+    "logs": [],
+    "blockNumber": 37492414,
+    "cumulativeGasUsed": "459818",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5647fbbc14f240be38ba59bb3b597451",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"ownerId\",\"type\":\"uint256\"}],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"isOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"owners\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ownersCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"target\",\"type\":\"address\"}],\"name\":\"removeOwner\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnerShip\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"newOwners\",\"type\":\"address[]\"}],\"name\":\"setPermission\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Simplifi (Bobeu)\",\"kind\":\"dev\",\"methods\":{\"getOwner(uint256)\":{\"details\":\"Returns owner variable. Can be called externally by contracts.\",\"params\":{\"ownerId\":\": Owner Id. \"}},\"isOwner(address)\":{\"details\":\"Check if target is an owner.\",\"params\":{\"target\":\": Target address.\"}},\"removeOwner(address)\":{\"details\":\"Remove an address as owner.\",\"params\":{\"target\":\": Target address\"}},\"renounceOwnerShip()\":{\"details\":\"An owner can renounce their ownership. This however will not leave the contract empty without an owner. There must be at least one owner left.\"},\"setPermission(address[])\":{\"details\":\"Add a new owner address\",\"params\":{\"newOwners\":\": New owners\"}}},\"title\":\"OwnerShip \",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"owners(uint256)\":{\"notice\":\"Mapping of ownersCount to addresses. A valid id will return a mapped owner.\"},\"ownersCount()\":{\"notice\":\"Number of owners.\"},\"removeOwner(address)\":{\"notice\":\"Only address with owner permission can remove another owner.\"},\"renounceOwnerShip()\":{\"notice\":\"Only address with owner permission can renounce ownership.\"},\"setPermission(address[])\":{\"notice\":\"Only address with owner permission can add another owner.\"}},\"notice\":\"Standalone contract for managing ownership in Simplifi protocol.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/implementations/OwnerShip.sol\":\"OwnerShip\"},\"evmVersion\":\"constantinople\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/apis/IOwnerShip.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IOwnerShip \\r\\n * Interface of the OwnerShip contract\\r\\n * @author Simplifi (Bobeu)\\r\\n */\\r\\ninterface IOwnerShip {\\r\\n    function setPermission(\\r\\n        address[] memory newOwners\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function removeOwner(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function renounceOwnerShip() \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function getOwner(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address);\\r\\n\\r\\n    function isOwner(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool);\\r\\n}\",\"keccak256\":\"0xe21511940e88a7e8036b4b6adfde25125f7f3d49cde2732bffd219847b3ed6c0\",\"license\":\"MIT\"},\"contracts/implementations/OwnerShip.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IOwnerShip } from \\\"../apis/IOwnerShip.sol\\\";\\r\\n/**\\r\\n * @title MsgSender \\r\\n * @author Simplifi (Bobeu)\\r\\n * @notice Non-deployable contract simply returning the calling account.\\r\\n */\\r\\nabstract contract MsgSender {\\r\\n    function _msgSender() internal view returns(address sender) {\\r\\n        sender = msg.sender;\\r\\n    }\\r\\n}\\r\\n\\r\\n/**\\r\\n * @title OwnerShip \\r\\n * @author Simplifi (Bobeu)\\r\\n * @notice Standalone contract for managing ownership in Simplifi protocol.\\r\\n */\\r\\ncontract OwnerShip is IOwnerShip, MsgSender{\\r\\n    /**\\r\\n     * @notice Number of owners.\\r\\n     */\\r\\n    uint public ownersCount;\\r\\n\\r\\n    /**\\r\\n     * @notice Addresses with ownership permission.\\r\\n     */\\r\\n    \\r\\n    mapping (address => bool) private _isOwner;\\r\\n\\r\\n    /**\\r\\n     * @notice Mapping of ownersCount to addresses.\\r\\n     * A valid id will return a mapped owner.\\r\\n     */\\r\\n    mapping (uint => address) public owners;\\r\\n\\r\\n    /**\\r\\n     * @dev Only owner is allowed.\\r\\n     */\\r\\n    modifier onlyOwner {\\r\\n        require(_isOwner[_msgSender()], \\\"Oop! Caller is not recognized\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    constructor() {\\r\\n        _setOwner(_msgSender(), true);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns owner variable.\\r\\n     */\\r\\n    function _getOwner(uint ownerId) \\r\\n        internal \\r\\n        view \\r\\n        returns(address _owner) \\r\\n    {\\r\\n        _owner = owners[ownerId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Add or remove target address as owner.\\r\\n     * @param target: Target address.\\r\\n     * @notice 'target' parameter must not be empty.\\r\\n     */\\r\\n    function _setOwner(\\r\\n        address target,\\r\\n        bool add\\r\\n    ) \\r\\n        private \\r\\n    {\\r\\n        require(target != address(0), \\\"Simplifi OwnerShip: 'target' parameter is empty\\\");\\r\\n        add? (_isOwner[target] = true, ownersCount ++) : (_isOwner[target] = false, ownersCount --);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Add a new owner address\\r\\n     * @param newOwners: New owners\\r\\n     * @notice Only address with owner permission can add another owner.\\r\\n     */\\r\\n    function setPermission(\\r\\n        address[] memory newOwners\\r\\n    ) \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        bool rt = true;\\r\\n        for(uint r = 0; r < newOwners.length; r++) {\\r\\n            _setOwner(newOwners[r], rt);\\r\\n        }\\r\\n        return rt;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Remove an address as owner.\\r\\n     * @param target: Target address\\r\\n     * @notice Only address with owner permission can remove another owner.\\r\\n     */\\r\\n    function removeOwner(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        _setOwner(target, false);\\r\\n        return true;\\r\\n    }\\r\\n    /**\\r\\n     * @dev An owner can renounce their ownership. This however will not leave the\\r\\n     * contract empty without an owner. There must be at least one owner left.\\r\\n     * @notice Only address with owner permission can renounce ownership.\\r\\n     */\\r\\n    function renounceOwnerShip() \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        require(ownersCount > 1, \\\"At least 2 owners is required to leave\\\"); \\r\\n        _setOwner(_msgSender(), false);\\r\\n        return true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns owner variable.\\r\\n     * Can be called externally by contracts.\\r\\n     * @param ownerId : Owner Id. \\r\\n     */\\r\\n    function getOwner(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address) \\r\\n    {\\r\\n        return _getOwner(ownerId);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if target is an owner.\\r\\n     * @param target : Target address.\\r\\n     */\\r\\n    function isOwner(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool) \\r\\n    {\\r\\n        return _isOwner[target];\\r\\n    }\\r\\n}\",\"keccak256\":\"0xecca6e7a2c2684e193fcb16ac131d1b2895f981862969101d96d94616db70c0c\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061001c336001610021565b610192565b6001600160a01b0382166100bb576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602f60248201527f53696d706c696669204f776e6572536869703a2027746172676574272070617260448201527f616d6574657220697320656d7074790000000000000000000000000000000000606482015260840160405180910390fd5b806100f6576001600160a01b0382166000908152600160205260408120805460ff19169055805481806100ed83610162565b9190505561012d565b6001600160a01b03821660009081526001602081905260408220805460ff191682179055815490918061012883610179565b919050555b50505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b60008161017157610171610133565b506000190190565b60006001820161018b5761018b610133565b5060010190565b6105aa806101a16000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c8063b94885461161005b578063b948854614610117578063c41a360a1461012e578063ea41c7f414610157578063f8b14a3b1461016a57600080fd5b8063025e7c2714610082578063173825d9146100c85780632f54bf6e146100eb575b600080fd5b6100ab6100903660046103b4565b6002602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100db6100d63660046103e4565b610172565b60405190151581526020016100bf565b6100db6100f93660046103e4565b6001600160a01b031660009081526001602052604090205460ff1690565b61012060005481565b6040519081526020016100bf565b6100ab61013c3660046103b4565b6000908152600260205260409020546001600160a01b031690565b6100db61016536600461041c565b6101be565b6100db61022d565b3360009081526001602052604081205460ff166101aa5760405162461bcd60e51b81526004016101a1906104e1565b60405180910390fd5b6101b58260006102ce565b5060015b919050565b3360009081526001602052604081205460ff166101ed5760405162461bcd60e51b81526004016101a1906104e1565b600160005b83518110156102265761021e84828151811061021057610210610518565b6020026020010151836102ce565b6001016101f2565b5092915050565b3360009081526001602052604081205460ff1661025c5760405162461bcd60e51b81526004016101a1906104e1565b6001600054116102bd5760405162461bcd60e51b815260206004820152602660248201527f4174206c656173742032206f776e65727320697320726571756972656420746f604482015265206c6561766560d01b60648201526084016101a1565b6102c83360006102ce565b50600190565b6001600160a01b03821661033c5760405162461bcd60e51b815260206004820152602f60248201527f53696d706c696669204f776e6572536869703a2027746172676574272070617260448201526e616d6574657220697320656d70747960881b60648201526084016101a1565b80610377576001600160a01b0382166000908152600160205260408120805460ff191690558054818061036e83610544565b919050556103ae565b6001600160a01b03821660009081526001602081905260408220805460ff19168217905581549091806103a98361055b565b919050555b50505050565b6000602082840312156103c657600080fd5b5035919050565b80356001600160a01b03811681146101b957600080fd5b6000602082840312156103f657600080fd5b6103ff826103cd565b9392505050565b634e487b7160e01b600052604160045260246000fd5b6000602080838503121561042f57600080fd5b823567ffffffffffffffff8082111561044757600080fd5b818501915085601f83011261045b57600080fd5b81358181111561046d5761046d610406565b8060051b604051601f19603f8301168101818110858211171561049257610492610406565b6040529182528482019250838101850191888311156104b057600080fd5b938501935b828510156104d5576104c6856103cd565b845293850193928501926104b5565b98975050505050505050565b6020808252601d908201527f4f6f70212043616c6c6572206973206e6f74207265636f676e697a6564000000604082015260600190565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b6000816105535761055361052e565b506000190190565b60006001820161056d5761056d61052e565b506001019056fea26469706673582212207aecedb801ff2a46344b20b11e2d0b1e272b1c21e04b0ca75db9635dd47a677864736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c8063b94885461161005b578063b948854614610117578063c41a360a1461012e578063ea41c7f414610157578063f8b14a3b1461016a57600080fd5b8063025e7c2714610082578063173825d9146100c85780632f54bf6e146100eb575b600080fd5b6100ab6100903660046103b4565b6002602052600090815260409020546001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100db6100d63660046103e4565b610172565b60405190151581526020016100bf565b6100db6100f93660046103e4565b6001600160a01b031660009081526001602052604090205460ff1690565b61012060005481565b6040519081526020016100bf565b6100ab61013c3660046103b4565b6000908152600260205260409020546001600160a01b031690565b6100db61016536600461041c565b6101be565b6100db61022d565b3360009081526001602052604081205460ff166101aa5760405162461bcd60e51b81526004016101a1906104e1565b60405180910390fd5b6101b58260006102ce565b5060015b919050565b3360009081526001602052604081205460ff166101ed5760405162461bcd60e51b81526004016101a1906104e1565b600160005b83518110156102265761021e84828151811061021057610210610518565b6020026020010151836102ce565b6001016101f2565b5092915050565b3360009081526001602052604081205460ff1661025c5760405162461bcd60e51b81526004016101a1906104e1565b6001600054116102bd5760405162461bcd60e51b815260206004820152602660248201527f4174206c656173742032206f776e65727320697320726571756972656420746f604482015265206c6561766560d01b60648201526084016101a1565b6102c83360006102ce565b50600190565b6001600160a01b03821661033c5760405162461bcd60e51b815260206004820152602f60248201527f53696d706c696669204f776e6572536869703a2027746172676574272070617260448201526e616d6574657220697320656d70747960881b60648201526084016101a1565b80610377576001600160a01b0382166000908152600160205260408120805460ff191690558054818061036e83610544565b919050556103ae565b6001600160a01b03821660009081526001602081905260408220805460ff19168217905581549091806103a98361055b565b919050555b50505050565b6000602082840312156103c657600080fd5b5035919050565b80356001600160a01b03811681146101b957600080fd5b6000602082840312156103f657600080fd5b6103ff826103cd565b9392505050565b634e487b7160e01b600052604160045260246000fd5b6000602080838503121561042f57600080fd5b823567ffffffffffffffff8082111561044757600080fd5b818501915085601f83011261045b57600080fd5b81358181111561046d5761046d610406565b8060051b604051601f19603f8301168101818110858211171561049257610492610406565b6040529182528482019250838101850191888311156104b057600080fd5b938501935b828510156104d5576104c6856103cd565b845293850193928501926104b5565b98975050505050505050565b6020808252601d908201527f4f6f70212043616c6c6572206973206e6f74207265636f676e697a6564000000604082015260600190565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b6000816105535761055361052e565b506000190190565b60006001820161056d5761056d61052e565b506001019056fea26469706673582212207aecedb801ff2a46344b20b11e2d0b1e272b1c21e04b0ca75db9635dd47a677864736f6c63430008180033",
+  "devdoc": {
+    "author": "Simplifi (Bobeu)",
+    "kind": "dev",
+    "methods": {
+      "getOwner(uint256)": {
+        "details": "Returns owner variable. Can be called externally by contracts.",
+        "params": {
+          "ownerId": ": Owner Id. "
+        }
+      },
+      "isOwner(address)": {
+        "details": "Check if target is an owner.",
+        "params": {
+          "target": ": Target address."
+        }
+      },
+      "removeOwner(address)": {
+        "details": "Remove an address as owner.",
+        "params": {
+          "target": ": Target address"
+        }
+      },
+      "renounceOwnerShip()": {
+        "details": "An owner can renounce their ownership. This however will not leave the contract empty without an owner. There must be at least one owner left."
+      },
+      "setPermission(address[])": {
+        "details": "Add a new owner address",
+        "params": {
+          "newOwners": ": New owners"
+        }
+      }
+    },
+    "title": "OwnerShip ",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "owners(uint256)": {
+        "notice": "Mapping of ownersCount to addresses. A valid id will return a mapped owner."
+      },
+      "ownersCount()": {
+        "notice": "Number of owners."
+      },
+      "removeOwner(address)": {
+        "notice": "Only address with owner permission can remove another owner."
+      },
+      "renounceOwnerShip()": {
+        "notice": "Only address with owner permission can renounce ownership."
+      },
+      "setPermission(address[])": {
+        "notice": "Only address with owner permission can add another owner."
+      }
+    },
+    "notice": "Standalone contract for managing ownership in Simplifi protocol.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 4000,
+        "contract": "contracts/implementations/OwnerShip.sol:OwnerShip",
+        "label": "ownersCount",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 4005,
+        "contract": "contracts/implementations/OwnerShip.sol:OwnerShip",
+        "label": "_isOwner",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 4010,
+        "contract": "contracts/implementations/OwnerShip.sol:OwnerShip",
+        "label": "owners",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_address)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_address)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

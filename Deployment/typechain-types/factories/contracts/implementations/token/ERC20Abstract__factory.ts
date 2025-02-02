@@ -58,12 +58,22 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "ManagerAddressIsZero",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "NoPreviousLockDetected",
     type: "error",
   },
   {
     inputs: [],
     name: "NotCallable",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotPermittedToCall",
     type: "error",
   },
   {

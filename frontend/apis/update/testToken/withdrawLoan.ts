@@ -1,7 +1,7 @@
 import { Address, Config } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { getTokenAddress  } from "../../utils/getTokenAddress";
+import { getContractData  } from "../../utils/getContractData";
 import getAllowance from "./getAllowance";
 import BigNumber from "bignumber.js";
 import { formatEther } from "viem";
@@ -10,7 +10,7 @@ import { errorMessage } from "../formatError";
 
 export default async function withdrawLoan(args: TransferFromParam) {
   const { callback, config, account: spender, bank: owner} = args;
-  const address = getTokenAddress();
+  const {token: address} = getContractData(config.state.chainId);
   const allowance = await getAllowance({config, account: spender, spender, owner });
   if(new BigNumber(allowance.toString()).gt(0)) {
     await simulateContract(config, {

@@ -53,7 +53,7 @@ export declare namespace IBank {
   ] & { access: boolean; collateral: IBank.CollateralStructOutput };
 }
 
-export declare namespace Common {
+export declare namespace C3 {
   export type ContributorStruct = {
     durOfChoice: BigNumberish;
     expInterest: BigNumberish;
@@ -142,7 +142,7 @@ export interface BankInterface extends Interface {
       BigNumberish,
       BigNumberish,
       boolean,
-      Common.ContributorStruct[],
+      C3.ContributorStruct[],
       boolean,
       AddressLike,
       BigNumberish
@@ -288,7 +288,7 @@ export interface Bank extends BaseContract {
       debt: BigNumberish,
       attestedInitialBal: BigNumberish,
       allGF: boolean,
-      cData: Common.ContributorStruct[],
+      cData: C3.ContributorStruct[],
       isSwapped: boolean,
       defaulted: AddressLike,
       rId: BigNumberish
@@ -377,7 +377,7 @@ export interface Bank extends BaseContract {
       debt: BigNumberish,
       attestedInitialBal: BigNumberish,
       allGF: boolean,
-      cData: Common.ContributorStruct[],
+      cData: C3.ContributorStruct[],
       isSwapped: boolean,
       defaulted: AddressLike,
       rId: BigNumberish

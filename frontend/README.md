@@ -45,3 +45,5 @@ a5e40120-e164-4ea0-af53-25bb3a2b4b38 gaspolicy Id -->
 <!-- websocket -->
 <!-- wss://crossfi-mainnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->
 <!-- wss://crossfi-testnet.g.alchemy.com/v2/gy921BCbc7DSi3AEkGezAXkNB5RgpTbL -->
+
+<!-- Creating a pool costs around 0.0528 Celo eq to $0.03 on Celo blockchain -->

@@ -6,12 +6,12 @@ dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, } = deployments;
-	const {deployer, diaOracle} = await getNamedAccounts();
+	const {deployer, oracle} = await getNamedAccounts();
   const serviceRate = 10; // 0.1%
   const minContribution = 1_000_000_000_000_000;
-  const setUpFee = 0;
+  // const setUpFee = 0;
 
-  console.log("Dia Oracle: ", diaOracle);
+  console.log("Oracle: ", oracle);
   /**
    * Deploy Ownership Manager
    */
@@ -56,19 +56,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   /**
    * Deploy FactoryLib
    */
-  const factoryLibV2 = await deploy("FactoryLibV2", {
+  const factoryLibV3 = await deploy("FactoryLibV3", {
     from: deployer,
     args: [],
     log: true,
   });
-  console.log(`factoryLibV2 deployed to: ${factoryLibV2.address}`);
+  console.log(`factoryLibV3 deployed to: ${factoryLibV3.address}`);
   
   /**
    * Deploy Strategy Manager
    */
   const factory = await deploy("Factory", {
     libraries: {
-      FactoryLib: factoryLibV2.address
+      FactoryLib: factoryLibV3.address
     },
     from: deployer,
     args: [
@@ -78,7 +78,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       assertMgr.address,
       bankFactory.address,
       ownershipManager.address,
-      diaOracle
+      oracle
     ],
     log: true,
   });

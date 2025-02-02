@@ -1,5 +1,5 @@
 import { Address, WagmiConfig } from "@/interfaces";
-import { getFactoryAddress } from "../utils/contractAddress";
+import { getContractData } from "../utils/getContractData";
 import { readContract } from "wagmi/actions";
 import { getCurrentDebtAbi } from "../abis";
 
@@ -7,7 +7,7 @@ export default async function getCurrentDebt(args: {config: WagmiConfig, unit: b
   const { config, unit, account } = args;
   return await readContract(config, {
     abi: getCurrentDebtAbi,
-    address: getFactoryAddress(), 
+    address: getContractData(config.state.chainId).factory, 
     functionName: "getCurrentDebt",
     args: [unit, account]
   });  

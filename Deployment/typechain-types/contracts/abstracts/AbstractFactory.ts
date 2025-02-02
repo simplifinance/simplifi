@@ -23,19 +23,16 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export declare namespace Counters {
-  export type CounterStruct = { _value: BigNumberish };
-
-  export type CounterStructOutput = [_value: bigint] & { _value: bigint };
-}
-
-export declare namespace Common {
+export declare namespace C3 {
   export type UintsStruct = {
     quorum: BigNumberish;
     selector: BigNumberish;
     colCoverage: BigNumberish;
     duration: BigNumberish;
     intRate: BigNumberish;
+    cSlot: BigNumberish;
+    allGh: BigNumberish;
+    userCount: BigNumberish;
   };
 
   export type UintsStructOutput = [
@@ -43,13 +40,19 @@ export declare namespace Common {
     selector: bigint,
     colCoverage: bigint,
     duration: bigint,
-    intRate: bigint
+    intRate: bigint,
+    cSlot: bigint,
+    allGh: bigint,
+    userCount: bigint
   ] & {
     quorum: bigint;
     selector: bigint;
     colCoverage: bigint;
     duration: bigint;
     intRate: bigint;
+    cSlot: bigint;
+    allGh: bigint;
+    userCount: bigint;
   };
 
   export type Uint256sStruct = {
@@ -91,6 +94,31 @@ export declare namespace Common {
     admin: string
   ] & { asset: string; lastPaid: string; bank: string; admin: string };
 
+  export type PoolStruct = {
+    uints: C3.UintsStruct;
+    uint256s: C3.Uint256sStruct;
+    addrs: C3.AddressesStruct;
+    status: BigNumberish;
+    router: BigNumberish;
+    stage: BigNumberish;
+  };
+
+  export type PoolStructOutput = [
+    uints: C3.UintsStructOutput,
+    uint256s: C3.Uint256sStructOutput,
+    addrs: C3.AddressesStructOutput,
+    status: bigint,
+    router: bigint,
+    stage: bigint
+  ] & {
+    uints: C3.UintsStructOutput;
+    uint256s: C3.Uint256sStructOutput;
+    addrs: C3.AddressesStructOutput;
+    status: bigint;
+    router: bigint;
+    stage: bigint;
+  };
+
   export type ContributorStruct = {
     durOfChoice: BigNumberish;
     expInterest: BigNumberish;
@@ -122,59 +150,6 @@ export declare namespace Common {
     sentQuota: boolean;
   };
 
-  export type PoolStruct = {
-    userCount: Counters.CounterStruct;
-    uints: Common.UintsStruct;
-    uint256s: Common.Uint256sStruct;
-    addrs: Common.AddressesStruct;
-    allGh: BigNumberish;
-    cData: Common.ContributorStruct[];
-    router: BigNumberish;
-    stage: BigNumberish;
-  };
-
-  export type PoolStructOutput = [
-    userCount: Counters.CounterStructOutput,
-    uints: Common.UintsStructOutput,
-    uint256s: Common.Uint256sStructOutput,
-    addrs: Common.AddressesStructOutput,
-    allGh: bigint,
-    cData: Common.ContributorStructOutput[],
-    router: bigint,
-    stage: bigint
-  ] & {
-    userCount: Counters.CounterStructOutput;
-    uints: Common.UintsStructOutput;
-    uint256s: Common.Uint256sStructOutput;
-    addrs: Common.AddressesStructOutput;
-    allGh: bigint;
-    cData: Common.ContributorStructOutput[];
-    router: bigint;
-    stage: bigint;
-  };
-
-  export type CreatePoolReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct;
-  };
-
-  export type CreatePoolReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput
-  ] & { pool: Common.PoolStructOutput; cData: Common.ContributorStructOutput };
-
-  export type CommonEventDataStruct = {
-    pool: Common.PoolStruct;
-    debtBal: BigNumberish;
-    colBal: BigNumberish;
-  };
-
-  export type CommonEventDataStructOutput = [
-    pool: Common.PoolStructOutput,
-    debtBal: bigint,
-    colBal: bigint
-  ] & { pool: Common.PoolStructOutput; debtBal: bigint; colBal: bigint };
-
   export type SlotStruct = {
     value: BigNumberish;
     isMember: boolean;
@@ -204,12 +179,15 @@ export declare namespace Common {
     creator: bigint;
   };
 
-  export type UnitStruct = { isInitialized: boolean; status: BigNumberish };
-
-  export type UnitStructOutput = [isInitialized: boolean, status: bigint] & {
-    isInitialized: boolean;
-    status: bigint;
+  export type ReadDataReturnValueStruct = {
+    pool: C3.PoolStruct;
+    cData: C3.ContributorStruct[];
   };
+
+  export type ReadDataReturnValueStructOutput = [
+    pool: C3.PoolStructOutput,
+    cData: C3.ContributorStructOutput[]
+  ] & { pool: C3.PoolStructOutput; cData: C3.ContributorStructOutput[] };
 }
 
 export declare namespace IFactory {
@@ -277,7 +255,7 @@ export interface AbstractFactoryInterface extends Interface {
       | "analytics"
       | "createPermissionedPool"
       | "createPermissionlessPool"
-      | "creationFee"
+      | "diaOracleAddress"
       | "enquireLiquidation"
       | "getBalances"
       | "getCollaterlQuote"
@@ -303,21 +281,20 @@ export interface AbstractFactoryInterface extends Interface {
       | "removeLiquidityPool"
       | "setContractData"
       | "setMinimumLiquidityPerProvider"
+      | "setOracleAddress"
       | "setOwnershipManager"
       | "unpause"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
-      | "BandCreated"
       | "Cancellation"
       | "GetFinanced"
       | "Liquidated"
-      | "NewMemberAdded"
+      | "NewContributorAdded"
       | "Paused"
       | "Payback"
-      | "Rekeyed"
-      | "RoundUp"
+      | "PoolCreated"
       | "Unpaused"
   ): EventFragment;
 
@@ -345,7 +322,7 @@ export interface AbstractFactoryInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "creationFee",
+    functionFragment: "diaOracleAddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -443,6 +420,10 @@ export interface AbstractFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setOracleAddress",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setOwnershipManager",
     values: [AddressLike]
   ): string;
@@ -458,7 +439,7 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "creationFee",
+    functionFragment: "diaOracleAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -526,22 +507,14 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setOracleAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setOwnershipManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-}
-
-export namespace BandCreatedEvent {
-  export type InputTuple = [arg0: Common.CreatePoolReturnValueStruct];
-  export type OutputTuple = [arg0: Common.CreatePoolReturnValueStructOutput];
-  export interface OutputObject {
-    arg0: Common.CreatePoolReturnValueStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace CancellationEvent {
@@ -557,10 +530,10 @@ export namespace CancellationEvent {
 }
 
 export namespace GetFinancedEvent {
-  export type InputTuple = [arg0: Common.CommonEventDataStruct];
-  export type OutputTuple = [arg0: Common.CommonEventDataStructOutput];
+  export type InputTuple = [arg0: C3.PoolStruct];
+  export type OutputTuple = [arg0: C3.PoolStructOutput];
   export interface OutputObject {
-    arg0: Common.CommonEventDataStructOutput;
+    arg0: C3.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -569,10 +542,10 @@ export namespace GetFinancedEvent {
 }
 
 export namespace LiquidatedEvent {
-  export type InputTuple = [arg0: Common.CommonEventDataStruct];
-  export type OutputTuple = [arg0: Common.CommonEventDataStructOutput];
+  export type InputTuple = [arg0: C3.PoolStruct];
+  export type OutputTuple = [arg0: C3.PoolStructOutput];
   export interface OutputObject {
-    arg0: Common.CommonEventDataStructOutput;
+    arg0: C3.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -580,11 +553,11 @@ export namespace LiquidatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace NewMemberAddedEvent {
-  export type InputTuple = [arg0: Common.CommonEventDataStruct];
-  export type OutputTuple = [arg0: Common.CommonEventDataStructOutput];
+export namespace NewContributorAddedEvent {
+  export type InputTuple = [arg0: C3.PoolStruct];
+  export type OutputTuple = [arg0: C3.PoolStructOutput];
   export interface OutputObject {
-    arg0: Common.CommonEventDataStructOutput;
+    arg0: C3.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -605,10 +578,10 @@ export namespace PausedEvent {
 }
 
 export namespace PaybackEvent {
-  export type InputTuple = [arg0: Common.CommonEventDataStruct];
-  export type OutputTuple = [arg0: Common.CommonEventDataStructOutput];
+  export type InputTuple = [arg0: C3.PoolStruct];
+  export type OutputTuple = [arg0: C3.PoolStructOutput];
   export interface OutputObject {
-    arg0: Common.CommonEventDataStructOutput;
+    arg0: C3.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -616,25 +589,11 @@ export namespace PaybackEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace RekeyedEvent {
-  export type InputTuple = [arg0: AddressLike, arg1: AddressLike];
-  export type OutputTuple = [arg0: string, arg1: string];
+export namespace PoolCreatedEvent {
+  export type InputTuple = [arg0: C3.PoolStruct];
+  export type OutputTuple = [arg0: C3.PoolStructOutput];
   export interface OutputObject {
-    arg0: string;
-    arg1: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace RoundUpEvent {
-  export type InputTuple = [arg0: BigNumberish, arg1: Common.PoolStruct];
-  export type OutputTuple = [arg0: bigint, arg1: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: bigint;
-    arg1: Common.PoolStructOutput;
+    arg0: C3.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -736,25 +695,19 @@ export interface AbstractFactory extends BaseContract {
     "nonpayable"
   >;
 
-  creationFee: TypedContractMethod<[], [bigint], "view">;
+  diaOracleAddress: TypedContractMethod<[], [string], "view">;
 
   enquireLiquidation: TypedContractMethod<
     [unit: BigNumberish],
     [
-      [
-        Common.ContributorStructOutput,
-        boolean,
-        bigint,
-        Common.SlotStructOutput,
-        string
-      ]
+      [C3.ContributorStructOutput, boolean, bigint, C3.SlotStructOutput, string]
     ],
     "view"
   >;
 
   getBalances: TypedContractMethod<
     [unit: BigNumberish],
-    [Common.BalancesStructOutput],
+    [C3.BalancesStructOutput],
     "view"
   >;
 
@@ -786,25 +739,25 @@ export interface AbstractFactory extends BaseContract {
 
   getPoint: TypedContractMethod<
     [user: AddressLike],
-    [Common.PointStructOutput],
+    [C3.PointStructOutput],
     "view"
   >;
 
   getPoolData: TypedContractMethod<
     [unitId: BigNumberish],
-    [Common.PoolStructOutput],
+    [C3.ReadDataReturnValueStructOutput],
     "view"
   >;
 
   getProfile: TypedContractMethod<
     [unit: BigNumberish, user: AddressLike],
-    [Common.ContributorStructOutput],
+    [C3.ContributorStructOutput],
     "view"
   >;
 
   getRecord: TypedContractMethod<
-    [uId: BigNumberish],
-    [Common.PoolStructOutput],
+    [rId: BigNumberish],
+    [C3.ReadDataReturnValueStructOutput],
     "view"
   >;
 
@@ -812,15 +765,11 @@ export interface AbstractFactory extends BaseContract {
 
   getSlot: TypedContractMethod<
     [user: AddressLike, unit: BigNumberish],
-    [Common.SlotStructOutput],
+    [C3.SlotStructOutput],
     "view"
   >;
 
-  getStatus: TypedContractMethod<
-    [unit: BigNumberish],
-    [Common.UnitStructOutput],
-    "view"
-  >;
+  getStatus: TypedContractMethod<[unit: BigNumberish], [string], "view">;
 
   joinAPool: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
 
@@ -867,6 +816,12 @@ export interface AbstractFactory extends BaseContract {
 
   setMinimumLiquidityPerProvider: TypedContractMethod<
     [minLiquidity: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  setOracleAddress: TypedContractMethod<
+    [newOracleAddr: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -926,20 +881,14 @@ export interface AbstractFactory extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "creationFee"
-  ): TypedContractMethod<[], [bigint], "view">;
+    nameOrSignature: "diaOracleAddress"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "enquireLiquidation"
   ): TypedContractMethod<
     [unit: BigNumberish],
     [
-      [
-        Common.ContributorStructOutput,
-        boolean,
-        bigint,
-        Common.SlotStructOutput,
-        string
-      ]
+      [C3.ContributorStructOutput, boolean, bigint, C3.SlotStructOutput, string]
     ],
     "view"
   >;
@@ -947,7 +896,7 @@ export interface AbstractFactory extends BaseContract {
     nameOrSignature: "getBalances"
   ): TypedContractMethod<
     [unit: BigNumberish],
-    [Common.BalancesStructOutput],
+    [C3.BalancesStructOutput],
     "view"
   >;
   getFunction(
@@ -979,30 +928,26 @@ export interface AbstractFactory extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getPoint"
-  ): TypedContractMethod<
-    [user: AddressLike],
-    [Common.PointStructOutput],
-    "view"
-  >;
+  ): TypedContractMethod<[user: AddressLike], [C3.PointStructOutput], "view">;
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
     [unitId: BigNumberish],
-    [Common.PoolStructOutput],
+    [C3.ReadDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getProfile"
   ): TypedContractMethod<
     [unit: BigNumberish, user: AddressLike],
-    [Common.ContributorStructOutput],
+    [C3.ContributorStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getRecord"
   ): TypedContractMethod<
-    [uId: BigNumberish],
-    [Common.PoolStructOutput],
+    [rId: BigNumberish],
+    [C3.ReadDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
@@ -1012,16 +957,12 @@ export interface AbstractFactory extends BaseContract {
     nameOrSignature: "getSlot"
   ): TypedContractMethod<
     [user: AddressLike, unit: BigNumberish],
-    [Common.SlotStructOutput],
+    [C3.SlotStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getStatus"
-  ): TypedContractMethod<
-    [unit: BigNumberish],
-    [Common.UnitStructOutput],
-    "view"
-  >;
+  ): TypedContractMethod<[unit: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "joinAPool"
   ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
@@ -1075,19 +1016,15 @@ export interface AbstractFactory extends BaseContract {
     nameOrSignature: "setMinimumLiquidityPerProvider"
   ): TypedContractMethod<[minLiquidity: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setOracleAddress"
+  ): TypedContractMethod<[newOracleAddr: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setOwnershipManager"
   ): TypedContractMethod<[newManager: AddressLike], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
 
-  getEvent(
-    key: "BandCreated"
-  ): TypedContractEvent<
-    BandCreatedEvent.InputTuple,
-    BandCreatedEvent.OutputTuple,
-    BandCreatedEvent.OutputObject
-  >;
   getEvent(
     key: "Cancellation"
   ): TypedContractEvent<
@@ -1110,11 +1047,11 @@ export interface AbstractFactory extends BaseContract {
     LiquidatedEvent.OutputObject
   >;
   getEvent(
-    key: "NewMemberAdded"
+    key: "NewContributorAdded"
   ): TypedContractEvent<
-    NewMemberAddedEvent.InputTuple,
-    NewMemberAddedEvent.OutputTuple,
-    NewMemberAddedEvent.OutputObject
+    NewContributorAddedEvent.InputTuple,
+    NewContributorAddedEvent.OutputTuple,
+    NewContributorAddedEvent.OutputObject
   >;
   getEvent(
     key: "Paused"
@@ -1131,18 +1068,11 @@ export interface AbstractFactory extends BaseContract {
     PaybackEvent.OutputObject
   >;
   getEvent(
-    key: "Rekeyed"
+    key: "PoolCreated"
   ): TypedContractEvent<
-    RekeyedEvent.InputTuple,
-    RekeyedEvent.OutputTuple,
-    RekeyedEvent.OutputObject
-  >;
-  getEvent(
-    key: "RoundUp"
-  ): TypedContractEvent<
-    RoundUpEvent.InputTuple,
-    RoundUpEvent.OutputTuple,
-    RoundUpEvent.OutputObject
+    PoolCreatedEvent.InputTuple,
+    PoolCreatedEvent.OutputTuple,
+    PoolCreatedEvent.OutputObject
   >;
   getEvent(
     key: "Unpaused"
@@ -1153,17 +1083,6 @@ export interface AbstractFactory extends BaseContract {
   >;
 
   filters: {
-    "BandCreated(tuple)": TypedContractEvent<
-      BandCreatedEvent.InputTuple,
-      BandCreatedEvent.OutputTuple,
-      BandCreatedEvent.OutputObject
-    >;
-    BandCreated: TypedContractEvent<
-      BandCreatedEvent.InputTuple,
-      BandCreatedEvent.OutputTuple,
-      BandCreatedEvent.OutputObject
-    >;
-
     "Cancellation(uint256)": TypedContractEvent<
       CancellationEvent.InputTuple,
       CancellationEvent.OutputTuple,
@@ -1197,15 +1116,15 @@ export interface AbstractFactory extends BaseContract {
       LiquidatedEvent.OutputObject
     >;
 
-    "NewMemberAdded(tuple)": TypedContractEvent<
-      NewMemberAddedEvent.InputTuple,
-      NewMemberAddedEvent.OutputTuple,
-      NewMemberAddedEvent.OutputObject
+    "NewContributorAdded(tuple)": TypedContractEvent<
+      NewContributorAddedEvent.InputTuple,
+      NewContributorAddedEvent.OutputTuple,
+      NewContributorAddedEvent.OutputObject
     >;
-    NewMemberAdded: TypedContractEvent<
-      NewMemberAddedEvent.InputTuple,
-      NewMemberAddedEvent.OutputTuple,
-      NewMemberAddedEvent.OutputObject
+    NewContributorAdded: TypedContractEvent<
+      NewContributorAddedEvent.InputTuple,
+      NewContributorAddedEvent.OutputTuple,
+      NewContributorAddedEvent.OutputObject
     >;
 
     "Paused(address)": TypedContractEvent<
@@ -1230,26 +1149,15 @@ export interface AbstractFactory extends BaseContract {
       PaybackEvent.OutputObject
     >;
 
-    "Rekeyed(address,address)": TypedContractEvent<
-      RekeyedEvent.InputTuple,
-      RekeyedEvent.OutputTuple,
-      RekeyedEvent.OutputObject
+    "PoolCreated(tuple)": TypedContractEvent<
+      PoolCreatedEvent.InputTuple,
+      PoolCreatedEvent.OutputTuple,
+      PoolCreatedEvent.OutputObject
     >;
-    Rekeyed: TypedContractEvent<
-      RekeyedEvent.InputTuple,
-      RekeyedEvent.OutputTuple,
-      RekeyedEvent.OutputObject
-    >;
-
-    "RoundUp(uint256,tuple)": TypedContractEvent<
-      RoundUpEvent.InputTuple,
-      RoundUpEvent.OutputTuple,
-      RoundUpEvent.OutputObject
-    >;
-    RoundUp: TypedContractEvent<
-      RoundUpEvent.InputTuple,
-      RoundUpEvent.OutputTuple,
-      RoundUpEvent.OutputObject
+    PoolCreated: TypedContractEvent<
+      PoolCreatedEvent.InputTuple,
+      PoolCreatedEvent.OutputTuple,
+      PoolCreatedEvent.OutputObject
     >;
 
     "Unpaused(address)": TypedContractEvent<

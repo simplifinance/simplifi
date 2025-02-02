@@ -6,6 +6,9 @@ import { MsgSender, OwnerShip } from "../implementations/OwnerShip.sol";
 import { IOwnerShip } from "../apis/IOwnerShip.sol";
 
 abstract contract OnlyOwner is MsgSender {
+    error ManagerAddressIsZero();
+    error NotPermittedToCall();
+
     address public ownershipManager;
 
     constructor(address _ownershipManager)
@@ -17,12 +20,11 @@ abstract contract OnlyOwner is MsgSender {
      * @notice Caller must have owner role before execeution can proceed.
      * The 'errorMessage' argument can be used to return error specific to 
      * a context e.g function call. 
-     * @param errorMessage : Custom error message
      */
-    modifier onlyOwner(string memory errorMessage) {
+    modifier onlyOwner {
         address mgr = ownershipManager;
-        require(mgr != address(0), "OnlyOwner: Manager not set");
-        require(IOwnerShip(mgr).isOwner(_msgSender()), errorMessage);
+        if(mgr == address(0)) revert ManagerAddressIsZero();
+        if(!IOwnerShip(mgr).isOwner(_msgSender())) revert NotPermittedToCall();
         _;
     }
 
@@ -42,7 +44,7 @@ abstract contract OnlyOwner is MsgSender {
         address newManager
     )
         public
-        onlyOwner("OnlyOwner: Not permitted")
+        onlyOwner
         returns(bool)
     {
         _setOwnershipManager(newManager);

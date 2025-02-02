@@ -7,27 +7,9 @@ import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/uti
 import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
 import { SafeCallERC20, IERC20 } from "../../libraries/SafeCallERC20.sol";
 import { IBank } from "../../apis/IBank.sol";
-import { Common } from "../../apis/Common.sol";
+import { C3 } from "../../apis/C3.sol";
 import { OnlyOwner } from "../../abstracts/OnlyOwner.sol";
 
-// Stores and tracks total USD locked in an epoch
-// When stage in: 
-/**
- *  CREATE & JOIN: 
- *      - From Factory, we transfer USD to bank, then inform bank to keep track of it against the epoch.
- *      Ex. Bob and Alice joined an epoch with unit contribution of $2, quorum is 2, expected contribution will be $4 hence $4 is sent
- *      to Stretegy.
- *  GET-FINANCE:
- *      - Withdraw USD to the next contributor. i.e $4 is sent to a contributor.
- *      - Takes fee if applicable, and forward to 'feeReceiver'.
- *      - Retrieves collateral from the borrower (in XFI) to corresponding bank.
- *  PAYBACK:
- *      - Return USD (with interest) to bank. i.e Bob returned $4 plus interest accrued.
- *      - Forward collateral balance to the contributor.
- *      - If all the contributors have GF:
- *            - Divide total returns (i.e USD) in an epoch by number of contributors.
- *            - Set allowance to withdraw the result for each contributor.
-*/
 contract Bank is IBank, OnlyOwner, ReentrancyGuard {
   using SafeMath for uint;
 
@@ -72,7 +54,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
   */
   function addUp(address user, uint rId) 
     external
-    onlyOwner("Bank - addUp: Not permitted")
+    onlyOwner
   {
     clients ++;
     _registerClient(user, rId);
@@ -106,7 +88,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     IERC20(asset).approve(to, amount);
   }
 
-  function _tryRoundUp(address asset, Common.Contributor[] memory cData) internal {
+  function _tryRoundUp(address asset, C3.Contributor[] memory cData) internal {
     uint erc20bBalances = IERC20(asset).balanceOf(address(this));
     uint fees = aggregateFee;
     if(erc20bBalances > fees) {
@@ -135,7 +117,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
   ) 
     external 
     payable 
-    onlyOwner("Bank: Not Permitted")
+    onlyOwner
     returns(uint) 
   {
     assert(asset != address(0) && user != address(0));
@@ -172,11 +154,11 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     uint256 debt,
     uint256 attestedInitialBal,
     bool allGF, 
-    Common.Contributor[] memory cData,
+    C3.Contributor[] memory cData,
     bool isSwapped,
     address defaulted,
     uint rId
-  ) external payable onlyOwner("Bank: Not Permitted"){
+  ) external payable onlyOwner{
     assert(IERC20(asset).balanceOf(address(this)) >= (attestedInitialBal + debt));
     Collateral memory col = collateralBalances[user][rId];
     if(isSwapped) {
@@ -244,7 +226,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     address asset, 
     uint erc20Balances,
     uint rId
-  ) external onlyOwner("Bank: Not permitted")  {
+  ) external onlyOwner  {
     _setAllowance(user, asset, erc20Balances);
     _unRegisterClient(user, rId);
   }
@@ -255,7 +237,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
   ) 
     external 
     nonReentrant 
-    onlyOwner("Bank: Not permitted") 
+    onlyOwner
   {
     uint fees = aggregateFee;
     if(fees == 0) revert NoFeeToWithdraw();
