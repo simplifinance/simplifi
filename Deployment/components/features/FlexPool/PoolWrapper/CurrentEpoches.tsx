@@ -6,27 +6,30 @@ import { Loading, NoPoolFound } from "./Nulls";
 import { FlexCard } from "../update/FlexCard";
 import useAppStorage from "@/components/StateContextProvider/useAppStorage";
 import { toBN } from "@/utilities";
+import { FuncTag } from "@/constants";
 
 const CurrentPool = (props: { index: number, unitId: bigint, totalPool: number}) => {
     const { index, unitId, totalPool } = props;
     const { chainId } = useAccount();
     const { data, isPending } = useReadContract({ ...getReadFunctions({chainId}).readPoolConfig({unitId}) });
 
-    if(!data || data?.cData.length === 0) {
+    if(!data) {
       return ( <NoPoolFound />);
     }
-    return(
-      <Grid item xs={12} sm={6} md={4} lg={3}>
-        <motion.button
-          initial={{opacity: 0}}
-          animate={{opacity: [0, 1]}}
-          transition={{duration: '0.5', delay: index/totalPool}}
-          className='w-full rounded-md cursor-pointer' 
-        >
-          { isPending? <Loading /> : <FlexCard { ...{...data! }} /> }
-        </motion.button>
-      </Grid>
-    );
+    if(data?.cData.length > 0){
+      return(
+        <Grid item xs={12} sm={6} md={4} lg={3}>
+          <motion.button
+            initial={{opacity: 0}}
+            animate={{opacity: [0, 1]}}
+            transition={{duration: '0.5', delay: index/totalPool}}
+            className='w-full rounded-md cursor-pointer' 
+          >
+            { isPending? <Loading /> : data?.pool.uints.quorum === 0n? null : <FlexCard { ...{...data! }} /> }
+          </motion.button>
+        </Grid>
+      );
+    }
   }
   
 export const CurrentEpoches:React.FC = () => {

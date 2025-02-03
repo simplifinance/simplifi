@@ -11,21 +11,23 @@ const PastPools = (props: { index: number, rId: bigint, totalPool: number}) => {
   const { index, rId, totalPool } = props;
   const { chainId } = useAccount();
   const { data, isPending } = useReadContract({ ...getReadFunctions({chainId}).readRecordConfig({rId}) });
-  if(!data || data?.cData.length === 0) {
+  if(!data) {
     return ( <NoPoolFound />);
   }
-  return(
-    <Grid item xs={12} sm={6} md={4} lg={3}>
-      <motion.button
-        initial={{opacity: 0}}
-        animate={{opacity: [0, 1]}}
-        transition={{duration: '0.5', delay: index/totalPool}}
-        className='w-full rounded-md cursor-pointer' 
-      >
-        { isPending? <Loading /> : <FlexCard { ...{...data! }} /> }
-      </motion.button>
-    </Grid>
-  );
+  if(data?.cData.length > 0) {
+    return(
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <motion.button
+          initial={{opacity: 0}}
+          animate={{opacity: [0, 1]}}
+          transition={{duration: '0.5', delay: index/totalPool}}
+          className='w-full rounded-md cursor-pointer' 
+        >
+          { isPending? <Loading /> : <FlexCard { ...{...data! }} /> }
+        </motion.button>
+      </Grid>
+    );
+  }
 }
   
 export const PastEpoches:React.FC = () => {

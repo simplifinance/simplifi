@@ -22,9 +22,10 @@ export const PopUp = (props: PopUpProps) => {
                 },
             }}
             hidden={!modalOpen}
+            // className="relative"
         >
             <Fade in={modalOpen}>
-                <Box sx={{...commonStyle(),}}>
+                <Box className="absolute top-[50%] left-0 w-full translate-[-50%] translate-y-[-50%]">
                     {children}
                 </Box>
             </Fade>

@@ -140,7 +140,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
 
     return(
         <React.Fragment>
-            <div className={`relative ${stage_toNumber === FuncTag.ENDED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
+            <div className={`relative ${stage_toNumber === FuncTag.ENDED || stage_toNumber === FuncTag.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
                 <div className="flex gap-2 items-center ">
                     <button onClick={() => showPermissionDetail(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
                     <div className="relative ">

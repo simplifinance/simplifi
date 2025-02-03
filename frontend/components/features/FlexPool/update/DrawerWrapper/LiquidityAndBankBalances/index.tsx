@@ -119,7 +119,7 @@ export default function LiquidityAndBankBalances({stage, isCancelledPool, handle
                 }
             </div>
             <div className={`${flexSpread}`}>
-                <h1>Liquidity Bal</h1>
+                <h1>Withdrawables</h1>
                 {
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(quota || 0n)).decimalPlaces(2).toString()} ${symbol || ''}`}</h1>
                 }
