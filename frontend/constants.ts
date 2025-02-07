@@ -1,6 +1,7 @@
 import { zeroAddress } from 'viem';
 import { Analytics, FormattedData, LiquidityPool, Profile } from './interfaces';
 import BigNumber from 'bignumber.js';
+import type { SafeVersion } from '@safe-global/types-kit';
 
 export enum FuncTag { 
   JOIN,
@@ -10,6 +11,7 @@ export enum FuncTag {
   CANCELED,
   ENDED
 }
+export const SAFE_VERSION : SafeVersion = '1.4.1';
 export enum ROUTER { PERMISSIONLESS, PERMISSIONED }
 export const DRAWERWIDTH = 240;
 export const ZERO_ADDR = zeroAddress;
