@@ -4,10 +4,10 @@ import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/ra
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 import { ReactNode } from "react";
-import { Chain, fallback } from "viem";
+import { Chain } from "viem";
 import { mock, } from 'wagmi/connectors';
 import { UserRejectedRequestError } from "viem";
-import { celoAlfajores } from 'wagmi/chains';
+// import { celoAlfajores } from 'wagmi/chains';
 
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
 if (!projectId) throw new Error('Project ID is undefined');
@@ -111,7 +111,7 @@ const config = getDefaultConfig({
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
   appUrl: 'https://simplifi-glxp.vercel.app',
-  chains: [crossFiTestnet, crossFiMainnet, celoAlfajores],
+  chains: [ crossFiTestnet, crossFiMainnet ],
   
 });
 
