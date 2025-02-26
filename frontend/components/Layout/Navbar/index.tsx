@@ -20,7 +20,7 @@ export default function Navbar() {
             </Link>
             <Typed 
               strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
-              className='text-red-400 font-extrabold bg-gray1 px-3 py-2 rounded-full text-sm'
+              className='text-orange-400 font-extrabold bg-gray1 px-3 py-2 rounded-full text-sm'
               typeSpeed={100} backSpeed={100} loop showCursor={false}              
             />                     
           </div>

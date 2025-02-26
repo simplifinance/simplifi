@@ -6,13 +6,14 @@ export default function OnboardUser() {
 
     return(
         <OnboardWrapperDiv>
-            <h1>Onboard video will be ready shortly. Please bear with us</h1>
+            <h1 className="text-orange-300">Our AI Agent is currently in development. please check back later</h1>
 
             <ButtonTemplate 
                 buttonAContent='Back'
                 buttonBContent="I'm done" 
                 disableButtonA={false} 
                 disableButtonB={false}
+                overrideClassName="text-orange-200"
             />
         </OnboardWrapperDiv>
     );

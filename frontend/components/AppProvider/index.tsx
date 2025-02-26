@@ -7,9 +7,10 @@ import { ReactNode } from "react";
 import { Chain } from "viem";
 import { mock, } from 'wagmi/connectors';
 import { UserRejectedRequestError } from "viem";
-// import { celoAlfajores } from 'wagmi/chains';
+import { celoAlfajores } from 'wagmi/chains';
 
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
+const testAlchemyWebSocket = str(process.env.NEXT_PUBLIC_ALCHEMY_WEBSOCKET_TESTNET);
 if (!projectId) throw new Error('Project ID is undefined');
 
 const alchemy_api_key = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
@@ -31,7 +32,7 @@ const crossFiTestnet : Chain = {
     default: {
       // http: ["https://rpc.testnet.ms",],
       http: ["https://rpc.testnet.ms", `https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`,],
-      webSocket: ['']
+      webSocket: [testAlchemyWebSocket]
     }
   }
 }
@@ -59,13 +60,13 @@ const crossFiMainnet : Chain = {
   }
 } 
 
-export const mockConnector = mock({
-  accounts: ['0xD7c271d20c9E323336bFC843AEb8deC23B346352'],
-  features: {
-    connectError: new UserRejectedRequestError(new Error('Failed to connect')),
-    reconnect: false
-  }
-});
+// export const mockConnector = mock({
+//   accounts: ['0xD7c271d20c9E323336bFC843AEb8deC23B346352'],
+//   features: {
+//     connectError: new UserRejectedRequestError(new Error('Failed to connect')),
+//     reconnect: false
+//   }
+// });
 
 // const config = createConfig({
 //   chains: [crossFiTestnet, crossFiMainnet],
@@ -110,8 +111,8 @@ const config = getDefaultConfig({
   projectId,
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
-  appUrl: 'https://simplifi-glxp.vercel.app',
-  chains: [ crossFiTestnet, crossFiMainnet ],
+  appUrl: 'https://testnet.simplifinance.xyz',
+  chains: [ crossFiTestnet, celoAlfajores],
   
 });
 
