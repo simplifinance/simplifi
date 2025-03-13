@@ -4,7 +4,7 @@ import token_xfi from "../../../contract/deployments/crossTest/TestAsset.json";
 import token_celo from "../../../contract/deployments/alfajores/TestAsset.json";
 import { Address } from "@/interfaces";
 
-const indexes = [4157, 44787];
+const chainids = [4157, 44787];
 const currencies = ['XFI', 'CELO'];
 const networks = ['CROSSFI', 'ALFAJORES'];
 const pairs = ['USDT/XFI', "USDT/CELO"];
@@ -17,9 +17,9 @@ export const formatAddr = (x: string | (Address | undefined)) : Address => {
 };
 
 export const getContractData = (chainId: number) => {
-    const isInList = indexes.includes(chainId);
+    const isInList = chainids.includes(chainId);
     if(!isInList) throw new Error('Unsupported chain');
-    const index = indexes.indexOf(chainId);
+    const index = chainids.indexOf(chainId);
     return {
         token: formatAddr(contract_addrs[index]),
         factory: formatAddr(factories[index]),

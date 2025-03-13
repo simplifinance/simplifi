@@ -1,0 +1,13 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "uint24",
+        "name": "ccr",
+        "type": "uint24"
+      }
+    ],
+    "name": "CollateralCoverageCannotGoBelow_100",
+    "type": "error"
+  }
+]

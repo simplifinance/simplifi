@@ -47,7 +47,38 @@ const config: HardhatUserConfig = {
       url: "https://alfajores-forno.celo-testnet.org",
       accounts: [`${PRIVATE_KEY}`],
       chainId: 44787,
-    } 
+    },
+    celo: {
+      accounts: [`${PRIVATE_KEY}`],
+      url: 'https://forno.celo.org',
+    },
+  },
+  etherscan: {
+    apiKey: {
+      alfajores: process.env.CELOSCAN_API_KEY ?? '',
+      celo: process.env.CELOSCAN_API_KEY ?? '',
+    },
+    customChains: [
+      {
+        chainId: 44_787,
+        network: 'alfajores',
+        urls: {
+          apiURL: 'https://api-alfajores.celoscan.io/api',
+          browserURL: 'https://alfajores.celoscan.io',
+        },
+      },
+      {
+        chainId: 42_220,
+        network: 'celo',
+        urls: {
+          apiURL: 'https://api.celoscan.io/api',
+          browserURL: 'https://celoscan.io/',
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: false,
   },
   namedAccounts: {
     deployer: {
@@ -58,7 +89,7 @@ const config: HardhatUserConfig = {
     oracle: {
       default: zeroAddress,
       4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233',
-      44787: zeroAddress
+      44787: zeroAddress // For testing only, we set to zeroAddress so the contract could switch to using local value.
       // 44787: '0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946'  // Chainlink oracle on Celo alfajores
     }
   },
