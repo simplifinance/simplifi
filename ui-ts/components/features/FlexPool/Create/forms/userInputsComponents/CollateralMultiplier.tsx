@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import { Chevron } from '@/components/Collapsible';
+import { Chevron } from '@/components/utilities/Icons';
 import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
 import { InputCategoryProp } from '@/interfaces';

@@ -75,7 +75,6 @@ interface C3 {
     uint msgValue;
     uint128 xfiUSDPriceInDecimals;
     Pool pool;
-    uint8 priceDecimals;
   }
 
   struct AddTobandParam {

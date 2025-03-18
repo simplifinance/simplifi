@@ -8,7 +8,7 @@ import {
     symbolAbi,
     balanceOfAbi,
     getCollateralQuoteAbi
-} from "@/apis/abis";
+} from "@/apis/utils/abis";
 import { getContractData } from "@/apis/utils/getContractData";
 import { Address } from "@/interfaces";
 

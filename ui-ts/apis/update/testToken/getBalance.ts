@@ -1,7 +1,7 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { getContractData } from "../../utils/getContractData";
-import { balanceOfAbi, symbolAbi } from "@/apis/abis";
+import { balanceOfAbi, symbolAbi } from "@/apis/utils/abis";
 
 export default async function getTestTokenBalance(args: GetBalanceArg) {
   const { account, config, target } = args;

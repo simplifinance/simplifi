@@ -1,7 +1,7 @@
 import React from "react";
 import { flexSpread, FuncTag, } from "@/constants";
 import { Provider } from './Provider';
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import { Address, FormattedData, FormattedPoolContentProps, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
 import { formatAddr, } from "@/utilities";

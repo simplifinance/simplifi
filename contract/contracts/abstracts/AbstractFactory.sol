@@ -185,12 +185,11 @@ abstract contract AbstractFactory is
     {
         return data.getEpoches();
     }
-
     
-  ///@dev Returns epoches
-  function getRecordEpoches() external view returns(uint) {
-    return data.getRecordEpoches();
-  }
+    ///@dev Returns epoches
+    function getRecordEpoches() external view returns(uint) {
+        return data.getRecordEpoches();
+    }
 
     /**
         *   @dev Updates minimum liquidity of a pool.

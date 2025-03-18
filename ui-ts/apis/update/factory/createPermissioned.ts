@@ -2,7 +2,7 @@ import { CreatePermissionedPoolParams, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { createPermissionedLiquidityPoolAbi } from "@/apis/abis";
+import { createPermissionedLiquidityPoolAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
 export default async function createPermissioned(param: CreatePermissionedPoolParams) {

@@ -1,11 +1,11 @@
 import React from "react";
 import { Input } from "../../Input";
 import { zeroAddress } from "viem";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { Address } from "@/interfaces";
 import Collapse from "@mui/material/Collapse";
 import { flexSpread } from "@/constants";
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 
 export default function Participants({addToList, participants, handleDelete} : {participants: Address[], addToList: (arg: string) => void, handleDelete: (arg: number) => void} ) {
     const [address, setAddress] = React.useState<string>('');

@@ -1,11 +1,11 @@
 import React from "react";
 import { getContractData } from "@/apis/utils/getContractData";
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import { useAccount, useReadContracts } from "wagmi";
 import { formatEther, } from "viem";
 import { flexSpread, } from "@/constants";
 import Collapse from '@mui/material/Collapse';
-import { Chevron } from "@/components/Collapsible";
+import { Chevron } from "@/components/utilities/Icons";
 import Stack from '@mui/material/Stack';
 import getReadFunctions from "../update/DrawerWrapper/readContractConfig";
 import { formatAddr, toBN } from "@/utilities";

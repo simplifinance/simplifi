@@ -6,7 +6,7 @@ import { flexSpread } from "@/constants";
 import Tooltip from "@mui/material/Tooltip";
 import { VoidFunc } from "@/interfaces";
 import { PopUp } from "../../Create/forms/modals/PopUp";
-import { CustomButton } from "@/components/CustomButton";
+import { CustomButton } from "@/components/utilities/CustomButton";
 
 export const PreferredDurationInput : 
     React.FC<PreferredDurationInputProp> = 

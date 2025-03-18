@@ -14,7 +14,7 @@
     "useUnknownInCatchVariables": false,
     "noImplicitAny": false
   },
-  "include": ["./typechain", "./src", "./test", "./deploy", "./types"],
+  "include": ["./typechain", "./test", "./deploy", "./types"],
   "exclude": ["./node_modules/*"],
   "files": ["./hardhat.config.ts"]
 }

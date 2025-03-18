@@ -4,7 +4,7 @@ import React from "react";
 import { formatEther, } from "viem";
 import { useChainId, useReadContract,} from "wagmi";
 import getReadFunctions from "../readContractConfig";
-import { Spinner } from "@/components/Spinner";
+import { Spinner } from "@/components/utilities/Spinner";
 import { toBN } from "@/utilities";
 
 export default function CollateralQuote({unit} : {unit: bigint}) {

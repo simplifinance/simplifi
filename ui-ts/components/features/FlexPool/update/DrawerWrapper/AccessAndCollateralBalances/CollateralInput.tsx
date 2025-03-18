@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import { VoidFunc } from "@/interfaces";
 import { PopUp } from "../../../Create/forms/modals/PopUp";
-import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 
 export const CollateralInput : 
     React.FC<PreferredDurationInputProp> = 

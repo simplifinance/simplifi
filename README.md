@@ -69,4 +69,4 @@
     yarn deploy-testnet
 ```
 
-`Note`: Ignore the `Deployment' folder. We had issue on Vercel with deployment, so the 'Deployment' folder is a solution to it.
+<!-- `Note`: Ignore the `Deployment' folder. We had issue on Vercel with deployment, so the 'Deployment' folder is a solution to it. -->

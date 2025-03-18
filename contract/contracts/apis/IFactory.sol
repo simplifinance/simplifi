@@ -3,6 +3,8 @@
 pragma solidity 0.8.24;
 
 import { C3 } from "./C3.sol";
+import { IAssetClass } from "./IAssetClass.sol";
+import { IERC20 } from "./IERC20.sol";
 
 interface IFactory is C3 {
   error InsufficientFund();
@@ -69,9 +71,10 @@ interface IFactory is C3 {
    */
   struct ContractData {
     address feeTo;
-    address assetAdmin;
+    IAssetClass assetAdmin;
     uint16 makerRate;
     address bankFactory;
+    IERC20 collacteralToken;
   }
 
   struct Analytics {

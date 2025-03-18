@@ -1,7 +1,7 @@
-import factory_xfi from "../../../contract/deployments/crossTest/Factory.json";
-import factory_celo from "../../../contract/deployments/alfajores/Factory.json";
-import token_xfi from "../../../contract/deployments/crossTest/TestAsset.json";
-import token_celo from "../../../contract/deployments/alfajores/TestAsset.json";
+import factory_xfi from "@/deployments/crossTest/Factory.json";
+import factory_celo from "@/deployments/alfajores/Factory.json";
+import token_xfi from "@/deployments/crossTest/TestAsset.json";
+import token_celo from "@/deployments/alfajores/TestAsset.json";
 import { Address } from "@/interfaces";
 
 const chainids = [4157, 44787];

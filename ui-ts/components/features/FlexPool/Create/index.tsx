@@ -3,7 +3,7 @@ import { Permissioned } from "./forms/Permissioned";
 import { Permissionless } from "./forms/Permissionless";
 import { flexSpread, flexStart } from "@/constants";
 import type { PoolType, } from "@/interfaces";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export const Create : React.FC = () => {
     const [formType, setFormType] = React.useState<PoolType>('Permissionless');

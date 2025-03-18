@@ -4,13 +4,12 @@ pragma solidity 0.8.24;
 
 import { AbstractFactory } from "../abstracts/AbstractFactory.sol";
 
-/** @title Factory : Main contract
- *  @author Simplifinance - (Bobeu) 
- *  @notice 
- *  A multi p2p lending and borrowing structure where liquidity providers are borrowers. We bring together users form different 
- * parts of the world to form a liquidity synergy, where the pooled fund moved round them from the first to the last on the list
- * in form of borrowed fund.The permissionless model allows users to create liquidity pool for anyone to participate while the 
- * permissioned structure restricts participation only to the known members known as band.
+/** @title Factory
+ *  @author Simplifinance - Written by Isaac J (https://github.com/bobeu) 
+ * A protocol for short-term lending and borrowing services through a peer-funding mechanism, with an auto-AI yield dashboard. This is a structure where liquidity providers are also the borrowers.
+ * Two currencies are used:
+ *        - Native currency/Platform/Base currency e.g Celo, XFI, ETH, etc. This is the currency used as collateral.
+ *        - Stable coin e.g cUSD, xUSD, USDT etc. This is the base currency use for contribution.
 */
 
 contract Factory is AbstractFactory {

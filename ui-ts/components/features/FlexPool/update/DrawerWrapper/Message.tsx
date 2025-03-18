@@ -1,5 +1,5 @@
 import React from "react";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export default function Message() {
     const { message } = useAppStorage();

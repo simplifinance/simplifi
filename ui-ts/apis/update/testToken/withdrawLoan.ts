@@ -5,7 +5,7 @@ import { getContractData  } from "../../utils/getContractData";
 import getAllowance from "./getAllowance";
 import BigNumber from "bignumber.js";
 import { formatEther } from "viem";
-import { transferFromAbi } from "@/apis/abis";
+import { transferFromAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
 export default async function withdrawLoan(args: TransferFromParam) {

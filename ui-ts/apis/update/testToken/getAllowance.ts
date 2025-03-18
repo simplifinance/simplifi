@@ -1,7 +1,7 @@
 import { Address, WagmiConfig } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { getContractData } from "../../utils/getContractData";
-import { allowanceAbi } from "@/apis/abis";
+import { allowanceAbi } from "@/apis/utils/abis";
 
 export default async function getAllowance(args: {owner: Address, account: Address, spender: Address, config: WagmiConfig}) {
   const { owner, spender, account, config } = args;

@@ -7,7 +7,7 @@ import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Providers } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
-import { CustomButton } from "@/components/CustomButton";
+import { CustomButton } from "@/components/utilities/CustomButton";
 import { getContractData } from "@/apis/utils/getContractData";
 
 /**

@@ -2,7 +2,7 @@ import { GetFinanceParam, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { getFinanceAbi } from "@/apis/abis";
+import { getFinanceAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
 export default async function getFinance(args: GetFinanceParam ) {

@@ -2,7 +2,7 @@ import React from "react";
 import { flexSpread } from "@/constants";
 import Collapse from "@mui/material/Collapse";
 import { faqContent } from "./content";
-import { Chevron } from "@/components/Collapsible";
+import { Chevron } from "@/components/utilities/Icons";
 
 const Content = ({title, content, subparagraph} : {title: React.ReactNode, content: React.ReactNode, subparagraph: React.ReactNode}) => {
   const [open, setOpen] = React.useState<boolean>(false);

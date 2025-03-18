@@ -2,8 +2,8 @@ import { CommonParam, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { getEllipsisTxt } from "@/components/AddressFormatter/stringFormatter";
-import { addToPoolAbi } from "@/apis/abis";
+import { getEllipsisTxt } from "@/components/utilities/AddressFormatter/stringFormatter";
+import { addToPoolAbi } from "@/apis/utils/abis";
 import { formatEther } from "viem";
 import { errorMessage } from "../formatError";
 

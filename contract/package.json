@@ -3,7 +3,7 @@
   "license": "MIT",
   "version": "1.0.0",
   "scripts": {
-    "compile": "npx hardhat compile && node sync-abis.js",
+    "compile": "npx hardhat compile && node sync-abis.js && node sync-types.js",
     "test": "npx hardhat test",
     "deploy": "npx hardhat deploy --network hardhat && node sync-deployments.js",
     "deploy-testnet": "hardhat deploy --network crossTest --export deployments/contracts.json && node sync-deployments.js",
@@ -16,6 +16,7 @@
     "flat-reserve": "npx hardhat flatten contracts/implementations/token/Reserve.sol > contracts/implementations/flattened/token/ReserveFlattened.sol",
     "flat-attorney": "npx hardhat flatten contracts/implementations/token/Attorney.sol > contracts/implementations/flattened/token/AttorneyFlattened.sol",
     "sync:abis": "node sync-abis.js",
+    "sync:types": "node sync-types.js",
     "sync:deployment": "node sync-deployments.js",
     "tsc": "npx tsc -p . && cp typechain/*.d.ts dist/typechain/",
     "build": "yarn compile && yarn tsc",

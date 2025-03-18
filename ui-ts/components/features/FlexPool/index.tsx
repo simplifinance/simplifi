@@ -1,12 +1,12 @@
 import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import { CustomButton } from '@/components/CustomButton';
+import { CustomButton } from '@/components/utilities/CustomButton';
 import { Create } from './Create';
 import { flexStart, flexSpread } from '@/constants';
 import USDBalances from './USDBalances';
 import { PastEpoches } from './PoolWrapper/PastEpoches';
 import { CurrentEpoches } from './PoolWrapper/CurrentEpoches';
-import useAppStorage from '@/components/StateContextProvider/useAppStorage';
+import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
 const FlexPool = () => {
   const [isPastEpoches, setEpochType] = React.useState<boolean>(false);  

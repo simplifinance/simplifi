@@ -1,7 +1,7 @@
 import type { DepositCollateralParam, TrxResult, } from "@/interfaces";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { depositCollateralAbi, } from "@/apis/abis";
+import { depositCollateralAbi, } from "@/apis/utils/abis";
 import { formatEther, zeroAddress } from "viem";
 import assert from "assert";
 import { errorMessage } from "../formatError";

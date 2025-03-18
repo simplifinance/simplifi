@@ -12,6 +12,7 @@ import { IFactory } from "../apis/IFactory.sol";
 import { C3 } from "../apis/C3.sol";
 import { AssetClass } from "../implementations/AssetClass.sol";
 import { Utils } from "../libraries/Utils.sol";
+import { IAssetClass } from "../apis/IAssetClass.sol";
 
 /**@dev
   * @param amountExist: Tracks unit contribution i.e values created in each permissionless communities
@@ -146,6 +147,11 @@ library FactoryLibV3 {
    * @notice cSlot is the position where the contibutors for the current unit is stored.
    *          Anytime we created a pool, a record is known in advance i.e. a slot is created in advance for the it. This is where the pool
    *          is moved when it is finalized.
+   * 
+   *          - We removed collateral coverage check so as to enable more flexible tuning and customization. Example: Bob, Alice and Kate agreed
+   *            to operate a flexpool of unit $100 at zero collateral index. So Bob creates a flexpool of $100 setting quorum to maximum 3 participants.
+   *            He set colCoverage to 0. If particapant A wants to get finance, they will be required to provide (collateralCalculor * 0) which is 0
+   *            in order to get finance.
   */   
   function _createPool(
     Data storage self,
@@ -159,7 +165,7 @@ library FactoryLibV3 {
     returns(C3.ReturnValue memory rv) 
   {
     Def memory _d = _defaults();
-    bool(cpp.colCoverage >= 100).assertTrue("Col coverage is too low");
+    // bool(cpp.colCoverage >= 100).assertTrue("Col coverage is too low");
     Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
     _awardPoint(self.points, user, _d.t);
     self.cSlots.increment();
@@ -619,15 +625,14 @@ library FactoryLibV3 {
     @param msgValue : Value sent in call.
     @param daysOfUseInHr : Number of days specified in hours after which 
                       the contributor shall return the borrowed fund.
-    @param getXFIPriceInUSD : A function that returns the current price of XFI.
+    @param getPriceOfCollateralToken : A function that returns the current price of XFI.
   */
   function getFinance(
     Data storage self,
     uint256 unit,
     uint256 msgValue,
     uint16 daysOfUseInHr,
-    uint8 priceDecimals,
-    function () internal returns(uint128) getXFIPriceInUSD
+    function () internal returns(uint128) getPriceOfCollateralToken
   ) 
     internal
     returns(C3.Pool memory _p, uint256 amtFinanced)
@@ -640,16 +645,15 @@ library FactoryLibV3 {
     if(_p.uint256s.currentPool < (_p.uint256s.unit.mul(_p.uints.quorum))) revert PoolNotComplete();
     _p = _updateStorageAndCall(
       self,
-      C3.UpdateMemberDataParam(
+      C3.UpdateMemberDataParam( 
         _convertDurationToSec(daysOfUseInHr), 
         self.cData[_p.uints.cSlot][_p.uints.selector].id,
         unit,
         _getIndex(self.indexes, unit),
         _p.uint256s.currentPool.computeFee(self.pData.makerRate),
         msgValue,
-        getXFIPriceInUSD(),
-        _p,
-        priceDecimals
+        getPriceOfCollateralToken(),
+        _p
       )
     );
     _callback(self, C3.ReturnValue(_p, _p.uint256s.unitId, _p.uint256s.rId));
@@ -763,7 +767,7 @@ library FactoryLibV3 {
       if(_msgSender() != cbt.id) revert TurnTimeHasNotPassed();
       // require(_msgSender() == cbt.id, "Turn time has not passed");
     }
-    uint computedCollateral = _computeCollateral(arg.pool.uint256s.currentPool, arg.msgValue, uint24(arg.pool.uints.colCoverage), arg.xfiUSDPriceInDecimals, arg.priceDecimals);
+    uint computedCollateral = _computeCollateral(arg.pool.uint256s.currentPool, arg.msgValue, uint24(arg.pool.uints.colCoverage), arg.xfiUSDPriceInDecimals, IERC20(self.pData.collacteralToken).decimals());
     arg.pool.addrs.lastPaid = caller;
     arg.pool.uints.selector ++;
     C3.Contributor memory cData = C3.Contributor({
@@ -1095,16 +1099,18 @@ library FactoryLibV3 {
    */
   function setContractData(
     Data storage self,
-    address assetAdmin,
+    IAssetClass assetAdmin,
     address feeTo,
     uint16 makerRate,
-    address bankFactory
+    address bankFactory,
+    IERC20 colToken
   ) 
     internal 
     returns(bool)
   {
-    if(assetAdmin != address(0)) self.pData.assetAdmin = assetAdmin;
+    if(address(assetAdmin) != address(0)) self.pData.assetAdmin = assetAdmin;
     if(bankFactory != address(0)) self.pData.bankFactory = bankFactory;
+    if(address(colToken) != address(0)) self.pData.collacteralToken = colToken;
     if(feeTo != address(0)) self.pData.feeTo = feeTo;
     if(makerRate < type(uint16).max) self.pData.makerRate = makerRate;
     return true;
