@@ -3,8 +3,12 @@
 pragma solidity 0.8.24;
 
 import { Common } from "../apis/Common.sol";
+import { Oracle } from "./Oracle.sol";
+import { Utils } from "../libraries/Utils.sol";
 
-abstract contract Pools {
+abstract contract Pools is Oracle {
+    using Utils for *;
+    
     // Total past pools
     uint public pastRecords;
 
@@ -20,6 +24,12 @@ abstract contract Pools {
      * one. This is easier and efficient for us than deleting an entire pool. 
      */
     mapping (uint256 => mapping( Common.Branch => Common.Pool)) private pools; 
+
+    // Only valid pool
+    modifier isValidUnitContribution(uint unit) {
+        require(_getPool(unit, Common.Branch.CURRENT).lInt.status == Common.Status.TAKEN, "Invalid pool");
+        _;
+    }
 
     /**
      * @dev Add pool to storage
@@ -37,18 +47,19 @@ abstract contract Pools {
      * @param unit : Unit contribution
      * @notice unit must not be the reserve slot.
      */
-    function _shufflePool(uint256 unit) internal virtual {
+    function _shufflePool(uint256 unit, Common.Pool memory current) internal virtual {
         assert(unit > 0);
         Common.Pool memory empty = pools[0][Common.Branch.CURRENT];
         pools[unit][Common.Branch.CURRENT] = empty;
+        pools[current.bigInt.recordId][Common.Branch.RECORD] = current;
     }
 
     /**
      * @dev Get pool from storage
      * @param unit : Unit contribution
      */
-    function _getPool(uint256 unit, Common.Branch status) internal view returns(Common.Pool memory) {
-        return pools[unit][status];
+    function _getPool(uint256 unit, Common.Branch branch) internal view returns(Common.Pool memory) {
+        return pools[unit][branch];
     }
 
     /**
@@ -76,6 +87,11 @@ abstract contract Pools {
         return pastRecords;
     }
 
+    // Return total current pools
+    function getCurrentId() external view returns(uint) {
+        return currentPools;
+    }
+
     /**
      * @dev Get pool from storage
      * @param unit : Unit contribution
@@ -91,4 +107,18 @@ abstract contract Pools {
     function getPastPoolData(uint256 unit) external view returns(Common.Pool memory) {
         return _getPool(unit, Common.Branch.RECORD);
     }
+
+    /**
+     * @dev Return the amount of collateral required to get finance in a pool
+     * @param unit : Unit contribution
+     */
+    function _getCollateralQuote(uint256 unit) internal view returns(uint quote){
+        Common.Pool memory _p = _getPool(unit, Common.Branch.CURRENT);
+        quote = Common.Price(_getDummyPrice(), 18).computeCollateral(uint24(_p.lInt.colCoverage), _p.bigInt.currentPool);
+    }
+
+    function getCollateralQuote(uint256 unit) external view returns(uint quote){
+       return _getCollateralQuote(unit);
+    }
+    
 }

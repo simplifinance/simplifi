@@ -2,44 +2,46 @@
 
 pragma solidity 0.8.24;
 
-import { C3 } from "./C3.sol";
+import { Common } from "./Common.sol";
+import { IERC20 } from "./IERC20.sol";
 
 interface IBank {
-  error NotACustomer(address);
-  error AlreadyACustomer(address);
   error ZeroWithdrawable();
-  error UserDoesNotHaveAccess();
   error NoFeeToWithdraw();
   error TokenAddressIsZero();
+  error InsufficientAllowance();
+  error AccessDenied();
+  error InvalidIERC20Contract();
+  error InsufficientContractBalance();
+  error AssetTransferFailed();
   
-  function addUp(address user, uint rId) external;
-  function borrow(
+  function addUp(address user, uint unitId) external;
+  function getFinance(
     address user, 
-    address asset, 
+    IERC20 asset, 
     uint256 loan, 
     uint fee, 
     uint256 calculatedCol,
-    uint rId
+    uint unitId,
+    bool swap,
+    address newUser
   ) 
     external 
-    payable 
     returns(uint);
 
   function payback(
     address user, 
-    address asset, 
+    IERC20 asset, 
     uint256 debt,
     uint256 attestedInitialBal,
     bool allGH,
-    C3.Contributor[] memory cData,
+    Common.Contributor[] memory cData,
     bool isSwapped,
     address defaulted,
-    uint rId
-  ) external payable;
+    uint unitId
+  ) external ;
 
-  function depositCollateral(uint rId) external payable returns(bool);
-  function cancel(address user, address asset, uint erc20Balances, uint rId) external;
-  function withdrawFee(address recipient, address asset) external;
+  function cancel(address user, IERC20 asset, uint erc20Balances, uint unitId) external;
   function getData() external view returns(ViewData memory);
 
   struct ViewData {
@@ -49,11 +51,11 @@ interface IBank {
 
   struct ViewUserData {
     bool access;
-    Collateral collateral;
+    uint collateralBalance;
   }
 
-  struct Collateral {
-    uint balance;
-    uint withdrawable;
+  struct User {
+    bool hasAccess;
+    uint index;
   }
 }

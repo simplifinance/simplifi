@@ -24,7 +24,7 @@ abstract contract Safe is OnlyOwner {
         * @notice 'unit' should not own a bank before now.
         * @param unit : Amount
     */
-    function _checkAndCreateSafe(uint256 unit, address _feeTo, IERC20 _collateralToken) 
+    function _getSafe(uint256 unit, address _feeTo, IERC20 _collateralToken) 
         internal 
         returns(Bank _safe) 
     {

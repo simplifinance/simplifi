@@ -13,6 +13,7 @@ interface ITokensInUse {
   error OwnershipManagerIsZeroAddress();
   error AssetIsNotListed();
   error InsufficientAllowance();
+  error TransferFromFailed();
   // error InvalidId();
 
   struct BaseAsset {

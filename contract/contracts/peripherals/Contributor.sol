@@ -16,7 +16,15 @@ abstract contract Contributor is ISimplifi {
     mapping (uint256 => uint) public userCounts;
 
     // Mapping of user to unit to position
-    mapping (address => mapping(uint256 => uint)) private positions;
+    mapping (address => mapping(uint256 => uint)) private slots;
+
+    function _getSlot(address target, uint256 unit) internal view returns(uint slot) {
+        slot = slots[target][unit];
+    }
+    
+    function _deleteSlot(address target, uint256 unit) internal {
+        delete slots[target][unit];
+    }
 
     /**
      * @dev Only contributor in a pool is allowed
@@ -42,7 +50,7 @@ abstract contract Contributor is ISimplifi {
      * @param unit : Unit contribution
      */
     function _getProfile(address user, uint256 unit) internal view returns(Common.Contributor memory _profile) {
-        uint pos = positions[user][unit];
+        uint pos = _getSlot(user, unit);
         _profile = contributors[unit][pos];
     }
 
@@ -59,17 +67,17 @@ abstract contract Contributor is ISimplifi {
      * @dev Set user's time to get finance
      * @param user : Target address
      * @param unit : Unit contribution
-     * @param date : Date/timestamp
+     * @param turnStartTime : Time the turn for user starts to count
      * @notice If 'user' is zero address, we generate a new slot otherwise fetch existing slot
      */ 
-    function _setTurnTime(address user, uint256 unit, uint64 date) internal {
+    function _setTurnTime(address user, uint256 unit, uint64 turnStartTime) internal {
         uint pos;
         if(user == address(0)){
             pos = userCounts[unit];
         } else {
-            pos = positions[user][unit];
+            pos = _getSlot(user, unit);
         }
-        contributors[unit][pos].turnTime = date;
+        contributors[unit][pos].turnStartTime = turnStartTime;
     }
 
     /**
@@ -81,7 +89,12 @@ abstract contract Contributor is ISimplifi {
         uint pos = userCounts[unit];
         userCounts[unit] = pos + 1;
         contributors[unit][pos] = newProfile;
-        positions[newProfile.id][unit] = pos;
+        slots[newProfile.id][unit] = pos;
+    }
+
+    function _updateProfile(uint256 unit, Common.Contributor memory profile, uint slot) internal {
+        contributors[unit][slot] = profile;
+        slots[profile.id][unit] = slot;
     }
 
     function _incrementUserCount(uint256 unit) internal {
@@ -94,9 +107,9 @@ abstract contract Contributor is ISimplifi {
      * @param unit : Unit contribution
      */
     function _removeContributor(address user, uint256 unit) internal {
-        uint pos = positions[user][unit];
-        delete contributors[unit][pos];
-        delete positions[user][unit];
+        uint slot = _getSlot(user, unit);
+        delete contributors[unit][slot];
+        delete slots[user][unit];
     }
 
     function _getUserCount(uint256 unit) internal view returns(uint _count) {
@@ -115,16 +128,16 @@ abstract contract Contributor is ISimplifi {
         internal
         returns(Common.Contributor memory aCData) 
     {
-        uint aSlot = positions[actCaller][unit];
-        uint eSlot = positions[expcData.id][unit];
+        uint aSlot = _getSlot(actCaller, unit);
+        uint eSlot = _getSlot(expcData.id, unit);
         aCData = contributors[unit][aSlot];
-        aCData.turnTime = expcData.turnTime;
-        expcData.turnTime = 0;
+        aCData.turnStartTime = expcData.turnStartTime;
+        expcData.turnStartTime = 0;
         contributors[unit][eSlot] = aCData;
         contributors[unit][aSlot] = expcData;
-        positions[actCaller][unit] = eSlot;
-        positions[expcData.id][unit] = aSlot;
-        contributors[unit][aSlot].turnTime = expcData.turnTime;
+        slots[actCaller][unit] = eSlot;
+        slots[expcData.id][unit] = aSlot;
+        contributors[unit][aSlot].turnStartTime = expcData.turnStartTime;
     }
 
     /** PUBLIC/EXTERNAL FUNCTIONS */
@@ -149,7 +162,35 @@ abstract contract Contributor is ISimplifi {
      * @dev Return the current number of contributors in a pool
      * @param unit : Unit contribution.
      */
-    function getUserCount(uint256 unit) external view returns(uint _count) {
-        _count = userCounts[unit];
+    function getUserCount(uint256 unit) external view returns(uint) {
+        return _getUserCount(unit);
     }
+
+    /**@dev Return accrued debt for user to date.
+     * @param unit : Contribution amount.
+     * @param user : Contributor.
+     * @notice This is the total accrued debt between the date user was paid and current time.
+     */
+    function _getCurrentDebt(uint256 unit, address user) 
+        internal 
+        view returns(uint debt) 
+    {
+        uint intPerSec = _getPool(unit, Common.UnitStatus.CURRENT).interest.intPerSec;
+        Common.Contributor memory _c = _getProfile(user, unit);
+        unchecked {
+            debt = _c.loan + (intPerSec * (Utils._now() - _c.getFinanceTime));
+        }
+    } 
+
+    /**@dev Return accrued debt for user up to this moment.
+     * @param unit : Contribution amount.
+     * @param user : Contributor.
+     * @notice This is the total accrued debt between the date user was paid and now.
+     */
+    function getCurrentDebt(uint256 unit, address user) 
+        public 
+        view returns(uint debt) 
+    {
+        return _getCurrentDebt(unit, user);
+    } 
 }

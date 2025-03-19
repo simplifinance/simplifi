@@ -5,14 +5,14 @@ pragma solidity 0.8.24;
 import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { C3 } from "../apis/C3.sol";
+import { Common } from "../apis/Common.sol";
 
 library Utils {
     using Address for address;
     using SafeMath for uint256;
 
     error InsufficientCollateral(uint256 actual, uint256 expected);
-
+    error CollateralCoverageCannotGoBelow_100();
     error InvalidDenominator(string message);
 
     ///@dev Requires all conditions to be true 
@@ -77,9 +77,8 @@ library Utils {
      * @dev Computes collateral on the requested loan amount
      * @param ccr : Collateral ratio. Must be multiply by 100 before parsing as input i.e if raw ccr
      *              is 1.2, it should be rendered as 1.2 * 100 = 120.
-     * @param xfi : Price of Collateral token base with decimals.
+     * @param price : Price of Collateral token base with decimals.
      * @param loanReqInDecimals : Total requested contribution in USD
-     * @param amountOfXFISent : Amount sent in XFI as collateral.
      * @notice Based on Simplifi mvp, loans are collaterized in XFI until we add more pairs
      *         in the future.
      * Example: Alice, Bob and Joe formed a band to contribute $100 each where duration is for 
@@ -99,29 +98,24 @@ library Utils {
      *   
      */
     function computeCollateral(
-        C3.XFIPrice memory xfi,
-        uint amountOfXFISent,
+        Common.Price memory price,
         uint24 ccr,
-        uint loanReqInDecimals,
-        bool performCheck
+        uint loanReqInDecimals
     ) 
         internal
         pure 
-        returns(uint256 expColInXFI) 
+        returns(uint256 expColInNative) 
     {
         uint8 minCCR = 100;
-        if(ccr < minCCR) revert C3.CollateralCoverageCannotGoBelow_100(ccr);
+        if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
         uint48 _ccr = uint48(uint(ccr).mul(100));
-        uint totalLoanInXFI = loanReqInDecimals.mul(10**xfi.decimals).div(xfi.price);
-        expColInXFI = totalLoanInXFI.mul(_ccr).div(_getBase());
-        if(performCheck) {
-            assertTrue(amountOfXFISent >= expColInXFI, "Insufficient XFI");
-        }
+        uint totalLoanInNative = loanReqInDecimals.mul(10**price.decimals).div(price.price);
+        expColInNative = totalLoanInNative.mul(_ccr).div(_getBase());
     }
 
     /**
         @dev Computes maker fee.
-        @param makerRate : The amount of fee (in %) charged by the platform on the amount getFinanced.
+        @param makerRate : The amount of fee (in %) charged by the platform on the principal given to a borrower.
             Note : Raw rate must multiply by 100 to get the expected value i.e
             if maker rate is 0.1%, it should be parsed as 0.1 * 100 = 10.
             See `_getPercentage()`.
@@ -142,7 +136,6 @@ library Utils {
      * @dev Compute interest based on specified rate.
      * @param rate : Interest rate.
      * @param principal : Total expected contribution.
-     * @param durOfChoiceInSec : Duration of loan. To be specified in hours.
      * 
      * Rules
      * -----
@@ -151,19 +144,17 @@ library Utils {
     function computeInterestsBasedOnDuration(
         uint principal,
         uint16 rate,
-        uint24 fullDurationInSec,
-        uint24 durOfChoiceInSec
+        uint24 fullDurationInSec
     )
         internal 
         pure 
-        returns(C3.InterestReturn memory _itr) 
+        returns(Common.Interest memory _itr) 
     {
-        C3.InterestReturn memory it;
-        assertTrue_2((fullDurationInSec <= _maxDurationInSec() && uint(durOfChoiceInSec).mod(60) == 0), (durOfChoiceInSec <= fullDurationInSec && uint(fullDurationInSec).mod(60) == 0), "Utils: FullDur or DurOfChoice oerflow");
+        Common.Interest memory it;
+        require(fullDurationInSec <= _maxDurationInSec(), "Utils: FullDur or DurOfChoice oerflow");
         it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
         if(it.fullInterest > 0) {
             it.intPerSec = it.fullInterest.mul(1).div(fullDurationInSec);
-            it.intPerChoiceOfDur = fullDurationInSec > durOfChoiceInSec? it.fullInterest.mul(durOfChoiceInSec).div(fullDurationInSec) : it.fullInterest;
         }
         _itr = it; 
     }
@@ -177,6 +168,10 @@ library Utils {
 
     function notZeroAddress(address target) internal pure {
         require(target != address(0), "Zero address");
+    }
+
+    function _now() internal view returns(uint64 date) {
+        date = uint64(block.timestamp);
     }
 
 }

@@ -7,7 +7,7 @@ import { OnlyOwner } from "../abstracts/OnlyOwner.sol";
 import { ITokensInUse } from "../apis/ITokensInUse.sol"; 
 import { IOwnerShip } from "../apis/IOwnerShip.sol"; 
 
-contract TokensInUse is ITokensInUse, OnlyOwner {
+abstract contract TokensInUse is ITokensInUse, OnlyOwner {
     // Collateral token i.e SFToken
     IERC20 public collateralToken;
 
@@ -45,8 +45,12 @@ contract TokensInUse is ITokensInUse, OnlyOwner {
     {
         if(address(_collateralToken) == address(0) || address(_asset) == address(0)) revert TokenIsAddressZero();
         if(address(_ownershipMgr) == address(0)) revert OwnershipManagerIsZeroAddress();
-        collateralToken = _collateralToken;
+        _setCollateralToken(_collateralToken);
         _supportAsset(address(_asset));
+    }
+
+    function _setCollateralToken(IERC20 newToken) internal {
+        collateralToken = newToken;
     }
 
         /**
@@ -132,6 +136,14 @@ contract TokensInUse is ITokensInUse, OnlyOwner {
         return _assets;
     }
 
+    /**
+     * @dev Check for approval, ensure it corresponds to the expected value and transfer to the beneficiary
+     * @param asset : Base asset used for contribution
+     * @param unit : Unit contribution
+     * @param owner : Owner of base token
+     * @param spender : Spender of base token
+     * @param beneficiary : Account to receive the allowance to.
+     */
     function _checkAndWithdrawToken(
         IERC20 asset, 
         uint256 unit, 
@@ -141,7 +153,11 @@ contract TokensInUse is ITokensInUse, OnlyOwner {
     ) internal {
         uint256 allowance = IERC20(asset).allowance(owner, spender);
         if(allowance < unit) revert InsufficientAllowance();
-        IERC20(asset).transferFrom(owner, beneficiary, unit);
+        if(!IERC20(asset).transferFrom(owner, beneficiary, unit)) revert TransferFromFailed();
+    }
+
+    function setCollateralToken(IERC20 newToken) public onlyOwner {
+        _setCollateralToken(newToken);
     }
 
 }
