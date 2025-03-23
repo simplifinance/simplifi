@@ -268,6 +268,11 @@
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "unitId",
+                "type": "uint256"
               }
             ],
             "internalType": "struct Common.BigInt",
@@ -332,6 +337,11 @@
             "internalType": "struct Common.Interest",
             "name": "interest",
             "type": "tuple"
+          },
+          {
+            "internalType": "enum Common.Status",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "indexed": false,
@@ -411,6 +421,11 @@
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "unitId",
+                "type": "uint256"
               }
             ],
             "internalType": "struct Common.BigInt",
@@ -475,6 +490,11 @@
             "internalType": "struct Common.Interest",
             "name": "interest",
             "type": "tuple"
+          },
+          {
+            "internalType": "enum Common.Status",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "indexed": false,
@@ -554,6 +574,11 @@
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "unitId",
+                "type": "uint256"
               }
             ],
             "internalType": "struct Common.BigInt",
@@ -618,6 +643,11 @@
             "internalType": "struct Common.Interest",
             "name": "interest",
             "type": "tuple"
+          },
+          {
+            "internalType": "enum Common.Status",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "indexed": false,
@@ -710,6 +740,11 @@
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "unitId",
+                "type": "uint256"
               }
             ],
             "internalType": "struct Common.BigInt",
@@ -774,6 +809,11 @@
             "internalType": "struct Common.Interest",
             "name": "interest",
             "type": "tuple"
+          },
+          {
+            "internalType": "enum Common.Status",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "indexed": false,
@@ -853,6 +893,11 @@
                 "internalType": "uint256",
                 "name": "recordId",
                 "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "unitId",
+                "type": "uint256"
               }
             ],
             "internalType": "struct Common.BigInt",
@@ -917,6 +962,11 @@
             "internalType": "struct Common.Interest",
             "name": "interest",
             "type": "tuple"
+          },
+          {
+            "internalType": "enum Common.Status",
+            "name": "status",
+            "type": "uint8"
           }
         ],
         "indexed": false,
@@ -1286,11 +1336,6 @@
               },
               {
                 "internalType": "address",
-                "name": "bankFactory",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
                 "name": "safeFactory",
                 "type": "address"
               },
@@ -1455,6 +1500,11 @@
                     "internalType": "uint256",
                     "name": "recordId",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "unitId",
+                    "type": "uint256"
                   }
                 ],
                 "internalType": "struct Common.BigInt",
@@ -1519,6 +1569,11 @@
                 "internalType": "struct Common.Interest",
                 "name": "interest",
                 "type": "tuple"
+              },
+              {
+                "internalType": "enum Common.Status",
+                "name": "status",
+                "type": "uint8"
               }
             ],
             "internalType": "struct Common.Pool",
@@ -1734,6 +1789,11 @@
                     "internalType": "uint256",
                     "name": "recordId",
                     "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "unitId",
+                    "type": "uint256"
                   }
                 ],
                 "internalType": "struct Common.BigInt",
@@ -1798,6 +1858,11 @@
                 "internalType": "struct Common.Interest",
                 "name": "interest",
                 "type": "tuple"
+              },
+              {
+                "internalType": "enum Common.Status",
+                "name": "status",
+                "type": "uint8"
               }
             ],
             "internalType": "struct Common.Pool",

@@ -59,13 +59,15 @@ export declare namespace Common {
     unit: BigNumberish;
     currentPool: BigNumberish;
     recordId: BigNumberish;
+    unitId: BigNumberish;
   };
 
   export type BigIntStructOutput = [
     unit: bigint,
     currentPool: bigint,
-    recordId: bigint
-  ] & { unit: bigint; currentPool: bigint; recordId: bigint };
+    recordId: bigint,
+    unitId: bigint
+  ] & { unit: bigint; currentPool: bigint; recordId: bigint; unitId: bigint };
 
   export type AddressesStruct = {
     asset: AddressLike;
@@ -100,6 +102,7 @@ export declare namespace Common {
     router: BigNumberish;
     stage: BigNumberish;
     interest: Common.InterestStruct;
+    status: BigNumberish;
   };
 
   export type PoolStructOutput = [
@@ -108,7 +111,8 @@ export declare namespace Common {
     addrs: Common.AddressesStructOutput,
     router: bigint,
     stage: bigint,
-    interest: Common.InterestStructOutput
+    interest: Common.InterestStructOutput,
+    status: bigint
   ] & {
     lInt: Common.LIntStructOutput;
     bigInt: Common.BigIntStructOutput;
@@ -116,6 +120,7 @@ export declare namespace Common {
     router: bigint;
     stage: bigint;
     interest: Common.InterestStructOutput;
+    status: bigint;
   };
 
   export type ContributorStruct = {

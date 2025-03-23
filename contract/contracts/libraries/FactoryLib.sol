@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-// import "hardhat/console.sol";   // For debugging only
+import "hardhat/console.sol";   // For debugging only
 import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
 import { IERC20 } from "../apis/IERC20.sol";
@@ -64,7 +64,8 @@ library FactoryLib {
    * @dev Verifiy that status is already initialized
   */
   function _isValidUnit(Data storage self, uint256 unit) internal view {
-    require( _isInitialized(self.indexes[unit]), 'Amount not initialized');
+    uint uId = self.indexes[unit];
+    require(_isInitialized(uId) && self.current[uId].status == Common.Status.TAKEN, 'Amount not initialized');
   }
 
   /**
@@ -80,14 +81,17 @@ library FactoryLib {
    * @dev Verifiy that unit contribution is not initialized, then intialize it.
    * @notice We preserve the first slot at self.current[0] for future use.
   */
-  function _getUnitId(Data storage self, uint256 unit) internal returns(uint uId, uint rId, bool initialized) {
-    (uId, rId, initialized) = (self.indexes[unit], 0, _isInitialized(uId));
-    if(!initialized){
+  function _getUnitId(Data storage self, Common.CreatePoolParam memory _c) internal returns(Common.CreatePoolParam memory cpp) {
+    _c.uId = self.indexes[_c.unit];
+    if(!_isInitialized(_c.uId)){
       self.epoches.increment();
-      self.pastEpoches.increment();
-      self.indexes[unit] = uId;
-      (uId, rId) = (self.epoches.current(), self.pastEpoches.current());
+      _c.uId = self.epoches.current();
+      self.indexes[_c.unit] = _c.uId;
     }
+    _c.isTaken = self.current[_c.uId].status == Common.Status.TAKEN;
+    self.pastEpoches.increment();
+    _c.rId = self.pastEpoches.current();
+    cpp = _c;
   }
 
   /**
@@ -125,7 +129,7 @@ library FactoryLib {
   /**
    * @dev Create a fresh pool
    * @param self: Storage of type `Data`
-   * @param cpp: This is a struct of data much like an object. We use it to compress a few parameters
+   * @param _c: This is a struct of data much like an object. We use it to compress a few parameters
    *              instead of overloading _createPool.
    * @notice cSlot is the position where the contibutors for the current unit is stored.
    *          Anytime we created a pool, a record is known in advance i.e. a slot is created in advance for the it. This is where the pool
@@ -138,7 +142,7 @@ library FactoryLib {
   */   
   function _createPool(
     Data storage self,
-    Common.CreatePoolParam memory cpp,
+    Common.CreatePoolParam memory _c,
     address safe,
     address user,
     Common.Router router
@@ -147,16 +151,16 @@ library FactoryLib {
     returns(Common.Pool memory _p) 
   {
     Def memory _d = _defaults();
-    // bool(cpp.colCoverage >= 100).assertTrue("Col coverage is too low");
-    Utils.assertTrue_2(cpp.duration > _d.zero, cpp.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
+    // bool(_c.colCoverage >= 100).assertTrue("Col coverage is too low");
+    Utils.assertTrue_2(_c.duration > _d.zero, _c.duration <= 720, "Invalid duration"); // 720hrs = 30 days.
     _awardPoint(self.points, user, _d.t);
     self.cSlots.increment();
-    (, uint rId, bool initialized) = _getUnitId(self, cpp.unit);
-    if(initialized) revert Common.UnitIsTaken();
-    _p = _updatePoolSlot(self, cpp, safe, router);
-    _callback(self, _p, rId);
-    if(!IBank(safe).addUp(user, rId)) revert Common.SafeAddupFailed();
-    _validateAndWithdrawAllowance(user, cpp.asset, cpp.unit, safe);
+    _c = _getUnitId(self, _c);
+    if(_c.isTaken) revert Common.UnitIsTaken();
+    _p = _updatePoolSlot(self, _c, safe, router);
+    _callback(self, _p, _c.uId);
+    if(!IBank(safe).addUp(user, _c.rId)) revert Common.SafeAddupFailed();
+    _validateAndWithdrawAllowance(user, _c.asset, _c.unit, safe);
   }
 
   function _defaults()
@@ -183,7 +187,7 @@ library FactoryLib {
    */
   function _initializePool(
     Data storage self,
-    Common.CreatePoolParam memory cpp,
+    Common.CreatePoolParam memory _c,
     Common.Interest memory itr,
     address safe,
     uint24 durInSec,
@@ -191,34 +195,35 @@ library FactoryLib {
   ) internal view returns(Common.Pool memory _p) {
     Def memory _d = _defaults();
     uint cSlot = self.cSlots.current();
-    _p.lInt = Common.LInt(cpp.quorum, _d.zero, cpp.colCoverage, durInSec, cpp.intRate, cSlot, _d.zero, _p.lInt.userCount);
-    _p.bigInt = Common.BigInt(cpp.unit, cpp.unit, self.pastEpoches.current());
-    _p.addrs = Common.Addresses(cpp.asset, _d.zeroAddr, safe, cpp.members[0]);
+    _p.lInt = Common.LInt(_c.quorum, _d.zero, _c.colCoverage, durInSec, _c.intRate, cSlot, _d.zero, _p.lInt.userCount);
+    _p.bigInt = Common.BigInt(_c.unit, _c.unit, _c.rId, _c.uId);
+    _p.addrs = Common.Addresses(_c.asset, _d.zeroAddr, safe, _c.members[0]);
     _p.router = router;
     _p.interest = itr;
+    _p.status = Common.Status.TAKEN;
     _p.stage = Common.Stage.JOIN;
   }
 
   /*** @dev Update the storage with pool information
    * @param self: Storage of type `Data`
-   * @param cpp: This is a struct of data much like an object. We use it to compress a few parameters
+   * @param _c: This is a struct of data much like an object. We use it to compress a few parameters
    *              instead of overloading _createPool.
    * @param uId: Unit Id ref/index in storage.
-   * @param safe: Strategy contract.
+   * @param router: Permissioned or Permissionless.
    */
   function _updatePoolSlot(
     Data storage self,
-    Common.CreatePoolParam memory cpp,
+    Common.CreatePoolParam memory _c,
     address safe,
-    Common.Router router 
+    Common.Router router
   ) 
     internal view returns(Common.Pool memory _p)
   {
-    uint24 durInSec = _convertDurationToSec(uint16(cpp.duration));
+    uint24 durInSec = _convertDurationToSec(uint16(_c.duration));
     _p = _initializePool(
       self, 
-      cpp, 
-      cpp.unit.mul(cpp.quorum).computeInterestsBasedOnDuration(cpp.intRate, durInSec), 
+      _c, 
+      _c.unit.mul(_c.quorum).computeInterestsBasedOnDuration(_c.intRate, durInSec), 
       safe, 
       durInSec, 
       router
@@ -249,7 +254,7 @@ library FactoryLib {
     returns (Common.Pool memory _p) 
   {
     Def memory _d = _defaults();
-    address safe = _fetchAndValidateSafe(cpp.unit, self.pData.safeFactory);
+    address safe = _getSafe(cpp.unit, self.pData.safeFactory);
     for(uint i = _d.zero; i < cpp.members.length; i++) {
       address user = cpp.members[i];
       if(i == _d.zero) {
@@ -263,38 +268,35 @@ library FactoryLib {
     }
   }
 
-  /**
-   * @dev Return safe for user
-   * @param safeFactory: StrategyManager contract address
-   * @param unit : Caller
-   */
-  function _getSafe(
-    address safeFactory, 
-    uint256 unit
-  ) 
-    internal 
-    view
-    returns(address _safe) 
-  {
-    _safe = IBankFactory(safeFactory).getBank(unit);
-  }
+  // /**
+  //  * @dev Return safe for user
+  //  * @param safeFactory: StrategyManager contract address
+  //  * @param unit : Caller
+  //  */
+  // function _getSafe(
+  //   address safeFactory, 
+  //   uint256 unit
+  // ) 
+  //   internal 
+  //   view
+  //   returns(address _safe) 
+  // {
+  //   _safe = IBankFactory(safeFactory).getBank(unit);
+  // }
 
   /**
    * @dev Checks, validate and return safe for the target address.
    * @param unit : Unit contribution.
    * @param safeFactory : StrategyManager contract address.
    */
-  function _fetchAndValidateSafe(
+  function _getSafe(
     uint256 unit,
     address safeFactory
   ) 
     private 
     returns(address safe) 
   {
-    safe = _getSafe(safeFactory, unit);
-    if(safe == address(0)) {
-      safe = IBankFactory(safeFactory).createBank(unit);
-    }
+    safe = IBankFactory(safeFactory).createBank(unit);
     assert(safe != address(0));
   }
 
@@ -317,8 +319,7 @@ library FactoryLib {
     self.cData[cSlot].push(); 
     self.slots[user][unit] = Common.Slot(pos, isMember, isAdmin);
     self.cData[cSlot][pos] = Common.Contributor(0, 0, 0, 0, 0, 0, user, sentQuota, 0);
-    // self.current[_getIndex(self.indexes, unit)].lInt.userCount ++;
-    (uint uId,,) = _getUnitId(self, unit);
+    uint uId = self.indexes[unit];
     self.current[uId].lInt.userCount ++;
   }
 
@@ -378,7 +379,7 @@ library FactoryLib {
   {
     Def memory _d = _defaults();
     address user = cpp.members[0];
-    address safe = _fetchAndValidateSafe(cpp.unit, self.pData.safeFactory);
+    address safe = _getSafe(cpp.unit, self.pData.safeFactory);
     _p = _createPool(self, cpp, safe, user, Common.Router.PERMISSIONLESS);
     _addNewContributor(self, _p.lInt.cSlot, _p.bigInt.unit, user, _d.t, _d.t, _d.t);
   }
@@ -418,7 +419,7 @@ library FactoryLib {
     }
     _validateAndWithdrawAllowance(caller, _p.addrs.asset, _p.bigInt.unit, _p.addrs.bank);
     _addUpToSafe(_p.addrs.bank, caller, _p.bigInt.recordId);
-    _callback(self, _p, self.indexes[_p.bigInt.unit]);
+    _callback(self, _p, _p.bigInt.unitId);
   }
 
   /**
@@ -553,14 +554,14 @@ library FactoryLib {
         _convertDurationToSec(daysOfUseInHr), 
         self.cData[_p.lInt.cSlot][_p.lInt.selector].id,
         unit,
-        self.indexes[unit],
+        _p.bigInt.unitId,
         _p.bigInt.currentPool.computeFee(self.pData.makerRate),
         getPriceOfCollateralToken(),
         _p
       )
     );
-    self.cData[_p.lInt.cSlot][_p.lInt.selector].getFinanceTime = _now();
-    _callback(self, _p, self.indexes[unit]);
+    self.cData[_p.lInt.cSlot][_p.lInt.selector - 1].getFinanceTime = _now();
+    _callback(self, _p, _p.bigInt.unitId);
   }
 
   /**@dev Increment allGh when one member get finance
@@ -668,6 +669,7 @@ library FactoryLib {
     computedCol = _computeCollateral(arg.pool.bigInt.currentPool, uint24(arg.pool.lInt.colCoverage), arg.colPriceInDecimals, IERC20(self.pData.collateralToken).decimals());
     arg.pool.addrs.lastPaid = caller;
     arg.pool.lInt.selector ++;
+    // console.log("ComputedCol", computedCol);
     _validateAndWithdrawAllowance(caller, address(self.pData.collateralToken), computedCol, arg.pool.addrs.bank);
     Common.Contributor memory cData = Common.Contributor({
       durOfChoice: arg.durOfChoice, 
@@ -907,7 +909,8 @@ library FactoryLib {
   function _shuffle(
     Data storage self,
     Common.Pool memory _p
-  ) internal returns(Common.Pool memory) {
+  ) internal returns(Common.Pool memory empty) {
+    empty = self.current[0];
     self.records[_p.bigInt.recordId] = _p;
   }
 
@@ -937,7 +940,7 @@ library FactoryLib {
       if(_p.bigInt.currentPool > _p.bigInt.unit) revert Common.CancellationNotAllowed();
     }
     _p.stage = Common.Stage.CANCELED;
-    _callback(self, _shuffle(self, _p), self.indexes[unit]);
+    _callback(self, _shuffle(self, _p), _p.bigInt.unitId);
     IBank(_p.addrs.bank).cancel(creator, _p.addrs.asset, _p.bigInt.unit, _p.bigInt.recordId);
   }
 

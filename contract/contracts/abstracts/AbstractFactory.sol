@@ -155,7 +155,7 @@ abstract contract AbstractFactory is
         } else {
             if(contributors.length <= 1) revert MinimumParticipantIsTwo();
         }
-        CreatePoolParam memory cpp = CreatePoolParam(intRate, quorum, durationInHours, colCoverage, unitLiquidity, contributors, asset);
+        CreatePoolParam memory cpp = CreatePoolParam(intRate, quorum, durationInHours, colCoverage, unitLiquidity, contributors, asset, 0, 0, false);
         Analytics memory alt = analytics;
         analytics = Analytics(
             alt.tvlCollateral, 

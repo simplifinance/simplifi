@@ -106,10 +106,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IOwnerShip__factory>;
     getContractFactory(
-      name: "ISimplifi",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ISimplifi__factory>;
-    getContractFactory(
       name: "AssetClass",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.AssetClass__factory>;
@@ -121,10 +117,6 @@ declare module "hardhat/types/runtime" {
       name: "OwnerShip",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.OwnerShip__factory>;
-    getContractFactory(
-      name: "Simplifi",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Simplifi__factory>;
     getContractFactory(
       name: "SimpliToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -173,38 +165,6 @@ declare module "hardhat/types/runtime" {
       name: "Utils",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Utils__factory>;
-    getContractFactory(
-      name: "Analytics",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Analytics__factory>;
-    getContractFactory(
-      name: "Contributor",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Contributor__factory>;
-    getContractFactory(
-      name: "CreatePool",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CreatePool__factory>;
-    getContractFactory(
-      name: "Point",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Point__factory>;
-    getContractFactory(
-      name: "Pools",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Pools__factory>;
-    getContractFactory(
-      name: "RatesAndFeeTo",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RatesAndFeeTo__factory>;
-    getContractFactory(
-      name: "Safe",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Safe__factory>;
-    getContractFactory(
-      name: "TokensInUse",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokensInUse__factory>;
 
     getContractAt(
       name: "IERC1155Errors",
@@ -322,11 +282,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IOwnerShip>;
     getContractAt(
-      name: "ISimplifi",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ISimplifi>;
-    getContractAt(
       name: "AssetClass",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -341,11 +296,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.OwnerShip>;
-    getContractAt(
-      name: "Simplifi",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Simplifi>;
     getContractAt(
       name: "SimpliToken",
       address: string | ethers.Addressable,
@@ -406,46 +356,6 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Utils>;
-    getContractAt(
-      name: "Analytics",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Analytics>;
-    getContractAt(
-      name: "Contributor",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Contributor>;
-    getContractAt(
-      name: "CreatePool",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CreatePool>;
-    getContractAt(
-      name: "Point",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Point>;
-    getContractAt(
-      name: "Pools",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Pools>;
-    getContractAt(
-      name: "RatesAndFeeTo",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.RatesAndFeeTo>;
-    getContractAt(
-      name: "Safe",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Safe>;
-    getContractAt(
-      name: "TokensInUse",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TokensInUse>;
 
     deployContract(
       name: "IERC1155Errors",
@@ -540,10 +450,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IOwnerShip>;
     deployContract(
-      name: "ISimplifi",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ISimplifi>;
-    deployContract(
       name: "AssetClass",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.AssetClass>;
@@ -555,10 +461,6 @@ declare module "hardhat/types/runtime" {
       name: "OwnerShip",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OwnerShip>;
-    deployContract(
-      name: "Simplifi",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Simplifi>;
     deployContract(
       name: "SimpliToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -607,38 +509,6 @@ declare module "hardhat/types/runtime" {
       name: "Utils",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Utils>;
-    deployContract(
-      name: "Analytics",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Analytics>;
-    deployContract(
-      name: "Contributor",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Contributor>;
-    deployContract(
-      name: "CreatePool",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CreatePool>;
-    deployContract(
-      name: "Point",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Point>;
-    deployContract(
-      name: "Pools",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pools>;
-    deployContract(
-      name: "RatesAndFeeTo",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RatesAndFeeTo>;
-    deployContract(
-      name: "Safe",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Safe>;
-    deployContract(
-      name: "TokensInUse",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokensInUse>;
 
     deployContract(
       name: "IERC1155Errors",
@@ -756,11 +626,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IOwnerShip>;
     deployContract(
-      name: "ISimplifi",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ISimplifi>;
-    deployContract(
       name: "AssetClass",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -775,11 +640,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.OwnerShip>;
-    deployContract(
-      name: "Simplifi",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Simplifi>;
     deployContract(
       name: "SimpliToken",
       args: any[],
@@ -840,46 +700,6 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Utils>;
-    deployContract(
-      name: "Analytics",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Analytics>;
-    deployContract(
-      name: "Contributor",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Contributor>;
-    deployContract(
-      name: "CreatePool",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.CreatePool>;
-    deployContract(
-      name: "Point",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Point>;
-    deployContract(
-      name: "Pools",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pools>;
-    deployContract(
-      name: "RatesAndFeeTo",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RatesAndFeeTo>;
-    deployContract(
-      name: "Safe",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Safe>;
-    deployContract(
-      name: "TokensInUse",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokensInUse>;
 
     // default types
     getContractFactory(

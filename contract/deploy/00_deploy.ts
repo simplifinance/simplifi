@@ -1,17 +1,19 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
+import { QUORUM } from '../archives/test/utilities';
+import { zeroAddress } from 'viem';
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, } = deployments;
-	const {deployer, oracle} = await getNamedAccounts();
+	const {deployer, oracle, feeTo} = await getNamedAccounts();
   const serviceRate = 10; // 0.1%
-  const minContribution = 1_000_000_000_000_000;
-  // const setUpFee = 0;
+  const FEE = '10000000000000000000';
+  const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27", deployer];
 
-  console.log("Oracle: ", oracle);
+  // console.log("Oracle: ", oracle);
   /**
    * Deploy Ownership Manager
    */
@@ -21,16 +23,71 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       log: true,
     });
     console.log(`OwnershipManager deployed to: ${ownershipManager.address}`);
+
+    const escape = await deploy("Escape", {
+      from: deployer,
+      args: [ownershipManager.address],
+      log: true,
+    });
+    console.log(`Escape contract deployed to: ${escape.address}`);
+
+    const reserve = await deploy("Reserve", {
+      from: deployer,
+      args: [ownershipManager.address],
+      log: true,
+    });
+    console.log(`Reserve contract deployed to: ${reserve.address}`);
+
+    const distributor = await deploy("TokenDistributor", {
+      from: deployer,
+      args: [
+        ownershipManager.address,
+        signers,
+        QUORUM
+      ],
+      log: true,
+    });
+    console.log(`TokenDistributor contract deployed to: ${distributor.address}`);
+                                                                    
+    const attorney = await deploy("Attorney", {
+      from: deployer,
+      args: [
+        FEE,
+        feeTo,
+        ownershipManager.address
+      ],
+      log: true,
+    });
+    console.log(`Attorney contract deployed to: ${attorney.address}`);
+
+  /**
+   * Deploy FactoryLib
+   */
+  const collateralToken = await deploy("SimpliToken", {
+    from: deployer,
+    args: [
+      attorney.address,
+      reserve.address,
+      distributor.address,
+      ownershipManager.address
+    ],
+    log: true,
+  });
+  console.log(`SimpliToken deployed to: ${collateralToken.address}`);
+  
  
     /**
    * Deploy Test Asset
    */
-    const testAsset = await deploy("TestAsset", {
+    const testAsset = await deploy("TestBaseAsset", {
       from: deployer,
-      args: [],
+      args: [
+        ownershipManager.address,
+        collateralToken.address
+      ],
       log: true,
     });
-    console.log(`Test Asset deployed to: ${testAsset.address}`);
+    console.log(`TestBaseAsset deployed to: ${testAsset.address}`);
 
 
   /**
@@ -48,43 +105,34 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
    */
   const bankFactory = await deploy("BankFactory", {
     from: deployer,
-    args: [ownershipManager.address],
+    args: [ownershipManager.address, feeTo],
     log: true,
   });
   console.log(`BankFactory deployed to: ${bankFactory.address}`);  
 
   /**
-   * Deploy FactoryLib
-   */
-  const factoryLibV3 = await deploy("FactoryLibV3", {
-    from: deployer,
-    args: [],
-    log: true,
-  });
-  console.log(`factoryLibV3 deployed to: ${factoryLibV3.address}`);
-  
-  /**
    * Deploy Strategy Manager
    */
   const factory = await deploy("Factory", {
-    libraries: {
-      FactoryLib: factoryLibV3.address
-    },
+    // libraries: {
+    //   FactoryLib: factoryLibV3.address
+    // },
     from: deployer,
     args: [
       serviceRate,
-      minContribution,
-      deployer, /// We use the deployer as feeReceiver /feeTo,
+      feeTo,
       assertMgr.address,
       bankFactory.address,
       ownershipManager.address,
-      oracle
+      zeroAddress,
+      collateralToken.address,
+      // oracle
     ],
     log: true,
   });
   console.log(`Factory deployed to: ${factory.address}`);
 
-  await execute("OwnerShip", {from: deployer}, "setPermission", [factory.address, ownershipManager.address]);
+  await execute("OwnerShip", {from: deployer}, "setPermission", [factory.address, ownershipManager.address, deployer, bankFactory.address, assertMgr.address]);
   const cData = await read("Factory", "getFactoryData");
   console.log(cData);
 };

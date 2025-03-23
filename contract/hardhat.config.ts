@@ -9,7 +9,7 @@ import { zeroAddress } from "viem";
 
 dotconfig();
 const PRIVATE_KEY = process.env.PRIVATE_KEY_CROSS_0xD7c;
-const API_KEY = process.env.ALCHEMY_API_KEY;
+// const API_KEY = process.env.ALCHEMY_API_KEY;
 
 const config: HardhatUserConfig = {
   
@@ -82,6 +82,11 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
+      default: 0,
+      4157: `privatekey://${PRIVATE_KEY}`,
+      44787: `privatekey://${PRIVATE_KEY}`,
+    },
+    feeTo: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
       44787: `privatekey://${PRIVATE_KEY}`,

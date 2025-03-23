@@ -10,11 +10,11 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "rootDirs": ["arch/test"],
+    "rootDirs": ["archives/test"],
     "useUnknownInCatchVariables": false,
     "noImplicitAny": false
   },
-  "include": ["./typechain", "arch/test", "./deploy", "./types"],
+  "include": ["./typechain", "archives/test", "./deploy", "./types"],
   "exclude": ["./node_modules/*"],
   "files": ["./hardhat.config.ts"]
 }

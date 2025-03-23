@@ -70,7 +70,6 @@ interface IFactory is Common {
     address feeTo;
     IAssetClass assetAdmin;
     uint16 makerRate;
-    address bankFactory;
     address safeFactory;
     IERC20 collateralToken;
   }

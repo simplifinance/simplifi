@@ -23,8 +23,8 @@ export const convertStringsToAddresses = (args: string[]) => {
   return returnArr;
 }
 export const DECIMALS = 18;
-export const SYMBOL = "SUSD";
-export const NAME = "Simple Test USD";
+export const SYMBOL = "TBSD";
+export const NAME = "Test Base Asset";
 export const TOTALSUPPLY = buildstring('1', '0', 24);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
 export const TEN_THOUSAND_TOKEN = BigInt('10000000000000000000000');

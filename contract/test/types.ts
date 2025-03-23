@@ -1,8 +1,19 @@
 import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { ContractTransactionResponse, ethers } from "ethers";
 import { Hex, Address as ContractAddress } from "viem";
-import type { AssetClass, Factory, OwnerShip, BankFactory, TestAsset, Bank, } from "../typechain-types";
-import { C3 } from "../typechain-types/contracts/apis/IFactory";
+import type { 
+  AssetClass, 
+  Factory, 
+  OwnerShip, 
+  BankFactory, 
+  TestBaseAsset, 
+  Bank, 
+  Escape, 
+  Attorney, 
+  Reserve,
+  TokenDistributor, 
+  SimpliToken } from "../typechain-types";
+import { Common } from "../typechain-types/contracts/apis/IFactory";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -62,9 +73,10 @@ export interface PermissionLessBandParam {
   deployer: Signer;
   durationInHours: number;
   unitLiquidity: bigint;
-  asset: TestAssetContract;
+  asset: TestBaseAssetContract;
   factory: FactoryContract;
   signer: Signer;
+  collateralToken: SimpliTokenContract;
 }
 
 export interface RemoveLiquidityParam {
@@ -81,8 +93,9 @@ export interface PermissionedBandParam {
   durationInHours: number;
   colCoverage: number;
   unitLiquidity: bigint;
-  asset: TestAssetContract;
+  asset: TestBaseAssetContract;
   contributors: Addresses;
+  collateralToken: SimpliTokenContract;
 }
 
 export interface BandParam {
@@ -101,17 +114,22 @@ export interface SetVariableParam {
   creationFee: bigint;
 }
 
+export interface Balances {
+  collateral: bigint;
+  base: bigint;
+}
+
 export interface FactoryTxReturn {
-  pool: C3.ReadDataReturnValueStructOutput;
-  balances?: C3.BalancesStructOutput;
-  profile: C3.ContributorStructOutput;
-  slot: C3.SlotStruct;
-  // cData: C3.ContributorStructOutput[];
+  pool: Common.ReadDataReturnValueStructOutput;
+  balances?: Balances;
+  profile: Common.ContributorStructOutput;
+  slot: Common.SlotStruct;
+  // cData: Common.ContributorStructOutput[];
   
 }
 
 export interface FundAccountParam {
-  asset: TestAssetContract;
+  asset: TestBaseAssetContract | SimpliTokenContract;
   testAssetAddr?: Address;
   recipients: Address[];
   sender: Signer;
@@ -119,28 +137,33 @@ export interface FundAccountParam {
 }
 
 export interface JoinABandParam {
-  testAsset: TestAssetContract;
+  testAsset: TestBaseAssetContract;
   factory: FactoryContract;
   factoryAddr: Address;
   signers: SignersArr;
   deployer: Signer;
   unit: bigint;
   contribution: bigint;
+  collateral: SimpliTokenContract;
 }
 
 export interface LiquidateParam extends BandParam {
   debt?: bigint;
-  asset: TestAssetContract;
+  asset: TestBaseAssetContract;
   deployer: Signer;
-  // unit: bigint;
+  collateral: SimpliTokenContract;
 }
 
 export interface GetFinanceParam extends BandParam {
   colQuote: bigint;
+  asset: TestBaseAssetContract;
+  collateral: SimpliTokenContract;
+  deployer: Signer;
 }
 
 export interface PaybackParam extends LiquidateParam {
-  asset: TestAssetContract;
+  asset: TestBaseAssetContract;
+  collateral: SimpliTokenContract;
 }
 
 export interface GetPaidParam {
@@ -148,7 +171,7 @@ export interface GetPaidParam {
   signers: SignersArr;
   unit: bigint;
   runPayback: boolean;
-  tcUSD: TestAssetContract;
+  tcUSD: TestBaseAssetContract;
   signerAddrs: Addresses;
   strategies: Addresses;
   trusteeAddr: Address;
@@ -162,7 +185,7 @@ export type AssetManagerContract = AssetClass & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type TestAssetContract = TestAsset & {
+export type TestBaseAssetContract = TestBaseAsset & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
@@ -174,6 +197,21 @@ export type BankContract = Bank & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
+export type EscapeContract = Escape & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+export type AttorneyContract = Attorney & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+export type TokenDistributorContract = TokenDistributor & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+export type SimpliTokenContract = SimpliToken & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+export type ReserveContract = Reserve & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
 export type OwnershipManagerContract = OwnerShip & {
   deploymentTransaction(): ContractTransactionResponse;
 };

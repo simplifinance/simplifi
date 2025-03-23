@@ -19,7 +19,7 @@ interface Common {
   }
 
   ////////////////////////////////////////////////////////// V3
-  // enum Status { AVAILABLE, TAKEN }
+  enum Status { AVAILABLE, TAKEN }
 
   enum Router { PERMISSIONLESS, PERMISSIONED }
 
@@ -30,7 +30,7 @@ interface Common {
     Router router;
     Stage stage;
     Interest interest;
-
+    Status status;
   }
     // Status status;
 
@@ -118,6 +118,9 @@ interface Common {
     uint unit;
     address[] members;
     address asset;
+    uint rId;
+    uint uId;
+    bool isTaken;
   }
 
   /**
@@ -128,7 +131,8 @@ interface Common {
   struct BigInt {
     uint256 unit;
     uint256 currentPool;
-    uint256 recordId;
+    uint recordId;
+    uint unitId;
   }
 
   /**

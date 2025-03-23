@@ -25,15 +25,15 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     // Fee Receiver
     address public feeTo;
 
-    // Mapping of user to unitId to access
+    // Mapping of user to record Id to access
     mapping(address => mapping(uint => bool)) private access;
 
     // Mapping of users to unitId to Collateral
     mapping(address => mapping(uint => uint256)) private collateralBalances;
 
     ///@dev Only users with access role are allowed
-    modifier hasAccess(address user, uint unitId) {
-        if (!access[user][unitId]) revert Common.UserDoesNotHaveAccess();
+    modifier hasAccess(address user, uint rId) {
+        if (!access[user][rId]) revert Common.UserDoesNotHaveAccess();
         _;
     }
 
@@ -68,7 +68,9 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
      * See IBank.addUp
      */
     function addUp(address user, uint rId) external onlyOwner returns (bool) {
-        userCount++;
+        unchecked {
+            userCount++;
+        }
         _addUser(user, rId);
         return true;
     }
@@ -80,6 +82,9 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
     */
     function _removeUser(address user, uint rId) private {
         assert(access[user][rId]);
+        if(userCount > 0) {
+            userCount--;
+        }
         access[user][rId] = false;
     }
 
@@ -140,7 +145,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
         uint fee,
         uint256 calculatedCol,
         uint rId
-    ) external onlyOwner returns (uint) {
+    ) external hasAccess(user, rId) onlyOwner returns (uint) {
         assert(asset != address(0) && user != address(0));
         collateralBalances[user][rId] = calculatedCol;
         uint loanable = loan;
@@ -169,14 +174,22 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
      * _p.defaulted : Address of the defaulted
      * _p.rId : Record Id. Every pool has a record Id i.e pool.bigInt.recordId
      */
-    function payback(Common.Payback_Bank memory _p) external onlyOwner returns (bool) {
+    function payback(Common.Payback_Bank memory _p) 
+        external 
+        onlyOwner 
+        hasAccess(_p.isSwapped? _p.defaulted : _p.user, _p.rId) 
+        returns (bool) 
+    {
         uint col = collateralBalances[_p.user][_p.rId];
         if (_p.isSwapped) {
             col = collateralBalances[_p.defaulted][_p.rId];
             collateralBalances[_p.defaulted][_p.rId] = 0;
             _removeUser(_p.defaulted, _p.rId);
-            _addUser(_p.user, _p.rId);
+        } else {
+            _removeUser(_p.user, _p.rId);
         }
+        collateralBalances[_p.user][_p.rId] = 0;
+        
         assert(
             IERC20(_p.asset).balanceOf(address(this)) >=
                 (_p.attestedInitialBal + _p.debt)
@@ -198,7 +211,7 @@ contract Bank is IBank, OnlyOwner, ReentrancyGuard {
         address asset,
         uint unit,
         uint rId
-    ) external onlyOwner returns (bool) {
+    ) external onlyOwner hasAccess(user, rId) returns (bool) {
         _setAllowance(user, asset, unit);
         _removeUser(user, rId);
         return true;

@@ -31,6 +31,11 @@
     "type": "error"
   },
   {
+    "inputs": [],
+    "name": "UserDoesNotHaveAccess",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
