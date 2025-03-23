@@ -50,7 +50,7 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }

@@ -1,5 +1,10 @@
 [
   {
+    "inputs": [],
+    "name": "CollateralCoverageCannotGoBelow_100",
+    "type": "error"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",

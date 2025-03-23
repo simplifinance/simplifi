@@ -7,7 +7,7 @@
         "type": "address"
       },
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "_ownershipMgr",
         "type": "address"
       }
@@ -97,7 +97,7 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }

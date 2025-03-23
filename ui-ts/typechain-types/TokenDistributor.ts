@@ -54,7 +54,6 @@ export interface TokenDistributorInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "delay"
-      | "deposit"
       | "executeTransaction"
       | "getExecutors"
       | "getTransactionRequest"
@@ -70,7 +69,6 @@ export interface TokenDistributorInterface extends Interface {
   getEvent(nameOrSignatureOrTopic: "Requested" | "Signer"): EventFragment;
 
   encodeFunctionData(functionFragment: "delay", values?: undefined): string;
-  encodeFunctionData(functionFragment: "deposit", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "executeTransaction",
     values: [BigNumberish]
@@ -107,7 +105,6 @@ export interface TokenDistributorInterface extends Interface {
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "delay", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTransaction",
     data: BytesLike
@@ -212,8 +209,6 @@ export interface TokenDistributor extends BaseContract {
 
   delay: TypedContractMethod<[], [bigint], "view">;
 
-  deposit: TypedContractMethod<[], [void], "payable">;
-
   executeTransaction: TypedContractMethod<
     [reqId: BigNumberish],
     [void],
@@ -266,9 +261,6 @@ export interface TokenDistributor extends BaseContract {
   getFunction(
     nameOrSignature: "delay"
   ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "deposit"
-  ): TypedContractMethod<[], [void], "payable">;
   getFunction(
     nameOrSignature: "executeTransaction"
   ): TypedContractMethod<[reqId: BigNumberish], [void], "nonpayable">;

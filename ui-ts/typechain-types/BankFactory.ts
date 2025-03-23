@@ -25,8 +25,10 @@ export interface BankFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "createBank"
+      | "feeTo"
       | "getBank"
       | "ownershipManager"
+      | "setFeeTp"
       | "setOwnershipManager"
       | "totalBanks"
   ): FunctionFragment;
@@ -35,6 +37,7 @@ export interface BankFactoryInterface extends Interface {
     functionFragment: "createBank",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getBank",
     values: [BigNumberish]
@@ -42,6 +45,10 @@ export interface BankFactoryInterface extends Interface {
   encodeFunctionData(
     functionFragment: "ownershipManager",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setFeeTp",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setOwnershipManager",
@@ -53,11 +60,13 @@ export interface BankFactoryInterface extends Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "createBank", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getBank", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipManager",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "setFeeTp", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setOwnershipManager",
     data: BytesLike
@@ -110,9 +119,13 @@ export interface BankFactory extends BaseContract {
 
   createBank: TypedContractMethod<[unit: BigNumberish], [string], "nonpayable">;
 
+  feeTo: TypedContractMethod<[], [string], "view">;
+
   getBank: TypedContractMethod<[unit: BigNumberish], [string], "view">;
 
   ownershipManager: TypedContractMethod<[], [string], "view">;
+
+  setFeeTp: TypedContractMethod<[newFeeTo: AddressLike], [void], "nonpayable">;
 
   setOwnershipManager: TypedContractMethod<
     [newManager: AddressLike],
@@ -130,11 +143,17 @@ export interface BankFactory extends BaseContract {
     nameOrSignature: "createBank"
   ): TypedContractMethod<[unit: BigNumberish], [string], "nonpayable">;
   getFunction(
+    nameOrSignature: "feeTo"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "getBank"
   ): TypedContractMethod<[unit: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "ownershipManager"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "setFeeTp"
+  ): TypedContractMethod<[newFeeTo: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setOwnershipManager"
   ): TypedContractMethod<[newManager: AddressLike], [boolean], "nonpayable">;

@@ -26,6 +26,7 @@ export interface ReserveInterface extends Interface {
     nameOrSignature:
       | "batchTransfer"
       | "lockToken"
+      | "name"
       | "ownershipManager"
       | "setOwnershipManager"
       | "setToken"
@@ -42,6 +43,7 @@ export interface ReserveInterface extends Interface {
     functionFragment: "lockToken",
     values: [AddressLike, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "ownershipManager",
     values?: undefined
@@ -69,6 +71,7 @@ export interface ReserveInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "lockToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "ownershipManager",
     data: BytesLike
@@ -144,6 +147,8 @@ export interface Reserve extends BaseContract {
     "nonpayable"
   >;
 
+  name: TypedContractMethod<[], [string], "view">;
+
   ownershipManager: TypedContractMethod<[], [string], "view">;
 
   setOwnershipManager: TypedContractMethod<
@@ -186,6 +191,9 @@ export interface Reserve extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "name"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "ownershipManager"
   ): TypedContractMethod<[], [string], "view">;

@@ -104,13 +104,13 @@ library Utils {
     ) 
         internal
         pure 
-        returns(uint256 expColInNative) 
+        returns(uint256 expCol) 
     {
         uint8 minCCR = 100;
         if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
         uint48 _ccr = uint48(uint(ccr).mul(100));
-        uint totalLoanInNative = loanReqInDecimals.mul(10**price.decimals).div(price.price);
-        expColInNative = totalLoanInNative.mul(_ccr).div(_getBase());
+        uint totalLoan = loanReqInDecimals.mul(10**price.decimals).div(price.price);
+        expCol = totalLoan.mul(_ccr).div(_getBase());
     }
 
     /**
@@ -136,6 +136,7 @@ library Utils {
      * @dev Compute interest based on specified rate.
      * @param rate : Interest rate.
      * @param principal : Total expected contribution.
+     * @param fullDurationInSec : Total duration.
      * 
      * Rules
      * -----

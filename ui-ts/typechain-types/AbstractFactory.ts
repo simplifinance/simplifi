@@ -23,8 +23,8 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
-export declare namespace C3 {
-  export type UintsStruct = {
+export declare namespace Common {
+  export type LIntStruct = {
     quorum: BigNumberish;
     selector: BigNumberish;
     colCoverage: BigNumberish;
@@ -35,7 +35,7 @@ export declare namespace C3 {
     userCount: BigNumberish;
   };
 
-  export type UintsStructOutput = [
+  export type LIntStructOutput = [
     quorum: bigint,
     selector: bigint,
     colCoverage: bigint,
@@ -55,30 +55,17 @@ export declare namespace C3 {
     userCount: bigint;
   };
 
-  export type Uint256sStruct = {
-    fullInterest: BigNumberish;
-    intPerSec: BigNumberish;
+  export type BigIntStruct = {
     unit: BigNumberish;
     currentPool: BigNumberish;
-    unitId: BigNumberish;
-    rId: BigNumberish;
+    recordId: BigNumberish;
   };
 
-  export type Uint256sStructOutput = [
-    fullInterest: bigint,
-    intPerSec: bigint,
+  export type BigIntStructOutput = [
     unit: bigint,
     currentPool: bigint,
-    unitId: bigint,
-    rId: bigint
-  ] & {
-    fullInterest: bigint;
-    intPerSec: bigint;
-    unit: bigint;
-    currentPool: bigint;
-    unitId: bigint;
-    rId: bigint;
-  };
+    recordId: bigint
+  ] & { unit: bigint; currentPool: bigint; recordId: bigint };
 
   export type AddressesStruct = {
     asset: AddressLike;
@@ -94,60 +81,75 @@ export declare namespace C3 {
     admin: string
   ] & { asset: string; lastPaid: string; bank: string; admin: string };
 
+  export type InterestStruct = {
+    fullInterest: BigNumberish;
+    intPerSec: BigNumberish;
+    intPerChoiceOfDur: BigNumberish;
+  };
+
+  export type InterestStructOutput = [
+    fullInterest: bigint,
+    intPerSec: bigint,
+    intPerChoiceOfDur: bigint
+  ] & { fullInterest: bigint; intPerSec: bigint; intPerChoiceOfDur: bigint };
+
   export type PoolStruct = {
-    uints: C3.UintsStruct;
-    uint256s: C3.Uint256sStruct;
-    addrs: C3.AddressesStruct;
-    status: BigNumberish;
+    lInt: Common.LIntStruct;
+    bigInt: Common.BigIntStruct;
+    addrs: Common.AddressesStruct;
     router: BigNumberish;
     stage: BigNumberish;
+    interest: Common.InterestStruct;
   };
 
   export type PoolStructOutput = [
-    uints: C3.UintsStructOutput,
-    uint256s: C3.Uint256sStructOutput,
-    addrs: C3.AddressesStructOutput,
-    status: bigint,
+    lInt: Common.LIntStructOutput,
+    bigInt: Common.BigIntStructOutput,
+    addrs: Common.AddressesStructOutput,
     router: bigint,
-    stage: bigint
+    stage: bigint,
+    interest: Common.InterestStructOutput
   ] & {
-    uints: C3.UintsStructOutput;
-    uint256s: C3.Uint256sStructOutput;
-    addrs: C3.AddressesStructOutput;
-    status: bigint;
+    lInt: Common.LIntStructOutput;
+    bigInt: Common.BigIntStructOutput;
+    addrs: Common.AddressesStructOutput;
     router: bigint;
     stage: bigint;
+    interest: Common.InterestStructOutput;
   };
 
   export type ContributorStruct = {
     durOfChoice: BigNumberish;
-    expInterest: BigNumberish;
-    payDate: BigNumberish;
-    turnTime: BigNumberish;
+    paybackTime: BigNumberish;
+    turnStartTime: BigNumberish;
+    getFinanceTime: BigNumberish;
     loan: BigNumberish;
     colBals: BigNumberish;
     id: AddressLike;
     sentQuota: boolean;
+    interestPaid: BigNumberish;
   };
 
   export type ContributorStructOutput = [
     durOfChoice: bigint,
-    expInterest: bigint,
-    payDate: bigint,
-    turnTime: bigint,
+    paybackTime: bigint,
+    turnStartTime: bigint,
+    getFinanceTime: bigint,
     loan: bigint,
     colBals: bigint,
     id: string,
-    sentQuota: boolean
+    sentQuota: boolean,
+    interestPaid: bigint
   ] & {
     durOfChoice: bigint;
-    expInterest: bigint;
-    payDate: bigint;
-    turnTime: bigint;
+    paybackTime: bigint;
+    turnStartTime: bigint;
+    getFinanceTime: bigint;
     loan: bigint;
     colBals: bigint;
     id: string;
     sentQuota: boolean;
+    interestPaid: bigint;
   };
 
   export type SlotStruct = {
@@ -162,13 +164,6 @@ export declare namespace C3 {
     isAdmin: boolean
   ] & { value: bigint; isMember: boolean; isAdmin: boolean };
 
-  export type BalancesStruct = { xfi: BigNumberish; erc20: BigNumberish };
-
-  export type BalancesStructOutput = [xfi: bigint, erc20: bigint] & {
-    xfi: bigint;
-    erc20: bigint;
-  };
-
   export type PointStruct = {
     contributor: BigNumberish;
     creator: BigNumberish;
@@ -180,32 +175,35 @@ export declare namespace C3 {
   };
 
   export type ReadDataReturnValueStruct = {
-    pool: C3.PoolStruct;
-    cData: C3.ContributorStruct[];
+    pool: Common.PoolStruct;
+    cData: Common.ContributorStruct[];
   };
 
   export type ReadDataReturnValueStructOutput = [
-    pool: C3.PoolStructOutput,
-    cData: C3.ContributorStructOutput[]
-  ] & { pool: C3.PoolStructOutput; cData: C3.ContributorStructOutput[] };
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorStructOutput[];
+  };
 }
 
 export declare namespace IFactory {
   export type AnalyticsStruct = {
-    tvlInXFI: BigNumberish;
-    tvlInUsd: BigNumberish;
+    tvlCollateral: BigNumberish;
+    tvlBase: BigNumberish;
     totalPermissioned: BigNumberish;
     totalPermissionless: BigNumberish;
   };
 
   export type AnalyticsStructOutput = [
-    tvlInXFI: bigint,
-    tvlInUsd: bigint,
+    tvlCollateral: bigint,
+    tvlBase: bigint,
     totalPermissioned: bigint,
     totalPermissionless: bigint
   ] & {
-    tvlInXFI: bigint;
-    tvlInUsd: bigint;
+    tvlCollateral: bigint;
+    tvlBase: bigint;
     totalPermissioned: bigint;
     totalPermissionless: bigint;
   };
@@ -215,18 +213,24 @@ export declare namespace IFactory {
     assetAdmin: AddressLike;
     makerRate: BigNumberish;
     bankFactory: AddressLike;
+    safeFactory: AddressLike;
+    collateralToken: AddressLike;
   };
 
   export type ContractDataStructOutput = [
     feeTo: string,
     assetAdmin: string,
     makerRate: bigint,
-    bankFactory: string
+    bankFactory: string,
+    safeFactory: string,
+    collateralToken: string
   ] & {
     feeTo: string;
     assetAdmin: string;
     makerRate: bigint;
     bankFactory: string;
+    safeFactory: string;
+    collateralToken: string;
   };
 
   export type ViewFactoryDataStruct = {
@@ -257,7 +261,6 @@ export interface AbstractFactoryInterface extends Interface {
       | "createPermissionlessPool"
       | "diaOracleAddress"
       | "enquireLiquidation"
-      | "getBalances"
       | "getCollaterlQuote"
       | "getCurrentDebt"
       | "getEpoches"
@@ -269,10 +272,8 @@ export interface AbstractFactoryInterface extends Interface {
       | "getRecord"
       | "getRecordEpoches"
       | "getSlot"
-      | "getStatus"
       | "joinAPool"
       | "liquidate"
-      | "minContribution"
       | "ownershipManager"
       | "pause"
       | "paused"
@@ -280,7 +281,6 @@ export interface AbstractFactoryInterface extends Interface {
       | "performSetUp"
       | "removeLiquidityPool"
       | "setContractData"
-      | "setMinimumLiquidityPerProvider"
       | "setOracleAddress"
       | "setOwnershipManager"
       | "unpause"
@@ -330,10 +330,6 @@ export interface AbstractFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getBalances",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getCollaterlQuote",
     values: [BigNumberish]
   ): string;
@@ -378,20 +374,12 @@ export interface AbstractFactoryInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getStatus",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "joinAPool",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "liquidate",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minContribution",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "ownershipManager",
@@ -405,7 +393,7 @@ export interface AbstractFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "performSetUp",
-    values: [BigNumberish, BigNumberish, AddressLike, AddressLike, AddressLike]
+    values: [BigNumberish, AddressLike, AddressLike, AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "removeLiquidityPool",
@@ -413,11 +401,7 @@ export interface AbstractFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setContractData",
-    values: [AddressLike, AddressLike, BigNumberish, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setMinimumLiquidityPerProvider",
-    values: [BigNumberish]
+    values: [AddressLike, AddressLike, BigNumberish, AddressLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setOracleAddress",
@@ -447,10 +431,6 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getBalances",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getCollaterlQuote",
     data: BytesLike
   ): Result;
@@ -476,13 +456,8 @@ export interface AbstractFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getSlot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getStatus", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "joinAPool", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "minContribution",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "ownershipManager",
     data: BytesLike
@@ -500,10 +475,6 @@ export interface AbstractFactoryInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setContractData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setMinimumLiquidityPerProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -530,10 +501,10 @@ export namespace CancellationEvent {
 }
 
 export namespace GetFinancedEvent {
-  export type InputTuple = [arg0: C3.PoolStruct];
-  export type OutputTuple = [arg0: C3.PoolStructOutput];
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
   export interface OutputObject {
-    arg0: C3.PoolStructOutput;
+    arg0: Common.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -542,10 +513,10 @@ export namespace GetFinancedEvent {
 }
 
 export namespace LiquidatedEvent {
-  export type InputTuple = [arg0: C3.PoolStruct];
-  export type OutputTuple = [arg0: C3.PoolStructOutput];
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
   export interface OutputObject {
-    arg0: C3.PoolStructOutput;
+    arg0: Common.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -554,10 +525,10 @@ export namespace LiquidatedEvent {
 }
 
 export namespace NewContributorAddedEvent {
-  export type InputTuple = [arg0: C3.PoolStruct];
-  export type OutputTuple = [arg0: C3.PoolStructOutput];
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
   export interface OutputObject {
-    arg0: C3.PoolStructOutput;
+    arg0: Common.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -578,10 +549,10 @@ export namespace PausedEvent {
 }
 
 export namespace PaybackEvent {
-  export type InputTuple = [arg0: C3.PoolStruct];
-  export type OutputTuple = [arg0: C3.PoolStructOutput];
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
   export interface OutputObject {
-    arg0: C3.PoolStructOutput;
+    arg0: Common.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -590,10 +561,10 @@ export namespace PaybackEvent {
 }
 
 export namespace PoolCreatedEvent {
-  export type InputTuple = [arg0: C3.PoolStruct];
-  export type OutputTuple = [arg0: C3.PoolStructOutput];
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
   export interface OutputObject {
-    arg0: C3.PoolStructOutput;
+    arg0: Common.PoolStructOutput;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -660,8 +631,8 @@ export interface AbstractFactory extends BaseContract {
     [],
     [
       [bigint, bigint, bigint, bigint] & {
-        tvlInXFI: bigint;
-        tvlInUsd: bigint;
+        tvlCollateral: bigint;
+        tvlBase: bigint;
         totalPermissioned: bigint;
         totalPermissionless: bigint;
       }
@@ -700,14 +671,14 @@ export interface AbstractFactory extends BaseContract {
   enquireLiquidation: TypedContractMethod<
     [unit: BigNumberish],
     [
-      [C3.ContributorStructOutput, boolean, bigint, C3.SlotStructOutput, string]
+      [
+        Common.ContributorStructOutput,
+        boolean,
+        bigint,
+        Common.SlotStructOutput,
+        string
+      ]
     ],
-    "view"
-  >;
-
-  getBalances: TypedContractMethod<
-    [unit: BigNumberish],
-    [C3.BalancesStructOutput],
     "view"
   >;
 
@@ -734,30 +705,30 @@ export interface AbstractFactory extends BaseContract {
   getFinance: TypedContractMethod<
     [unit: BigNumberish, daysOfUseInHr: BigNumberish],
     [boolean],
-    "payable"
+    "nonpayable"
   >;
 
   getPoint: TypedContractMethod<
     [user: AddressLike],
-    [C3.PointStructOutput],
+    [Common.PointStructOutput],
     "view"
   >;
 
   getPoolData: TypedContractMethod<
     [unitId: BigNumberish],
-    [C3.ReadDataReturnValueStructOutput],
+    [Common.ReadDataReturnValueStructOutput],
     "view"
   >;
 
   getProfile: TypedContractMethod<
     [unit: BigNumberish, user: AddressLike],
-    [C3.ContributorStructOutput],
+    [Common.ContributorStructOutput],
     "view"
   >;
 
   getRecord: TypedContractMethod<
     [rId: BigNumberish],
-    [C3.ReadDataReturnValueStructOutput],
+    [Common.ReadDataReturnValueStructOutput],
     "view"
   >;
 
@@ -765,17 +736,13 @@ export interface AbstractFactory extends BaseContract {
 
   getSlot: TypedContractMethod<
     [user: AddressLike, unit: BigNumberish],
-    [C3.SlotStructOutput],
+    [Common.SlotStructOutput],
     "view"
   >;
-
-  getStatus: TypedContractMethod<[unit: BigNumberish], [string], "view">;
 
   joinAPool: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
 
   liquidate: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-
-  minContribution: TypedContractMethod<[], [bigint], "view">;
 
   ownershipManager: TypedContractMethod<[], [string], "view">;
 
@@ -788,10 +755,10 @@ export interface AbstractFactory extends BaseContract {
   performSetUp: TypedContractMethod<
     [
       serviceRate: BigNumberish,
-      _minContribution: BigNumberish,
       feeTo: AddressLike,
       assetClass: AddressLike,
-      strategyManager: AddressLike
+      strategyManager: AddressLike,
+      colToken: AddressLike
     ],
     [void],
     "nonpayable"
@@ -805,18 +772,13 @@ export interface AbstractFactory extends BaseContract {
 
   setContractData: TypedContractMethod<
     [
-      feeTo: AddressLike,
       assetAdmin: AddressLike,
-      serviceRate: BigNumberish,
-      bankFactory: AddressLike
+      feeTo: AddressLike,
+      makerRate: BigNumberish,
+      safeFactory: AddressLike,
+      colToken: AddressLike
     ],
     [boolean],
-    "nonpayable"
-  >;
-
-  setMinimumLiquidityPerProvider: TypedContractMethod<
-    [minLiquidity: BigNumberish],
-    [void],
     "nonpayable"
   >;
 
@@ -844,8 +806,8 @@ export interface AbstractFactory extends BaseContract {
     [],
     [
       [bigint, bigint, bigint, bigint] & {
-        tvlInXFI: bigint;
-        tvlInUsd: bigint;
+        tvlCollateral: bigint;
+        tvlBase: bigint;
         totalPermissioned: bigint;
         totalPermissionless: bigint;
       }
@@ -888,15 +850,14 @@ export interface AbstractFactory extends BaseContract {
   ): TypedContractMethod<
     [unit: BigNumberish],
     [
-      [C3.ContributorStructOutput, boolean, bigint, C3.SlotStructOutput, string]
+      [
+        Common.ContributorStructOutput,
+        boolean,
+        bigint,
+        Common.SlotStructOutput,
+        string
+      ]
     ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getBalances"
-  ): TypedContractMethod<
-    [unit: BigNumberish],
-    [C3.BalancesStructOutput],
     "view"
   >;
   getFunction(
@@ -924,30 +885,34 @@ export interface AbstractFactory extends BaseContract {
   ): TypedContractMethod<
     [unit: BigNumberish, daysOfUseInHr: BigNumberish],
     [boolean],
-    "payable"
+    "nonpayable"
   >;
   getFunction(
     nameOrSignature: "getPoint"
-  ): TypedContractMethod<[user: AddressLike], [C3.PointStructOutput], "view">;
+  ): TypedContractMethod<
+    [user: AddressLike],
+    [Common.PointStructOutput],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
     [unitId: BigNumberish],
-    [C3.ReadDataReturnValueStructOutput],
+    [Common.ReadDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getProfile"
   ): TypedContractMethod<
     [unit: BigNumberish, user: AddressLike],
-    [C3.ContributorStructOutput],
+    [Common.ContributorStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getRecord"
   ): TypedContractMethod<
     [rId: BigNumberish],
-    [C3.ReadDataReturnValueStructOutput],
+    [Common.ReadDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
@@ -957,21 +922,15 @@ export interface AbstractFactory extends BaseContract {
     nameOrSignature: "getSlot"
   ): TypedContractMethod<
     [user: AddressLike, unit: BigNumberish],
-    [C3.SlotStructOutput],
+    [Common.SlotStructOutput],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "getStatus"
-  ): TypedContractMethod<[unit: BigNumberish], [string], "view">;
   getFunction(
     nameOrSignature: "joinAPool"
   ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "liquidate"
   ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "minContribution"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "ownershipManager"
   ): TypedContractMethod<[], [string], "view">;
@@ -989,10 +948,10 @@ export interface AbstractFactory extends BaseContract {
   ): TypedContractMethod<
     [
       serviceRate: BigNumberish,
-      _minContribution: BigNumberish,
       feeTo: AddressLike,
       assetClass: AddressLike,
-      strategyManager: AddressLike
+      strategyManager: AddressLike,
+      colToken: AddressLike
     ],
     [void],
     "nonpayable"
@@ -1004,17 +963,15 @@ export interface AbstractFactory extends BaseContract {
     nameOrSignature: "setContractData"
   ): TypedContractMethod<
     [
-      feeTo: AddressLike,
       assetAdmin: AddressLike,
-      serviceRate: BigNumberish,
-      bankFactory: AddressLike
+      feeTo: AddressLike,
+      makerRate: BigNumberish,
+      safeFactory: AddressLike,
+      colToken: AddressLike
     ],
     [boolean],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "setMinimumLiquidityPerProvider"
-  ): TypedContractMethod<[minLiquidity: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setOracleAddress"
   ): TypedContractMethod<[newOracleAddr: AddressLike], [void], "nonpayable">;

@@ -2,8 +2,13 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "_ownershipManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeTo",
         "type": "address"
       }
     ],
@@ -11,14 +16,8 @@
     "type": "constructor"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "AlreadyACustomer",
+    "inputs": [],
+    "name": "AssetTransferFailed",
     "type": "error"
   },
   {
@@ -28,38 +27,7 @@
   },
   {
     "inputs": [],
-    "name": "NoFeeToWithdraw",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "NotACustomer",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "NotPermittedToCall",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "TokenAddressIsZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "UserDoesNotHaveAccess",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ZeroWithdrawable",
     "type": "error"
   },
   {
@@ -76,7 +44,13 @@
       }
     ],
     "name": "addUp",
-    "outputs": [],
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -94,51 +68,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "loan",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "fee",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "calculatedCol",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
-      }
-    ],
-    "name": "borrow",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "asset",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "erc20Balances",
+        "name": "unit",
         "type": "uint256"
       },
       {
@@ -148,19 +78,6 @@
       }
     ],
     "name": "cancel",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
-      }
-    ],
-    "name": "depositCollateral",
     "outputs": [
       {
         "internalType": "bool",
@@ -168,7 +85,20 @@
         "type": "bool"
       }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeTo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -204,6 +134,50 @@
         "type": "address"
       },
       {
+        "internalType": "address",
+        "name": "asset",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "loan",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "calculatedCol",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getFinance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
         "name": "rId",
         "type": "uint256"
@@ -219,21 +193,9 @@
             "type": "bool"
           },
           {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "balance",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "withdrawable",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct IBank.Collateral",
-            "name": "collateral",
-            "type": "tuple"
+            "internalType": "uint256",
+            "name": "collateralBalance",
+            "type": "uint256"
           }
         ],
         "internalType": "struct IBank.ViewUserData",
@@ -249,7 +211,7 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }
@@ -260,96 +222,119 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "user",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "asset",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "debt",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "attestedInitialBal",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "allGF",
-        "type": "bool"
-      },
-      {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "durOfChoice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "expInterest",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "payDate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "turnTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "loan",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "colBals",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
-            "name": "id",
+            "name": "user",
             "type": "address"
           },
           {
+            "internalType": "address",
+            "name": "asset",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "debt",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "attestedInitialBal",
+            "type": "uint256"
+          },
+          {
             "internalType": "bool",
-            "name": "sentQuota",
+            "name": "allGF",
             "type": "bool"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "durOfChoice",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "paybackTime",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "turnStartTime",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "getFinanceTime",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "loan",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "colBals",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "id",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "sentQuota",
+                "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "interestPaid",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Contributor[]",
+            "name": "cData",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "isSwapped",
+            "type": "bool"
+          },
+          {
+            "internalType": "address",
+            "name": "defaulted",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "contract IERC20",
+            "name": "collateralToken",
+            "type": "address"
           }
         ],
-        "internalType": "struct C3.Contributor[]",
-        "name": "cData",
-        "type": "tuple[]"
-      },
-      {
-        "internalType": "bool",
-        "name": "isSwapped",
-        "type": "bool"
-      },
-      {
-        "internalType": "address",
-        "name": "defaulted",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
+        "internalType": "struct Common.Payback_Bank",
+        "name": "_p",
+        "type": "tuple"
       }
     ],
     "name": "payback",
-    "outputs": [],
-    "stateMutability": "payable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -368,43 +353,6 @@
         "type": "bool"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawCollateral",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "recipient",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "asset",
-        "type": "address"
-      }
-    ],
-    "name": "withdrawFee",
-    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

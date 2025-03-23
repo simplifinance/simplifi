@@ -11,7 +11,7 @@
   },
   {
     "inputs": [],
-    "name": "AmountNotInitialized",
+    "name": "CancellationNotAllowed",
     "type": "error"
   },
   {
@@ -22,6 +22,11 @@
         "type": "uint24"
       }
     ],
+    "name": "CollateralCoverageCannotGoBelow_100",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "CollateralCoverageCannotGoBelow_100",
     "type": "error"
   },
@@ -38,6 +43,11 @@
   {
     "inputs": [],
     "name": "ExpectedPause",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InsufficientAllowance",
     "type": "error"
   },
   {
@@ -72,12 +82,22 @@
   },
   {
     "inputs": [],
+    "name": "OnlyAdminIsAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
     "name": "OracleAddressIsZero",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "OwnershipManagerIsNotSet",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PoolIsFilled",
     "type": "error"
   },
   {
@@ -92,12 +112,27 @@
   },
   {
     "inputs": [],
-    "name": "ReentrancyGuardReentrantCall",
+    "name": "SafeAddupFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TransferFailed",
     "type": "error"
   },
   {
     "inputs": [],
     "name": "TurnTimeHasNotPassed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnitIsTaken",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UserDoesNotHaveAccess",
     "type": "error"
   },
   {
@@ -161,22 +196,12 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uints",
-            "name": "uints",
+            "internalType": "struct Common.LInt",
+            "name": "lInt",
             "type": "tuple"
           },
           {
             "components": [
-              {
-                "internalType": "uint256",
-                "name": "fullInterest",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "intPerSec",
-                "type": "uint256"
-              },
               {
                 "internalType": "uint256",
                 "name": "unit",
@@ -189,17 +214,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "unitId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rId",
+                "name": "recordId",
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uint256s",
-            "name": "uint256s",
+            "internalType": "struct Common.BigInt",
+            "name": "bigInt",
             "type": "tuple"
           },
           {
@@ -225,28 +245,45 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct C3.Addresses",
+            "internalType": "struct Common.Addresses",
             "name": "addrs",
             "type": "tuple"
           },
           {
-            "internalType": "enum C3.Status",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum C3.Router",
+            "internalType": "enum Common.Router",
             "name": "router",
             "type": "uint8"
           },
           {
-            "internalType": "enum C3.FuncTag",
+            "internalType": "enum Common.Stage",
             "name": "stage",
             "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerChoiceOfDur",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "interest",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct C3.Pool",
+        "internalType": "struct Common.Pool",
         "name": "",
         "type": "tuple"
       }
@@ -302,22 +339,12 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uints",
-            "name": "uints",
+            "internalType": "struct Common.LInt",
+            "name": "lInt",
             "type": "tuple"
           },
           {
             "components": [
-              {
-                "internalType": "uint256",
-                "name": "fullInterest",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "intPerSec",
-                "type": "uint256"
-              },
               {
                 "internalType": "uint256",
                 "name": "unit",
@@ -330,17 +357,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "unitId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rId",
+                "name": "recordId",
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uint256s",
-            "name": "uint256s",
+            "internalType": "struct Common.BigInt",
+            "name": "bigInt",
             "type": "tuple"
           },
           {
@@ -366,28 +388,45 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct C3.Addresses",
+            "internalType": "struct Common.Addresses",
             "name": "addrs",
             "type": "tuple"
           },
           {
-            "internalType": "enum C3.Status",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum C3.Router",
+            "internalType": "enum Common.Router",
             "name": "router",
             "type": "uint8"
           },
           {
-            "internalType": "enum C3.FuncTag",
+            "internalType": "enum Common.Stage",
             "name": "stage",
             "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerChoiceOfDur",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "interest",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct C3.Pool",
+        "internalType": "struct Common.Pool",
         "name": "",
         "type": "tuple"
       }
@@ -443,22 +482,12 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uints",
-            "name": "uints",
+            "internalType": "struct Common.LInt",
+            "name": "lInt",
             "type": "tuple"
           },
           {
             "components": [
-              {
-                "internalType": "uint256",
-                "name": "fullInterest",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "intPerSec",
-                "type": "uint256"
-              },
               {
                 "internalType": "uint256",
                 "name": "unit",
@@ -471,17 +500,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "unitId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rId",
+                "name": "recordId",
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uint256s",
-            "name": "uint256s",
+            "internalType": "struct Common.BigInt",
+            "name": "bigInt",
             "type": "tuple"
           },
           {
@@ -507,28 +531,45 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct C3.Addresses",
+            "internalType": "struct Common.Addresses",
             "name": "addrs",
             "type": "tuple"
           },
           {
-            "internalType": "enum C3.Status",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum C3.Router",
+            "internalType": "enum Common.Router",
             "name": "router",
             "type": "uint8"
           },
           {
-            "internalType": "enum C3.FuncTag",
+            "internalType": "enum Common.Stage",
             "name": "stage",
             "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerChoiceOfDur",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "interest",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct C3.Pool",
+        "internalType": "struct Common.Pool",
         "name": "",
         "type": "tuple"
       }
@@ -597,22 +638,12 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uints",
-            "name": "uints",
+            "internalType": "struct Common.LInt",
+            "name": "lInt",
             "type": "tuple"
           },
           {
             "components": [
-              {
-                "internalType": "uint256",
-                "name": "fullInterest",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "intPerSec",
-                "type": "uint256"
-              },
               {
                 "internalType": "uint256",
                 "name": "unit",
@@ -625,17 +656,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "unitId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rId",
+                "name": "recordId",
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uint256s",
-            "name": "uint256s",
+            "internalType": "struct Common.BigInt",
+            "name": "bigInt",
             "type": "tuple"
           },
           {
@@ -661,28 +687,45 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct C3.Addresses",
+            "internalType": "struct Common.Addresses",
             "name": "addrs",
             "type": "tuple"
           },
           {
-            "internalType": "enum C3.Status",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum C3.Router",
+            "internalType": "enum Common.Router",
             "name": "router",
             "type": "uint8"
           },
           {
-            "internalType": "enum C3.FuncTag",
+            "internalType": "enum Common.Stage",
             "name": "stage",
             "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerChoiceOfDur",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "interest",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct C3.Pool",
+        "internalType": "struct Common.Pool",
         "name": "",
         "type": "tuple"
       }
@@ -738,22 +781,12 @@
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uints",
-            "name": "uints",
+            "internalType": "struct Common.LInt",
+            "name": "lInt",
             "type": "tuple"
           },
           {
             "components": [
-              {
-                "internalType": "uint256",
-                "name": "fullInterest",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "intPerSec",
-                "type": "uint256"
-              },
               {
                 "internalType": "uint256",
                 "name": "unit",
@@ -766,17 +799,12 @@
               },
               {
                 "internalType": "uint256",
-                "name": "unitId",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "rId",
+                "name": "recordId",
                 "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Uint256s",
-            "name": "uint256s",
+            "internalType": "struct Common.BigInt",
+            "name": "bigInt",
             "type": "tuple"
           },
           {
@@ -802,28 +830,45 @@
                 "type": "address"
               }
             ],
-            "internalType": "struct C3.Addresses",
+            "internalType": "struct Common.Addresses",
             "name": "addrs",
             "type": "tuple"
           },
           {
-            "internalType": "enum C3.Status",
-            "name": "status",
-            "type": "uint8"
-          },
-          {
-            "internalType": "enum C3.Router",
+            "internalType": "enum Common.Router",
             "name": "router",
             "type": "uint8"
           },
           {
-            "internalType": "enum C3.FuncTag",
+            "internalType": "enum Common.Stage",
             "name": "stage",
             "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerChoiceOfDur",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "interest",
+            "type": "tuple"
           }
         ],
         "indexed": false,
-        "internalType": "struct C3.Pool",
+        "internalType": "struct Common.Pool",
         "name": "",
         "type": "tuple"
       }
@@ -850,12 +895,12 @@
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "tvlInXFI",
+        "name": "tvlCollateral",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "tvlInUsd",
+        "name": "tvlBase",
         "type": "uint256"
       },
       {
@@ -992,17 +1037,17 @@
           },
           {
             "internalType": "uint256",
-            "name": "expInterest",
+            "name": "paybackTime",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "payDate",
+            "name": "turnStartTime",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "turnTime",
+            "name": "getFinanceTime",
             "type": "uint256"
           },
           {
@@ -1024,9 +1069,14 @@
             "internalType": "bool",
             "name": "sentQuota",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interestPaid",
+            "type": "uint256"
           }
         ],
-        "internalType": "struct C3.Contributor",
+        "internalType": "struct Common.Contributor",
         "name": "",
         "type": "tuple"
       },
@@ -1058,7 +1108,7 @@
             "type": "bool"
           }
         ],
-        "internalType": "struct C3.Slot",
+        "internalType": "struct Common.Slot",
         "name": "",
         "type": "tuple"
       },
@@ -1066,37 +1116,6 @@
         "internalType": "address",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "unit",
-        "type": "uint256"
-      }
-    ],
-    "name": "getBalances",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "xfi",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "erc20",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct C3.Balances",
-        "name": "",
-        "type": "tuple"
       }
     ],
     "stateMutability": "view",
@@ -1173,12 +1192,12 @@
             "components": [
               {
                 "internalType": "uint256",
-                "name": "tvlInXFI",
+                "name": "tvlCollateral",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "tvlInUsd",
+                "name": "tvlBase",
                 "type": "uint256"
               },
               {
@@ -1204,7 +1223,7 @@
                 "type": "address"
               },
               {
-                "internalType": "address",
+                "internalType": "contract IAssetClass",
                 "name": "assetAdmin",
                 "type": "address"
               },
@@ -1216,6 +1235,16 @@
               {
                 "internalType": "address",
                 "name": "bankFactory",
+                "type": "address"
+              },
+              {
+                "internalType": "address",
+                "name": "safeFactory",
+                "type": "address"
+              },
+              {
+                "internalType": "contract IERC20",
+                "name": "collateralToken",
                 "type": "address"
               }
             ],
@@ -1263,7 +1292,7 @@
         "type": "bool"
       }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -1289,7 +1318,7 @@
             "type": "uint256"
           }
         ],
-        "internalType": "struct C3.Point",
+        "internalType": "struct Common.Point",
         "name": "point",
         "type": "tuple"
       }
@@ -1354,22 +1383,12 @@
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct C3.Uints",
-                "name": "uints",
+                "internalType": "struct Common.LInt",
+                "name": "lInt",
                 "type": "tuple"
               },
               {
                 "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "fullInterest",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "intPerSec",
-                    "type": "uint256"
-                  },
                   {
                     "internalType": "uint256",
                     "name": "unit",
@@ -1382,17 +1401,12 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "unitId",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "rId",
+                    "name": "recordId",
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct C3.Uint256s",
-                "name": "uint256s",
+                "internalType": "struct Common.BigInt",
+                "name": "bigInt",
                 "type": "tuple"
               },
               {
@@ -1418,27 +1432,44 @@
                     "type": "address"
                   }
                 ],
-                "internalType": "struct C3.Addresses",
+                "internalType": "struct Common.Addresses",
                 "name": "addrs",
                 "type": "tuple"
               },
               {
-                "internalType": "enum C3.Status",
-                "name": "status",
-                "type": "uint8"
-              },
-              {
-                "internalType": "enum C3.Router",
+                "internalType": "enum Common.Router",
                 "name": "router",
                 "type": "uint8"
               },
               {
-                "internalType": "enum C3.FuncTag",
+                "internalType": "enum Common.Stage",
                 "name": "stage",
                 "type": "uint8"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "fullInterest",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "intPerSec",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "intPerChoiceOfDur",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct Common.Interest",
+                "name": "interest",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct C3.Pool",
+            "internalType": "struct Common.Pool",
             "name": "pool",
             "type": "tuple"
           },
@@ -1451,17 +1482,17 @@
               },
               {
                 "internalType": "uint256",
-                "name": "expInterest",
+                "name": "paybackTime",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "payDate",
+                "name": "turnStartTime",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "turnTime",
+                "name": "getFinanceTime",
                 "type": "uint256"
               },
               {
@@ -1483,14 +1514,19 @@
                 "internalType": "bool",
                 "name": "sentQuota",
                 "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "interestPaid",
+                "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Contributor[]",
+            "internalType": "struct Common.Contributor[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct C3.ReadDataReturnValue",
+        "internalType": "struct Common.ReadDataReturnValue",
         "name": "",
         "type": "tuple"
       }
@@ -1522,17 +1558,17 @@
           },
           {
             "internalType": "uint256",
-            "name": "expInterest",
+            "name": "paybackTime",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "payDate",
+            "name": "turnStartTime",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "turnTime",
+            "name": "getFinanceTime",
             "type": "uint256"
           },
           {
@@ -1554,9 +1590,14 @@
             "internalType": "bool",
             "name": "sentQuota",
             "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "interestPaid",
+            "type": "uint256"
           }
         ],
-        "internalType": "struct C3.Contributor",
+        "internalType": "struct Common.Contributor",
         "name": "",
         "type": "tuple"
       }
@@ -1621,22 +1662,12 @@
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct C3.Uints",
-                "name": "uints",
+                "internalType": "struct Common.LInt",
+                "name": "lInt",
                 "type": "tuple"
               },
               {
                 "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "fullInterest",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "intPerSec",
-                    "type": "uint256"
-                  },
                   {
                     "internalType": "uint256",
                     "name": "unit",
@@ -1649,17 +1680,12 @@
                   },
                   {
                     "internalType": "uint256",
-                    "name": "unitId",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "rId",
+                    "name": "recordId",
                     "type": "uint256"
                   }
                 ],
-                "internalType": "struct C3.Uint256s",
-                "name": "uint256s",
+                "internalType": "struct Common.BigInt",
+                "name": "bigInt",
                 "type": "tuple"
               },
               {
@@ -1685,27 +1711,44 @@
                     "type": "address"
                   }
                 ],
-                "internalType": "struct C3.Addresses",
+                "internalType": "struct Common.Addresses",
                 "name": "addrs",
                 "type": "tuple"
               },
               {
-                "internalType": "enum C3.Status",
-                "name": "status",
-                "type": "uint8"
-              },
-              {
-                "internalType": "enum C3.Router",
+                "internalType": "enum Common.Router",
                 "name": "router",
                 "type": "uint8"
               },
               {
-                "internalType": "enum C3.FuncTag",
+                "internalType": "enum Common.Stage",
                 "name": "stage",
                 "type": "uint8"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "fullInterest",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "intPerSec",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "intPerChoiceOfDur",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct Common.Interest",
+                "name": "interest",
+                "type": "tuple"
               }
             ],
-            "internalType": "struct C3.Pool",
+            "internalType": "struct Common.Pool",
             "name": "pool",
             "type": "tuple"
           },
@@ -1718,17 +1761,17 @@
               },
               {
                 "internalType": "uint256",
-                "name": "expInterest",
+                "name": "paybackTime",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "payDate",
+                "name": "turnStartTime",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "turnTime",
+                "name": "getFinanceTime",
                 "type": "uint256"
               },
               {
@@ -1750,14 +1793,19 @@
                 "internalType": "bool",
                 "name": "sentQuota",
                 "type": "bool"
+              },
+              {
+                "internalType": "uint256",
+                "name": "interestPaid",
+                "type": "uint256"
               }
             ],
-            "internalType": "struct C3.Contributor[]",
+            "internalType": "struct Common.Contributor[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct C3.ReadDataReturnValue",
+        "internalType": "struct Common.ReadDataReturnValue",
         "name": "",
         "type": "tuple"
       }
@@ -1811,28 +1859,9 @@
             "type": "bool"
           }
         ],
-        "internalType": "struct C3.Slot",
+        "internalType": "struct Common.Slot",
         "name": "",
         "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "unit",
-        "type": "uint256"
-      }
-    ],
-    "name": "getStatus",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -1878,23 +1907,10 @@
   },
   {
     "inputs": [],
-    "name": "minContribution",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }
@@ -1949,23 +1965,23 @@
         "type": "uint16"
       },
       {
-        "internalType": "uint256",
-        "name": "_minContribution",
-        "type": "uint256"
-      },
-      {
         "internalType": "address",
         "name": "feeTo",
         "type": "address"
       },
       {
-        "internalType": "address",
+        "internalType": "contract IAssetClass",
         "name": "assetClass",
         "type": "address"
       },
       {
         "internalType": "address",
         "name": "strategyManager",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "colToken",
         "type": "address"
       }
     ],
@@ -1996,23 +2012,28 @@
   {
     "inputs": [
       {
+        "internalType": "contract IAssetClass",
+        "name": "assetAdmin",
+        "type": "address"
+      },
+      {
         "internalType": "address",
         "name": "feeTo",
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "assetAdmin",
-        "type": "address"
-      },
-      {
         "internalType": "uint16",
-        "name": "serviceRate",
+        "name": "makerRate",
         "type": "uint16"
       },
       {
         "internalType": "address",
-        "name": "bankFactory",
+        "name": "safeFactory",
+        "type": "address"
+      },
+      {
+        "internalType": "contract IERC20",
+        "name": "colToken",
         "type": "address"
       }
     ],
@@ -2024,19 +2045,6 @@
         "type": "bool"
       }
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "minLiquidity",
-        "type": "uint256"
-      }
-    ],
-    "name": "setMinimumLiquidityPerProvider",
-    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },

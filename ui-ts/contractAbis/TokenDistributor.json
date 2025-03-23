@@ -2,7 +2,7 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "_ownershipManager",
         "type": "address"
       },
@@ -40,11 +40,6 @@
       }
     ],
     "name": "AddressInsufficientBalance",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "AddressIsZero",
     "type": "error"
   },
   {
@@ -148,13 +143,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -267,7 +255,7 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }

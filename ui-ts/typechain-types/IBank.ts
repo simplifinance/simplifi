@@ -33,49 +33,82 @@ export declare namespace IBank {
   ] & { totalClients: bigint; aggregateFee: bigint };
 }
 
-export declare namespace C3 {
+export declare namespace Common {
   export type ContributorStruct = {
     durOfChoice: BigNumberish;
-    expInterest: BigNumberish;
-    payDate: BigNumberish;
-    turnTime: BigNumberish;
+    paybackTime: BigNumberish;
+    turnStartTime: BigNumberish;
+    getFinanceTime: BigNumberish;
     loan: BigNumberish;
     colBals: BigNumberish;
     id: AddressLike;
     sentQuota: boolean;
+    interestPaid: BigNumberish;
   };
 
   export type ContributorStructOutput = [
     durOfChoice: bigint,
-    expInterest: bigint,
-    payDate: bigint,
-    turnTime: bigint,
+    paybackTime: bigint,
+    turnStartTime: bigint,
+    getFinanceTime: bigint,
     loan: bigint,
     colBals: bigint,
     id: string,
-    sentQuota: boolean
+    sentQuota: boolean,
+    interestPaid: bigint
   ] & {
     durOfChoice: bigint;
-    expInterest: bigint;
-    payDate: bigint;
-    turnTime: bigint;
+    paybackTime: bigint;
+    turnStartTime: bigint;
+    getFinanceTime: bigint;
     loan: bigint;
     colBals: bigint;
     id: string;
     sentQuota: boolean;
+    interestPaid: bigint;
+  };
+
+  export type Payback_BankStruct = {
+    user: AddressLike;
+    asset: AddressLike;
+    debt: BigNumberish;
+    attestedInitialBal: BigNumberish;
+    allGF: boolean;
+    cData: Common.ContributorStruct[];
+    isSwapped: boolean;
+    defaulted: AddressLike;
+    rId: BigNumberish;
+    collateralToken: AddressLike;
+  };
+
+  export type Payback_BankStructOutput = [
+    user: string,
+    asset: string,
+    debt: bigint,
+    attestedInitialBal: bigint,
+    allGF: boolean,
+    cData: Common.ContributorStructOutput[],
+    isSwapped: boolean,
+    defaulted: string,
+    rId: bigint,
+    collateralToken: string
+  ] & {
+    user: string;
+    asset: string;
+    debt: bigint;
+    attestedInitialBal: bigint;
+    allGF: boolean;
+    cData: Common.ContributorStructOutput[];
+    isSwapped: boolean;
+    defaulted: string;
+    rId: bigint;
+    collateralToken: string;
   };
 }
 
 export interface IBankInterface extends Interface {
   getFunction(
-    nameOrSignature:
-      | "addUp"
-      | "borrow"
-      | "cancel"
-      | "depositCollateral"
-      | "getData"
-      | "payback"
-      | "withdrawFee"
+    nameOrSignature: "addUp" | "cancel" | "getData" | "getFinance" | "payback"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -83,57 +116,31 @@ export interface IBankInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "borrow",
-    values: [
-      AddressLike,
-      AddressLike,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "cancel",
     values: [AddressLike, AddressLike, BigNumberish, BigNumberish]
   ): string;
-  encodeFunctionData(
-    functionFragment: "depositCollateral",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "getData", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "payback",
+    functionFragment: "getFinance",
     values: [
       AddressLike,
       AddressLike,
       BigNumberish,
       BigNumberish,
-      boolean,
-      C3.ContributorStruct[],
-      boolean,
-      AddressLike,
+      BigNumberish,
       BigNumberish
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "withdrawFee",
-    values: [AddressLike, AddressLike]
+    functionFragment: "payback",
+    values: [Common.Payback_BankStruct]
   ): string;
 
   decodeFunctionResult(functionFragment: "addUp", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "borrow", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "cancel", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "depositCollateral",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getFinance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "payback", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "withdrawFee",
-    data: BytesLike
-  ): Result;
 }
 
 export interface IBank extends BaseContract {
@@ -181,11 +188,24 @@ export interface IBank extends BaseContract {
 
   addUp: TypedContractMethod<
     [user: AddressLike, rId: BigNumberish],
-    [void],
+    [boolean],
     "nonpayable"
   >;
 
-  borrow: TypedContractMethod<
+  cancel: TypedContractMethod<
+    [
+      user: AddressLike,
+      asset: AddressLike,
+      unit: BigNumberish,
+      rId: BigNumberish
+    ],
+    [boolean],
+    "nonpayable"
+  >;
+
+  getData: TypedContractMethod<[], [IBank.ViewDataStructOutput], "view">;
+
+  getFinance: TypedContractMethod<
     [
       user: AddressLike,
       asset: AddressLike,
@@ -195,47 +215,12 @@ export interface IBank extends BaseContract {
       rId: BigNumberish
     ],
     [bigint],
-    "payable"
-  >;
-
-  cancel: TypedContractMethod<
-    [
-      user: AddressLike,
-      asset: AddressLike,
-      erc20Balances: BigNumberish,
-      rId: BigNumberish
-    ],
-    [void],
     "nonpayable"
   >;
 
-  depositCollateral: TypedContractMethod<
-    [rId: BigNumberish],
-    [boolean],
-    "payable"
-  >;
-
-  getData: TypedContractMethod<[], [IBank.ViewDataStructOutput], "view">;
-
   payback: TypedContractMethod<
-    [
-      user: AddressLike,
-      asset: AddressLike,
-      debt: BigNumberish,
-      attestedInitialBal: BigNumberish,
-      allGH: boolean,
-      cData: C3.ContributorStruct[],
-      isSwapped: boolean,
-      defaulted: AddressLike,
-      rId: BigNumberish
-    ],
-    [void],
-    "payable"
-  >;
-
-  withdrawFee: TypedContractMethod<
-    [recipient: AddressLike, asset: AddressLike],
-    [void],
+    [arg0: Common.Payback_BankStruct],
+    [boolean],
     "nonpayable"
   >;
 
@@ -247,11 +232,26 @@ export interface IBank extends BaseContract {
     nameOrSignature: "addUp"
   ): TypedContractMethod<
     [user: AddressLike, rId: BigNumberish],
-    [void],
+    [boolean],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "borrow"
+    nameOrSignature: "cancel"
+  ): TypedContractMethod<
+    [
+      user: AddressLike,
+      asset: AddressLike,
+      unit: BigNumberish,
+      rId: BigNumberish
+    ],
+    [boolean],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "getData"
+  ): TypedContractMethod<[], [IBank.ViewDataStructOutput], "view">;
+  getFunction(
+    nameOrSignature: "getFinance"
   ): TypedContractMethod<
     [
       user: AddressLike,
@@ -262,48 +262,13 @@ export interface IBank extends BaseContract {
       rId: BigNumberish
     ],
     [bigint],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "cancel"
-  ): TypedContractMethod<
-    [
-      user: AddressLike,
-      asset: AddressLike,
-      erc20Balances: BigNumberish,
-      rId: BigNumberish
-    ],
-    [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "depositCollateral"
-  ): TypedContractMethod<[rId: BigNumberish], [boolean], "payable">;
-  getFunction(
-    nameOrSignature: "getData"
-  ): TypedContractMethod<[], [IBank.ViewDataStructOutput], "view">;
-  getFunction(
     nameOrSignature: "payback"
   ): TypedContractMethod<
-    [
-      user: AddressLike,
-      asset: AddressLike,
-      debt: BigNumberish,
-      attestedInitialBal: BigNumberish,
-      allGH: boolean,
-      cData: C3.ContributorStruct[],
-      isSwapped: boolean,
-      defaulted: AddressLike,
-      rId: BigNumberish
-    ],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "withdrawFee"
-  ): TypedContractMethod<
-    [recipient: AddressLike, asset: AddressLike],
-    [void],
+    [arg0: Common.Payback_BankStruct],
+    [boolean],
     "nonpayable"
   >;
 

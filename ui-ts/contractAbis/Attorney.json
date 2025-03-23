@@ -12,7 +12,7 @@
         "type": "address"
       },
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "_ownershipManager",
         "type": "address"
       }
@@ -44,11 +44,6 @@
   },
   {
     "inputs": [],
-    "name": "AddressIsZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
     "name": "CallNotFromEscapeAccount",
     "type": "error"
   },
@@ -65,22 +60,6 @@
   {
     "inputs": [],
     "name": "FailedInnerCall",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "InsufficientBalance",
     "type": "error"
   },
   {
@@ -137,7 +116,7 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }
@@ -149,7 +128,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "accountToRetrieve",
+        "name": "lostAccount",
         "type": "address"
       }
     ],

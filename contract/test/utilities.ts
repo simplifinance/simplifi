@@ -223,4 +223,3 @@ export const compareEqualNumber = (a: StrBigHex, b: StrBigHex): NullNoPromise =>
 export const compareEqualString = (a: string, b: string): NullNoPromise => {
   expect(a).to.equal(b);
 };
-

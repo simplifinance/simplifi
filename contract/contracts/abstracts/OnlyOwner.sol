@@ -2,16 +2,16 @@
 
 pragma solidity 0.8.24;
 
-import { MsgSender, OwnerShip } from "../implementations/OwnerShip.sol";
+import { MsgSender } from "../implementations/OwnerShip.sol";
 import { IOwnerShip } from "../apis/IOwnerShip.sol";
 
 abstract contract OnlyOwner is MsgSender {
     error ManagerAddressIsZero();
     error NotPermittedToCall();
 
-    address public ownershipManager;
+    IOwnerShip public ownershipManager;
 
-    constructor(address _ownershipManager)
+    constructor(IOwnerShip _ownershipManager)
     {
         _setOwnershipManager(_ownershipManager);
     }
@@ -22,14 +22,14 @@ abstract contract OnlyOwner is MsgSender {
      * a context e.g function call. 
      */
     modifier onlyOwner {
-        address mgr = ownershipManager;
-        if(mgr == address(0)) revert ManagerAddressIsZero();
+        IOwnerShip mgr = ownershipManager;
+        if(address(mgr) == address(0)) revert ManagerAddressIsZero();
         if(!IOwnerShip(mgr).isOwner(_msgSender())) revert NotPermittedToCall();
         _;
     }
 
     function _setOwnershipManager(
-        address newManager
+        IOwnerShip newManager
     )
         private
     {
@@ -47,7 +47,7 @@ abstract contract OnlyOwner is MsgSender {
         onlyOwner
         returns(bool)
     {
-        _setOwnershipManager(newManager);
+        _setOwnershipManager(IOwnerShip(newManager));
         return true;
     }
 }

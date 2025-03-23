@@ -159,7 +159,7 @@ export interface Attorney extends BaseContract {
   ownershipManager: TypedContractMethod<[], [string], "view">;
 
   panicUnlock: TypedContractMethod<
-    [accountToRetrieve: AddressLike],
+    [lostAccount: AddressLike],
     [void],
     "payable"
   >;
@@ -194,7 +194,7 @@ export interface Attorney extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "panicUnlock"
-  ): TypedContractMethod<[accountToRetrieve: AddressLike], [void], "payable">;
+  ): TypedContractMethod<[lostAccount: AddressLike], [void], "payable">;
   getFunction(
     nameOrSignature: "pause"
   ): TypedContractMethod<[], [void], "nonpayable">;

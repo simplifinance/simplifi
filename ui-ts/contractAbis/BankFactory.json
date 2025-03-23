@@ -2,8 +2,13 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "_ownershipManager",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_feeTo",
         "type": "address"
       }
     ],
@@ -51,6 +56,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "feeTo",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -74,12 +92,25 @@
     "name": "ownershipManager",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "contract IOwnerShip",
         "name": "",
         "type": "address"
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newFeeTo",
+        "type": "address"
+      }
+    ],
+    "name": "setFeeTp",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

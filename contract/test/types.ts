@@ -177,4 +177,3 @@ export type BankContract = Bank & {
 export type OwnershipManagerContract = OwnerShip & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-
