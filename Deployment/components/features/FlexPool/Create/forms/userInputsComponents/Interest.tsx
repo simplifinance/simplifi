@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Chevron } from '@/components/Collapsible';
+import { Chevron } from '@/components/utilities/Icons';
 import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
 import Tooltip from '@mui/material/Tooltip';

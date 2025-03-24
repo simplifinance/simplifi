@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "@mui/material/Container";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 function Yield(): JSX.Element {
   const { setActivepath } = useAppStorage();

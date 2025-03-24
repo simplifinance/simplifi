@@ -1,9 +1,9 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import { Spinner } from "@/components/Spinner";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { Spinner } from "@/components/utilities/Spinner";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
-import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 import { formatError, } from "@/apis/update/formatError";
 import Message from "../../DrawerWrapper/Message";
 import { VoidFunc } from "@/interfaces";

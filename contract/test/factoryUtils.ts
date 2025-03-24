@@ -216,15 +216,15 @@ import type {
   export async function liquidate(x: LiquidateParam)  {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signer = x.signers[0];
-    console.log(`Bal b4 trf: `, await x.asset.balanceOf(signer.address));
+    let baseBalB4Liq : bigint = 0n;
+    // console.log(`Bal b4 trf: `, await x.asset.balanceOf(signer.address));
     await transferAsset({
       amount: x.debt!,
       asset: x.asset,
       recipients: [formatAddr(signer.address)],
       sender: x.deployer
-    });
-    console.log(`Bal After trf: `, await x.asset.balanceOf(signer.address));
-    const baseBalB4Liq = await x.asset.balanceOf(signer.address);
+    }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signer.address));
+    // console.log(`Bal After trf: `, await x.asset.balanceOf(signer.address));
     const colBalB4Liq = await x.collateral.balanceOf(signer.address);
     await approve({
       owner: signer,
@@ -233,7 +233,7 @@ import type {
       testAsset: x.asset
     });
     const unitId = await x.factory.getEpoches();
-    // console.log(`Bal B4 Liq: `, await x.asset.balanceOf(signer.address));
+    // console.log(`baseBalB4Liq: `, baseBalB4Liq);
     await x.factory.connect(signer).liquidate(x.unit);
     // console.log(`Bal Af Liq: `, await x.asset.balanceOf(signer.address))
     const pool = await x.factory.getPoolData(unitId);

@@ -2,10 +2,10 @@ import React from "react";
 import { AmountToApproveParam, ButtonObj, FormattedPoolContentProps, TransactionCallback, TrxState, } from "@/interfaces";
 import { handleTransact } from "@/utilities";
 import BigNumber from "bignumber.js";
-import useAppStorage from '@/components/StateContextProvider/useAppStorage';
+import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { PreferredDurationInput } from "./PreferredDurationInput";
 import { Confirmation } from "./Confirmation";
-import { CustomButton } from "@/components/CustomButton";
+import { CustomButton } from "@/components/utilities/CustomButton";
 
 export const ActionButton = (props: RenderActionsProps) => {
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');

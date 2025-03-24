@@ -2,7 +2,7 @@ import type { CreatePermissionLessPoolParams, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { createPermissionlessLiquidityPoolAbi } from "@/apis/abis";
+import { createPermissionlessLiquidityPoolAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
 

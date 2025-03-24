@@ -1,10 +1,5 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { Chevron } from '@/components/Collapsible';
+import { Chevron } from '@/components/utilities/Icons';
 import { flexSpread } from '@/constants';
 import Collapse from '@mui/material/Collapse';
 import Tooltip from '@mui/material/Tooltip';

@@ -2,14 +2,14 @@ import React from "react";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, PoolType, TransactionCallback, TrxState, VoidFunc, } from "@/interfaces";
-import { Chevron } from "@/components/Collapsible";
+import { Chevron } from "@/components/utilities/Icons";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
 import { parseEther } from "viem";
-import { Spinner } from "@/components/Spinner";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import { Spinner } from "@/components/utilities/Spinner";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { formatError } from "@/apis/update/formatError";
 import Drawer from "../../../update/ActionButton/Confirmation/Drawer";
 import Message from "../../../update/DrawerWrapper/Message";
@@ -133,7 +133,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                     <Stack key={item.title} >
                                         <div className="flex justify-between items-center text-sm font-semibold">
                                             <h3>{ item.title }</h3>
-                                            <button onClick={() => setOpen(!open)}><Chevron open={open} hideChevron={false} /></button>
+                                            <button onClick={() => setOpen(!open)}><Chevron open={open}/></button>
                                         </div>
                                         <Collapse in={open} timeout="auto" unmountOnExit>
                                             <div className="p-2 rounded bg-[#272525]">

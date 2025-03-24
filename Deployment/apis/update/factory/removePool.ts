@@ -2,7 +2,7 @@ import { CommonParam, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { removeLiquidityPoolAbi } from "@/apis/abis";
+import { removeLiquidityPoolAbi } from "@/apis/utils/abis";
 import { formatEther } from "viem";
 import { errorMessage } from "../formatError";
 

@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, ReadDataReturnValue, } from "@/interfaces";
+import { Address, AmountToApproveParam, FormattedData, FormattedPoolContentProps, HandleTransactionParam, LiquidityPool, ReadDataReturnValue, } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/testToken/getAllowance";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -9,7 +9,7 @@ import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
 import { formatEther,} from "viem";
-import { C3 } from "./typechain-types/contracts/apis/IFactory";
+import { C3 } from "./typechain-types/IFactory";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";

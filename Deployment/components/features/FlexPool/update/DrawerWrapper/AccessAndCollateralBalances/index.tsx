@@ -1,4 +1,4 @@
-import ButtonTemplate from "@/components/OnboardScreen/ButtonTemplate";
+import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 import { flexSpread,} from "@/constants";
 import { formatAddr, toBN } from "@/utilities";
 import { Stack } from "@mui/material";
@@ -7,8 +7,8 @@ import { formatEther, parseEther, } from "viem";
 import { useAccount, useReadContract, useConfig } from "wagmi";
 import getReadFunctions from "../readContractConfig";
 import { Address, TrxState, VoidFunc } from "@/interfaces";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
-import { Spinner } from "@/components/Spinner";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import { Spinner } from "@/components/utilities/Spinner";
 import { formatError } from "@/apis/update/formatError";
 import Message from "../Message";
 import withdrawCollateral from "@/apis/update/bank/withdrawCollateral";

@@ -4,7 +4,7 @@ import Grid from "@mui/material/Grid";
 import { motion } from 'framer-motion';
 import { Loading, NoPoolFound } from "./Nulls";
 import { FlexCard } from "../update/FlexCard";
-import useAppStorage from "@/components/StateContextProvider/useAppStorage";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { toBN } from "@/utilities";
 
 const PastPools = (props: { index: number, rId: bigint, totalPool: number}) => {

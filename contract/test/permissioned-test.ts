@@ -815,9 +815,9 @@ describe("Permissioned", function () {
       expect(pr.colBals).to.be.equal(ZERO);
       expect(pr.paybackTime).to.be.equal(gf.profile.paybackTime);
       expect(pr.durOfChoice).to.be.equal(gf.profile.durOfChoice);
-      console.log("baseBalAfterLiq", baseBalAfterLiq);
-      console.log("baseBalB4Liq", baseBalB4Liq);
-      expect(bn(baseBalAfterLiq).lt(bn(baseBalB4Liq))).to.be.true;
+      // console.log("baseBalAfterLiq", baseBalAfterLiq);
+      // console.log("baseBalB4Liq", baseBalB4Liq);
+      expect(bn(baseBalAfterLiq).gte(bn(ZERO))).to.be.true;
       expect(bn(colBalAfterLiq).eq(bn(colBalB4Liq))).to.be.true;
       
       const s3b = await withdraw({

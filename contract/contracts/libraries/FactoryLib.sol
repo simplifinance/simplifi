@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import "hardhat/console.sol";   // For debugging only
+// import "hardhat/console.sol";   // For debugging only
 import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
 import { IERC20 } from "../apis/IERC20.sol";
@@ -12,7 +12,6 @@ import { IFactory } from "../apis/IFactory.sol";
 import { Common } from "../apis/Common.sol";
 import { AssetClass, IAssetClass } from "../implementations/AssetClass.sol";
 import { Utils } from "../libraries/Utils.sol";
-// import { IAssetClass } from "../apis/IAssetClass.sol";
 
 /**@dev
   * @param amountExist: Tracks unit contribution i.e values created in each permissionless communities
@@ -268,22 +267,6 @@ library FactoryLib {
     }
   }
 
-  // /**
-  //  * @dev Return safe for user
-  //  * @param safeFactory: StrategyManager contract address
-  //  * @param unit : Caller
-  //  */
-  // function _getSafe(
-  //   address safeFactory, 
-  //   uint256 unit
-  // ) 
-  //   internal 
-  //   view
-  //   returns(address _safe) 
-  // {
-  //   _safe = IBankFactory(safeFactory).getBank(unit);
-  // }
-
   /**
    * @dev Checks, validate and return safe for the target address.
    * @param unit : Unit contribution.
@@ -479,21 +462,6 @@ library FactoryLib {
     uint expected = _p.bigInt.unit.mul(_p.lInt.quorum);
     filled = !isPermissioned? _p.lInt.userCount == _p.lInt.quorum : expected == _p.bigInt.currentPool;
   }
-
-  // /**@dev Update selector to who will get finance next
-  //   * @param self: Storage {typeof mapping}
-  //   * @param cSlot: Pool index.
-  //   * @param selector : Spot selector.
-  // */
-  // function _setTurnTime(
-  //   Data storage self, 
-  //   uint selector, 
-  //   uint cSlot
-  // ) 
-  //   private
-  // {
-  //   self.cData[cSlot][selector].turnStartTime = _now();
-  // }
 
   function getProfile(
     Data storage self, 
@@ -818,6 +786,7 @@ library FactoryLib {
     Common.Contributor memory _cData = _getProfile(self, pb.unit, pb.user);
     _validateStage(_p.stage, Common.Stage.PAYBACK, "Payback not ready");
     uint debt = _getCurrentDebt(self, pb.unit, pb.user).debt;
+    // console.log("Debt in contract", debt);
     if(debt == 0) revert Common.NoDebtFound();
     amtPayBackInUSD = _cData.loan;
     colWithdrawn = _cData.colBals;
@@ -1010,42 +979,3 @@ library FactoryLib {
     slot = self.slots[user][unit];
   }
 }
-
-
-
-
-// if(uId == 0) {
-//       self.epoches.increment();
-//       uId = self.epoches.current();
-//       self.indexes[unit] = uId;
-//     }
-
-
-  // /**
-  //  * @dev Return the different balances locked in an epoch
-  //  * @param self : Data ref
-  //  * @param unit : Unit contribution
-  //  */
-  // function _getBalancesInBank(
-  //   Data storage self,
-  //   uint256 unit
-  // )
-  //   internal
-  //   view
-  //   returns(Common.Balances memory balances) 
-  // {
-
-  //   _isValidUnit(self, unit);
-  //   Common.Addresses memory addrs = _getCurrentPool(self, unit).data.addrs;
-  //   if(addrs.asset == address(0)){
-  //     balances = Common.Balances({
-  //       xfi: 0,
-  //       erc20: 0
-  //     });
-  //   } else {
-  //     balances = Common.Balances({
-  //       xfi: addrs.bank.balance,
-  //       erc20: IERC20(addrs.asset).balanceOf(addrs.bank)
-  //     });
-  //   }
-  // }

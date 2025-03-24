@@ -1,9 +1,9 @@
 import React from "react";
 import { FormattedData } from "@/interfaces";
 import { flexSpread } from "@/constants";
-import AddressWrapper from "@/components/AddressFormatter/AddressWrapper";
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import Collapse from "@mui/material/Collapse";
-import { Chevron } from "@/components/Collapsible";
+import { Chevron } from "@/components/utilities/Icons";
 import { getContractData } from "@/apis/utils/getContractData";
 import { useAccount } from "wagmi";
 

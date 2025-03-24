@@ -2,7 +2,7 @@ import { CommonParam, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { liquidateAbi } from "@/apis/abis";
+import { liquidateAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
 export default async function liquidate(args: CommonParam) {

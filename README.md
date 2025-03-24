@@ -60,7 +60,7 @@ It is built with NextJs framework using __ReactJS__ and __Typescript__ libraries
     - LICENSE
     - tsconfig.json
     - yarn.lock
-- ui
+- Deployment
     - apis (Backend files: OpenAI and Safe wallet configurations and tools)
         - openai
         - read
@@ -131,7 +131,7 @@ Deploy to Celo testnet
 - Clone the repository
 
 ```
-    cd ui
+    cd Deployment
 ```
 
 Install dependencies

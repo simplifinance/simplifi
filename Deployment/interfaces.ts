@@ -1,10 +1,11 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { BigNumberish, ethers } from "ethers";
-import { C3 } from "./typechain-types/contracts/apis/IFactory";
+import { C3 } from "../contract/typechain-types/contracts/apis/IFactory";
 
 export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
 export type WagmiConfig = import("wagmi").Config;
+export type ViemClient = import('viem').Client;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
 export type Str = string;
 export type Address = `0x${string}`;
@@ -197,6 +198,11 @@ export interface ContractData {
   bankFactory: Address;
 }
 
+export interface CommonToolArg {
+  wagmiConfig: WagmiConfig;
+  callback: TransactionCallback;
+  account: Address;
+}
 // export interface ViewFactoryData {
 //   analytics: Analytics;
 //   contractData: ContractData;
