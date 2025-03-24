@@ -154,7 +154,7 @@ Build
 
 - __[Webiste](https://simplifinance.xyz)__
 - __[Testnet live](https://testnet.simplifinance.xyz)__
-- __[Documentation](https://simplifinance.gitbook.io/docs/)__ -->
+- __[Documentation](https://simplifinance.gitbook.io/docs/)__
 
 
 
