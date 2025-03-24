@@ -9,13 +9,13 @@ import { zeroAddress } from "viem";
 
 dotconfig();
 const PRIVATE_KEY = process.env.PRIVATE_KEY_CROSS_0xD7c;
-// const API_KEY = process.env.ALCHEMY_API_KEY;
+const API_KEY = process.env.ALCHEMY_API_KEY;
 
 const config: HardhatUserConfig = {
   
   networks: {
     crossTest: {
-      url: "https://rpc.testnet.ms",  // Not working
+      // url: "https://rpc.testnet.ms",  // Not working
       // url: "https://rpc-t.crossfi.nodestake.org", // Bad gateway
       // url: "https://crossfi-testnet-rpc.itrocket.net:443", // Bad gateway
       // url: "https://crossfi-testnet-rpc.itrocket.net/", // Bad gateway
@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
       // url: "https://crossfi-testnet-rpc.synergynodes.com/", // Bad gateway
       // url: "https://crossfi-testnet-rpc.bangpateng.id/", // Bad gateway
       // url: "https://crossfi-testnet-rpc.staketab.org/", // Bad gateway
-      // url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
+      url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
     },

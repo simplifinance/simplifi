@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
-import { QUORUM } from '../archives/test/utilities';
+import { QUORUM } from '../arch/test/utilities';
 import { zeroAddress } from 'viem';
 
 dotconfig();

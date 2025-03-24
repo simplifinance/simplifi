@@ -1,140 +1,9 @@
 {
-  "name": "alfajores",
-  "chainId": "44787",
+  "name": "crossTest",
+  "chainId": "4157",
   "contracts": {
-    "OwnerShip": {
-      "address": "0xF5aE8bE0B39FA81A89C410d0D764C692d368758f",
-      "abi": [
-        {
-          "inputs": [],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "ownerId",
-              "type": "uint256"
-            }
-          ],
-          "name": "getOwner",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            }
-          ],
-          "name": "isOwner",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "owners",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "ownersCount",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "target",
-              "type": "address"
-            }
-          ],
-          "name": "removeOwner",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "renounceOwnerShip",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "newOwners",
-              "type": "address[]"
-            }
-          ],
-          "name": "setPermission",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
     "Escape": {
-      "address": "0xbf6928a7B98118CF8A86754D68862ea7343f3441",
+      "address": "0x15F5F39D9f35F4952De7691F7A2152a9Cf82951d",
       "abi": [
         {
           "inputs": [
@@ -328,8 +197,139 @@
         }
       ]
     },
+    "OwnerShip": {
+      "address": "0x85f9819923B0C3B38516dbBb0156B93811e42DcE",
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "ownerId",
+              "type": "uint256"
+            }
+          ],
+          "name": "getOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "target",
+              "type": "address"
+            }
+          ],
+          "name": "isOwner",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "owners",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "ownersCount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "target",
+              "type": "address"
+            }
+          ],
+          "name": "removeOwner",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnerShip",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "newOwners",
+              "type": "address[]"
+            }
+          ],
+          "name": "setPermission",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "Reserve": {
-      "address": "0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB",
+      "address": "0x982ea6Bb79a83217f7EA772b031974468404231b",
       "abi": [
         {
           "inputs": [
@@ -524,7 +524,7 @@
       ]
     },
     "TokenDistributor": {
-      "address": "0x2993871C97b80914Bb4580CE89e3cD5cC463aEbF",
+      "address": "0xc6C6984F09c2f1815C23F8F3971A6d1945AE610C",
       "abi": [
         {
           "inputs": [
@@ -868,7 +868,7 @@
       ]
     },
     "Attorney": {
-      "address": "0x5Be0fA900F3488eF4282417afEfaC57d71Cb2EAa",
+      "address": "0xe3F9527da2412eB74E3BEa41a1cE4501C6b8566b",
       "abi": [
         {
           "inputs": [
@@ -1100,7 +1100,7 @@
       ]
     },
     "SimpliToken": {
-      "address": "0x90395731cb1DE69f4DF80208c572EedbaE84986a",
+      "address": "0x73b4Ce8ad3D183F3CF2FC595b9F6398232e12f52",
       "abi": [
         {
           "inputs": [
@@ -1826,7 +1826,7 @@
       ]
     },
     "TestBaseAsset": {
-      "address": "0xbdAE8eB1417979E6a95c74BB771bFBb5C52ff27a",
+      "address": "0x9cA1ECD49d97287A966Bd55Fe95ee8Fdd16b2957",
       "abi": [
         {
           "inputs": [
@@ -2310,7 +2310,7 @@
       ]
     },
     "AssetClass": {
-      "address": "0xb4cc1e6605430631d87709c06e437ac31cc0eCBe",
+      "address": "0x008B7bD0b0ab1512bf13097a30dC9E2FF9761f78",
       "abi": [
         {
           "inputs": [
@@ -2466,7 +2466,7 @@
       ]
     },
     "BankFactory": {
-      "address": "0x6F71385f7d423ac843693A5CDD1223687fc8Be05",
+      "address": "0x9041F75414dEE439E0C5Fc618862642B93F84cb4",
       "abi": [
         {
           "inputs": [
@@ -2621,7 +2621,7 @@
       ]
     },
     "Factory": {
-      "address": "0x885a9F1077B02CeBc384217B18bd6ca2B8D957B1",
+      "address": "0x0564915a3c76a05765f0518fe2a0e677C429Cc84",
       "abi": [
         {
           "inputs": [
