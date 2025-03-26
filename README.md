@@ -8,7 +8,7 @@ A protocol for short-term lending and borrowing services through a peer-funding 
 Our solutions allow users to access short-term, flexible, and expandable credit with little or no interest. By eliminating centralized liquidity pools, users themselves control inflow and outflow, ensuring autonomy over their funds, interest rates, if applicable, are determined by the participants, not the platform, creating a competitive and fair lending environment.
 
 - __FlexPool: User-Driven Liquidity Pools__
-FlexPool is at the heart of our system. These user-created pools can be either permissioned (for trusted groups like friends and colleagues) or permissionless (open to anyone). Participants have equal access to the total liquidity generated within a pool, distributed on a rotational basis. The decentralized model is ideal for users ranging from market women to crypto traders.
+FlexPool is at the heart of our system. These user-created pools can be permissioned (for trusted groups like friends and colleagues) or permissionless (open to anyone). Participants have equal access to the total liquidity generated within a pool, distributed on a rotational basis. The decentralized model is ideal for users ranging from market women to crypto traders.
 
 ## How it works
 For example, Bob, a crypto trader, creates a FlexPool with $500 unit liquidity and a maximum of five participants. He sets parameters: no interest, a 6-hour duration, and a collateral requirement in SFToken with 130 index. Once the quorum is achieved, Bob receives $2,500 to execute his trade, replenishes the pool before the 6-hour deadline, and the next participant in line gets access. This cycle continues until all participants benefit.
@@ -25,11 +25,11 @@ Collateral staked in the pool can optionally be channeled into the yield strateg
 ## Solution
 - Near-zero interest loans via peer-funding mechanism.
 - User-driven liquidity pool through our FlexPool design.
-- Enhanced flexibility and inclusion for all class of users.
+- Enhanced flexibility and inclusion for all classes of users.
 - Trust and transparency.
 - Expandable liquidity.
 
-By blending traditional group lending practices with blockchain tecehnology, Simplifi creates a financial solution that's transparent, inclusive, and uniquely user-focused.
+By blending traditional group lending practices with blockchain technology, Simplifi creates a financial solution that's transparent, inclusive, and uniquely user-focused.
 
 ## How FlexPool works
 ![ob2](https://github.com/user-attachments/assets/e806c380-96e5-4557-a076-dac58238dca9)
@@ -45,6 +45,15 @@ Simplifinance __[repository](https://github.com/simplifinance/simplifi/)__ conta
 It is built with NextJs framework using __ReactJS__ and __Typescript__ libraries. We used __Shadcn__ and __TailwindCSS__ to give it a nice and customizable theme and components. The web-app uses a mobile-first approach while maintaining compatibility with the desktop. The __AI-Assist__ version uses LLM and Agentic workflow to give users an interactive chat-based experience. We have halted the development of the AI-version, and we plan to resume working on it in the future. We used Wagmi and the Viem libraries (coupled with the Alchemy APIs) to connect to and fetch data from the blockchain. 
 
 - [contract] folder contains the smart contracts code and test files built with Solidity language and the Etherjs library.
+
+## Smart Contracts - Unverified (Celo Alfajores)
+The following smart contracts are tentatively deployed on the Celo testnet, as they undergo constant changes. 
+- __[0x885a9F1077B02CeBc384217B18bd6ca2B8D957B1]()__
+- __[0x90395731cb1DE69f4DF80208c572EedbaE84986a]()__
+- __[0xbdAE8eB1417979E6a95c74BB771bFBb5C52ff27a]()__
+- __[0x2993871C97b80914Bb4580CE89e3cD5cC463aEbF]()__
+- __[0x5Be0fA900F3488eF4282417afEfaC57d71Cb2EAa]()__
+- __[0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB]()__
 
 ## Project structure
 - contract
@@ -155,112 +164,6 @@ Build
 - __[Webiste](https://simplifinance.xyz)__
 - __[Testnet live](https://testnet.simplifinance.xyz)__
 - __[Documentation](https://simplifinance.gitbook.io/docs/)__
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-<!-- 
-- Our smart contracts are currently deployed on the Celo Alfajores since we're actively making a lot of changes. Celo blockchain serves as our core database, even though we had tested with other network, we chose Celo in order to benefit from the cheap transaction cost, scalabiity and EVM security features.
-
-## Deployed Contract Addresses on Celo Alfajores
-
-- Factory - __0x99D39170E2807D26E71C721bbb414f4a913eA2c4__ (Unverified)
-- Stablecoin (test) - __0xF0046e26E286f966F77fFC6F408eD00949092Ccd__ (Unverified)
-
-`NB`: We are yet to very these contracts as they are undergoing frequest changes.
-
-## Commits
-
-- __[1](https://github.com/bobeu/simplifi_proof_of_ship/commit/f1e04091efce2358fdbb6771bfa2510e7b50043a)__
-
-- __[2](https://github.com/bobeu/simplifi_proof_of_ship/commit/e2eead19451c0c15379975bf27379406b97745cb)__
-
-__[3](https://github.com/bobeu/simplifi_proof_of_ship/commit/990ee8131843ed5bdbeca54e86207c33d0070925)__
-
-__[4](https://github.com/celo-org/Proof-of-Ship/commit/16fa2f242811958bcf8e1fdc0ff470dc5d41a2ab)__
-
-__[5](https://github.com/celo-org/Proof-of-Ship/commit/f19ca4ae3d98b47b52fd184a41e7a20e33086625)__
-
-
-## Video
-__[Youtube](https://youtu.be/Ag4Jfwo6jHM)__
-
-## Slide
-__[Google](https://docs.google.com/presentation/d/1r4jqqVc-oMhMBpJAXiN9u0VSnVNS2uC3M0hgdH1c-Bg/edit?usp=sharing https://docs.google.com/presentation/d/1r4jqqVc-oMhMBpJAXiN9u0VSnVNS2uC3M0hgdH1c-Bg/edit?usp=sharing )__
-
-## Team
-- Isaac J
-    - __[Github](https://github.com/bobeu)__
-    - __[Email](mailto:bobmatea27@gmail.com)__
-    - __[LinkedIn](https://www.linkedin.com/in/isaac-j-a6764a169)__
-    - __[Project - Proof of ship](https://github.com/bobeu/simplifinance_bot_miniapp)__
-
-            
-
-
- -->
-
-
-
-
-
-
-
-
-
-<!-- # Simplifinanc AI-Agent/Integration
-
-Simplifinance AI-powered Agent
-
-Simplifinance provides users with multiple loan faucets with full control of their liquidity to maximize capital efficiency. Our MVP, FlexPool, is a customized liquidity pool for short-term crypto loan services focusing on all categories of users. 
-
-
-## AI Assist Interface
-
-## Project structure
-
-The project is split into two main categories:
-- __[Action Based - repo](https://github.com/simplifinance/simplifi)__ : Usual way to interact with an application through a call-to-action such as clicking a button to get response (s). Github __[repo](https://github.com/simplifinance/simplifi)__. Interact __[here](https://testnet.simplifinance.xyz)__
-
-- __[AI Assist - repo](https://github.com/bobeu/simplifinance_bot_miniapp)__ : This a text-based mode of interacting with the Simplifinance's backend via AI agent. The Agent can connect and perform read and write access to the Simplifi's backend on behalf of the user using text prompts. Currently, we are working to improve the quality of the UI for this category. You can find the demo __[here]()__.
-
-
-
-
-
-
-
 
 
 

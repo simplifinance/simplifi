@@ -41,7 +41,7 @@ contract TokenDistributor is
     event Requested(uint reqId, address from);
     event Signer(uint reqId, address from);
 
-    enum Status {NONE, INITIATED, PENDING, EXECUTED}
+    enum Status {NONE, INITIATED, PENDING, EXECUTED, EXPIRED}
 
     /**
      * @notice Transaction type
@@ -63,12 +63,6 @@ contract TokenDistributor is
      */
     uint public requestIDs;
 
-    // /**
-    //  * @notice Delay timer.
-    //  * Transfers are executed after the expiration of this period.
-    //  */
-    // uint public delay;
-
     struct TransactionRequest {
         uint256 amount;
         address recipient;
@@ -76,6 +70,7 @@ contract TokenDistributor is
         address[] executors;
         Status status;
         Type txType;
+        uint expirationTime;
     }
 
     address[] private executors;
@@ -198,7 +193,7 @@ contract TokenDistributor is
                         SETQUORUM (4): Increase or decrease the number of signatories needed to execute a transaction.
         Note: By default, the caller is deemed to have signed the transaction.
      */
-    function initiateTransaction(
+    function proposeTransaction(
         address _recipient,
         uint256 _amount,
         uint16 _delayInHours,
@@ -214,8 +209,8 @@ contract TokenDistributor is
         requests[reqId].status = Status.INITIATED;
         requests[reqId].txType = Type(_type);
         unchecked {
+            requests[reqId].expirationTime = _now() + 14 days;
             requests[reqId].delay = uint(_delayInHours) * 1 hours;
-            
         }
         address caller = _msgSender();
         requests[reqId].executors.push(caller);
@@ -240,16 +235,23 @@ contract TokenDistributor is
         whenNotSign(reqId)
     {
         TransactionRequest memory req = requests[reqId];
-        _whenStatus(req, Status.INITIATED, "Trxn must be initiated");
-        uint currentSigners = req.executors.length;
-        require(currentSigners < quorum, "Signers complete");
-        address caller = _msgSender();
-        requests[reqId].executors.push(caller);
-        signed[caller][reqId] = true;
-        if((currentSigners + 1) == quorum) {
-            requests[reqId].status = Status.PENDING;
-            unchecked {
-                requests[reqId].delay = _now() + req.delay;
+        if(_now() > req.expirationTime && req.status == Status.INITIATED) {
+            req.status = Status.EXPIRED;
+            requests[reqId].status = req.status;
+        }
+        if(req.status != Status.EXPIRED) {
+            _whenStatus(req, Status.INITIATED, "Trxn must be initiated");
+            uint currentSigners = req.executors.length;
+            require(currentSigners < quorum, "Signers complete");
+            address caller = _msgSender();
+            requests[reqId].executors.push(caller);
+            signed[caller][reqId] = true;
+            if((currentSigners + 1) == quorum) {
+                requests[reqId].status = Status.PENDING;
+                requests[reqId].expirationTime = _now() + 14 days;
+                unchecked {
+                    requests[reqId].delay = _now() + req.delay;
+                }
             }
         }
     } 
@@ -263,25 +265,32 @@ contract TokenDistributor is
      */
     function executeTransaction(uint reqId) public onlySigner validateRequestId(reqId) nonReentrant {
         TransactionRequest memory req = requests[reqId];
-        _whenStatus(req, Status.PENDING, "Trxn must be initiated");
-        if(_now() < req.delay) revert Pending();
-        requests[reqId].status = Status.EXECUTED;
-        if(req.txType == Type.ERC20) {
-            address(token).cannotBeEmptyAddress();
-            token.safeTransfer(req.recipient, req.amount);
-        } else if(req.txType == Type.NATIVE) {
-            uint256 balance = address(this).balance;
-            if(balance < req.amount) revert InsufficientBalance(balance);
-            (bool success,) = req.recipient.call{value: req.amount}("");
-            require(success,"Trxn failed");
-        } else if(req.txType == Type.ADDSIGNER) {
-            req = requests[reqId];
-            _addSigner(req.recipient);
-        } else if(req.txType == Type.REMOVESIGNER) {
-            req = requests[reqId];
-            _removeSigner(req.recipient, req.executors, reqId);
-        } else if(req.txType == Type.SETQUORUM) {
-            quorum = req.amount;
+        if(_now() > req.expirationTime && req.status == Status.PENDING) {
+            req.status = Status.EXPIRED;
+            requests[reqId].status = req.status;
+        }
+        if(req.status != Status.EXPIRED) {
+            _whenStatus(req, Status.PENDING, "Trxn must be initiated");
+            if(_now() < req.delay) revert Pending();
+            requests[reqId].status = Status.EXECUTED;
+            // requests[reqId].expirationTime;
+            if(req.txType == Type.ERC20) {
+                address(token).cannotBeEmptyAddress();
+                token.safeTransfer(req.recipient, req.amount);
+            } else if(req.txType == Type.NATIVE) {
+                uint256 balance = address(this).balance;
+                if(balance < req.amount) revert InsufficientBalance(balance);
+                (bool success,) = req.recipient.call{value: req.amount}("");
+                require(success,"Trxn failed");
+            } else if(req.txType == Type.ADDSIGNER) {
+                req = requests[reqId];
+                _addSigner(req.recipient);
+            } else if(req.txType == Type.REMOVESIGNER) {
+                req = requests[reqId];
+                _removeSigner(req.recipient, req.executors, reqId);
+            } else if(req.txType == Type.SETQUORUM) {
+                quorum = req.amount;
+            }
         }
 
     }

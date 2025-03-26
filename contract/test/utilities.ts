@@ -24,6 +24,7 @@ export const convertStringsToAddresses = (args: string[]) => {
 }
 
 export enum TrxnType {ERC20, NATIVE, ADDSIGNER, REMOVESIGNER, SETQUORUM}
+export enum Status_Dist {NONE, INITIATED, PENDING, EXECUTED, EXPIRED}
 export const DECIMALS = 18;
 export const SYMBOL = "TBSD";
 export const NAME = "Test Base Asset";
