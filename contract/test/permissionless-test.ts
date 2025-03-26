@@ -29,7 +29,7 @@ import {
   withdraw,
   removeLiquidityPool,
   createPermissionlessPool
-} from "./factoryUtils";
+} from "./utils";
 import { ZeroAddress } from "ethers";
 import { Address } from "./types";
 
@@ -217,7 +217,6 @@ describe("Permissionless", function () {
       expect(bn(gf.profile.turnStartTime).toNumber()).to.be.gte(turnStartTime);
       expect(bn(gf.profile.paybackTime).toNumber()).to.be.gte(turnStartTime + DURATION_OF_CHOICE_IN_SECS);
       expect(gf.pool.pool.bigInt.currentPool).to.be.equal(ZERO);
-    //   expect(gf.profile.expInterest.toString()).to.be.approximately(mulToString(gf.pool.pool.interest.intPerSec, DURATION_OF_CHOICE_IN_SECS), bn('12500000000000000'));
       expect(gf.profile.durOfChoice).to.be.equal(BigInt(DURATION_OF_CHOICE_IN_SECS));
 
       const bankContract = await retrieveContract(formatAddr(gf.pool.pool.addrs.bank));
@@ -341,8 +340,7 @@ describe("Permissionless", function () {
       expect(collateralBalance).to.be.eq(0n);
 
       expect(pay.balances?.collateral).to.be.equal(gf.balances?.collateral);
-    //   const balB4Withdrawal = await signer1.provider.getBalance(signer1.address);
-      
+
       // Withdraw collateral from the bank and test
       const { colBalAfter, colBalB4 } = await withdraw({
         owner: create.pool.pool.addrs.bank as Address,
@@ -533,37 +531,18 @@ describe("Permissionless", function () {
     //   await bankContract.connect(signer2).withdrawCollateral(create.pool.pool.bigInt.recordId);
       const s1After = await bankContract.getUserData(signer1.address, create.pool.pool.bigInt.recordId);
       const s2After = await bankContract.getUserData(signer2.address, create.pool.pool.bigInt.recordId);
+      const { aggregateFee, totalClients} = await bankContract.getData();
+      const bankBalance = await tAsset.balanceOf(gf.pool.pool.addrs.bank);
+      const data = await bankContract.getData();
+      const bankBalance2 = await tAsset.balanceOf(gf.pool.pool.addrs.bank);
 
       expect(s1After.access).to.be.false;
       expect(s2After.access).to.be.false;
       expect(s1After.collateralBalance).to.be.eq(ZERO);
       expect(s2After.collateralBalance).to.be.eq(ZERO);;
-
-      const { aggregateFee, totalClients} = await bankContract.getData();
       expect(totalClients).to.be.eq(ZERO);
       expect(aggregateFee).to.be.eq(ZERO);
-
-      const bankBalance = await tAsset.balanceOf(gf.pool.pool.addrs.bank);
       expect(bankBalance).to.be.equal(ZERO);
-
-      // Participants withdraw from the bank
-    //   await withdraw({
-    //     asset: tAsset,
-    //     factory,
-    //     owner: formatAddr(gf_2.pool.pool.addrs.bank),
-    //     spender: signer1,
-    //     collateral: collateralToken
-    //   });
-    //   await withdraw({
-    //     asset: tAsset,
-    //     factory,
-    //     owner: formatAddr(gf_2.pool.pool.addrs.bank),
-    //     spender: signer2,
-    //     collateral: collateralToken
-    //   });
-
-      const data = await bankContract.getData();
-      const bankBalance2 = await tAsset.balanceOf(gf.pool.pool.addrs.bank);
       expect(bn(bankBalance2).gte(bn(data.aggregateFee))).to.be.true;
     });
 
@@ -768,11 +747,8 @@ describe("Permissionless", function () {
       // Fastrack block time
       const future = await time.latest() + (DURATION_OF_CHOICE_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
-    //   console.log("baseBaInit", await tAsset.balanceOf(signer3.address));
       const debtToDate = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer1.address);
       const debt = debtToDate + (gf.pool.pool.interest.intPerSec * BigInt((ONE_HOUR_ONE_MINUTE + 3)));
-    //   console.log("debtToDate", debt);
-      // const defaulter = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
       const bankContract = await retrieveContract(formatAddr(gf.pool.pool.addrs.bank));
       const s3BfLiq = await bankContract.getUserData(signer3.address, create.pool.pool.bigInt.recordId);
       expect(s3BfLiq.access).to.be.false;
@@ -785,8 +761,6 @@ describe("Permissionless", function () {
         debt: debt,
         collateral: collateralToken
       });
-    //   console.log("baseBalB4Liq", baseBalB4Liq);
-    //   console.log("baseBalAfterLiq", baseBalAfterLiq);
       expect(bn(baseBalAfterLiq).gte(bn(ZERO))).to.be.true;
 
       const { baseBalB4, baseBalAfter, colBalAfter, colBalB4 } = await withdraw({
@@ -799,7 +773,6 @@ describe("Permissionless", function () {
       const s3AfterLiq = await bankContract.getUserData(signer3.address, create.pool.pool.bigInt.recordId);
       expect(s3AfterLiq.access).to.be.false;
       expect(s3AfterLiq.collateralBalance).to.be.eq(ZERO);
-    //   const balAferLiq = await tAsset.balanceOf(signer3.address);
       /** 
        * Liquidator should inherit the profile data of expected borrower except for id.
       */
@@ -807,8 +780,6 @@ describe("Permissionless", function () {
       expect(pr.colBals).to.be.equal(ZERO);
       expect(pr.paybackTime).to.be.equal(gf.profile.paybackTime);
       expect(pr.durOfChoice).to.be.equal(gf.profile.durOfChoice);
-    //   console.log("baseBalB4", baseBalB4)
-    //   console.log("baseBalAfter", baseBalAfter)
       expect(baseBalAfter).to.be.equal(baseBalB4);
       
       expect(bn(colBalAfter).gt(bn(colBalB4))). to.be.true;
@@ -885,7 +856,6 @@ describe("Permissionless", function () {
 
       const debtToDate = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer1.address);
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.pool.interest.intPerSec).times(bn(ONE_HOUR_ONE_MINUTE + 3))).toString());
-      // const def = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
       await liquidate({
         asset: tAsset,
         deployer,
@@ -896,7 +866,6 @@ describe("Permissionless", function () {
         collateral: collateralToken
       });
 
-    //   const bankContract = await retrieveContract(formatAddr(gf.pool.pool.addrs.bank));
       await withdraw({
         asset: tAsset,
         factory,

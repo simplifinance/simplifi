@@ -16,7 +16,7 @@ import type {
    BankContract
 } from "./types";
 
-import { FEE, formatAddr, MAKER_RATE, QUORUM, } from "./utilities";
+import { executeTransaction, FEE, formatAddr, MAKER_RATE, proposeTransaction, QUORUM, signTransaction, TrxnType, Type, } from "./utilities";
 import { expect } from "chai";
 // import { abi } from "../artifacts/contracts/implementations/strategies/Bank.sol/Bank.json";
 import { zeroAddress } from "viem";
@@ -114,8 +114,8 @@ async function deployAttorney(
 /**
  * Deploys and return an instance of the Token Distributor contract.
  * @param deployer : Deployer address
- * @param fee : Attorney fee
- * @param feeTo : Fee receiver
+ * @param signers : List of Signers
+ * @param quorum : Number of signers required to execute a transaction
  * @param ownershipManager : OwnerShip contract
  * @returns Contract instance
  */
@@ -184,7 +184,8 @@ export async function retrieveContract(bank: Address) : Promise<BankContract> {
 
 export async function deployContracts(getSigners_: () => Signers) {
   const [deployer, alc1, alc2, alc3, routeTo, feeTo, signer1, signer2, signer3, devAddr ] = await getSigners_();
-  const signers = [deployer.address, devAddr.address, signer3.address] as Address[];
+  const signers = [deployer.address, devAddr.address, signer3.address, signer1.address] as Address[];
+  const INITIAL_MINT : bigint = 200000000000000000000000n;
   const ownershipMgr = await deployOwnershipManager(deployer);
   const ownershipMgrAddr = await ownershipMgr.getAddress() as Address;
   
@@ -194,7 +195,7 @@ export async function deployContracts(getSigners_: () => Signers) {
   const reserve = await deployReserve(ownershipMgrAddr, deployer);
   const reserveAddr = await reserve.getAddress() as Address;
 
-  const distributor = await deployTokenDistributor(deployer, ownershipMgrAddr, signers, QUORUM);
+  const distributor = await deployTokenDistributor(deployer, ownershipMgrAddr, signers, QUORUM-1);
   const distributorAddr = await distributor.getAddress() as Address;
   
   const collateralToken = await deployCollateralAsset(deployer, attorneyAddr, reserveAddr, distributorAddr, ownershipMgrAddr);
@@ -210,13 +211,15 @@ export async function deployContracts(getSigners_: () => Signers) {
   const escape = await deployEscape(ownershipMgrAddr, deployer);
   const escapeAddr = await escape.getAddress() as Address;
   
+  await distributor.connect(deployer).setToken(collateralTokenAddr);
+  await attorney.connect(deployer).setToken(collateralTokenAddr);
+  const result = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployer.address as Address, trxType: TrxnType.ERC20});
+  await signTransaction({signer: signer3, contract: distributor, requestId: result.reqId});
+  await executeTransaction({contract: distributor, reqId: result.reqId, signer: devAddr});
   
-
-  // const strategy = await deployBank(formatAddr(ownershipMgrAddr), deployer);
   const bankFactory = await deployBankFactory(ownershipMgrAddr, feeTo.address as Address, deployer);
   const bankFactoryAddr = await bankFactory.getAddress() as Address;
   const factory = await deployFactory(assetMgrAddr, bankFactoryAddr, feeTo.address as Address, ownershipMgrAddr, deployer, collateralTokenAddr);
-
   const factoryAddr = await factory.getAddress();
   await ownershipMgr.connect(deployer).setPermission([factoryAddr, bankFactoryAddr, deployer.address,]);
   const isSupported = await assetMgr.isSupportedAsset(testAssetAddr);
@@ -225,6 +228,8 @@ export async function deployContracts(getSigners_: () => Signers) {
   expect(isSupported).to.be.true;
 
   return {
+    attorney,
+    attorneyAddr,
     bankFactory,
     assetMgr,
     testAssetAddr,
@@ -238,6 +243,7 @@ export async function deployContracts(getSigners_: () => Signers) {
     collateralToken,
     collateralTokenAddr,
     factory,
+    INITIAL_MINT,
     assetMgrAddr,
     factoryAddr,
     bankFactoryAddr,

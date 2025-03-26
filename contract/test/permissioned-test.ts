@@ -14,12 +14,10 @@ import {
   formatAddr,
   DURATION_IN_SECS,
   TOTAL_LIQUIDITY,
-  mulToString,
   DURATION_OF_CHOICE_IN_HR,
   DURATION_OF_CHOICE_IN_SECS,
   ONE_HOUR_ONE_MINUTE,
   FuncTag,
-  Status
 } from "./utilities";
 
 import { 
@@ -32,7 +30,7 @@ import {
   getAddressFromSigners,
   withdraw,
   removeLiquidityPool
-} from "./factoryUtils";
+} from "./utils";
 import { ZeroAddress, } from "ethers";
 import { Address } from "./types";
 
@@ -59,7 +57,7 @@ describe("Permissioned", function () {
             addrs: { asset, bank, lastPaid, admin }, 
             stage, 
             lInt: { colCoverage, duration, selector, allGh, }, 
-            bigInt: { currentPool, unit, recordId},
+            bigInt: { currentPool, unit},
             interest: { intPerSec, fullInterest }
           },
           cData: members
@@ -83,7 +81,6 @@ describe("Permissioned", function () {
 
       const slot2 = await factory.getSlot(signer2.address, unit);
       const slot3 = await factory.getSlot(signer3.address, unit);
-      // console.log("Bank", bank);
       const bankContract = await retrieveContract(formatAddr(bank));
       const bankData = await bankContract.getData();
       // Assertions
@@ -223,14 +220,6 @@ describe("Permissioned", function () {
         collateral: collateralToken
       });
       const turnTime = await time.latest();
-      
-      // Join function should be locked
-      
-      // GetFinance should be unlocked
-
-      /**
-       * Collateral required to getFinance;
-       */
       const quoted = await factory.getCollaterlQuote(create.pool.pool.bigInt.unit);
       const gf = await getFinance({
         unit: create.pool.pool.bigInt.unit,
@@ -272,8 +261,6 @@ describe("Permissioned", function () {
       expect(balances?.collateral).to.be.equal(quoted.collateral);
       expect(balances?.base).to.be.equal(aggregateFee);
       expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true;
-      // console.log("baseBalAfter", baseBalAfter);
-      // console.log("gf.profile.loan", gf.profile.loan);
       expect(bn(baseBalAfter).lte(bn(gf.profile.loan))).to.be.true;
     });
 
@@ -357,22 +344,14 @@ describe("Permissioned", function () {
         collateral: collateralToken
       });
       
-      // console.log("Join: ", join.pool.pool.bigInt.currentPool.toString());
-      // console.log("PAy: ", pay.pool.pool.bigInt.currentPool.toString());
-      // After borrower repaid loan, the pool balance should be replenished.
       expect(pay.pool.pool.bigInt.currentPool).to.be.equal(join.pool.pool.bigInt.currentPool);
-      
-      // Collateral balances.
       expect(bn(pay.profile.colBals).isZero()).to.be.true;
-
-      // We check the user's collateral balances with the bank are intact
       const bankContract = await retrieveContract(formatAddr(gf.pool.pool.addrs.bank));
       const { access, collateralBalance} = await bankContract.getUserData(signer1.address, create.pool.pool.bigInt.recordId);
       expect(access).to.be.false;
       expect(collateralBalance).to.be.eq(0n);
 
       expect(pay.balances?.collateral).to.be.equal(gf.balances?.collateral);
-      // Withdraw collateral from the bank and test
       const { colBalAfter, colBalB4 } = await withdraw({
         owner: pay.pool.pool.addrs.bank as Address, 
         asset: tAsset, 
@@ -386,8 +365,6 @@ describe("Permissioned", function () {
       const prof = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
       expect(prof.colBals).to.be.equal(ZERO);
       expect(await signer1.provider.getBalance(pay.pool.pool.addrs.bank)).to.be.equal(ZERO);
-      // console.log("colBalAfter", colBalAfter);
-      // console.log("colBalB4", colBalB4);
       expect(bn(colBalAfter).gt(bn(colBalB4))).to.be.true;
     });
 
@@ -456,12 +433,6 @@ describe("Permissioned", function () {
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
       const debtToDate = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer1.address);
-
-      /**
-       * We increase the time to give 3 sec for execution which is why we multiply interest per sec
-       * by the number of seconds we increased by. This is to enable us give enough allowance to the 
-       * factory contract since factory will always reply on the interest up to the current block. 
-       */
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.pool.interest.intPerSec).times(bn(3))).toString());
       const pay = await payback({
         asset: tAsset,
@@ -473,19 +444,9 @@ describe("Permissioned", function () {
         collateral: collateralToken
       }); 
 
-      // const profB4 = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
-      // Before withdrawing collateral, the balance should be intact.
       expect(bn(pay.profile.colBals).lt(bn(gf.profile.colBals))).to.be.true;
-
-      // await factory.connect(signer1).withdrawCollateral(create.pool.pool.bigInt.unit);
       const prof = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
-
-      // Before withdrawing collateral, the balance should be intact.
       expect(prof.colBals).to.be.equal(ZERO);
-
-      /**
-       * Signer2 Borrow and payback
-       */
       const gf_2 = await getFinance({
         unit: create.pool.pool.bigInt.unit,
         factory,
@@ -644,13 +605,8 @@ describe("Permissioned", function () {
         collateral: collateralToken
       });
 
-      // Decrease the duration
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS - ONE_HOUR_ONE_MINUTE));
       await time.increaseTo(durOfChoiceInSec_2);
-
-      /**
-       * When the paydate is yet to come, enquiry should return nothing
-       */
       const [profile, isDefaulted, value] = await enquireLiquidation({
         unit: create.pool.pool.bigInt.unit,
         factory,
@@ -815,8 +771,6 @@ describe("Permissioned", function () {
       expect(pr.colBals).to.be.equal(ZERO);
       expect(pr.paybackTime).to.be.equal(gf.profile.paybackTime);
       expect(pr.durOfChoice).to.be.equal(gf.profile.durOfChoice);
-      // console.log("baseBalAfterLiq", baseBalAfterLiq);
-      // console.log("baseBalB4Liq", baseBalB4Liq);
       expect(bn(baseBalAfterLiq).gte(bn(ZERO))).to.be.true;
       expect(bn(colBalAfterLiq).eq(bn(colBalB4Liq))).to.be.true;
       
@@ -900,7 +854,6 @@ describe("Permissioned", function () {
 
       const debtToDate = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer1.address);
       const debt = BigInt(bn(debtToDate).plus(bn(gf.pool.pool.interest.intPerSec).times(bn(ONE_HOUR_ONE_MINUTE + 3))).toString());
-      // const def = await factory.getProfile(create.pool.pool.bigInt.unit, signer1.address);
       await liquidate({
         asset: tAsset,
         deployer,
@@ -943,7 +896,6 @@ describe("Permissioned", function () {
       await time.increaseTo(durOfChoiceInSec_2);
       const debtToDate_2 = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer2.address);
       const debt_2 = debtToDate_2 + (gf_2.pool.pool.interest.intPerSec * 3n);
-      // const debt_2 = BigInt(bn(debtToDate_2).plus(bn(gf_2.pool.pool.interest.intPerSec).times(bn(3))).toString());
       const pay_2 = await payback({
         asset: tAsset,
         deployer,
@@ -1024,24 +976,6 @@ describe("Permissioned", function () {
         collateral: collateralToken
       });
 
-      /**
-       * Uncomment this line before the GF time elapses should make the test failed.
-       * This is because signer3 is not expected at this time but signer 1.
-       */
-      // await getFinance({
-      //   unit: create.pool.pool.bigInt.unit,
-      //   factory,
-      //   signers: [signer3],
-      //   hrsOfUse_choice: DURATION_OF_CHOICE_IN_HR 
-      // });
-      
-      /**
-       * NOTE: IN THE FACTORY CONTRACT, WHEN THE REQUIRED QUORUM IS ACHIEVED, GETFINANCE IS OPENED 
-       * TO THE NEXT BORROWER IN THE CONTRACT. IT HAPPENS ON FIRST-COME-FIRST-SERVED BASIS USING THE
-       * SELECTOR. EXPECTED BORROWER HAVE AT LEAST ONE HOUR FROM THE TIME QUORUM IS ACHIEVED TO GF
-       * OTHERWISE THEY CAN BE LIQUIDATED.
-      */
-
       const futureGthanTurnTime = BigInt((await time.latest()) + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(futureGthanTurnTime);
 
@@ -1078,7 +1012,6 @@ describe("Permissioned", function () {
        */
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
-      // await time.increaseTo(durOfChoiceInSec);
       const debtToDate = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer3.address);
 
       /**
@@ -1137,12 +1070,6 @@ describe("Permissioned", function () {
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_OF_CHOICE_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
       const debtToDate_2 = await factory.getCurrentDebt(create.pool.pool.bigInt.unit, signer2.address);
-
-      /**
-       * We increase the time to give 3 sec for execution which is why we multiply interest per sec
-       * by the number of seconds we increased by. This is to enable us give enough allowance to the 
-       * factory contract since factory will always reply on the interest up to the current block. 
-       */
       const debt_2 = debtToDate_2 + (gf_2.pool.pool.interest.intPerSec * 3n);
       const pay_2 = await payback({
         asset: tAsset,
@@ -1239,9 +1166,6 @@ describe("Permissioned", function () {
         collateralToken
       });
 
-      // console.log("first recordId", f.pool.pool.bigInt.recordId);
-      // console.log("first unitId", f.pool.pool.bigInt.unitId);
-
       // Remove liquidity
       await removeLiquidityPool({
         factory,
@@ -1262,9 +1186,6 @@ describe("Permissioned", function () {
         deployer,
         collateralToken
       });
-
-      // console.log("second recordId", create.pool.pool.bigInt.recordId);
-      // console.log("second unitId", create.pool.pool.bigInt.unitId);
 
       await factory.getPoolData(create.pool.pool.bigInt.unitId);
 

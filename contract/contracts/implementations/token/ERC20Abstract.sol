@@ -99,7 +99,7 @@ abstract contract ERC20Abstract is IERC20, Pausable {
   {
     attorney_.cannotBeEmptyAddress();
     tokenInfo = TokenInfo(18, 0, "Simplfinance Token", "TSFT", attorney_);
-    _mint(_msgSender(), 200000*(10**18)); // For testing, mint to msg.sender
+    // _mint(_msgSender(), 200000*(10**18)); // For testing, mint to msg.sender
     _mint(initTokenReceiver, 1_000_000_000*(10**18));
     _lock(initTokenReceiver, reserve_, 700_000_000*(10**18)); // We expect reserve_ to be a grouped account e.g multisig.
   }

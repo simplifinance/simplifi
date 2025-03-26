@@ -15,7 +15,6 @@ import { IERC20 } from "../../apis/IERC20.sol";
  */
 
 contract Attorney is Pausable {
-  using Lib for *;
   using SafeERC20 for IERC20;
 
   error CallNotFromEscapeAccount();
@@ -40,16 +39,16 @@ contract Attorney is Pausable {
   ) 
     Pausable(_ownershipManager) 
   {
-    _feeTo.cannotBeEmptyAddress();
+    require(_feeTo != address(0), "FeeTo is zero address");
     fee = _fee;
     feeTo = _feeTo;
-  }
+  } 
 
   function setToken(IERC20 _token) 
     public 
     onlyOwner
   {
-    address(_token).cannotBeEmptyAddress();
+    require(address(_token) != address(0), "Token is not set");
     token = _token;
   }
 
@@ -65,8 +64,7 @@ contract Attorney is Pausable {
   {
     IERC20.Balances memory _b = IERC20(token).accountBalances(lostAccount);
     require(_b.locked.value > 0, "No lock detected");
-    // if(_msgSender() != _b.locked.escapeTo) revert CallNotFromEscapeAccount();
-    msg.value.mustBeAbove(fee);
+    require(msg.value >= fee, "Insufficient value for fee");
     (bool _s,) = feeTo.call{value: msg.value}("");
     require(_s);
     token.safePanicUnlock(lostAccount, _b);

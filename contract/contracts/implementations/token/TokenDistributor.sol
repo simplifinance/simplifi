@@ -61,15 +61,15 @@ contract TokenDistributor is
      * @dev Unique order ID mapped to each transfer request.
      * Note: Two requests can not have same order ID. 
      */
-    uint private requestIDs;
+    uint public requestIDs;
 
-    /**
-     * @notice Delay timer.
-     * Transfers are executed after the expiration of this period.
-     */
-    uint public delay;
+    // /**
+    //  * @notice Delay timer.
+    //  * Transfers are executed after the expiration of this period.
+    //  */
+    // uint public delay;
 
-    struct Request {
+    struct TransactionRequest {
         uint256 amount;
         address recipient;
         uint delay;
@@ -86,19 +86,19 @@ contract TokenDistributor is
      * Note: We assigned slot `0` to add and remove signer.
      * i.e requests[0].
      */
-    mapping (uint => Request) private requests;
+    mapping (uint => TransactionRequest) private requests;
 
     /**
      * @dev Signers
      * Mapping of address to bool
      */
-    mapping (address => bool) private signers;
+    mapping (address => bool) public signers;
 
     /**
      * @dev Signed requests
      * Mapping of signer to request id to bool
      */
-    mapping (address => mapping (uint => bool)) private signed;
+    mapping (address => mapping (uint => bool)) public signed;
 
     // ERC20 basic token contract held by this contract
     IERC20 public token;
@@ -164,7 +164,6 @@ contract TokenDistributor is
     function _generateRequestId() private returns(uint id) {
         requestIDs ++;
         id = requestIDs;
-        // id = _type < 2? requestIDs : 0;
     }
     
     /**
@@ -173,7 +172,7 @@ contract TokenDistributor is
      * @param _status : Status to match with.
      * @param errorMessage : Error message.
      */
-    function _whenStatus(Request memory _req, Status _status, string memory errorMessage) internal pure {
+    function _whenStatus(TransactionRequest memory _req, Status _status, string memory errorMessage) internal pure {
         require(_req.status == _status, errorMessage);
     }
 
@@ -208,14 +207,14 @@ contract TokenDistributor is
         require(_type < 5, "Invalid selector");
         uint reqId = _generateRequestId();
         if(_type < 4) {
-            require(_recipient != address(0), "Recipient is zero addr");
+            require(_recipient != address(0), "Arg(0) is zero addr");
         }
         requests[reqId].amount = _amount;
         requests[reqId].recipient = _recipient;
         requests[reqId].status = Status.INITIATED;
         requests[reqId].txType = Type(_type);
         unchecked {
-            requests[reqId].delay = _now() + (_delayInHours * 1 hours);
+            requests[reqId].delay = uint(_delayInHours) * 1 hours;
             
         }
         address caller = _msgSender();
@@ -240,7 +239,7 @@ contract TokenDistributor is
         validateRequestId(reqId)
         whenNotSign(reqId)
     {
-        Request memory req = requests[reqId];
+        TransactionRequest memory req = requests[reqId];
         _whenStatus(req, Status.INITIATED, "Trxn must be initiated");
         uint currentSigners = req.executors.length;
         require(currentSigners < quorum, "Signers complete");
@@ -249,8 +248,11 @@ contract TokenDistributor is
         signed[caller][reqId] = true;
         if((currentSigners + 1) == quorum) {
             requests[reqId].status = Status.PENDING;
+            unchecked {
+                requests[reqId].delay = _now() + req.delay;
+            }
         }
-    }
+    } 
 
     /**
      * @dev Executes pending transaction.
@@ -260,7 +262,7 @@ contract TokenDistributor is
      * Only signer accounts can call.
      */
     function executeTransaction(uint reqId) public onlySigner validateRequestId(reqId) nonReentrant {
-        Request memory req = requests[reqId];
+        TransactionRequest memory req = requests[reqId];
         _whenStatus(req, Status.PENDING, "Trxn must be initiated");
         if(_now() < req.delay) revert Pending();
         requests[reqId].status = Status.EXECUTED;
@@ -274,12 +276,10 @@ contract TokenDistributor is
             require(success,"Trxn failed");
         } else if(req.txType == Type.ADDSIGNER) {
             req = requests[reqId];
-            delete requests[reqId];
             _addSigner(req.recipient);
         } else if(req.txType == Type.REMOVESIGNER) {
             req = requests[reqId];
-            delete requests[reqId];
-            _removeSigner(req.recipient);
+            _removeSigner(req.recipient, req.executors, reqId);
         } else if(req.txType == Type.SETQUORUM) {
             quorum = req.amount;
         }
@@ -287,16 +287,33 @@ contract TokenDistributor is
     }
     
     /**
+     * @dev Search the list of executors and remove the target if exist
+     * @param lists : List of executors to search
+     * @param target : Target account to remove
+     * @param reqId : Request Id
+     */
+    function _searchAndRemove(address[] memory lists, address target, uint reqId) internal {
+        for(uint i = 0; i < lists.length; i++) {
+            address comparator = lists[i];
+            if(comparator == target) {
+                requests[reqId].executors[i] = address(0);
+            }
+        } 
+    }
+        
+    /**
      * @dev Remove a signer from the list
      */
-    function _removeSigner(address account) private {
-        signers[account] = false;
+    function _removeSigner(address target, address[] memory _executors, uint reqId) private {
+        signers[target] = false;
+        _searchAndRemove(_executors, target, reqId);
     }
 
     /**
      * @dev Add a signer to the list
      */
     function _addSigner(address account) private {
+        require(!signers[account], "Account already exist"); 
         signers[account] = true;
         executors.push(account);
     }
@@ -304,14 +321,11 @@ contract TokenDistributor is
     /**
         @dev Return request struct at the reqId ref.
      */
-    function getTransactionRequest(uint reqId) public view returns(Request memory req) {
+    function getTransactionRequest(uint reqId) public view returns(TransactionRequest memory req) {
         return requests[reqId];
     }
-
-    // function deposit() public payable {
-    //     require(msg.value > 0, "000/");
-    // }
-
+    
+    // Return the executors 
     function getExecutors() public view returns(address[] memory) {
         return executors;
     }

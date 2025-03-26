@@ -1,0 +1,44 @@
+[
+  {
+    "inputs": [],
+    "name": "ManagerAddressIsZero",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotPermittedToCall",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ownershipManager",
+    "outputs": [
+      {
+        "internalType": "contract IOwnerShip",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newManager",
+        "type": "address"
+      }
+    ],
+    "name": "setOwnershipManager",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

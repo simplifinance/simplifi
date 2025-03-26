@@ -1,0 +1,78 @@
+[
+  {
+    "inputs": [],
+    "name": "CancellationNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint24",
+        "name": "ccr",
+        "type": "uint24"
+      }
+    ],
+    "name": "CollateralCoverageCannotGoBelow_100",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CurrentReceiverIsNotADefaulter",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InsufficientAllowance",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NoDebtFound",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotAMember",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OnlyAdminIsAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PoolIsFilled",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PoolNotComplete",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "SafeAddupFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TransferFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "TurnTimeHasNotPassed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UnitIsTaken",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "UserDoesNotHaveAccess",
+    "type": "error"
+  }
+]

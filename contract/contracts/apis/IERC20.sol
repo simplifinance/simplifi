@@ -126,18 +126,18 @@ interface IERC20 is IERC20Metadata{
      */
     function panicUnlock(address account, Balances memory _bal) external returns(bool);
 
-    /**
-     * @dev Same as lockToken except that this function is called by the Factory contract to 
-     * lock collateral amount to user's wallet
-     * @param target : Account to lock to token to.
-     * @param _routeTo : Escape address.
-     * @param amount : Amount to lock
-     */
-    function lockSpecial(
-        address target, 
-        address _routeTo, 
-        uint256 amount
-    ) external returns(bool);
+    // /**
+    //  * @dev Same as lockToken except that this function is called by the Factory contract to 
+    //  * lock collateral amount to user's wallet
+    //  * @param target : Account to lock to token to.
+    //  * @param _routeTo : Escape address.
+    //  * @param amount : Amount to lock
+    //  */
+    // function lockSpecial(
+    //     address target, 
+    //     address _routeTo, 
+    //     uint256 amount
+    // ) external returns(bool);
 
     struct Protected {
         uint256 value; // Total value currently locked

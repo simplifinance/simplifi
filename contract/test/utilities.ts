@@ -1,4 +1,4 @@
-import { Address, Addresses, NullNoPromise, StrBigHex } from "./types";
+import { Address, Addresses, NullNoPromise, Signer, StrBigHex, TokenDistributorContract } from "./types";
 import { ethers, Web3 } from "hardhat";
 import BigNumber from "bignumber.js";
 import { Hex } from "viem";
@@ -22,6 +22,8 @@ export const convertStringsToAddresses = (args: string[]) => {
   }
   return returnArr;
 }
+
+export enum TrxnType {ERC20, NATIVE, ADDSIGNER, REMOVESIGNER, SETQUORUM}
 export const DECIMALS = 18;
 export const SYMBOL = "TBSD";
 export const NAME = "Test Base Asset";
@@ -92,7 +94,7 @@ export const TOTAL_LIQUIDITY = BigInt('15000000000000000000'); // unit * 3
  * Transfer amount: 10,000 Token
  */
 export const AMOUNT = BigInt('10000000000000000000000');
-export const FEE = BigInt('10000000000000000'); //0.01
+export const FEE = BigInt('10000000000000000'); //0.1
 export const USD_XFI_TESTNET: Address = "0x874069fa1eb16d44d622f2e0ca25eea172369bc1";
 
 /**
@@ -223,3 +225,43 @@ export const compareEqualNumber = (a: StrBigHex, b: StrBigHex): NullNoPromise =>
 export const compareEqualString = (a: string, b: string): NullNoPromise => {
   expect(a).to.equal(b);
 };
+
+// Propose a new transaction
+export async function proposeTransaction (
+  {signer, contract, recipient, amount, delayInHrs, trxType} 
+    : 
+    {contract: TokenDistributorContract, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType}
+)
+{
+    await contract.connect(signer).initiateTransaction(recipient, amount, delayInHrs, trxType);
+    const reqId = await contract.requestIDs();
+    const request = await contract.getTransactionRequest(reqId);
+    return { request, reqId };
+}
+
+// Sign transaction
+export async function signTransaction (
+  {signer, contract, requestId} 
+    : 
+    {contract: TokenDistributorContract, signer: Signer, requestId: bigint}
+)
+{
+    await contract.connect(signer).signTransaction(requestId);
+    const request = await contract.getTransactionRequest(requestId);
+    return request;
+}
+
+/**
+ * Execute pending transactions
+ */
+export async function executeTransaction(
+  { contract, signer, reqId } 
+    : 
+  {contract: TokenDistributorContract, signer: Signer, reqId: bigint}) 
+{
+  // Execute transaction
+  await contract.connect(signer).executeTransaction(reqId);
+  const request = await contract.getTransactionRequest(reqId);
+  return request; 
+}
+

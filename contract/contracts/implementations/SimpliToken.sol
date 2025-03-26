@@ -8,7 +8,7 @@ import { ERC20Abstract, IOwnerShip } from "./token/ERC20Abstract.sol";
     @title SToken is the native token of the Simplifinance platform.
             It is a utility token that gives its holders access to Simplifinance
             products.
-        Standard: Customized and ERC20 compatible.
+        Standard: Custom and ERC20 compatible.
         Type: Deflationary.
         Max Supply: 1_000_000_000.
         Decimal: 18.
@@ -37,17 +37,17 @@ contract SimpliToken is ERC20Abstract {
         return true;
     }
 
-    ///@dev See IERC20.sol {lockSpecial}
-    function lockSpecial(
-        address target, 
-        address _routeTo, 
-        uint256 amount
-    ) external onlyOwner returns (bool) {
-        _lock(target, _routeTo, amount);
+    // ///@dev See IERC20.sol {lockSpecial}
+    // function lockSpecial(
+    //     address target, 
+    //     address _routeTo, 
+    //     uint256 amount
+    // ) external onlyOwner returns (bool) {
+    //     _lock(target, _routeTo, amount);
 
-        emit Locked(_msgSender(), amount);
-        return true;
-    }
+    //     emit Locked(_msgSender(), amount);
+    //     return true;
+    // }
 
     ///@dev See IERC20.sol {unlock}
     function unlockToken(uint256 amount) public returns (bool) {
@@ -83,20 +83,20 @@ contract SimpliToken is ERC20Abstract {
         return true;
     }
 
-    /**
-     * @dev See {ERC20-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual override {
-        super._beforeTokenTransfer(from, to, amount);
+    // /**
+    //  * @dev See {ERC20-_beforeTokenTransfer}.
+    //  *
+    //  * Requirements:
+    //  *
+    //  * - the contract must not be paused.
+    //  */
+    // function _beforeTokenTransfer(
+    //     address from,
+    //     address to,
+    //     uint256 amount
+    // ) internal virtual override {
+    //     super._beforeTokenTransfer(from, to, amount);
 
-        require(!paused(), "ERC20Pausable: token transfer while paused");
-    }
+    //     require(!paused(), "ERC20Pausable: token transfer while paused");
+    // }
 }
