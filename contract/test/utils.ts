@@ -35,11 +35,11 @@ import type {
     : Promise<FactoryTxReturn> 
   {
     const factoryAddr = formatAddr(await x.factory.getAddress());
-  
+    const signerAddr = await x.signer.getAddress();
     await transferAsset({
       amount: x.unitLiquidity,
       asset: x.asset,
-      recipients: [formatAddr(x.signer.address)],
+      recipients: [formatAddr(signerAddr)],
       sender: x.deployer
     });
   
@@ -62,8 +62,8 @@ import type {
     const base = await x.asset.balanceOf(pool.pool.addrs.bank);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.bank);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unitLiquidity, x.signer.address);
-    const slot = await x.factory.getSlot(x.signer.address, x.unitLiquidity);
+    const profile = await x.factory.getProfile(x.unitLiquidity, signerAddr);
+    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
     return { pool, balances, profile, slot};
   }
   
@@ -78,7 +78,7 @@ import type {
     : Promise<FactoryTxReturn>
   {
     const factoryAddr = formatAddr(await x.factory.getAddress());
-  
+    const signerAddr = await x.signer.getAddress();
     await transferAsset({
       amount: x.unitLiquidity,
       asset: x.asset,
@@ -107,8 +107,8 @@ import type {
     const base = await x.asset.balanceOf(pool.pool.addrs.bank);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.bank);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unitLiquidity, x.signer.address);
-    const slot = await x.factory.getSlot(x.signer.address, x.unitLiquidity);
+    const profile = await x.factory.getProfile(x.unitLiquidity, signerAddr);
+    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
   
     return { pool, balances, profile, slot };
   }
@@ -124,31 +124,32 @@ import type {
     // const getCol = await x.factory.getCollaterlQuote(x.unit); 1500000000000000000
     // console.log("GetQuote", getCol);x.colQuote 1500000000000000000
     const signer = x.signers[0];
+    const signerAddr = await signer.getAddress();
     const spender = await x.factory.getAddress() as Address;
     // console.log(",x.colQuote:", x.colQuote);
     // console.log("Bal of deployer", await x.collateral.balanceOf(x.deployer.address));
     await transferAsset({
       amount: x.colQuote * 2n,
       asset: x.collateral,
-      recipients: [signer.address] as Address[],
+      recipients: [signerAddr] as Address[],
       sender: x.deployer
     });
-    // console.log("Bal of signer", await x.collateral.balanceOf(signer.address));
+    // console.log("Bal of signer", await x.collateral.balanceOf(signerAddr));
     await approve({
       owner: signer,
       amount: x.colQuote,
       spender,
       testAsset: x.collateral
     });
-    // console.log("Ballll", await x.collateral.allowance(signer.address, spender));
+    // console.log("Ballll", await x.collateral.allowance(signerAddr, spender));
     await x.factory.connect(signer).getFinance(x.unit, x.hrsOfUse_choice!);
     const unitId = await x.factory.getEpoches();
     const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.bank);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.bank);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signer.address);
-    const slot = await x.factory.getSlot(signer.address, x.unit);
+    const profile = await x.factory.getProfile(x.unit, signerAddr);
+    const slot = await x.factory.getSlot(signerAddr, x.unit);
   
     return { balances, pool, profile, slot };
   }
@@ -169,13 +170,14 @@ import type {
   {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signer = x.signers[0];
-    await x.factory.getCurrentDebt(x.unit, signer.address);
-    const bal = await x.asset.balanceOf(signer.address);
+    const signerAddr = await signer.getAddress();
+    await x.factory.getCurrentDebt(x.unit, signerAddr);
+    const bal = await x.asset.balanceOf(signerAddr);
     if(bn(x.debt).gt(bn(bal))){
       await transferAsset({
         amount: x.debt! - bal,
         asset: x.asset,
-        recipients: [formatAddr(signer.address)],
+        recipients: [formatAddr(signerAddr)],
         sender: x.deployer
       });
     }
@@ -185,14 +187,14 @@ import type {
       spender: factoryAddr,
       testAsset: x.asset
     });
-    // console.log("Allowance", await x.asset.allowance(signer.address, factoryAddr));
+    // console.log("Allowance", await x.asset.allowance(signerAddr, factoryAddr));
     const unitId = await x.factory.getEpoches();
     await x.factory.connect(signer).payback(x.unit);
     const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.bank);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.bank);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signer.address);
+    const profile = await x.factory.getProfile(x.unit, signerAddr);
     return {
       pool,
       balances,
@@ -216,16 +218,17 @@ import type {
   export async function liquidate(x: LiquidateParam)  {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signer = x.signers[0];
+    const signerAddr = await signer.getAddress();
     let baseBalB4Liq : bigint = 0n;
-    // console.log(`Bal b4 trf: `, await x.asset.balanceOf(signer.address));
+    // console.log(`Bal b4 trf: `, await x.asset.balanceOf(signerAddr));
     await transferAsset({
       amount: x.debt!,
       asset: x.asset,
-      recipients: [formatAddr(signer.address)],
+      recipients: [formatAddr(signerAddr)],
       sender: x.deployer
-    }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signer.address));
-    // console.log(`Bal After trf: `, await x.asset.balanceOf(signer.address));
-    const colBalB4Liq = await x.collateral.balanceOf(signer.address);
+    }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signerAddr));
+    // console.log(`Bal After trf: `, await x.asset.balanceOf(signerAddr));
+    const colBalB4Liq = await x.collateral.balanceOf(signerAddr);
     await approve({
       owner: signer,
       amount: x.debt!,
@@ -235,15 +238,15 @@ import type {
     const unitId = await x.factory.getEpoches();
     // console.log(`baseBalB4Liq: `, baseBalB4Liq);
     await x.factory.connect(signer).liquidate(x.unit);
-    // console.log(`Bal Af Liq: `, await x.asset.balanceOf(signer.address))
+    // console.log(`Bal Af Liq: `, await x.asset.balanceOf(signerAddr))
     const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.bank);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.bank);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signer.address);
-    const slot = await x.factory.getSlot(signer.address, x.unit);
-    const baseBalAfterLiq = await x.asset.balanceOf(signer.address);
-    const colBalAfterLiq = await x.collateral.balanceOf(signer.address);
+    const profile = await x.factory.getProfile(x.unit, signerAddr);
+    const slot = await x.factory.getSlot(signerAddr, x.unit);
+    const baseBalAfterLiq = await x.asset.balanceOf(signerAddr);
+    const colBalAfterLiq = await x.collateral.balanceOf(signerAddr);
   
     return {
       liq: {
@@ -313,12 +316,13 @@ import type {
     }
   ){
     const { asset, owner, collateral: collateralToken, factory, spender} = x;
+    const spenderAddr = await spender.getAddress();
     const baseBalB4 = await asset.balanceOf(spender);
     const colBalB4 = await collateralToken.balanceOf(spender);
     const baseAllowance = await asset.allowance(owner, spender);
-    if(baseAllowance > 0)  await asset.connect(spender).transferFrom(owner, spender.address, baseAllowance);
+    if(baseAllowance > 0)  await asset.connect(spender).transferFrom(owner, spenderAddr, baseAllowance);
     const collateralAllowance = await collateralToken.allowance(owner, spender);
-    if(collateralAllowance > 0)  await collateralToken.connect(spender).transferFrom(owner, spender.address, collateralAllowance);
+    if(collateralAllowance > 0)  await collateralToken.connect(spender).transferFrom(owner, spenderAddr, collateralAllowance);
     const baseBalAfter = await asset.balanceOf(spender);
     const colBalAfter = await collateralToken.balanceOf(spender);
 
@@ -337,10 +341,11 @@ import type {
     // const unitId = await x.factory.getEpoches();
   }
   
-  export function getAddressFromSigners(signers: Signer[]) {
+  export async function getAddressFromSigners(signers: Signer[]) {
     let addrs : Addresses = [];
     for(let i = 0; i < signers.length; i++) {
-      addrs.push(formatAddr(signers[i].address));
+      const signerAddr = await signers[i].getAddress();
+      addrs.push(formatAddr(signerAddr));
     }
     return addrs;
   }
@@ -360,11 +365,11 @@ import type {
     }>
   {
     const testAssetAddr = formatAddr(await x.testAsset.getAddress());
-    // const factoryAddr = await x.factory.getAddress();
+    const recipients = await getAddressFromSigners(x.signers);
     await transferAsset({
       amount: x.contribution,
       asset: x.testAsset,
-      recipients: getAddressFromSigners(x.signers),
+      recipients,
       sender: x.deployer,
       testAssetAddr
     });
@@ -377,8 +382,9 @@ import type {
         spender: x.factoryAddr,
         testAsset: x.testAsset
       });
-      await x.factory.connect(x.signers[i]).joinAPool(x.unit);
-      const profile = await x.factory.getProfile(x.unit, x.signers[i].address);
+      await x.factory.connect(signer).joinAPool(x.unit);
+      const signerAddr = await signer.getAddress();
+      const profile = await x.factory.getProfile(x.unit, signerAddr);
       profiles.push(profile);
     }
     const unitId = await x.factory.getEpoches();

@@ -35,11 +35,13 @@ contract TokenDistributor is
 
     error Pending();
     error AlreadySigned();
+    error PleaseLeaveAMinimumOfTwoSigners();
     error InvalidRequestId(uint);
     error InsufficientBalance(uint256);
 
     event Requested(uint reqId, address from);
     event Signer(uint reqId, address from);
+    event ThankYou(string); 
 
     enum Status {NONE, INITIATED, PENDING, EXECUTED, EXPIRED}
 
@@ -57,6 +59,9 @@ contract TokenDistributor is
      */
     uint public quorum;
 
+    // Number of valid executors. i.e Address in request.executor list that are not zero
+    uint public validExecutors;
+
     /**
      * @dev Unique order ID mapped to each transfer request.
      * Note: Two requests can not have same order ID. 
@@ -71,6 +76,7 @@ contract TokenDistributor is
         Status status;
         Type txType;
         uint expirationTime;
+        uint id;
     }
 
     address[] private executors;
@@ -135,14 +141,19 @@ contract TokenDistributor is
     {
         uint size = _signers.length;
         quorum = _quorum;
+        require(size > 1 && quorum > 1, "Minimum of 2 signers and 2 quorum");
         if(size > 0) {
             for (uint i = 0; i < size; i++) {
-                _addSigner(_signers[i]);
+                address addr = _signers[i];
+                addr.cannotBeEmptyAddress();
+                _addSigner(addr);
             }
         }
     }
 
-    receive() external payable {}
+    receive() external payable {
+        emit ThankYou("Thank You");
+    }
 
     function setToken(IERC20 newToken) 
         public 
@@ -201,13 +212,14 @@ contract TokenDistributor is
     ) public onlySigner {
         require(_type < 5, "Invalid selector");
         uint reqId = _generateRequestId();
-        if(_type < 4) {
+        if(_type < 5) {
             require(_recipient != address(0), "Arg(0) is zero addr");
         }
         requests[reqId].amount = _amount;
         requests[reqId].recipient = _recipient;
         requests[reqId].status = Status.INITIATED;
         requests[reqId].txType = Type(_type);
+        requests[reqId].id = reqId; 
         unchecked {
             requests[reqId].expirationTime = _now() + 14 days;
             requests[reqId].delay = uint(_delayInHours) * 1 hours;
@@ -273,22 +285,25 @@ contract TokenDistributor is
             _whenStatus(req, Status.PENDING, "Trxn must be initiated");
             if(_now() < req.delay) revert Pending();
             requests[reqId].status = Status.EXECUTED;
-            // requests[reqId].expirationTime;
             if(req.txType == Type.ERC20) {
                 address(token).cannotBeEmptyAddress();
                 token.safeTransfer(req.recipient, req.amount);
             } else if(req.txType == Type.NATIVE) {
+                req.recipient.cannotBeEmptyAddress();
                 uint256 balance = address(this).balance;
                 if(balance < req.amount) revert InsufficientBalance(balance);
                 (bool success,) = req.recipient.call{value: req.amount}("");
                 require(success,"Trxn failed");
             } else if(req.txType == Type.ADDSIGNER) {
-                req = requests[reqId];
+                req.recipient.cannotBeEmptyAddress();
+                // req = requests[reqId];
                 _addSigner(req.recipient);
             } else if(req.txType == Type.REMOVESIGNER) {
-                req = requests[reqId];
+                req.recipient.cannotBeEmptyAddress();
+                // req = requests[reqId];
                 _removeSigner(req.recipient, req.executors, reqId);
             } else if(req.txType == Type.SETQUORUM) {
+                require(req.amount <= validExecutors, "await signTransaction({signer: deployer, requestId: id, contract: distributor});");
                 quorum = req.amount;
             }
         }
@@ -305,7 +320,12 @@ contract TokenDistributor is
         for(uint i = 0; i < lists.length; i++) {
             address comparator = lists[i];
             if(comparator == target) {
-                requests[reqId].executors[i] = address(0);
+                if(validExecutors > 2) {
+                    validExecutors --;
+                    requests[reqId].executors[i] = address(0);
+                    if(quorum > 2) quorum --;
+                }
+                else revert PleaseLeaveAMinimumOfTwoSigners();
             }
         } 
     }
@@ -325,6 +345,10 @@ contract TokenDistributor is
         require(!signers[account], "Account already exist"); 
         signers[account] = true;
         executors.push(account);
+        unchecked {
+            validExecutors ++;
+        }
+        assert(quorum > 1);
     }
 
     /**

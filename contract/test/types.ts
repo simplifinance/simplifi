@@ -17,7 +17,7 @@ import { Common } from "../typechain-types/contracts/apis/IFactory";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
-export type Signer = HardhatEthersSigner;
+export type Signer = ethers.Signer;
 export type Addresses = Array<Address>;
 export type Null = Promise<void>;
 export type NullNoPromise = void;

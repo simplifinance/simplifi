@@ -5,7 +5,7 @@ const path = require('path');
 
 // Configuration - directory files
 const HARDHAT_TYPECHAIN_PATH = './typechain-types';
-const REACT_TYPECHAIN_PATH = '../ui-ts/typechain-types';
+const REACT_TYPECHAIN_PATH = '../Deployment/typechain-types';
 
 // Create the React ABI directory if it doesn't exist
 if (!fs.existsSync(REACT_TYPECHAIN_PATH)) {

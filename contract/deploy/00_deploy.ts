@@ -1,7 +1,7 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
-import { QUORUM } from '../arch/test/utilities';
+import { QUORUM } from '../test/utilities';
 import { zeroAddress } from 'viem';
 
 dotconfig();
@@ -43,7 +43,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       args: [
         ownershipManager.address,
         signers,
-        QUORUM
+        QUORUM - 1
       ],
       log: true,
     });

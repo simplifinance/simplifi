@@ -8,7 +8,7 @@ const HARDHAT_DEPLOYMENTS_PATH = './deployments';
 
 // Create the React ABI directory if it doesn't exist
 const checkFIleExistence = (dir) => {
-    const topDir = '../ui-ts/';
+    const topDir = '../Deployment/';
     let dirName = path.join(topDir, dir);
     const filename = path.basename(dirName);
     const dirname = path.dirname(dirName);

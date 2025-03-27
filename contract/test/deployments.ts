@@ -16,7 +16,7 @@ import type {
    BankContract
 } from "./types";
 
-import { executeTransaction, FEE, formatAddr, MAKER_RATE, proposeTransaction, QUORUM, signTransaction, TrxnType, Type, } from "./utilities";
+import { executeTransaction, FEE, formatAddr, MAKER_RATE, proposeTransaction, QUORUM, signTransaction, TrxnType, } from "./utilities";
 import { expect } from "chai";
 // import { abi } from "../artifacts/contracts/implementations/strategies/Bank.sol/Bank.json";
 import { zeroAddress } from "viem";
@@ -183,13 +183,21 @@ export async function retrieveContract(bank: Address) : Promise<BankContract> {
 }
 
 export async function deployContracts(getSigners_: () => Signers) {
-  const [deployer, alc1, alc2, alc3, routeTo, feeTo, signer1, signer2, signer3, devAddr ] = await getSigners_();
-  const signers = [deployer.address, devAddr.address, signer3.address, signer1.address] as Address[];
+  const [deployer, alc1, alc2, feeTo, signer1, signer2, signer3, extra ] = await getSigners_();
+  const deployerAddr = await deployer.getAddress();
+  const extraAddr = await extra.getAddress();
+  const signer3Addr = await signer3.getAddress();
+  const signer1Addr = await signer1.getAddress();
+  const feeToAddr = await feeTo.getAddress();
+  const alc1Addr = await alc1.getAddress();
+  const alc2Addr = await alc2.getAddress();
+  const signer2Addr = await signer2.getAddress();
+  const signers = [deployerAddr, extraAddr, signer3Addr, signer1Addr] as Address[];
   const INITIAL_MINT : bigint = 200000000000000000000000n;
   const ownershipMgr = await deployOwnershipManager(deployer);
   const ownershipMgrAddr = await ownershipMgr.getAddress() as Address;
   
-  const attorney = await deployAttorney(deployer, FEE, feeTo.address as Address, ownershipMgrAddr);
+  const attorney = await deployAttorney(deployer, FEE, feeToAddr as Address, ownershipMgrAddr);
   const attorneyAddr = await attorney.getAddress() as Address;
  
   const reserve = await deployReserve(ownershipMgrAddr, deployer);
@@ -213,15 +221,15 @@ export async function deployContracts(getSigners_: () => Signers) {
   
   await distributor.connect(deployer).setToken(collateralTokenAddr);
   await attorney.connect(deployer).setToken(collateralTokenAddr);
-  const result = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployer.address as Address, trxType: TrxnType.ERC20});
-  await signTransaction({signer: signer3, contract: distributor, requestId: result.reqId});
-  await executeTransaction({contract: distributor, reqId: result.reqId, signer: devAddr});
+  const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
+  await signTransaction({signer: signer3, contract: distributor, requestId: request.id});
+  await executeTransaction({contract: distributor, reqId: request.id, signer: extra});
   
-  const bankFactory = await deployBankFactory(ownershipMgrAddr, feeTo.address as Address, deployer);
+  const bankFactory = await deployBankFactory(ownershipMgrAddr, feeToAddr as Address, deployer);
   const bankFactoryAddr = await bankFactory.getAddress() as Address;
-  const factory = await deployFactory(assetMgrAddr, bankFactoryAddr, feeTo.address as Address, ownershipMgrAddr, deployer, collateralTokenAddr);
+  const factory = await deployFactory(assetMgrAddr, bankFactoryAddr, feeToAddr as Address, ownershipMgrAddr, deployer, collateralTokenAddr);
   const factoryAddr = await factory.getAddress();
-  await ownershipMgr.connect(deployer).setPermission([factoryAddr, bankFactoryAddr, deployer.address,]);
+  await ownershipMgr.connect(deployer).setPermission([factoryAddr, bankFactoryAddr, deployerAddr,]);
   const isSupported = await assetMgr.isSupportedAsset(testAssetAddr);
   const isListed = await assetMgr.listed(testAssetAddr);
   expect(isListed).to.be.true;
@@ -248,6 +256,6 @@ export async function deployContracts(getSigners_: () => Signers) {
     factoryAddr,
     bankFactoryAddr,
     signers_distributor: signers,
-    signers: { deployer, alc1, alc2, alc3, routeTo, feeTo, signer1, signer2, signer3, devAddr }
+    signers: { deployer, alc1, alc2, feeTo, signer1, signer2, signer3, extra, deployerAddr, alc1Addr, alc2Addr, feeToAddr, signer1Addr, signer2Addr, signer3Addr, extraAddr }
   };
 }

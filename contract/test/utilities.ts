@@ -234,10 +234,11 @@ export async function proposeTransaction (
     {contract: TokenDistributorContract, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType}
 )
 {
-    await contract.connect(signer).initiateTransaction(recipient, amount, delayInHrs, trxType);
+    await contract.connect(signer).proposeTransaction(recipient, amount, delayInHrs, trxType);
     const reqId = await contract.requestIDs();
     const request = await contract.getTransactionRequest(reqId);
-    return { request, reqId };
+    expect(reqId).to.be.eq(request.id);
+    return request;
 }
 
 // Sign transaction
