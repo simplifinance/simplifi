@@ -1,0 +1,296 @@
+{
+  "address": "0x1F215D7f412cF6e0DAE025d40875e74c8F8CCd97",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_asset",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IOwnerShip",
+          "name": "_ownershipMgr",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "Locked",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ManagerAddressIsZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotPermittedToCall",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "UnSupportedAsset",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "getSupportedAssets",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "_assets",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_asset",
+          "type": "address"
+        }
+      ],
+      "name": "isSupportedAsset",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "listed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ownershipManager",
+      "outputs": [
+        {
+          "internalType": "contract IOwnerShip",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newManager",
+          "type": "address"
+        }
+      ],
+      "name": "setOwnershipManager",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_asset",
+          "type": "address"
+        }
+      ],
+      "name": "supportAsset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newAsset",
+          "type": "address"
+        }
+      ],
+      "name": "unsupportAsset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x17294cbeac26f64bcd890cb750230656a285b0965dee64d69a295051f2d0ba07",
+  "receipt": {
+    "to": null,
+    "from": "0xD7c271d20c9E323336bFC843AEb8deC23B346352",
+    "contractAddress": "0x1F215D7f412cF6e0DAE025d40875e74c8F8CCd97",
+    "transactionIndex": 4,
+    "gasUsed": "501555",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x0c69a3ec2e4cbc54007aaab70914c62c1c25e0f5d9128bea4ffa868234d199d4",
+    "transactionHash": "0x17294cbeac26f64bcd890cb750230656a285b0965dee64d69a295051f2d0ba07",
+    "logs": [],
+    "blockNumber": 42155325,
+    "cumulativeGasUsed": "1329610",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x13feaDCAc04F71aa3dF3646882a56C95086A4ee6",
+    "0xF5aE8bE0B39FA81A89C410d0D764C692d368758f"
+  ],
+  "numDeployments": 2,
+  "solcInputHash": "f780c2f11c4ccd0f85c921954ca3f88d",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"},{\"internalType\":\"contract IOwnerShip\",\"name\":\"_ownershipMgr\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"Locked\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ManagerAddressIsZero\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotPermittedToCall\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"UnSupportedAsset\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"getSupportedAssets\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_assets\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"isSupportedAsset\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"listed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ownershipManager\",\"outputs\":[{\"internalType\":\"contract IOwnerShip\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newManager\",\"type\":\"address\"}],\"name\":\"setOwnershipManager\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"supportAsset\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAsset\",\"type\":\"address\"}],\"name\":\"unsupportAsset\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"details\":\"Initialize state variables\",\"params\":{\"_asset\":\": Initial supported asset\"}},\"getSupportedAssets()\":{\"details\":\"Returns a list of supported assets\"},\"isSupportedAsset(address)\":{\"details\":\"Check if an asset is supported\"},\"setOwnershipManager(address)\":{\"params\":{\"newManager\":\": New manager address\"}},\"supportAsset(address)\":{\"details\":\"Support a new asset Note: OnlyOwner action\",\"params\":{\"_asset\":\": Asset to add to list of supported asset\"}},\"unsupportAsset(address)\":{\"details\":\"Unsupports an asset Note: Only-owner action\",\"params\":{\"newAsset\":\": Removes an asset from the list of supported asset\"}}},\"stateVariables\":{\"supportedAssets\":{\"details\":\"Mapping assets address to bool i.e Assets must be contract account and must be supported\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"setOwnershipManager(address)\":{\"notice\":\"Set Ownership manager\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/implementations/AssetClass.sol\":\"AssetClass\"},\"evmVersion\":\"constantinople\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/abstracts/OnlyOwner.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { MsgSender } from \\\"../implementations/OwnerShip.sol\\\";\\r\\nimport { IOwnerShip } from \\\"../apis/IOwnerShip.sol\\\";\\r\\n\\r\\nabstract contract OnlyOwner is MsgSender {\\r\\n    error ManagerAddressIsZero();\\r\\n    error NotPermittedToCall();\\r\\n\\r\\n    IOwnerShip public ownershipManager;\\r\\n\\r\\n    constructor(IOwnerShip _ownershipManager)\\r\\n    {\\r\\n        _setOwnershipManager(_ownershipManager);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Caller must have owner role before execeution can proceed.\\r\\n     * The 'errorMessage' argument can be used to return error specific to \\r\\n     * a context e.g function call. \\r\\n     */\\r\\n    modifier onlyOwner {\\r\\n        IOwnerShip mgr = ownershipManager;\\r\\n        if(address(mgr) == address(0)) revert ManagerAddressIsZero();\\r\\n        if(!IOwnerShip(mgr).isOwner(_msgSender())) revert NotPermittedToCall();\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    function _setOwnershipManager(\\r\\n        IOwnerShip newManager\\r\\n    )\\r\\n        private\\r\\n    {\\r\\n        ownershipManager = newManager;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * Set Ownership manager\\r\\n     * @param newManager : New manager address\\r\\n     */\\r\\n    function setOwnershipManager(\\r\\n        address newManager\\r\\n    )\\r\\n        public\\r\\n        onlyOwner\\r\\n        returns(bool)\\r\\n    {\\r\\n        _setOwnershipManager(IOwnerShip(newManager));\\r\\n        return true;\\r\\n    }\\r\\n}\",\"keccak256\":\"0x6d34bfc0e1c2b6cd550c7cea1442036213925283ff98f0010b7ec78c50863f6e\",\"license\":\"MIT\"},\"contracts/apis/IAssetClass.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\ninterface IAssetClass {\\r\\n  error UnSupportedAsset(address);\\r\\n  error Locked();\\r\\n  \\r\\n  function isSupportedAsset(\\r\\n    address _asset\\r\\n  ) \\r\\n    external \\r\\n    view returns(bool);\\r\\n}\",\"keccak256\":\"0x8c5b7a13d1c6e9e9d7bfdfc11d1fb337729ef4a809f8bfe2636a1999b77a341b\",\"license\":\"MIT\"},\"contracts/apis/IOwnerShip.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IOwnerShip \\r\\n * Interface of the OwnerShip contract\\r\\n * @author Simplifi (Bobeu)\\r\\n */\\r\\ninterface IOwnerShip {\\r\\n    function setPermission(\\r\\n        address[] memory newOwners\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function removeOwner(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function renounceOwnerShip() \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function getOwner(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address);\\r\\n\\r\\n    function isOwner(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool);\\r\\n}\",\"keccak256\":\"0xe21511940e88a7e8036b4b6adfde25125f7f3d49cde2732bffd219847b3ed6c0\",\"license\":\"MIT\"},\"contracts/implementations/AssetClass.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { OnlyOwner, IOwnerShip } from \\\"../abstracts/OnlyOwner.sol\\\";\\r\\nimport { IAssetClass } from \\\"../apis/IAssetClass.sol\\\"; \\r\\n\\r\\ncontract AssetClass is IAssetClass, OnlyOwner {\\r\\n  address[] private assets;\\r\\n\\r\\n  /**\\r\\n   * @dev Mapping assets address to bool i.e Assets must be contract account\\r\\n   * and must be supported\\r\\n   */\\r\\n  mapping(address => bool) private supportedAssets;\\r\\n\\r\\n  mapping(address => bool) public listed;\\r\\n\\r\\n  /**\\r\\n   * @dev Asset must be supported before they can be used.\\r\\n   */\\r\\n  modifier onlySupportedAsset(address _asset) {\\r\\n    if(!supportedAssets[_asset]) revert UnSupportedAsset(_asset);\\r\\n    _;\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Initialize state variables\\r\\n   * @param _asset : Initial supported asset\\r\\n   */\\r\\n  constructor(\\r\\n    address _asset,\\r\\n    IOwnerShip _ownershipMgr\\r\\n  ) \\r\\n    OnlyOwner(_ownershipMgr) \\r\\n  {\\r\\n    require(_asset != address(0), \\\"Asset cannot be empty\\\");\\r\\n    _supportAsset(_asset);\\r\\n  }\\r\\n\\r\\n  // fallback(bytes calldata data) external returns(bytes memory) {\\r\\n  //   return \\\"Function not found\\\";\\r\\n  // }\\r\\n\\r\\n  /**\\r\\n   * @dev Support a new asset\\r\\n   * Note: OnlyOwner action\\r\\n   * @param _asset : Asset to add to list of supported asset\\r\\n   */\\r\\n  function supportAsset(\\r\\n    address _asset\\r\\n  ) \\r\\n    public \\r\\n    onlyOwner\\r\\n  {\\r\\n    _supportAsset(_asset); \\r\\n  }\\r\\n\\r\\n  function _supportAsset(address _asset) private {\\r\\n    \\r\\n    if(!listed[_asset]){\\r\\n      listed[_asset] = true;\\r\\n      assets.push(_asset);\\r\\n    }\\r\\n    if(!_isAssetSupported(_asset)){\\r\\n      supportedAssets[_asset] = true;\\r\\n    }\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Unsupports an asset\\r\\n   * Note: Only-owner action\\r\\n   * @param newAsset : Removes an asset from the list of supported asset\\r\\n   */\\r\\n  function unsupportAsset(\\r\\n    address newAsset\\r\\n  ) \\r\\n    public \\r\\n    onlyOwner\\r\\n  {\\r\\n    supportedAssets[newAsset] = false;\\r\\n  }\\r\\n\\r\\n  function _isAssetSupported(address _asset) internal view returns(bool) {\\r\\n    return supportedAssets[_asset];\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Check if an asset is supported\\r\\n   */\\r\\n  function isSupportedAsset(address _asset) public override view returns(bool) {\\r\\n    return _isAssetSupported(_asset);\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Returns a list of supported assets\\r\\n   */\\r\\n  function getSupportedAssets() public view returns(address[] memory _assets) {\\r\\n    _assets = assets;\\r\\n    return _assets;\\r\\n  }\\r\\n\\r\\n}\",\"keccak256\":\"0x944b973c0ecd9b169b5f3bf44ac756d5b7027ebf62a309ba719a2ef4ad13406f\",\"license\":\"MIT\"},\"contracts/implementations/OwnerShip.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IOwnerShip } from \\\"../apis/IOwnerShip.sol\\\";\\r\\n/**\\r\\n * @title MsgSender \\r\\n * @author Simplifi (Bobeu)\\r\\n * @notice Non-deployable contract simply returning the calling account.\\r\\n */\\r\\nabstract contract MsgSender {\\r\\n    function _msgSender() internal view virtual returns(address sender) {\\r\\n        sender = msg.sender;\\r\\n    }\\r\\n}\\r\\n\\r\\n/**\\r\\n * @title OwnerShip contract cuts across all contracts in the Simplifinance ecosystem. Multiple accounts can be given ownership right to interact with \\r\\n * ecosystem's smart contracts. It is a standalone contract for managing ownership in Simplifi protocol\\r\\n * @author Simplifinance Code written by Isaac Jesse (a.k.a Bobeu) Github: https://github.com/bobeu\\r\\n * @notice Accounts with ownership access cannot access users'fund. Users'funds are isolated from the main contract. Funds are \\r\\n * managed in a special safe called Bank. Each of the pools operates a unique and reusable safe.\\r\\n */\\r\\ncontract OwnerShip is IOwnerShip, MsgSender{\\r\\n    /**\\r\\n     * @notice Number of owners.\\r\\n     */\\r\\n    uint public ownersCount;\\r\\n\\r\\n    /**\\r\\n     * @notice Addresses with ownership permission.\\r\\n     */\\r\\n    \\r\\n    mapping (address => bool) private _isOwner;\\r\\n\\r\\n    /**\\r\\n     * @notice Mapping of ownersCount to addresses.\\r\\n     * A valid id will return a mapped owner.\\r\\n     */\\r\\n    mapping (uint => address) public owners;\\r\\n\\r\\n    /**\\r\\n     * @dev Only owner is allowed.\\r\\n     */\\r\\n    modifier onlyOwner {\\r\\n        require(_isOwner[_msgSender()], \\\"Oop! Caller is not recognized\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    constructor() {\\r\\n        _setOwner(_msgSender(), true);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns owner variable.\\r\\n     */\\r\\n    function _getOwner(uint ownerId) \\r\\n        internal \\r\\n        view \\r\\n        returns(address _owner) \\r\\n    {\\r\\n        _owner = owners[ownerId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Add or remove target address as owner.\\r\\n     * @param target: Target address.\\r\\n     * @notice 'target' parameter must not be empty.\\r\\n     */\\r\\n    function _setOwner(\\r\\n        address target,\\r\\n        bool add\\r\\n    ) \\r\\n        private \\r\\n    {\\r\\n        require(target != address(0), \\\"Simplifi OwnerShip: 'target' parameter is empty\\\");\\r\\n        add? (_isOwner[target] = true, ownersCount ++) : (_isOwner[target] = false, ownersCount --);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Add a new owner address\\r\\n     * @param newOwners: New owners\\r\\n     * @notice Only address with owner permission can add another owner.\\r\\n     */\\r\\n    function setPermission(\\r\\n        address[] memory newOwners\\r\\n    ) \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        bool rt = true;\\r\\n        for(uint r = 0; r < newOwners.length; r++) {\\r\\n            _setOwner(newOwners[r], rt);\\r\\n        }\\r\\n        return rt;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Remove an address as owner.\\r\\n     * @param target: Target address\\r\\n     * @notice Only address with owner permission can remove another owner.\\r\\n     */\\r\\n    function removeOwner(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        _setOwner(target, false);\\r\\n        return true;\\r\\n    }\\r\\n    /**\\r\\n     * @dev An owner can renounce their ownership. This however will not leave the\\r\\n     * contract empty without an owner. There must be at least one owner left.\\r\\n     * @notice Only address with owner permission can renounce ownership.\\r\\n     */\\r\\n    function renounceOwnerShip() \\r\\n        external\\r\\n        onlyOwner\\r\\n        returns(bool) \\r\\n    {\\r\\n        require(ownersCount > 1, \\\"At least 2 owners is required to leave\\\"); \\r\\n        _setOwner(_msgSender(), false);\\r\\n        return true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns owner variable.\\r\\n     * Can be called externally by contracts.\\r\\n     * @param ownerId : Owner Id. \\r\\n     */\\r\\n    function getOwner(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address) \\r\\n    {\\r\\n        return _getOwner(ownerId);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if target is an owner.\\r\\n     * @param target : Target address.\\r\\n     */\\r\\n    function isOwner(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool) \\r\\n    {\\r\\n        return _isOwner[target];\\r\\n    }\\r\\n}\",\"keccak256\":\"0xcacb7af12f543387d578515a163f7c3d57c32b441a0c68484940aaefaf0fdab0\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506040516107e93803806107e983398101604081905261002f916101ad565b600080546001600160a01b0319166001600160a01b0383161790556001600160a01b0382166100be576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601560248201527f41737365742063616e6e6f7420626520656d7074790000000000000000000000604482015260640160405180910390fd5b6100c7826100ce565b50506101e7565b6001600160a01b03811660009081526003602052604090205460ff16610151576001600160a01b0381166000818152600360205260408120805460ff191660019081179091558054808201825591527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf60180546001600160a01b03191690911790555b6001600160a01b03811660009081526002602052604090205460ff16610195576001600160a01b0381166000908152600260205260409020805460ff191660011790555b50565b6001600160a01b038116811461019557600080fd5b600080604083850312156101c057600080fd5b82516101cb81610198565b60208401519092506101dc81610198565b809150509250929050565b6105f3806101f66000396000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c8063696875121161005b57806369687512146100e25780639be918e6146100f5578063b88a391514610121578063e5406dbf1461014c57600080fd5b80634cd55c2d1461008257806361737d621461009757806364138230146100bf575b600080fd5b61009561009036600461051e565b610161565b005b6100aa6100a536600461051e565b61022d565b60405190151581526020015b60405180910390f35b6100aa6100cd36600461051e565b60036020526000908152604090205460ff1681565b6100956100f036600461051e565b610311565b6100aa61010336600461051e565b6001600160a01b031660009081526002602052604090205460ff1690565b600054610134906001600160a01b031681565b6040516001600160a01b0390911681526020016100b6565b6101546103f2565b6040516100b6919061054e565b6000546001600160a01b03168061018b57604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa1580156101df573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610203919061059b565b610220576040516315ed864b60e21b815260040160405180910390fd5b61022982610454565b5050565b600080546001600160a01b03168061025857604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa1580156102ac573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102d0919061059b565b6102ed576040516315ed864b60e21b815260040160405180910390fd5b600080546001600160a01b0319166001600160a01b03851617905550600192915050565b6000546001600160a01b03168061033b57604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa15801561038f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b3919061059b565b6103d0576040516315ed864b60e21b815260040160405180910390fd5b506001600160a01b03166000908152600260205260409020805460ff19169055565b6060600180548060200260200160405190810160405280929190818152602001828054801561044a57602002820191906000526020600020905b81546001600160a01b0316815260019091019060200180831161042c575b5050505050905090565b6001600160a01b03811660009081526003602052604090205460ff166104d7576001600160a01b0381166000818152600360205260408120805460ff191660019081179091558054808201825591527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf60180546001600160a01b03191690911790555b6001600160a01b03811660009081526002602052604090205460ff1661051b576001600160a01b0381166000908152600260205260409020805460ff191660011790555b50565b60006020828403121561053057600080fd5b81356001600160a01b038116811461054757600080fd5b9392505050565b6020808252825182820181905260009190848201906040850190845b8181101561058f5783516001600160a01b03168352928401929184019160010161056a565b50909695505050505050565b6000602082840312156105ad57600080fd5b8151801515811461054757600080fdfea264697066735822122036ac0400f5864d527162c0b81a0b20db073bcfb61ef710c7bd606eb4f5c6489364736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c8063696875121161005b57806369687512146100e25780639be918e6146100f5578063b88a391514610121578063e5406dbf1461014c57600080fd5b80634cd55c2d1461008257806361737d621461009757806364138230146100bf575b600080fd5b61009561009036600461051e565b610161565b005b6100aa6100a536600461051e565b61022d565b60405190151581526020015b60405180910390f35b6100aa6100cd36600461051e565b60036020526000908152604090205460ff1681565b6100956100f036600461051e565b610311565b6100aa61010336600461051e565b6001600160a01b031660009081526002602052604090205460ff1690565b600054610134906001600160a01b031681565b6040516001600160a01b0390911681526020016100b6565b6101546103f2565b6040516100b6919061054e565b6000546001600160a01b03168061018b57604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa1580156101df573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610203919061059b565b610220576040516315ed864b60e21b815260040160405180910390fd5b61022982610454565b5050565b600080546001600160a01b03168061025857604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa1580156102ac573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906102d0919061059b565b6102ed576040516315ed864b60e21b815260040160405180910390fd5b600080546001600160a01b0319166001600160a01b03851617905550600192915050565b6000546001600160a01b03168061033b57604051637e70a7e360e01b815260040160405180910390fd5b6001600160a01b038116632f54bf6e336040516001600160e01b031960e084901b1681526001600160a01b039091166004820152602401602060405180830381865afa15801561038f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103b3919061059b565b6103d0576040516315ed864b60e21b815260040160405180910390fd5b506001600160a01b03166000908152600260205260409020805460ff19169055565b6060600180548060200260200160405190810160405280929190818152602001828054801561044a57602002820191906000526020600020905b81546001600160a01b0316815260019091019060200180831161042c575b5050505050905090565b6001600160a01b03811660009081526003602052604090205460ff166104d7576001600160a01b0381166000818152600360205260408120805460ff191660019081179091558054808201825591527fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf60180546001600160a01b03191690911790555b6001600160a01b03811660009081526002602052604090205460ff1661051b576001600160a01b0381166000908152600260205260409020805460ff191660011790555b50565b60006020828403121561053057600080fd5b81356001600160a01b038116811461054757600080fd5b9392505050565b6020808252825182820181905260009190848201906040850190845b8181101561058f5783516001600160a01b03168352928401929184019160010161056a565b50909695505050505050565b6000602082840312156105ad57600080fd5b8151801515811461054757600080fdfea264697066735822122036ac0400f5864d527162c0b81a0b20db073bcfb61ef710c7bd606eb4f5c6489364736f6c63430008180033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "details": "Initialize state variables",
+        "params": {
+          "_asset": ": Initial supported asset"
+        }
+      },
+      "getSupportedAssets()": {
+        "details": "Returns a list of supported assets"
+      },
+      "isSupportedAsset(address)": {
+        "details": "Check if an asset is supported"
+      },
+      "setOwnershipManager(address)": {
+        "params": {
+          "newManager": ": New manager address"
+        }
+      },
+      "supportAsset(address)": {
+        "details": "Support a new asset Note: OnlyOwner action",
+        "params": {
+          "_asset": ": Asset to add to list of supported asset"
+        }
+      },
+      "unsupportAsset(address)": {
+        "details": "Unsupports an asset Note: Only-owner action",
+        "params": {
+          "newAsset": ": Removes an asset from the list of supported asset"
+        }
+      }
+    },
+    "stateVariables": {
+      "supportedAssets": {
+        "details": "Mapping assets address to bool i.e Assets must be contract account and must be supported"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "setOwnershipManager(address)": {
+        "notice": "Set Ownership manager"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 2443,
+        "contract": "contracts/implementations/AssetClass.sol:AssetClass",
+        "label": "ownershipManager",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(IOwnerShip)3542"
+      },
+      {
+        "astId": 3556,
+        "contract": "contracts/implementations/AssetClass.sol:AssetClass",
+        "label": "assets",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 3561,
+        "contract": "contracts/implementations/AssetClass.sol:AssetClass",
+        "label": "supportedAssets",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 3565,
+        "contract": "contracts/implementations/AssetClass.sol:AssetClass",
+        "label": "listed",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IOwnerShip)3542": {
+        "encoding": "inplace",
+        "label": "contract IOwnerShip",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      }
+    }
+  }
+}

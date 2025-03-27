@@ -24,22 +24,26 @@ import type {
 } from "../../../common";
 
 export declare namespace TokenDistributor {
-  export type RequestStruct = {
+  export type TransactionRequestStruct = {
     amount: BigNumberish;
     recipient: AddressLike;
     delay: BigNumberish;
     executors: AddressLike[];
     status: BigNumberish;
     txType: BigNumberish;
+    expirationTime: BigNumberish;
+    id: BigNumberish;
   };
 
-  export type RequestStructOutput = [
+  export type TransactionRequestStructOutput = [
     amount: bigint,
     recipient: string,
     delay: bigint,
     executors: string[],
     status: bigint,
-    txType: bigint
+    txType: bigint,
+    expirationTime: bigint,
+    id: bigint
   ] & {
     amount: bigint;
     recipient: string;
@@ -47,28 +51,34 @@ export declare namespace TokenDistributor {
     executors: string[];
     status: bigint;
     txType: bigint;
+    expirationTime: bigint;
+    id: bigint;
   };
 }
 
 export interface TokenDistributorInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "delay"
       | "executeTransaction"
       | "getExecutors"
       | "getTransactionRequest"
-      | "initiateTransaction"
       | "ownershipManager"
+      | "proposeTransaction"
       | "quorum"
+      | "requestIDs"
       | "setOwnershipManager"
       | "setToken"
       | "signTransaction"
+      | "signed"
+      | "signers"
       | "token"
+      | "validExecutors"
   ): FunctionFragment;
 
-  getEvent(nameOrSignatureOrTopic: "Requested" | "Signer"): EventFragment;
+  getEvent(
+    nameOrSignatureOrTopic: "Requested" | "Signer" | "ThankYou"
+  ): EventFragment;
 
-  encodeFunctionData(functionFragment: "delay", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "executeTransaction",
     values: [BigNumberish]
@@ -82,14 +92,18 @@ export interface TokenDistributorInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "initiateTransaction",
-    values: [AddressLike, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "ownershipManager",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "proposeTransaction",
+    values: [AddressLike, BigNumberish, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "quorum", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "requestIDs",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "setOwnershipManager",
     values: [AddressLike]
@@ -102,9 +116,20 @@ export interface TokenDistributorInterface extends Interface {
     functionFragment: "signTransaction",
     values: [BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "signed",
+    values: [AddressLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "signers",
+    values: [AddressLike]
+  ): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "validExecutors",
+    values?: undefined
+  ): string;
 
-  decodeFunctionResult(functionFragment: "delay", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "executeTransaction",
     data: BytesLike
@@ -118,14 +143,15 @@ export interface TokenDistributorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "initiateTransaction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "ownershipManager",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "proposeTransaction",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "quorum", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "requestIDs", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "setOwnershipManager",
     data: BytesLike
@@ -135,7 +161,13 @@ export interface TokenDistributorInterface extends Interface {
     functionFragment: "signTransaction",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "signed", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "signers", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validExecutors",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace RequestedEvent {
@@ -157,6 +189,18 @@ export namespace SignerEvent {
   export interface OutputObject {
     reqId: bigint;
     from: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ThankYouEvent {
+  export type InputTuple = [arg0: string];
+  export type OutputTuple = [arg0: string];
+  export interface OutputObject {
+    arg0: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -207,8 +251,6 @@ export interface TokenDistributor extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  delay: TypedContractMethod<[], [bigint], "view">;
-
   executeTransaction: TypedContractMethod<
     [reqId: BigNumberish],
     [void],
@@ -219,11 +261,13 @@ export interface TokenDistributor extends BaseContract {
 
   getTransactionRequest: TypedContractMethod<
     [reqId: BigNumberish],
-    [TokenDistributor.RequestStructOutput],
+    [TokenDistributor.TransactionRequestStructOutput],
     "view"
   >;
 
-  initiateTransaction: TypedContractMethod<
+  ownershipManager: TypedContractMethod<[], [string], "view">;
+
+  proposeTransaction: TypedContractMethod<
     [
       _recipient: AddressLike,
       _amount: BigNumberish,
@@ -234,9 +278,9 @@ export interface TokenDistributor extends BaseContract {
     "nonpayable"
   >;
 
-  ownershipManager: TypedContractMethod<[], [string], "view">;
-
   quorum: TypedContractMethod<[], [bigint], "view">;
+
+  requestIDs: TypedContractMethod<[], [bigint], "view">;
 
   setOwnershipManager: TypedContractMethod<
     [newManager: AddressLike],
@@ -252,15 +296,22 @@ export interface TokenDistributor extends BaseContract {
     "nonpayable"
   >;
 
+  signed: TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
+  signers: TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+
   token: TypedContractMethod<[], [string], "view">;
+
+  validExecutors: TypedContractMethod<[], [bigint], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "delay"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "executeTransaction"
   ): TypedContractMethod<[reqId: BigNumberish], [void], "nonpayable">;
@@ -271,11 +322,14 @@ export interface TokenDistributor extends BaseContract {
     nameOrSignature: "getTransactionRequest"
   ): TypedContractMethod<
     [reqId: BigNumberish],
-    [TokenDistributor.RequestStructOutput],
+    [TokenDistributor.TransactionRequestStructOutput],
     "view"
   >;
   getFunction(
-    nameOrSignature: "initiateTransaction"
+    nameOrSignature: "ownershipManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "proposeTransaction"
   ): TypedContractMethod<
     [
       _recipient: AddressLike,
@@ -287,10 +341,10 @@ export interface TokenDistributor extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "ownershipManager"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "quorum"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "requestIDs"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "setOwnershipManager"
@@ -302,8 +356,21 @@ export interface TokenDistributor extends BaseContract {
     nameOrSignature: "signTransaction"
   ): TypedContractMethod<[reqId: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "signed"
+  ): TypedContractMethod<
+    [arg0: AddressLike, arg1: BigNumberish],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "signers"
+  ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
+  getFunction(
     nameOrSignature: "token"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "validExecutors"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "Requested"
@@ -318,6 +385,13 @@ export interface TokenDistributor extends BaseContract {
     SignerEvent.InputTuple,
     SignerEvent.OutputTuple,
     SignerEvent.OutputObject
+  >;
+  getEvent(
+    key: "ThankYou"
+  ): TypedContractEvent<
+    ThankYouEvent.InputTuple,
+    ThankYouEvent.OutputTuple,
+    ThankYouEvent.OutputObject
   >;
 
   filters: {
@@ -341,6 +415,17 @@ export interface TokenDistributor extends BaseContract {
       SignerEvent.InputTuple,
       SignerEvent.OutputTuple,
       SignerEvent.OutputObject
+    >;
+
+    "ThankYou(string)": TypedContractEvent<
+      ThankYouEvent.InputTuple,
+      ThankYouEvent.OutputTuple,
+      ThankYouEvent.OutputObject
+    >;
+    ThankYou: TypedContractEvent<
+      ThankYouEvent.InputTuple,
+      ThankYouEvent.OutputTuple,
+      ThankYouEvent.OutputObject
     >;
   };
 }

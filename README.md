@@ -162,6 +162,7 @@ Build
 # Relevant Links
 
 - __[Webiste](https://simplifinance.xyz)__
+- __[X/Twitter](https://x.com/SimpliFina)__
 - __[Testnet live](https://testnet.simplifinance.xyz)__
 - __[Documentation](https://simplifinance.gitbook.io/docs/)__
 

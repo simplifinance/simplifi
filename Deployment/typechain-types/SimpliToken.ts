@@ -56,7 +56,6 @@ export interface SimpliTokenInterface extends Interface {
       | "getAttorney"
       | "getLockedInfo"
       | "increaseAllowance"
-      | "lockSpecial"
       | "lockToken"
       | "name"
       | "ownershipManager"
@@ -120,10 +119,6 @@ export interface SimpliTokenInterface extends Interface {
   encodeFunctionData(
     functionFragment: "increaseAllowance",
     values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "lockSpecial",
-    values: [AddressLike, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lockToken",
@@ -194,10 +189,6 @@ export interface SimpliTokenInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "increaseAllowance",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "lockSpecial",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "lockToken", data: BytesLike): Result;
@@ -416,12 +407,6 @@ export interface SimpliToken extends BaseContract {
     "nonpayable"
   >;
 
-  lockSpecial: TypedContractMethod<
-    [target: AddressLike, _routeTo: AddressLike, amount: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
-
   lockToken: TypedContractMethod<
     [_routeTo: AddressLike, amount: BigNumberish],
     [boolean],
@@ -540,13 +525,6 @@ export interface SimpliToken extends BaseContract {
     nameOrSignature: "increaseAllowance"
   ): TypedContractMethod<
     [spender: AddressLike, addedValue: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "lockSpecial"
-  ): TypedContractMethod<
-    [target: AddressLike, _routeTo: AddressLike, amount: BigNumberish],
     [boolean],
     "nonpayable"
   >;
