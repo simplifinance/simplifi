@@ -1,30 +1,3 @@
-/* @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-} */
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -137,10 +110,8 @@ footer{
 
 .animateSidebar{
   margin: 0;
-  /* background: #2e3231; */
   position: relative;
   padding: 40px 16px 16px 16px;
-  /* width: 300px; */
 }
 
 @property --angle{ 
@@ -155,7 +126,7 @@ footer{
   position: absolute;
   height: 101%;
   width: 102%;
-  border-radius: 56px;
+  border-radius: 36px;
   background-image: conic-gradient(from var(--angle), transparent 70%, #2E3231, #F87C00, #121212, #F87C00,#2E3231, #F9f4f4, #2E3231);
   top: 50%;
   left: 50%;

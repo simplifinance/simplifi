@@ -34,7 +34,7 @@ export default function ButtonTemplate (
             <CustomButton 
                 disabled={disableButtonA}
                 handleButtonClick={buttonAFunc || toggleDisplayOnboardUser} 
-                overrideClassName={`border border-green1 p-3 rounded-l-full text-xs md:text-md uppercase bg-orangec hover:bg-orangec/70 text-green1`}
+                overrideClassName={`border border-green1 p-3 rounded-l-xl text-xs md:text-md uppercase bg-orangec hover:bg-orangec/70 text-green1 dark:text-white1`}
             >
                 {buttonAContent}
             </CustomButton>

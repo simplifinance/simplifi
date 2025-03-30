@@ -86,3 +86,14 @@ export const FORMATTEDDATA_MOCK : FormattedData = {
   loan_InBN: new BigNumber(0),
   sentQuota: false
 }
+
+export const ROUTE_ENUM = {
+  DASHBOARD: '/',
+  FLEXPOOL: '/flexpool',
+  YIELD: '/yield',
+  DAO: '/dao',
+  CREATE: '/flexpool/create',
+  POOLS: '/flexpool/pools',
+  FAQ: '/faq',
+  AIASSIST: '/aiassist'
+}

@@ -4,11 +4,13 @@ import { Permissionless } from "./forms/Permissionless";
 import { flexSpread, flexStart } from "@/constants";
 import type { PoolType, } from "@/interfaces";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import { useNavigate } from "react-router-dom";
 
 export const Create : React.FC = () => {
     const [formType, setFormType] = React.useState<PoolType>('Permissionless');
     
-    const { closeDisplayForm } = useAppStorage();
+    // const { closeDisplayForm } = useAppStorage();
+    const navigate = useNavigate();
     const disablebutton = formType === 'Permissionless';
     const handleSwitch = (arg: PoolType) => setFormType(arg);
     const renderForm = () => {
@@ -47,7 +49,7 @@ export const Create : React.FC = () => {
                   Permissioned
                 </button>
               </div>
-                <button onClick={closeDisplayForm} className="w-[fit-content] focus:ring-1 p-3 hover:shadow-sm text-orange-300 hover:shadow-orange-200 bg-green1 rounded-r-full text-xs uppercase focus:ring-gray1 active:ring-1">
+                <button onClick={() => navigate(-1)} className="w-[fit-content] focus:ring-1 p-3 hover:shadow-sm text-orange-300 hover:shadow-orange-200 bg-green1 rounded-r-full text-xs uppercase focus:ring-gray1 active:ring-1">
                     <h1 className="animate-pulse">Back</h1>
                 </button>
             </div>

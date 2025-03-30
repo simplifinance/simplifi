@@ -3,10 +3,10 @@ import Socials from "../Socials";
 
 const Footer = () => {
   return (
-    <footer id="footer" className="pt-[10px relative">
-      <div className="border-white1/20 md:rounded-[56px] bg-gray1 py-6 lg:py-[4rem] text-white font-inter poweredbycrossfi">
+    <footer id="footer" className="pb-[22px] relative ">
+      <div className="dark:bg-gray1 md:border border-green1/30 dark:border-gray1 p-4 z-50 py-6 bg-white1 md:rounded-[36px] lg:py-[3rem] font-inter text-green1/70 dark:text-green1">
         <Socials />
-        <div className="text-center pt-[30px] text-orangec text-sm">
+        <div className="text-center pt-[30px] text-green1/80 dark:text-white1">
           &copy;2025 SimpliFinance. All rights reserved.
         </div>
       </div>

@@ -34,19 +34,19 @@ import React from "react";
 const Socials = () => {
   return (
     <ul className="w-full flex justify-center gap-6 text-orange-300 text-sm md:text-md md:gap-10">
-      <li className="hover:text-orange-200">
+      <li className="text-xl font-bold text-green1 hover:text-orangec dark:text-blue-500 dark:hover:text-orangec shad shadow-white1 p-2 rounded-lg">
         <a href="#123" target="_blank" rel="noreferrer">
           Telegram
           {/* <img src="images/socials/telegram.svg" alt="telegram" width={45} /> */}
         </a>
       </li>
-      <li className="hover:text-orange-200">
+      <li className="text-xl font-bold text-green1 hover:text-orangec dark:text-blue-300 dark:hover:text-orangec shad shadow-white1 p-2 rounded-lg">
         <a href="#123" target="_blank" rel="noreferrer">
           {'X(Twitter)'}
           {/* <img src="images/socials/twitter.svg" alt="twitter" width={45} /> */}
         </a>
       </li>
-      <li className="hover:text-orange-200">
+      <li className="text-xl font-bold text-green1 hover:text-orangec dark:text-blue-900 dark:hover:text-orangec shad shadow-white1 p-2 rounded-lg">
         <a href="#123" target="_blank" rel="noreferrer">
           Discord
           {/* <img src="images/socials/discord.svg" alt="discord" width={45} /> */}

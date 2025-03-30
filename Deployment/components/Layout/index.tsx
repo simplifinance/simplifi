@@ -5,6 +5,9 @@ import { Spinner } from "../utilities/Spinner";
 import Stack from '@mui/material/Stack';
 import { ThemeProvider } from "../contexts/ThemeProvider";
 import ErrorBoundary from "../utilities/ErrorBoundary";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+import Footer from "./Footer";
 // import AppProvider from "../contexts/AppProvider";
 
 const Layout = ({children} : {children: React.ReactNode}) => {
@@ -39,9 +42,14 @@ const Layout = ({children} : {children: React.ReactNode}) => {
                   <Spinner color="#fed7aa" />
                 </Stack>
               </section>
-              <div className="w-full h-screen relative">
+              <div className="w-full h-screen relative appContainer">
+                <Navbar />
+                <Sidebar />
                 <ScrollButton windowIsDefined={windowIsDefined} />
-                {children}
+                <main className='space-y-6 relative pt-6 md:pr-[22px]'>
+                  {children}
+                  <Footer />
+                </main>
               </div>
             </ErrorBoundary> : null
         }

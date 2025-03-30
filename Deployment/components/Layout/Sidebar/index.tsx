@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 import { Collapsible } from '@/components/utilities/Collapsible';
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { Path } from "@/interfaces";
+import { ROUTE_ENUM } from "@/constants";
 
 export default function Sidebar() {
   const { showSidebar,} = useAppStorage();
@@ -12,13 +13,13 @@ export default function Sidebar() {
     title: string, 
     disabled: boolean, 
     displayChevron: boolean, 
-    path: Path, 
+    path: string, 
     icon: JSX.Element
   }[] = [
     {
       title: 'Home',
       disabled: false,
-      path: '/dashboard',
+      path: ROUTE_ENUM.DASHBOARD,
       displayChevron: false,
       icon: 
           <svg key={0} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg" className=''>
@@ -29,7 +30,7 @@ export default function Sidebar() {
     {
       title: 'Flex',
       disabled: false,
-      path: '/flexpool',
+      path: ROUTE_ENUM.FLEXPOOL,
       displayChevron: false,
       icon: 
           <svg key={1} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +45,7 @@ export default function Sidebar() {
     {
       title: 'Yield',
       disabled: true,
-      path: '/yield',
+      path: ROUTE_ENUM.YIELD,
       displayChevron: false,
       icon: 
           <svg key={2} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -55,7 +56,7 @@ export default function Sidebar() {
     {
       title: 'Dao',
       disabled: true,
-      path: '/simplidao',
+      path: ROUTE_ENUM.DAO,
       displayChevron: false,
       icon: 
           <svg key={3} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -66,7 +67,7 @@ export default function Sidebar() {
     {
       title: 'Faq',
       disabled: false,
-      path: 'faq',
+      path: ROUTE_ENUM.FAQ,
       displayChevron: false,
       icon: 
         <svg key={4} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -78,7 +79,7 @@ export default function Sidebar() {
 
   return(
     <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[22px]`}>
-      <div className="w-full md:rounded-[56px] min-h-[fit-content] bg-white1 dark:bg-green1 border border-green1/30 dark:border-none animateSidebar">
+      <div className="w-full md:rounded-[36px] min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar">
         {
           DRAWER_CONTENT.map(({disabled, path, icon, title, displayChevron }) => (
             <Collapsible 

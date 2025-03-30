@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
 // import { ThemeProvider } from "@/components/contexts/ThemeProvider"
-import AppProvider from '../components/contexts/AppProvider';
-// import ErrorBoundary from '@/components/utilities/ErrorBoundary';
+import AppProvider from '@/components/contexts/AppProvider';
+import ErrorBoundary from '@/components/utilities/ErrorBoundary';
 // import Layout from '@/components/Layout';
 import { Author } from 'next/dist/lib/metadata/types/metadata-types';
 
@@ -35,15 +35,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={``}
       >
-        <AppProvider>
-          {children}
-        </AppProvider>
+        <ErrorBoundary>
+          <AppProvider>
+            {children}
+          </AppProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

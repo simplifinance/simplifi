@@ -1,4 +1,4 @@
-import Drawer from "../features/FlexPool/update/ActionButton/Confirmation/Drawer";
+import Drawer from "../AppFeatures/FlexPool/update/ActionButton/Confirmation/Drawer";
 
 export default function NotConnectedPopUp({openDrawer, toggleDrawer} : {openDrawer: number, toggleDrawer: (arg: number) => void}) {
 

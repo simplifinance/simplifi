@@ -1,11 +1,11 @@
 import React from "react";
 import OnbaordScreen from "@/components/screens/OnboardScreen";
 import { ANALYTICS, } from "@/constants";
-import Dashboard from "@/components/features/Dashboard";
-import FlexPool from "@/components/features/FlexPool";
-import Yield from "@/components/features/Yield";
-import Faq from "@/components/features/Faq";
-import SimpliDao from "@/components/features/SimpliDao";
+import Dashboard from "@/components/AppFeatures/Dashboard";
+import FlexPool from "@/components/AppFeatures/FlexPool";
+import Yield from "@/components/AppFeatures/Yield";
+import Faq from "@/components/AppFeatures/Faq";
+import SimpliDao from "@/components/AppFeatures/SimpliDao";
 import { Path, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import Notification from "@/components/utilities/Notification";
@@ -16,7 +16,7 @@ import Footer from "@/components/Layout/Footer";
 import Typed from "react-typed";
 import NotConnectedPopUp from "@/components/utilities/NotConnectedPopUp";
 import { useAccount, useReadContracts,} from "wagmi";
-import getReadFunctions from "@/components/features/FlexPool/update/DrawerWrapper/readContractConfig";
+import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 
 export default function SimpliApp() {
   // const {data: blockNumber, } = useBlockNumber({watch: true, query: {refetchInterval: 3000}});
