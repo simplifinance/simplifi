@@ -3,31 +3,28 @@ import Box from "@mui/material/Box";
 import Image from 'next/image';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
-import { flexCenter, flexSpread, ROUTE_ENUM,} from '@/constants';
-// import useAppStorage from "../../contexts/StateContextProvider/useAppStorage";
-// import OnboardUser from "./OnboardUser";
+import { flexCenter, flexSpread, } from '@/constants';
 import OnboardWrapperDiv from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
 import { useAccount, useConnect } from "wagmi";
-import { useNavigate } from "react-router-dom";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export default function SwipeableInfo() { 
   const AutoSwipeableViews = autoPlay(SwipeableViews);
-  // const { toggleDisplayOnboardUser, displayOnboardUser, } = useAppStorage();
   const { isConnected, connector } = useAccount();
   const { connectAsync } = useConnect();
-  const navigate = useNavigate();
+  const { setActivepath } = useAppStorage();
 
-  const handleNavigate = () => navigate(ROUTE_ENUM.AIASSIST);
+  const handleNavigate = () => setActivepath("AiAssist");
 
   // Try route user to flexpool dashboard if they're connected otherwise, connect their wallet first and reroute them
   const handleGetStarted = async() => {
-    if(isConnected) navigate(ROUTE_ENUM.FLEXPOOL);
+    if(isConnected) setActivepath("Flexpool");
     else {
       try {
         if(connector) await connectAsync({connector})
           .then((res) => {
-            if(res.accounts.length > 0) navigate(ROUTE_ENUM.FLEXPOOL);
+            if(res.accounts.length > 0) setActivepath("Flexpool");
         });
       } catch (error) {
         alert('Unable to connect wallet')
@@ -36,12 +33,12 @@ export default function SwipeableInfo() {
   }
 
   return(
-    <div className="dark:bg-green1 p-8 rounded-xl">
+    <div className="bg-white1 dark:bg-green1 border border-gray1/50 md:border-none p-4 md:p-8 rounded-xl">
       {
-        <OnboardWrapperDiv overrideClassName="bg-wh borde border-green1/2 dark:bg-[#2e3231 shadow-m shadow-gree">
+        <OnboardWrapperDiv overrideClassName="shadow-m">
             <AutoSwipeableViews >
               {
-                SWIPEABLE_CONTENTS.map(({imageComponent, title, description}, i) => (
+                swipeableContent.map(({imageComponent, title, description}, i) => (
                     <Box className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>
                       {imageComponent}
                       <Box className={`text-md text-green1/80 space-y-2 text-center`}>
@@ -62,8 +59,7 @@ export default function SwipeableInfo() {
   );
 }
 
-
-const SWIPEABLE_CONTENTS = [
+const swipeableContent = [
     {
       title: "Simplicity And Flexibility",
       description: "Experience the power of flexible finance, while earning in multiple ways",

@@ -17,21 +17,21 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
     const { chainId,} = useAccount();
     const { token, currency } = getContractData(chainId || 4157);
     const {
-        unit_InEther,
-        currentPool_InEther,
-        unitId_toNumber,
-        allGh_toNumber,
-        quorum_toNumber,
-        cData_formatted,
-        colCoverage_InString,
-        intPercent_string,
-        duration_toNumber,
-        fullInterest_InEther,
-        intPerSec_InEther,
-        stage_toNumber,
+        unitInEther,
+        currentPoolInEther,
+        unitIdToNumber,
+        allGhToNumber,
+        quorumToNumber,
+        cDataFormatted,
+        colCoverageInString,
+        intPercentString,
+        durationToNumber,
+        fullInterestInEther,
+        intPerSecInEther,
+        stageToNumber,
         lastPaid,
         isPermissionless,
-        formatted_bank,
+        formattedSafe,
         unit_bigint,
         rId,
         // isAdmin
@@ -39,17 +39,17 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
 
     const extractAddresses = () => {
         let addrs : Address[] = [];
-        cData_formatted.forEach((cd) => {
-            addrs.push(formatAddr(cd.id_toString))
+        cDataFormatted.forEach((cd) => {
+            addrs.push(formatAddr(cd.idToString))
         });
         return addrs;
     }
     const rekeyParam : RekeyParam = {
-        colCoverage: Number(colCoverage_InString),
-        durationInHours: duration_toNumber,
-        intRate: Number(intPercent_string),
+        colCoverage: Number(colCoverageInString),
+        durationInHours: durationToNumber,
+        intRate: Number(intPercentString),
         contributors: extractAddresses(),
-        allGH: allGh_toNumber
+        allGH: allGhToNumber
     }
 
     return(
@@ -79,14 +79,14 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
-                            account={formatted_bank}
+                            account={formattedSafe}
                             overrideClassName="text-md" 
                             display 
                         />
                     </li>
                     <li className={`${flexSpread}`} >
                         <h3 className="">{"Financed"}</h3>
-                        <p className="">{`${allGh_toNumber}`}</p>
+                        <p className="">{`${allGhToNumber}`}</p>
                     </li>
                     <li className={`${flexSpread}`} >
                         <h3 className="">{"Reserved Id"}</h3>
@@ -95,16 +95,15 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                 </ul>
                 <CollateralQuote unit={unit_bigint} />
                 <LiquidityAndStrategyBalances
-                    formatted_bank={formatted_bank}
+                    formattedSafe={formattedSafe}
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
-                    isCancelledPool={quorum_toNumber === 0 && stage_toNumber === FuncTag.ENDED}
+                    isCancelledPool={quorumToNumber === 0 && stageToNumber === FuncTag.ENDED}
                     handleCloseDrawer={() => toggleDrawer(0)}
-                    stage={stage_toNumber}
                 />
 
                 <AccessAndCollateralBalances 
-                    formatted_bank={formatted_bank}
+                    formattedSafe={formattedSafe}
                     handleCloseDrawer={() => toggleDrawer(0)}
                     rId={rId}
                 />
@@ -112,15 +111,15 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Liquidity</h3>
-                        <p>{`$${unit_InEther}`}</p>
+                        <p>{`$${unitInEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Total Pooled Liquidity</h3>
-                        <p>{`$${currentPool_InEther}`}</p>
+                        <p>{`$${currentPoolInEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Id</h3>
-                        <p>{unitId_toNumber}</p>
+                        <p>{unitIdToNumber}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Last Paid</h3>
@@ -130,30 +129,30 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Interest Percent</h3>
-                        <p>{intPercent_string}</p>
+                        <p>{intPercentString}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Collateral Coverage Ratio</h3>
-                        <p>{colCoverage_InString}</p>
+                        <p>{colCoverageInString}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Duration</h3>
-                        <p>{`${duration_toNumber} hrs`}</p>
+                        <p>{`${durationToNumber} hrs`}</p>
                     </li>
                 </ul>
 
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>{"Int/Sec"}</h3>
-                        <p className="px-2 text-xs md:textsm">{`${intPerSec_InEther} ${currency}`}</p>
+                        <p className="px-2 text-xs md:textsm">{`${intPerSecInEther} ${currency}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Full Interest</h3>
-                        <p>{`${fullInterest_InEther} ${currency}`}</p>
+                        <p>{`${fullInterestInEther} ${currency}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Stage</h3>
-                        <p>{FuncTag[stage_toNumber]}</p>
+                        <p>{FuncTag[stageToNumber]}</p>
                     </li>
                 </ul>
             </div>
@@ -161,7 +160,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
     );
 }
 
-export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggleDrawer, cData_formatted}) => {
+export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggleDrawer, cDataFormatted}) => {
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.3)', height: "100%"}} >
             <div className="p-0 flex justify-between items-center text-lg md:text-xl font-bold">
@@ -174,7 +173,7 @@ export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggl
             </div>
             <React.Fragment>
                 {
-                    cData_formatted.map((data, i) => (
+                    cDataFormatted.map((data, i) => (
                         <Provider
                             formattedData={data}
                             key={i} 
@@ -196,7 +195,7 @@ interface InfoDisplayProps {
 }
 
 interface ProvidersProps {
-    cData_formatted: FormattedData[];
+    cDataFormatted: FormattedData[];
     popUpDrawer: number;
     toggleDrawer: (arg: number) => void;
     isAdmin: boolean;

@@ -2,37 +2,34 @@ import React from "react";
 import { flexSpread } from "@/constants";
 import Collapse from "@mui/material/Collapse";
 import { faqContent } from "./content";
-import { Chevron } from "@/components/utilities/Icons";
+import { PlusMinusIcons } from "@/components/utilities/Icons";
 
 const Content = ({title, content, subparagraph} : {title: React.ReactNode, content: React.ReactNode, subparagraph: React.ReactNode}) => {
   const [open, setOpen] = React.useState<boolean>(false);
-
   return(
-    <div>
-      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:bg-green1/70 rounded-t-md focus:bg-gray1/50`}>
-        <span className={`text-xl`}>{ title }</span>
-        <Chevron open={open} />
+    <React.Fragment>
+      <button onClick={() => setOpen(!open)} className={`w-full ${flexSpread} p-3 hover:bg-green1 hover:text-white1 rounded-t-md focus:bg-green1 focus:text-white1 text-green1 dark:text-white1`}>
+        <span className={`text-lg ${open && "dark:text-orange-300 font-bold"}`}>{ title }</span>
+        <PlusMinusIcons open={open} />
       </button> 
       <Collapse in={open} timeout="auto" unmountOnExit className={'w-full '}>
-        <div className="text-white1/80 font-thin border border-green1 rounded-b-[26px] p-4 text-lg bg-green1">
+        <div className="text-green1 dark:text-white1/80 bg:orange-200 rounded-b-xl text-lg p-8">
           <span>{content}</span>
           <span>{subparagraph}</span>
         </div>
       </Collapse>
-    </div>
+    </React.Fragment>
   );
 }
 
-function Faq(): JSX.Element {
+export default function Faq(){
   return (
-    <div className="w-full text-orange-200 md:p-4 md:rounded-[26px]">
+    <div className="w-full md:p-4 md:rounded-xl dark:bg-green1">
       {
         faqContent.map(({title, content, subparagraph}, i) => (
           <Content {...{title, content, subparagraph}} key={i} />            
         ))
       }
     </div>
-  );
+  )
 }
-
-export default Faq;

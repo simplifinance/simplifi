@@ -9,7 +9,7 @@ import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
 import { formatEther,} from "viem";
-import { C3 } from "./typechain-types/IFactory";
+import { Common } from "./typechain-types/IFactory";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
@@ -17,7 +17,7 @@ import { getContractData } from "./apis/utils/getContractData";
 import withdrawLoan from "./apis/update/testToken/withdrawLoan";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { ROUTER } from "./constants";
+import { Router, supportedChains } from "./constants";
 
 export type Operation = 'Open' | 'Closed';
 
@@ -31,6 +31,10 @@ export const formatValue = (value: string | undefined): string => {
     return '0';
   } 
   return ethers.formatEther(value);
+}
+
+export const isSuportedChain = (chainId: number) => {
+  return supportedChains.includes(chainId);
 }
 
 export const str = (arg: string | undefined) => String(arg);
@@ -171,39 +175,40 @@ export const handleTransact = async(param: HandleTransactionParam) => {
 export const formatPoolContent = (pool: ReadDataReturnValue, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
   const {
     pool: {
-      uint256s: { unit, currentPool, intPerSec, rId, fullInterest, unitId: unitId_, },
-      uints: { intRate, quorum, allGh, userCount, duration, colCoverage, selector },
+      bigInt: { unit, currentPool, unitId: unitId_, recordId},
+      lInt: { intRate, quorum, allGh, userCount, duration, colCoverage, selector },
       addrs: { admin, asset, lastPaid, bank },
+      interest: { intPerSec, fullInterest, },
       router,
       stage
     },
     cData
   } = pool;
 
-  let cData_formatted : FormattedData[] = [];
-  const isPermissionless = toBN(router.toString()).toNumber() === ROUTER.PERMISSIONLESS;
-  const selector_toNumber = toBN(selector.toString()).toNumber();
-  const colCoverage_InString = toBN(colCoverage.toString()).toString();
-  const fullInterest_InEther = formatEther(toBigInt(toBN(fullInterest.toString()).toString()));
-  const intPerSec_InEther = formatEther(toBigInt(toBN(intPerSec.toString()).toString()));
-  const currentPool_InEther = formatEther(toBigInt(toBN(currentPool.toString()).toString()));
-  const allGET_bool  = toBN(allGh.toString()).eq(toBN(userCount.toString()));
-  const allGh_toNumber = toBN(allGh.toString()).toNumber();
-  const unitId_toNumber = toBN(unitId_.toString()).toNumber();
-  const quorum_toNumber = toBN(quorum.toString()).toNumber();
-  const unitId_bigint = toBigInt(unitId_);
-  const stage_toNumber = toBN(stage.toString()).toNumber();
-  const expectedPoolAmt_bigint = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
-  const unit_InEther =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
-  const userCount_toNumber = toBN(userCount.toString()).toNumber();
-  const intPercent_string = toBN(intRate.toString()).div(100).toString();
-  const duration_toNumber = toBN(duration.toString()).div(3600).toNumber();
-  const poolFilled = userCount_toNumber === quorum_toNumber;
+  let cDataFormatted : FormattedData[] = [];
+  const isPermissionless = toBN(router.toString()).toNumber() === Router.PERMISSIONLESS;
+  const selectorToNumber = toBN(selector.toString()).toNumber();
+  const colCoverageInString = toBN(colCoverage.toString()).toString();
+  const fullInterestInEther = formatEther(toBigInt(toBN(fullInterest.toString()).toString()));
+  const intPerSecInEther = formatEther(toBigInt(toBN(intPerSec.toString()).toString()));
+  const currentPoolInEther = formatEther(toBigInt(toBN(currentPool.toString()).toString()));
+  const allGetBool  = toBN(allGh.toString()).eq(toBN(userCount.toString()));
+  const allGhToNumber = toBN(allGh.toString()).toNumber();
+  const unitIdToNumber = toBN(unitId_.toString()).toNumber();
+  const quorumToNumber = toBN(quorum.toString()).toNumber();
+  const unitIdBigint = toBigInt(unitId_);
+  const stageToNumber = toBN(stage.toString()).toNumber();
+  const expectedPoolAmtBigint = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
+  const unitInEther =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
+  const userCountToNumber = toBN(userCount.toString()).toNumber();
+  const intPercentString = toBN(intRate.toString()).div(100).toString();
+  const durationToNumber = toBN(duration.toString()).div(3600).toNumber();
+  const poolFilled = userCountToNumber === quorumToNumber;
   let isMember = false;
 
   if(formatProfiles && cData.length > 0) {
     cData.forEach((data) => {
-      cData_formatted.push(formatProfileData(data));
+      cDataFormatted.push(formatProfileData(data));
       if(data.id.toString().toLowerCase() === currentUser.toString().toLowerCase()) {
         isMember = true;
       }
@@ -213,65 +218,67 @@ export const formatPoolContent = (pool: ReadDataReturnValue, formatProfiles: boo
   return {
     unit,
     unit_bigint: BigInt(unit.toString()),
-    rId: BigInt(rId.toString()),
-    quorum_toNumber,
-    userCount_toNumber,
-    allGET_bool,
-    allGh_toNumber,
-    unitId_toNumber,
-    unitId_bigint,
-    stage_toNumber,
-    expectedPoolAmt_bigint,
-    unit_InEther,
-    intPercent_string,
-    duration_toNumber,
+    rId: BigInt(recordId.toString()),
+    quorumToNumber,
+    userCountToNumber,
+    allGetBool,
+    allGhToNumber,
+    unitIdToNumber,
+    unitIdBigint,
+    stageToNumber,
+    expectedPoolAmtBigint,
+    unitInEther,
+    intPercentString,
+    durationToNumber,
     poolFilled,
     isPermissionless,
-    selector_toNumber,
-    colCoverage_InString,
-    fullInterest_InEther,
-    intPerSec_InEther,
-    currentPool_InEther,
+    selectorToNumber,
+    colCoverageInString,
+    fullInterestInEther,
+    intPerSecInEther,
+    currentPoolInEther,
     unitInBN: toBN(unit.toString()),
     currentPoolInBN: toBN(currentPool.toString()),
-    admin_lowerCase: admin.toString().toLowerCase(),
-    asset_lowerCase: asset.toString().toLowerCase(),
+    adminLowerCase: admin.toString().toLowerCase(),
+    assetLowerCase: asset.toString().toLowerCase(),
     admin,
     asset,
     isMember,
     isAdmin: currentUser.toString().toLowerCase() === admin.toString().toLowerCase(),
-    cData_formatted,
+    cDataFormatted,
     intPerSec,
-    formatted_bank: formatAddr(bank.toString()),
+    formattedSafe: formatAddr(bank.toString()),
     lastPaid: formatAddr(lastPaid.toString())
   }
 }
 
-export const formatProfileData = (param: C3.ContributorStruct) : FormattedData => {
-  const { payDate, colBals, turnTime, durOfChoice, expInterest, sentQuota, id, loan, } = param;
-  const payDate_InSec = toBN(payDate.toString()).toNumber();
-  const turnTime_InSec = toBN(turnTime.toString()).toNumber();
-  const durOfChoice_InSec = toBN(durOfChoice.toString()).toNumber();
-  const colBals_InEther = formatEther(toBigInt(toBN(colBals.toString()).toString()));
-  const loan_InEther = formatEther(toBigInt(toBN(loan.toString()).toString()));
-  const loan_InBN = toBN(loan.toString());
-  const expInterest_InEther = formatEther(toBigInt(toBN(expInterest.toString()).toString()));
-  const payDate_InDateFormat = getTimeFromEpoch(payDate_InSec);
-  const turnTime_InDateFormat = getTimeFromEpoch(turnTime_InSec);
-  const id_lowerCase = id.toString().toLowerCase()
+export const formatProfileData = (param: Common.ContributorStruct) : FormattedData => {
+  const { paybackTime, colBals, turnStartTime, durOfChoice, interestPaid, sentQuota, id, loan, } = param;
+  const paybackTimeInSec = toBN(paybackTime.toString()).toNumber();
+  const turnStartTimeInSec = toBN(turnStartTime.toString()).toNumber();
+  const durOfChoiceInSec = toBN(durOfChoice.toString()).toNumber();
+  const colBalsInEther = formatEther(toBigInt(toBN(colBals.toString()).toString()));
+  const loanInEther = formatEther(toBigInt(toBN(loan.toString()).toString()));
+  const loanInBN = toBN(loan.toString());
+  const interestPaidInEther = formatEther(toBigInt(toBN(interestPaid.toString()).toString()));
+  const paybackTimeInDateFormat = getTimeFromEpoch(paybackTimeInSec);
+  const turnStartTimeInDateFormat = getTimeFromEpoch(turnStartTimeInSec);
+  const idLowerCase = id.toString().toLowerCase()
 
   return {
-    payDate_InDateFormat,
-    payDate_InSec,
-    turnTime_InDateFormat,
-    turnTime_InSec,
-    durOfChoice_InSec,
-    colBals_InEther,
-    loan_InEther,
-    expInterest_InEther,
-    id_lowerCase,
-    id_toString: id.toString(),
-    loan_InBN,
+    paybackTimeInDateFormat,
+    paybackTimeInSec,
+    turnStartTimeInDateFormat,
+    turnStartTimeInSec,
+    durOfChoiceInSec,
+    colBalsInEther,
+    loanInEther,
+    interestPaidInEther,
+    idLowerCase,
+    idToString: id.toString(),
+    loanInBN,
     sentQuota
   }
 }
+
+

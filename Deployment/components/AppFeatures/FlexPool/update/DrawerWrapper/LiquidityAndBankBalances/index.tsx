@@ -13,7 +13,7 @@ import { Spinner } from "@/components/utilities/Spinner";
 import Message from "../Message";
 import { formatError } from "@/apis/update/formatError";
 
-export default function LiquidityAndBankBalances({stage, isCancelledPool, handleCloseDrawer, formatted_bank, isPermissionless, param } : BalancesProps) {
+export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, param } : BalancesProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     
     const { address, chainId } = useAccount();
@@ -38,8 +38,8 @@ export default function LiquidityAndBankBalances({stage, isCancelledPool, handle
     
     const { data, isPending } = useReadContracts({
         contracts: [
-            { ...readBalanceConfig({account: formatted_bank})},
-            { ...readAllowanceConfig({owner: formatted_bank, spender: currentUser})}
+            { ...readBalanceConfig({account: formattedSafe})},
+            { ...readAllowanceConfig({owner: formattedSafe, spender: currentUser})}
         ],
         allowFailure: true,
         query: {refetchInterval: 5000}
@@ -55,7 +55,7 @@ export default function LiquidityAndBankBalances({stage, isCancelledPool, handle
         await withdrawLoan({
             config,
             account: currentUser,
-            bank: formatted_bank,
+            bank: formattedSafe,
             callback,
         }).then(() => callback_after(false))
         .catch((error) => callback_after(true, error))
@@ -147,10 +147,10 @@ export interface RekeyParam {
 }
 
 interface BalancesProps {
-    formatted_bank: Address;
+    formattedSafe: Address;
     isPermissionless: boolean;
     param: RekeyParam;
     isCancelledPool: boolean;
     handleCloseDrawer: VoidFunc;
-    stage: number;
+    // stage: number;
 }

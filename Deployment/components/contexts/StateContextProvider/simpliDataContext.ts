@@ -1,4 +1,4 @@
-import { Analytics, LiquidityPool, Path, TrxState, VoidFunc } from "@/interfaces";
+import { Analytics, Path, TrxState, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
@@ -15,10 +15,6 @@ export interface DataContextProps {
     displayForm: boolean;
     closeDisplayForm: VoidFunc;
     openDisplayForm: VoidFunc;
-    // open: LiquidityPool[];
-    // closed: LiquidityPool[];
-    // permissioned: LiquidityPool[];
-    // permissionless: LiquidityPool[];
     activePath: Path;
     setActivepath: (arg: Path) => void;
     analytics: Analytics;

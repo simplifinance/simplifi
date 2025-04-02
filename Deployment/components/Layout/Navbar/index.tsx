@@ -19,7 +19,7 @@ export default function Navbar() {
             height={100}
           />
         </Link>
-        <div className='hidden md:block bg-green1 dark:bg-white1 px-3 py-2 rounded-[16px] text-white1 dark:text-green1 font-extrabold'>
+        <div className='hidden md:block bg-green1 md:min-w-[420px] dark:bg-white1 px-3 py-2 rounded-xl text-white1 dark:text-green1 font-extrabold'>
           <Typed 
             strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
             className='text-md'

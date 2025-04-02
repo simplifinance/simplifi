@@ -1,15 +1,17 @@
 import React from "react";
 import Container from "@mui/material/Container";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import { CustomNode } from "@/interfaces";
+import FlexPool from "../FlexPool";
 
-function Yield(): JSX.Element {
-  const { setActivepath } = useAppStorage();
+export default function Yield() {
+  const { addNode } = useAppStorage();
 
   React.useEffect(() => {
     setTimeout(() => {
-      setActivepath('/flexpool');
+      addNode({type: 'Current', item: FlexPool()});
     }, 2000);
-  }, [setActivepath]);
+  }, [addNode]);
 
   return (
     <Container maxWidth="xs" className="space-y-4 absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">
@@ -19,5 +21,3 @@ function Yield(): JSX.Element {
     </Container>
   );
 }
-
-export default Yield;

@@ -7,6 +7,8 @@ import AppProvider from '@/components/contexts/AppProvider';
 import ErrorBoundary from '@/components/utilities/ErrorBoundary';
 // import Layout from '@/components/Layout';
 import { Author } from 'next/dist/lib/metadata/types/metadata-types';
+import { AppProps } from 'next/app';
+import { Session } from "next-auth";
 
 const authors : Author[] = [
   {
@@ -37,9 +39,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={``}
-      >
+      <body>
         <ErrorBoundary>
           <AppProvider>
             {children}

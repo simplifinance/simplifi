@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import { Drawer as MuiDrawer, } from '@mui/material';
-// import useAppStorage from '@/components/StateContextProvider/useAppStorage';
 import { useMediaQuery } from '@mui/material';
 import type { ToggleDrawer } from '@/interfaces';
 

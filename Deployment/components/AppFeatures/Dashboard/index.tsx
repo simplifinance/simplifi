@@ -13,15 +13,14 @@ import { formatEther } from 'viem';
 import { toBN } from '@/utilities';
 import { getContractData } from '@/apis/utils/getContractData';
 import { useAccount } from 'wagmi';
-// import OnbaordScreen from '@/components/screens/OnboardScreen';
 import { WelcomeTabs } from './WelcomeTabs';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-// import OnbaordScreen from '@/components/screens/OnboardScreen';
 import SwipeableInfo from '@/components/screens/OnboardScreen/SwipeableInfo';
+import { CustomNode } from '@/interfaces';
 
-const Dashboard : React.FC = () => {
-  const { analytics: { totalPermissioned, totalPermissionless, tvlInUsd, tvlInXFI }, symbol, currentEpoches, recordEpoches, displayAppScreen } = useAppStorage();
+export default function Dashboard() {
+  const { analytics: { totalPermissioned, totalPermissionless, tvlInUsd, tvlInXFI }, symbol, currentEpoches, recordEpoches, } = useAppStorage();
   const tvlInXfi = toBN(formatEther(tvlInXFI)).decimalPlaces(3);
   const tvlInUSD = formatEther(tvlInUsd);
   const { chainId, isConnected } = useAccount();
@@ -65,14 +64,14 @@ const Dashboard : React.FC = () => {
       icon: permissionedIcon
     },
   ];
-{/* <OnbaordScreen /> */}
-  return (
+
+  return(
     <div className='grid grid-cols-1 md:grid-cols-2 md:gap-4'>
       <div className='minHeight p-4 space-y-4 w-full'>
         <SwipeableInfo />
         <div className='p-4 bg-green1 rounded-xl space-y-2'>
           <h1 className='text-lg text-orange-300 md:text-3xl font-bold'>Statistics</h1>
-          <div className={`p-4 bg-green1 rounded-xl space-y-2 md:font-semibold text-orange-100 text-sm md:text-md`}>
+          <div className={`p-4 bg-green1 rounded-xl space-y-2 md:font-semibold text-orange-100 `}>
             <div className={`${flexSpread}`}>
               <h3>Active</h3>
               <h3 className=''>{currentEpoches.toString()}</h3>
@@ -96,7 +95,7 @@ const Dashboard : React.FC = () => {
       </div>
       
       <div className='minHeight p-4 space-y-4'>
-        <div className={`${flexSpread}`}>
+        <div className={`${flexSpread} bg-white1 dark:bg-green1 p-4 rounded-xl`}>
           <h1 className='text-xl text-green1 dark:text-white1 md:text-3xl font-bold'>Welcome to Simplifi!</h1>
           <Button className={`${flexSpread}`}>
             <Link href={'https://simplifinance.gitbook.io/docs'}>How it works</Link>
@@ -114,13 +113,10 @@ const Dashboard : React.FC = () => {
             </span>
             Simplifi Phase 1 is live
           </h3>
-          <p>Participate in testnet and various social tasks to earn reward</p>
+          <p>Participate in testnet activities and social tasks to earn reward</p>
         </div>
         <WelcomeTabs />
       </div>
     </div>
   )
 }
-
-export default Dashboard;
-

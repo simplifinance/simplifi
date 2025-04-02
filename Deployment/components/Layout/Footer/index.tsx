@@ -4,7 +4,7 @@ import Socials from "../Socials";
 const Footer = () => {
   return (
     <footer id="footer" className="pb-[22px] relative ">
-      <div className="dark:bg-gray1 md:border border-green1/30 dark:border-gray1 p-4 z-50 py-6 bg-white1 md:rounded-[36px] lg:py-[3rem] font-inter text-green1/70 dark:text-green1">
+      <div className="dark:bg-gray1 md:border border-green1/30 dark:border-gray1 p-4 z-50 py-6 bg-white1 md:rounded-xl lg:py-[3rem] font-inter text-green1/70 dark:text-green1">
         <Socials />
         <div className="text-center pt-[30px] text-green1/80 dark:text-white1">
           &copy;2025 SimpliFinance. All rights reserved.

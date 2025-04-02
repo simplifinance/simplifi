@@ -126,7 +126,7 @@ footer{
   position: absolute;
   height: 101%;
   width: 102%;
-  border-radius: 36px;
+  border-radius: 12px;
   background-image: conic-gradient(from var(--angle), transparent 70%, #2E3231, #F87C00, #121212, #F87C00,#2E3231, #F9f4f4, #2E3231);
   top: 50%;
   left: 50%;
@@ -151,9 +151,6 @@ footer{
 }
 
 @media all and (max-width:767px) {
-  /* body{
-    padding: 0;
-  } */
   .appContainer{
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -326,4 +323,15 @@ footer{
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.aibackground{
+  scroll-behavior: smooth;
+  background-image: url('../public/ai.svg');
+  object-fit: cover;
+  width: 100%;
+  height: 380px;
+  background-repeat: no-repeat;
+  display: flex;
+  justify-content: center;
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import type { ButtonObj, Address, AmountToApproveParam, FormattedData, ReadDataReturnValue, } from "@/interfaces";
 import { formatAddr, formatPoolContent } from "@/utilities";
-import { FORMATTEDDATA_MOCK, FuncTag } from "@/constants";
+import { formattedMockData, FuncTag } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Providers } from '../DrawerWrapper';
@@ -20,8 +20,8 @@ const filterUser = (
     cData: FormattedData[], 
     currentUser: Address
 ) : FormattedData => {
-    let result : FormattedData = FORMATTEDDATA_MOCK;
-    const filtered = cData.filter(({id_lowerCase}) => id_lowerCase === currentUser.toString().toLowerCase());
+    let result : FormattedData = formattedMockData;
+    const filtered = cData.filter(({idLowerCase}) => idLowerCase === currentUser.toString().toLowerCase());
     if(filtered?.length > 0) {
         result = filtered[0];
     }
@@ -49,24 +49,24 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         unit,
         currentPoolInBN,
         unitInBN,
-        cData_formatted, 
-        stage_toNumber, 
+        cDataFormatted, 
+        stageToNumber, 
         isPermissionless,
-        unitId_toNumber,
+        unitIdToNumber,
         // unitId_bigint,
-        quorum_toNumber,
+        quorumToNumber,
         // formatted_bank,
-        intPercent_string,
-        unit_InEther,
+        intPercentString,
+        unitInEther,
         intPerSec,
         lastPaid,
         isMember,
         isAdmin,
         // duration_toNumber,
-        userCount_toNumber,
+        userCountToNumber,
     } = formattedPool;
 
-    const { payDate_InSec, loan_InBN, sentQuota } = filterUser(cData_formatted, account);
+    const { paybackTimeInSec, loanInBN, sentQuota } = filterUser(cDataFormatted, account);
     const otherParam: AmountToApproveParam = {
         config,
         account,
@@ -77,18 +77,18 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         unit: BigInt(unit.toString())
     };
 
-    const msg_AddLiq = `Request to add liquidity to epoch ${unitId_toNumber}`;
-    const msg_getFin = `Getting finance from epoch ${unitId_toNumber}`;
-    const msg_Pay = `Paying back loan at epoch ${unitId_toNumber}`
-    const msg_Liq = `Setting liquidation at epoch ${unitId_toNumber}`;
-    const msg_Remv = `Request to remove Flexpool at epoch ${unitId_toNumber}`;
+    const msg_AddLiq = `Request to add liquidity to epoch ${unitIdToNumber}`;
+    const msg_getFin = `Getting finance from epoch ${unitIdToNumber}`;
+    const msg_Pay = `Paying back loan at epoch ${unitIdToNumber}`
+    const msg_Liq = `Setting liquidation at epoch ${unitIdToNumber}`;
+    const msg_Remv = `Request to remove Flexpool at epoch ${unitIdToNumber}`;
 
     React.useEffect(() => {
-        switch (stage_toNumber) {
+        switch (stageToNumber) {
             case FuncTag.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
-                        if(userCount_toNumber === 1) {
+                        if(userCountToNumber === 1) {
                             setButtonObj({value: 'REMOVE', disable: false, displayMessage: msg_Remv});
                         } else {
                             setButtonObj({value: 'WAIT', disable: true});
@@ -125,10 +125,10 @@ export const FlexCard = (props: ReadDataReturnValue) => {
             
             case FuncTag.PAYBACK:
                 if(isMember){
-                    if(loan_InBN.gt(0)) setButtonObj({value : 'PAYBACK', disable: false, displayMessage: msg_Pay});
+                    if(loanInBN.gt(0)) setButtonObj({value : 'PAYBACK', disable: false, displayMessage: msg_Pay});
                     else setButtonObj({ value: 'NOT ALLOWED', disable: true});
                 } else {
-                    if((new Date().getTime() / 1000) >  payDate_InSec) setButtonObj({ value: 'LIQUIDATE', disable: false, displayMessage: msg_Liq});
+                    if((new Date().getTime() / 1000) >  paybackTimeInSec) setButtonObj({ value: 'LIQUIDATE', disable: false, displayMessage: msg_Liq});
                     else setButtonObj({ value: 'NOT ALLOWED', disable: true});
                 }
                 break;
@@ -136,15 +136,15 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 setButtonObj({ value: 'ENDED', disable: true});
                 break;
         }    
-    }, [stage_toNumber]);
+    }, [stageToNumber]);
 
     return(
         <React.Fragment>
-            <div className={`relative ${stage_toNumber === FuncTag.ENDED || stage_toNumber === FuncTag.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
+            <div className={`relative ${stageToNumber === FuncTag.ENDED || stageToNumber === FuncTag.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
                 <div className="flex gap-2 items-center ">
                     <button onClick={() => showPermissionDetail(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
                     <div className="relative ">
-                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCount_toNumber}</h3>
+                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCountToNumber}</h3>
                         <button onClick={() => showProviderDetails(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">
                             { 
                                 isPermissionless?
@@ -163,26 +163,26 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 <div className="text-orangec font-medium">
                     <span className="flex items-center gap-2">
                         <h1>{'Unit Id:'}</h1>
-                        <h1>{unitId_toNumber}</h1>
+                        <h1>{unitIdToNumber}</h1>
                     </span>
                     <div className="flex items-center gap-2">
                         <h3>{'Rate:'}</h3>
-                        <h3>{`${intPercent_string}%`}</h3>
+                        <h3>{`${intPercentString}%`}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3>{'Stage:'}</h3>
-                        <h3>{FuncTag[stage_toNumber]}</h3>
+                        <h3>{FuncTag[stageToNumber]}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3>{'Quorum:'}</h3>
-                        <h3>{quorum_toNumber}</h3>
+                        <h3>{quorumToNumber}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3 className="">{'Pair:'}</h3>
                         <h3 className="">{pair}</h3>
                     </div>
                     <h2 className="absolute right-0 top-[1px] text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[26px]">
-                        {`$${unit_InEther}`}
+                        {`$${unitInEther}`}
                     </h2>
                 </div>
                 <div className="w-full flex flex-col justify-between items-center">
@@ -198,8 +198,8 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                             {
                                 ...{
                                     sentQuota,
-                                    loan_InBN,
-                                    payDate_InSec,
+                                    loanInBN,
+                                    paybackTimeInSec,
                                     otherParam,
                                     buttonObj,
                                     ...formattedPool,
@@ -228,7 +228,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 isAdmin={isAdmin}
                 popUpDrawer={providerDrawer}
                 toggleDrawer={showProviderDetails}
-                cData_formatted={cData_formatted} 
+                cDataFormatted={cDataFormatted} 
             />
             {
                 (!confirmationDrawerOn && !inputModalOn) && 
@@ -241,8 +241,8 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                                 {
                                     ...{
                                         sentQuota,
-                                        loan_InBN,
-                                        payDate_InSec,
+                                        loanInBN,
+                                        paybackTimeInSec,
                                         otherParam,
                                         buttonObj,
                                         ...formattedPool,

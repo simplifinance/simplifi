@@ -1,5 +1,5 @@
 import React from "react";
-import { FormattedData } from "@/interfaces";
+import { ProviderProps } from "@/interfaces";
 import { flexSpread } from "@/constants";
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import Collapse from "@mui/material/Collapse";
@@ -14,16 +14,14 @@ export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
     const { currency } = getContractData(chainId || 4157);
 
     const { 
-        // isAdmin, 
         sentQuota,
-        id_toString, 
-        loan_InEther,
-        // slot_toNumber, 
-        colBals_InEther,
-        durOfChoice_InSec,
-        expInterest_InEther,
-        payDate_InDateFormat,
-        turnTime_InDateFormat,
+        idToString, 
+        loanInEther,
+        colBalsInEther,
+        durOfChoiceInSec,
+        interestPaidInEther,
+        paybackTimeInDateFormat,
+        turnStartTimeInDateFormat,
     } = formattedData;
 
     return(
@@ -36,7 +34,7 @@ export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
                 <ul className="w-full space-y-2 text-xs relative">
                     <li className={`${flexSpread} underline underline-offset-4`}>
                         <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
-                        <AddressWrapper size={3} account={id_toString} display overrideClassName="text-sm" copyIconSize="4"/>
+                        <AddressWrapper size={3} account={idToString} display overrideClassName="text-sm" copyIconSize="4"/>
                         <h3 className="absolute right-[40%]">
                             { adminBadge(isAdmin) }
                         </h3>
@@ -47,7 +45,7 @@ export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
                     </li> */}
                     <li className={`${flexSpread}`}>
                         <h3>Time Until GetFinance</h3>
-                        <h3 className="text-end">{turnTime_InDateFormat}</h3>
+                        <h3 className="text-end">{turnStartTimeInDateFormat}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Has Sent Quota</h3>
@@ -55,23 +53,23 @@ export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Duration Choice</h3>
-                        <h3>{durOfChoice_InSec > 0? durOfChoice_InSec / 3600 : 0}</h3>
+                        <h3>{durOfChoiceInSec > 0? durOfChoiceInSec / 3600 : 0}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Loan Bal</h3>
-                        <h3>{`${loan_InEther} USDT`}</h3>
+                        <h3>{`${loanInEther} USDT`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{'Max. Date To Payback'}</h3>
-                        <h3 className="text-end">{ payDate_InDateFormat }</h3>
+                        <h3 className="text-end">{ paybackTimeInDateFormat }</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{"Col-Bal"}</h3>
-                        <h3>{`${colBals_InEther} ${currency}`}</h3>
+                        <h3>{`${colBalsInEther} ${currency}`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Interest Accrued</h3>
-                        <h3>{`${expInterest_InEther} ${currency}`}</h3>
+                        <h3>{`${interestPaidInEther} ${currency}`}</h3>
                     </li>
                 </ul>
             </Collapse>
@@ -88,9 +86,3 @@ const adminBadge = (isAdmin: boolean) => {
         </span>
     );
 };
-
-interface ProviderProps {
-    formattedData: FormattedData;
-    index: number;
-    isAdmin: boolean;
-}

@@ -2,23 +2,31 @@
 
 import { WagmiProvider } from "wagmi";
 import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
+// import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
+// import { SessionProvider } from "next-auth/react";
+// import { Session } from "next-auth";
+// import { UserRejectedRequestError } from "viem";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
-import { ReactNode } from "react";
 import { Chain } from "viem";
-import { UserRejectedRequestError } from "viem";
-import { celoAlfajores } from 'wagmi/chains';
+import { celoAlfajores, } from 'wagmi/chains';
 
+// Your walletconnect project Id
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
+
+// Alchemy websocket URI
 const testAlchemyWebSocket = str(process.env.NEXT_PUBLIC_ALCHEMY_WEBSOCKET_TESTNET);
 if (!projectId) throw new Error('Project ID is undefined');
 
+// Alchemy API Key
 const alchemy_api_key = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
-const crossFiTestnet : Chain = {
+
+// CrossFi Blaze network configuration
+const blaze : Chain = {
   id: 4157,
-  name: "CrossFi Testnet",
+  name: "Blaze",
   nativeCurrency: {
-    name: "CrossFI Test Token",
+    name: "CrossFi Test Token",
     symbol: "XFI",
     decimals: 18
   },
@@ -37,85 +45,42 @@ const crossFiTestnet : Chain = {
   }
 }
 
-const crossFiMainnet : Chain = {
-  id: 4158,
-  name: "CrossFi Mainnet",
-  nativeCurrency: {
-    name: "CrossFi Mainnet Token",
-    symbol: "XFI",
-    decimals: 18
-  },
-  blockExplorers: {
-    default: {
-      name: "crossFi",
-      url: "https://xfiscan.com"
-    }
-  },
-  rpcUrls: {
-    default: {
-      // http: ["https://rpc.mainnet.ms",],
-      http: ["https://rpc.mainet.ms", `https://crossfi-mainnet.g.alchemy.com/v2/${alchemy_api_key}`,],
-      webSocket: ['']
-    }
-  }
-} 
-
-// export const mockConnector = mock({
-//   accounts: ['0xD7c271d20c9E323336bFC843AEb8deC23B346352'],
-//   features: {
-//     connectError: new UserRejectedRequestError(new Error('Failed to connect')),
-//     reconnect: false
+// CrossFi mainnet configuration
+// const crossFiMainnet : Chain = {
+//   id: 4158,
+//   name: "CrossFi Mainnet",
+//   nativeCurrency: {
+//     name: "CrossFi Mainnet Token",
+//     symbol: "XFI",
+//     decimals: 18
+//   },
+//   blockExplorers: {
+//     default: {
+//       name: "crossFi",
+//       url: "https://xfiscan.com"
+//     }
+//   },
+//   rpcUrls: {
+//     default: {
+//       // http: ["https://rpc.mainnet.ms",],
+//       http: ["https://rpc.mainet.ms", `https://crossfi-mainnet.g.alchemy.com/v2/${alchemy_api_key}`,],
+//       webSocket: ['']
+//     }
 //   }
-// });
+// } 
 
-// const config = createConfig({
-//   chains: [crossFiTestnet, crossFiMainnet],
-//   connectors: [
-//     // mockConnector,
-//     injected(),
-//     metaMask({
-//       dappMetadata: {
-//         name: 'Simplifinance', 
-//         url: 'https://simplifi-glxp.vercel.app',
-//         // iconUrl: 'https://favicon-32x32.png'
-//       }
-//     }),
-//     coinbaseWallet({
-//       appName: 'Simplifinance',
-//       appLogoUrl: '/favicon-32x32.png',
-//       darkMode: true,
-//       enableMobileWalletLink: true,
-//       // overrideIsMetaMask: false,
-//       reloadOnDisconnect: true
-//     }),
-//     walletConnect({
-//       projectId,
-//       metadata: {
-//         name: 'Simplifinance',
-//         description: 'A decentralized p2p, DeFi protocol',
-//         icons: ['/favicon-32x32.png'],
-//         url: 'https://simplifi-glxp.vercel.app',
-//       }
-//     }),
-//   ],
-//   transports: {
-//     [crossFiTestnet.id]: fallback([
-//       http("https://rpc.testnet.ms"),
-//       http(`https://crossfi-testnet.g.alchemy.com/v2/${alchemy_api_key}`)
-//     ]),
-//     [crossFiMainnet.id]: http(),
-//   }
-// });
+// Load the defaut config from RainbowKit
 const config = getDefaultConfig({
   appName: 'Simplifinance',
   projectId,
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
   appUrl: 'https://testnet.simplifinance.xyz',
-  chains: [ crossFiTestnet, celoAlfajores],
+  chains: [ blaze, celoAlfajores ],
   
 });
 
+// Light theme configuration for RainbowKit wallet set up
 const theme = lightTheme(
   {
     ...lightTheme.accentColors.orange,
@@ -125,16 +90,35 @@ const theme = lightTheme(
     overlayBlur: 'small',
     accentColor: '#2E3231'
   }
-)
+);
 
-export default function AppProvider({children} : {children: ReactNode}) {
+export default function AppProvider({children} : {children: React.ReactNode}) {
   return(
     <WagmiProvider config={config}>
       <QueryClientProvider client={new QueryClient()}>
-        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={crossFiTestnet.id} showRecentTransactions={true}>
+        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={blaze.id} showRecentTransactions={true}>
           { children }
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
 }
+
+// export default function AppProvider({session, children} : {session: Session, children: ReactNode}) {
+//   return(
+//     <WagmiProvider config={config}>
+//       {/* <SessionProvider refetchInterval={0} session={session}> */}
+//         <QueryClientProvider client={new QueryClient()}>
+//           <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
+//             <RainbowKitProvider modalSize="compact" theme={theme} initialChain={blaze.id} showRecentTransactions={true}>
+//               { children }
+//             </RainbowKitProvider>
+//           </RainbowKitSiweNextAuthProvider>
+//         </QueryClientProvider>
+//       {/* </SessionProvider> */}
+//     </WagmiProvider>
+//   );
+// }
+// const getSiweMessageOptions : GetSiweMessageOptions = () => ({
+//   statement: "Confirm that you want to sign in to Simplifi"
+// })

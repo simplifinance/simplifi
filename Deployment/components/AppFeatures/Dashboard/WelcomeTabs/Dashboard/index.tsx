@@ -1,26 +1,29 @@
 import React from "react";
 import { Button } from "@/components/ui/button"
-import { useAccount, useConnect } from "wagmi";
-import { useNavigate } from "react-router-dom";
-import { flexSpread, ROUTE_ENUM } from "@/constants";
+import { useAccount } from "wagmi";
+import { flexSpread, } from "@/constants";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import createFlexpool from "@/components/AppFeatures/FlexPool/Create";
+import flexpool from "@/components/AppFeatures/FlexPool";
 
 export default function Dashboard() {
-    const { isConnected, connector } = useAccount();
-    const { connectAsync } = useConnect();
-    const navigate = useNavigate();
+    const { isConnected, } = useAccount();
+    const { addNode } = useAppStorage();
+    const { connectModalOpen, openConnectModal } = useConnectModal();
 
-    // Connect wallet to access the app
+    // Connect user or route to flexpool
     const handleConnectButton = async() => {
-        !isConnected? navigate(ROUTE_ENUM.CREATE) : connector? await connectAsync({connector}) : alert("No wallet detected");
+        isConnected? addNode({type: 'Current', item: createFlexpool()}) : openConnectModal?.();
     }
 
     // Route user to create pool section
     const handleCreateFlexpool = async() => {
-        isConnected && navigate(ROUTE_ENUM.CREATE);
+        isConnected && addNode({type: 'Current', item: createFlexpool()});
     }
 
     // Route user to Flexpool
-    const handleRouteToFlexpool = () => navigate(ROUTE_ENUM.FLEXPOOL);
+    const handleRouteToFlexpool = () => isConnected? addNode({type: 'Current', item: flexpool()}) : alert('Please connect wallet');
 
     // Get test tokens
     const handleGetTestToken = () => {
@@ -29,7 +32,7 @@ export default function Dashboard() {
     }
 
     return(
-        <div className="space-y-4 max-h-[500px] overflow-auto">
+        <div className="space-y-4 overflow-auto">
             <div className="bg-green1 dark:bg-gray1/50 text-white1/80 p-4 rounded-[16px] space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Create a Flexpool</h3>
                 <p>Create a customized Flexpool with liquidity to receive <span>SIMPL Points</span>, and possibly be eligible to receive airdrops from future partner projects</p>
@@ -43,7 +46,7 @@ export default function Dashboard() {
             <div className="bg-green1 p-4 rounded-[16px] text-white1/80 space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Connect your Wallet</h3>
                 <p>Get started exploring Simplifi on supported networks</p>
-                <Button onClick={handleConnectButton} className={`${flexSpread} border border-white1/50`}>
+                <Button disabled={connectModalOpen || isConnected} onClick={handleConnectButton} className={`${flexSpread} onboardButton border border-white1/50`}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 0 0-2.25-2.25H15a3 3 0 1 1-6 0H5.25A2.25 2.25 0 0 0 3 12m18 0v6a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 9m18 0V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v3" />
                     </svg>

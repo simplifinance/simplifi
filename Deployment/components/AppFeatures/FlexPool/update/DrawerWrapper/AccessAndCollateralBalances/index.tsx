@@ -15,7 +15,7 @@ import withdrawCollateral from "@/apis/update/bank/withdrawCollateral";
 import depositCollateral from "@/apis/update/bank/depositCollateral";
 import { CollateralInput } from "./CollateralInput";
 
-export default function AccessAndCollateralBalances({ handleCloseDrawer, formatted_bank, rId} : AccessAndCollateralBalanceProps) {
+export default function AccessAndCollateralBalances({ handleCloseDrawer, formattedSafe, rId} : AccessAndCollateralBalanceProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [showInput, setShowInput] = React.useState<boolean>(false);
     const [amount, setAmount] = React.useState<string>('0');
@@ -49,7 +49,7 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
     const { data, isPending } = useReadContract({
         ...readUserDataConfig({
             user: currentUser, 
-            bank: formatted_bank,
+            bank: formattedSafe,
             rId
         }),
         query: {refetchInterval: 5000}
@@ -62,7 +62,7 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
         await depositCollateral({
             config,
             account: currentUser,
-            bank: formatted_bank,
+            bank: formattedSafe,
             rId,
             callback,
             value: parseEther(amount, 'wei')
@@ -74,7 +74,7 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
         setLoading(true);
         await withdrawCollateral({
             account: currentUser,
-            bank: formatted_bank,
+            bank: formattedSafe,
             rId,
             config,
             callback, 
@@ -128,7 +128,7 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
 }
 
 interface AccessAndCollateralBalanceProps {
-    formatted_bank: Address;
+    formattedSafe: Address;
     handleCloseDrawer: VoidFunc;
     rId: bigint;
 }

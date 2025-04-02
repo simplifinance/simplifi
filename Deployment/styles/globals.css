@@ -29,7 +29,7 @@
 html,
 body {
   scroll-behavior: smooth;
-  background: #121212;
+  /* background: #121212; */
   background-image: url('../public/hero-bg1.png');
   object-fit: cover;
   color: #F9F4F4;
@@ -38,7 +38,7 @@ body {
 }
 
 .appContainer {
-  color: #F9F4F4;
+  /* color: #F9F4F4; */
   display: grid;
   grid-template-columns: 300px 1fr;
   grid-template-rows: auto 1fr;
@@ -110,10 +110,8 @@ footer{
 
 .animateSidebar{
   margin: 0;
-  background: #2e3231;
   position: relative;
   padding: 40px 16px 16px 16px;
-  /* width: 300px; */
 }
 
 @property --angle{ 
@@ -128,7 +126,7 @@ footer{
   position: absolute;
   height: 101%;
   width: 102%;
-  border-radius: 56px;
+  border-radius: 36px;
   background-image: conic-gradient(from var(--angle), transparent 70%, #2E3231, #F87C00, #121212, #F87C00,#2E3231, #F9f4f4, #2E3231);
   top: 50%;
   left: 50%;
@@ -203,7 +201,7 @@ footer{
 /* AnimateOnboard start */
 .animateOnboard{
   margin: 0;
-  background: #2e3231;
+  /* background: #2e3231; */
   position: relative;
   padding: 24px;
   border-radius: 26px;
