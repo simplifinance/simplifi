@@ -3,11 +3,9 @@ import factory_celo from "@/deployments/alfajores/Factory.json";
 import token_xfi from "@/deployments/crossTest/TestBaseAsset.json";
 import token_celo from "@/deployments/alfajores/TestBaseAsset.json";
 import { Address } from "@/interfaces";
+import { currencies, networks, pairs, supportedChains } from "@/constants";
+import { isSuportedChain } from "@/utilities";
 
-const chainids = [4157, 44787];
-const currencies = ['XFI', 'CELO'];
-const networks = ['CROSSFI', 'ALFAJORES'];
-const pairs = ['USDT/XFI', "USDT/CELO"];
 const contract_addrs = [token_xfi.address, token_celo.address] as const;
 const factories = [factory_xfi.address, factory_celo.address] as const;
 
@@ -17,9 +15,8 @@ export const formatAddr = (x: string | (Address | undefined)) : Address => {
 };
 
 export const getContractData = (chainId: number) => {
-    const isInList = chainids.includes(chainId);
-    if(!isInList) throw new Error('Unsupported chain');
-    const index = chainids.indexOf(chainId);
+    let index = supportedChains[1];
+    if(!isSuportedChain(chainId)) index = supportedChains.indexOf(chainId);;
     return {
         token: formatAddr(contract_addrs[index]),
         factory: formatAddr(factories[index]),
@@ -28,3 +25,4 @@ export const getContractData = (chainId: number) => {
         pair: pairs[index],
     };
 }
+// throw new Error('Unsupported chain')

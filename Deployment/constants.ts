@@ -1,5 +1,5 @@
 import { zeroAddress } from 'viem';
-import { Analytics, FormattedData, LiquidityPool, Profile } from './interfaces';
+import { Analytics, FormattedData, LiquidityPool, Path, Profile } from './interfaces';
 import BigNumber from 'bignumber.js';
 import type { SafeVersion } from '@safe-global/types-kit';
 
@@ -11,48 +11,39 @@ export enum FuncTag {
   CANCELED,
   ENDED
 }
-export const SAFE_VERSION : SafeVersion = '1.4.1';
-export enum ROUTER { PERMISSIONLESS, PERMISSIONED }
-export const DRAWERWIDTH = 240;
-export const ZERO_ADDR = zeroAddress;
-export const STRINGS = ["Decentralized", "Secure", "Permissionless"];
-export const INIT_ZOOM = '0%';
-export const DEFAULT_ANIMATION_STEPS = ['50%', '100%'];
-export const CONFIRMATIONS = 3; // 3 blocks
+export const safeVersion : SafeVersion = '1.4.1';
+export enum Router { PERMISSIONLESS, PERMISSIONED }
+export const initialZoom = '0%';
+export const defaultAnimationSteps = ['50%', '100%'];
+export const confirmationBlocks = 3; // 3 blocks
 export const flexCenter = "flex justify-center items-center";
 export const flexStart = "flex justify-start items-center";
 export const flexEnd = "flex justify-end items-center";
 export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
-export const ANALYTICS : Analytics = {
+export const analytics : Analytics = {
   tvlInXFI: 0n,
   tvlInUsd: 0n,
   totalPermissioned: 0n,
   totalPermissionless: 0n
 }
 
-export const PROFILE_MOCK : Profile = {
+export const profileMock : Profile = {
   id: zeroAddress,
-  payDate: 0n,
+  paybackTime: 0n,
   colBals: 0n,
-  expInterest: 0n,
+  interestPaid: 0n,
   durOfChoice: 0n,
-  turnTime: 0n,
+  turnStartTime: 0n,
   loan: 0n,
-  sentQuota: false
+  sentQuota: false,
+  getFinanceTime: 0n
 };
 
-export const POOL_MOCK : LiquidityPool = {
-  uint256s: {
-    unit: 0n,
-    currentPool: 0n,
-    fullInterest: 0n,
-    intPerSec: 0n,
-    unitId: 0n,
-    rId: 0n
-  },
+export const poolMock : LiquidityPool = {
+  bigInt: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },
   stage: 0n,
-  uints: {
+  lInt: {
     intRate: 0n,
     quorum: 0n,
     selector: 0n,
@@ -62,38 +53,38 @@ export const POOL_MOCK : LiquidityPool = {
     allGh: 0n,
     userCount: 0n
   },
-  addrs: {
-    lastPaid: zeroAddress,
-    admin: zeroAddress,
-    asset: zeroAddress,
-    bank: zeroAddress,
-  },
+  addrs: { lastPaid: zeroAddress, admin: zeroAddress, asset: zeroAddress, bank: zeroAddress, },
+  interest: {fullInterest: 0n, intPerSec: 0n,intPerChoiceOfDur: 0n},
   router: 'PERMISSIONLESS',
   status: 0n
 }
 
-export const FORMATTEDDATA_MOCK : FormattedData = {
-  payDate_InDateFormat: '',
-  payDate_InSec: 0,
-  turnTime_InDateFormat: '',
-  turnTime_InSec: 0,
-  durOfChoice_InSec: 0,
-  colBals_InEther: '',
-  loan_InEther: '',
-  expInterest_InEther: '',
-  id_lowerCase: '',
-  id_toString: '',
-  loan_InBN: new BigNumber(0),
+export const formattedMockData : FormattedData = {
+  paybackTimeInDateFormat: '',
+  paybackTimeInSec: 0,
+  turnStartTimeInDateFormat: '',
+  turnStartTimeInSec: 0,
+  durOfChoiceInSec: 0,
+  colBalsInEther: '',
+  loanInEther: '',
+  interestPaidInEther: '',
+  idLowerCase: '',
+  idToString: '',
+  loanInBN: new BigNumber(0),
   sentQuota: false
 }
 
-export const ROUTE_ENUM = {
-  DASHBOARD: '/',
-  FLEXPOOL: '/flexpool',
-  YIELD: '/yield',
-  DAO: '/dao',
-  CREATE: '/flexpool/create',
-  POOLS: '/flexpool/pools',
-  FAQ: '/faq',
-  AIASSIST: '/aiassist'
+export const routeEnum : Record<string, Path> = {
+  DASHBOARD: 'Dashboard',
+  FLEXPOOL: 'Flexpool',
+  YIELD: 'Yield',
+  DAO: 'Dao',
+  CREATE: 'CreateFlexpool',
+  FAQ: 'Faq',
+  AIASSIST: 'AiAssist'
 }
+
+export const supportedChains = [4157, 44787];
+export const currencies = ['XFI', 'CELO'];
+export const networks = ['CROSSFI', 'ALFAJORES'];
+export const pairs = ['USDT/XFI', "CUSD/CELO"];

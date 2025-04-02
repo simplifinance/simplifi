@@ -1,9 +1,9 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { BigNumberish, ethers } from "ethers";
-import { C3 } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
 
-export type Path = '/dashboard' | '/yield' | '/simplidao' | '/flexpool' | 'faq';
+export type Path = 'Yield' | 'Dao' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
 export type ViemClient = import('viem').Client;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
@@ -20,10 +20,13 @@ export type ToggleDrawer = (value: number, setState: (value: number) => void) =>
 export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type PoolType = 'Permissioned' | 'Permissionless';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
-export type Profile = C3.ContributorStruct;
+export type Profile = Common.ContributorStruct;
 export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
+// export type SimpliFC = () => CustomNode;
+export type RenderType = 'Back' | 'Current' | '';
+
 export interface TrxState {
   status?: TrxResult;
   message: string;
@@ -31,18 +34,19 @@ export interface TrxState {
 
 export interface ReadDataReturnValue {
   pool: LiquidityPool;
-  cData: Readonly<C3.ContributorStruct[]>;
+  cData: Readonly<Common.ContributorStruct[]>;
 }
 
 export interface LiquidityPool {
-  uints: C3.UintsStruct;
-  uint256s: C3.Uint256sStruct;
-  addrs: C3.AddressesStruct;
+  lInt: Common.LIntStruct;
+  bigInt: Common.BigIntStruct;
+  addrs: Common.AddressesStruct;
   status: BigNumberish;
   router: BigNumberish;
   stage: BigNumberish;
+  interest: Common.InterestStruct;
 }
-// cData: Readonly<C3.ContributorStruct[]>;
+// cData: Readonly<Common.ContributorStruct[]>;
 
 export interface CreatePermissionedPoolParams extends Config{
   intRate: number;
@@ -93,17 +97,17 @@ export interface ScreenUserResult{
 }
 
 export interface FormattedData {
-  payDate_InDateFormat: string;
-  payDate_InSec: number;
-  turnTime_InDateFormat: string;
-  turnTime_InSec: number;
-  durOfChoice_InSec: number;
-  colBals_InEther: string;
-  loan_InEther: string;
-  expInterest_InEther: string;
-  id_lowerCase: string;
-  id_toString: string;
-  loan_InBN: BigNumber;
+  paybackTimeInDateFormat: string;
+  paybackTimeInSec: number;
+  turnStartTimeInDateFormat: string;
+  turnStartTimeInSec: number;
+  durOfChoiceInSec: number;
+  colBalsInEther: string;
+  loanInEther: string;
+  interestPaidInEther: string;
+  idLowerCase: string;
+  idToString: string;
+  loanInBN: BigNumber;
   sentQuota: boolean;
 }
 
@@ -112,34 +116,34 @@ export interface FormattedPoolContentProps {
   unit_bigint: bigint;
   rId: bigint;
   // pair: string;
-  quorum_toNumber: number;
-  userCount_toNumber: number;
-  allGET_bool: boolean;
-  allGh_toNumber: number;
-  unitId_toNumber: number;
-  unitId_bigint: bigint;
-  stage_toNumber: number;
-  expectedPoolAmt_bigint: bigint;
-  unit_InEther: string;
-  intPercent_string: string;
-  duration_toNumber: number;
+  quorumToNumber: number;
+  userCountToNumber: number;
+  allGetBool: boolean;
+  allGhToNumber: number;
+  unitIdToNumber: number;
+  unitIdBigint: bigint;
+  stageToNumber: number;
+  expectedPoolAmtBigint: bigint;
+  unitInEther: string;
+  intPercentString: string;
+  durationToNumber: number;
   poolFilled: boolean;
   isPermissionless: boolean;
-  selector_toNumber: number;
-  colCoverage_InString: string;
-  fullInterest_InEther: string;
-  intPerSec_InEther: string;
-  currentPool_InEther: string;
-  admin_lowerCase: string;
-  asset_lowerCase: string;
+  selectorToNumber: number;
+  colCoverageInString: string;
+  fullInterestInEther: string;
+  intPerSecInEther: string;
+  currentPoolInEther: string;
+  adminLowerCase: string;
+  assetLowerCase: string;
   admin: ethers.AddressLike;
   asset: ethers.AddressLike;
   isAdmin: boolean;
   isMember: boolean;
-  cData_formatted: FormattedData[];
+  cDataFormatted: FormattedData[];
   intPerSec: BigNumberish;
   lastPaid: Address;
-  formatted_bank: Address;
+  formattedSafe: Address;
   unitInBN: BigNumber;
   currentPoolInBN: BigNumber;
 }
@@ -203,9 +207,15 @@ export interface CommonToolArg {
   callback: TransactionCallback;
   account: Address;
 }
-// export interface ViewFactoryData {
-//   analytics: Analytics;
-//   contractData: ContractData;
-//   currentEpoches: bigint;
-//   recordEpoches: bigint;
-// }
+
+export interface ProviderProps {
+  formattedData: FormattedData;
+  index: number;
+  isAdmin: boolean;
+}
+
+export interface CustomNode {
+  element: React.ReactNode; 
+  path: Path;
+  location: number;
+}

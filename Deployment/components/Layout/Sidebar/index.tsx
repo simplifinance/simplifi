@@ -1,10 +1,8 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
-import { NavLink } from "react-router-dom";
 import { Collapsible } from '@/components/utilities/Collapsible';
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import { routeEnum } from "@/constants";
 import { Path } from "@/interfaces";
-import { ROUTE_ENUM } from "@/constants";
 
 export default function Sidebar() {
   const { showSidebar,} = useAppStorage();
@@ -13,13 +11,13 @@ export default function Sidebar() {
     title: string, 
     disabled: boolean, 
     displayChevron: boolean, 
-    path: string, 
+    path: Path, 
     icon: JSX.Element
   }[] = [
     {
       title: 'Home',
       disabled: false,
-      path: ROUTE_ENUM.DASHBOARD,
+      path: routeEnum.DASHBOARD,
       displayChevron: false,
       icon: 
           <svg key={0} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg" className=''>
@@ -30,7 +28,7 @@ export default function Sidebar() {
     {
       title: 'Flex',
       disabled: false,
-      path: ROUTE_ENUM.FLEXPOOL,
+      path: routeEnum.FLEXPOOL,
       displayChevron: false,
       icon: 
           <svg key={1} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -45,7 +43,7 @@ export default function Sidebar() {
     {
       title: 'Yield',
       disabled: true,
-      path: ROUTE_ENUM.YIELD,
+      path: routeEnum.YIELD,
       displayChevron: false,
       icon: 
           <svg key={2} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +54,7 @@ export default function Sidebar() {
     {
       title: 'Dao',
       disabled: true,
-      path: ROUTE_ENUM.DAO,
+      path: routeEnum.DAO,
       displayChevron: false,
       icon: 
           <svg key={3} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -67,7 +65,7 @@ export default function Sidebar() {
     {
       title: 'Faq',
       disabled: false,
-      path: ROUTE_ENUM.FAQ,
+      path: routeEnum.FAQ,
       displayChevron: false,
       icon: 
         <svg key={4} width="20" height="20" viewBox="0 0 20 20" fill="#000" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +77,7 @@ export default function Sidebar() {
 
   return(
     <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[22px]`}>
-      <div className="w-full md:rounded-[36px] min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar">
+      <div className="w-full md:rounded-xl min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar">
         {
           DRAWER_CONTENT.map(({disabled, path, icon, title, displayChevron }) => (
             <Collapsible 
@@ -111,15 +109,15 @@ export default function Sidebar() {
 //           ([
 //             {
 //               name: 'Create',
-//               path: ROUTE_ENUM.CREATE
+//               path: routeEnum.CREATE
 //             },
 //             {
 //               name: 'Open',
-//               path: ROUTE_ENUM.OPEN
+//               path: routeEnum.OPEN
 //             },
 //             {
 //               name: 'Closed',
-//               path: ROUTE_ENUM.CLOSED
+//               path: routeEnum.CLOSED
 //             },
 //           ] as const).map(({name, path}) => (
 //             <NavLink to={path} key={name} style={({isActive}) => {

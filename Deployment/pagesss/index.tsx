@@ -1,16 +1,43 @@
-"use client"
-
 import React from "react";
+import Dashboard from "@/components/AppFeatures/Dashboard";
+import FlexPool from "@/components/AppFeatures/FlexPool";
+import Yield from "@/components/AppFeatures/Yield";
+import Faq from "@/components/AppFeatures/Faq";
+import SimpliDao from "@/components/AppFeatures/SimpliDao";
 import Notification from "@/components/utilities/Notification";
-import { analytics } from "@/constants";
+import { analytics, routeEnum, } from "@/constants";
 import { Path, TrxState, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import { useAccount, useReadContracts,} from "wagmi";
 import NotConnectedPopUp from "@/components/utilities/NotConnectedPopUp";
 import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
+import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import AppFeatures from "@/components/AppFeatures";
-import { useChainModal } from "@rainbow-me/rainbowkit";
+import { Create } from "@/components/AppFeatures/FlexPool/Create";
+import Pools from "@/components/AppFeatures/FlexPool/Pools";
+import AiAssist from "@/components/AppFeatures/AiAssist";
+import ErrorBoundary from "@/components/utilities/ErrorBoundary";
 import { isSuportedChain } from "@/utilities";
+import { useChainModal } from "@rainbow-me/rainbowkit"
+
+// import { GetServerSidePropsContext, InferGetServerSidePropsType, PreviewData } from 'next';
+// import { getSession } from 'next-auth/react';
+// import { getToken } from 'next-auth/jwt';
+// import { ParsedUrlQuery } from "querystring";
+
+// export const getServerSideProps = async (context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>) => {
+//   const session = await getSession(context);
+//   const token = await getToken({req: context.req});
+//   const address = token?.sub ?? null;
+  
+//   return{
+//     props: {
+//       address,
+//       session,
+//     },
+//   };
+// };
+// type AuthenticatedPageProps = InferGetServerSidePropsType<typeof getServerSideProps>;
 
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
@@ -18,14 +45,14 @@ export default function SimplifiApp() {
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
-  const [activePath, setActivePath] = React.useState<Path>('Dashboard');
+  const [activePath, setActivePath] = React.useState<Path>('/dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
-    
+  // const [switchChain, setSwitchChain] = React.useState<boolean>(false);
+
   const { isConnected, address, connector, isDisconnected, chainId } = useAccount();
-  const { openChainModal, chainModalOpen } = useChainModal();
+   const { openChainModal, chainModalOpen } = useChainModal();
   const { getFactoryDataConfig, readSymbolConfig } = getReadFunctions({chainId});
   
-  // Read contract data from the blockchain
   const { data, refetch } = useReadContracts({
     contracts: [
       {...readSymbolConfig()},
@@ -51,32 +78,25 @@ export default function SimplifiApp() {
     refetch();
   };
 
-  // const renderDashboardChildren = () => {
-  //   return(
-  //     CHILDREN.map(({element, path, children}) => (
-  //       <Route path={path} element={element}>{children && children}</Route>
-  //     ))
-  //   );
-  // }
+  const renderDashboardChildren = () => {
+    return(
+      CHILDREN.map(({element, path, children}) => (
+        <Route path={path} element={element}>{children && children}</Route>
+      ))
+    );
+  }
   
-  // // Configure a router provider 
-  // const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //     <Route 
-  //       path={'/'} 
-  //       element={ <AppFeatures /> } 
-  //     >
-  //       { renderDashboardChildren() }
-  //     </Route>
-  //   )
-  // );
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route 
+        path={'/'} 
+        element={ <AppFeatures /> } 
+      >
+        { renderDashboardChildren() }
+      </Route>
+    )
+  );
 
-  /**
-   * React UseEffect. Watches changes to the 'isConnected' variable.
-   * If user is not connected, they're restricted access to the app functionalities. 
-   * A popup modal is activated instead. At the same time, it ensures that users are 
-   * connected to a supported network.
-   */
   React.useEffect(() => {
     if(!isConnected) {
       openPopUp && setTimeout(() => {
@@ -117,9 +137,56 @@ export default function SimplifiApp() {
         }
       }
     >
-      <AppFeatures currentPath={activePath} />
+      <RouterProvider router={router} fallbackElement={<ErrorBoundary />} />
       <NotConnectedPopUp toggleDrawer={togglePopUp} openDrawer={openPopUp} />
       <Notification message={message} resetMessage={() => setmessage('')} />
+      {/* <SwitchChain chainId={chainId} /> */}
     </StorageContextProvider>
   );
 }
+
+const renderFlexPoolChildren = () => [
+  {
+    path: routeEnum.POOLS,
+    element: () => (<Pools />),
+  },
+  {
+    path: routeEnum.CREATE,
+    element: () => (<Create />),
+  },
+].map(({path, element}) => (
+    <Route key={path} {...{path, element: element()}} />
+));
+
+const CHILDREN : {path: string, element: React.ReactNode, children: React.ReactNode}[] = [
+  {
+    path: routeEnum.DASHBOARD,
+    element: ( <Dashboard /> ), 
+    children: undefined
+  },
+  {
+    path: routeEnum.FLEXPOOL,
+    element: ( <FlexPool /> ), 
+    children: renderFlexPoolChildren()
+  },
+  { 
+    path: routeEnum.YIELD,
+    element: ( <Yield /> ),
+    children: undefined
+  },
+  {
+    path: routeEnum.DAO,
+    element: ( <SimpliDao /> ), 
+    children: undefined
+  },
+  {
+    path: routeEnum.FAQ,
+    element: ( <Faq /> ), 
+    children: undefined
+  },
+  {
+    path: routeEnum.AIASSIST,
+    element: ( <AiAssist /> ), 
+    children: undefined
+  }
+];

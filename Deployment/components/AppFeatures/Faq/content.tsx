@@ -1,7 +1,7 @@
 export const faqContent = [
     {
         title: <h1>What is FlexPool?</h1>,
-        content: <p>FlexPool is a fancy name given to a custom liquidity pool that is operated by an individual. They&apos;re created primarily for the benefits of accessing loans at little or no interest rate pushing the loan boundary beyond limit. It may be permissioned <span className="text-orange-200">(for closed group or peers who are familiar with one another)</span> or permissionless <span className="text-orange-200">(open to anyone)</span>. A worthy exception 
+        content: <p>FlexPool is a fancy name given to a custom liquidity pool that is operated by an individual. They&apos;re created primarily for the benefits of accessing loans at little or no interest rate pushing the loan boundary beyond limit. It may be permissioned <span className="font-bold">(for closed group or peers who are familiar with one another)</span> or permissionless <span className="font-bold">(open to anyone)</span>. A worthy exception 
         to creating a permisssionless liquidity pool is that the proposed unit liquidity 
         must not exist. Two FlexPools with the same liquidity value cannot
         simultaneously exist in a Permissionless liquidity pool - PLP . To avoid and reduce the possibility of spamming and unexpected scenarios.
@@ -38,7 +38,7 @@ export const faqContent = [
         content: <p>
             An Epoch otherwise called Cycle is the total period/time is took all FlexPool participants to benefit from the liquidity.
             It may however been perceived as the total period is took all the participants to fulfil their turn. 
-            <span className="text-orange-200">
+            <span className="font-bold">
                 Example: Assume a FlexPool with 3 hours duration, and the quorum is 3, the cycle.epoch will be 9 hours since this will be the
                 aggregate time it will take all the participants to benefit from the liquidity contributed.
             </span>
@@ -108,7 +108,7 @@ export const faqContent = [
             released to the liquidator.
         </p>,
         subparagraph: <p>
-            <span className="text-orange-200">NOTE:</span> Liquidation may cause participants in a permissioned pool to forfeit 
+            <span className="font-bold">NOTE:</span> Liquidation may cause participants in a permissioned pool to forfeit 
             earnings or a part of their liquidity. Losses and profits are spread evenly among the participants where interest is set.
         </p>,
     },

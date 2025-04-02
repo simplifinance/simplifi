@@ -11,16 +11,16 @@ export const ActionButton = (props: RenderActionsProps) => {
     const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
     const { 
         buttonObj,
-        formatted_bank, 
+        formattedSafe, 
         otherParam, 
         inputModalOn,
         confirmationDrawerOn,
         setInputModal,
         setDrawerState,
-        duration_toNumber, } = props;
+        durationToNumber, } = props;
 
     const openDrawer = () => setDrawerState(1);
-    const maxEpochDuration = duration_toNumber.toString()
+    const maxEpochDuration = durationToNumber.toString()
     const { setstorage, } = useAppStorage();
     const handleModalClose = () => {
         if(preferredDuration === '0') {
@@ -39,7 +39,7 @@ export const ActionButton = (props: RenderActionsProps) => {
 
     const handleClick = () => {
         if(buttonObj.value === 'GET FINANCE') {
-            if(duration_toNumber > 1){
+            if(durationToNumber > 1){
                 setInputModal(true);
             } else {
                 openDrawer();
@@ -62,17 +62,13 @@ export const ActionButton = (props: RenderActionsProps) => {
         setstorage(arg);
     }
 
-    // const sendTransaction = async({onSuccess, onError}: {onSuccess: () => void, onError: (errorArg: FormatErrorArgs) => void}) => {
     const sendTransaction = async() => {
-        // console.log("Other param: ", otherParam);
-        // console.log("formatted_bank: ", formatted_bank);
-        // const otherParam : AmountToApproveParam = {...otp, txnType: buttonObj.value};
         await handleTransact(
             {
                 callback,
                 preferredDuration,
                 otherParam,
-                bank: formatted_bank
+                bank: formattedSafe
             }
         ); 
     }
@@ -112,8 +108,8 @@ export const ActionButton = (props: RenderActionsProps) => {
 export interface RenderActionsProps extends FormattedPoolContentProps{
     isMember: boolean;
     isAdmin: boolean;
-    loan_InBN: BigNumber;
-    payDate_InSec: number;
+    loanInBN: BigNumber;
+    paybackTimeInSec: number;
     sentQuota: boolean;
     buttonObj: ButtonObj;
     otherParam: AmountToApproveParam;
