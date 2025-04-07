@@ -3,6 +3,7 @@
 pragma solidity 0.8.24;
 
 import { IRoleBase } from "../apis/IRoleBase.sol";
+import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 /**
  * @title MsgSender 
@@ -16,11 +17,12 @@ abstract contract MsgSender {
 }
 
 abstract contract OnlyRoleBase is MsgSender {
-    error ManagerAddressIsZero();
-    error NotPermittedToCall();
+    using ErrorLib for string;
 
+    // Role manager address
     IRoleBase public roleManager;
 
+    // ============= constructor ============
     constructor(IRoleBase _roleManager)
     {
         _setRoleManager(_roleManager);
@@ -32,17 +34,23 @@ abstract contract OnlyRoleBase is MsgSender {
      * a context e.g function call. 
      */
     modifier onlyRoleBearer {
-        IRoleBase mgr = roleManager;
-        if(address(mgr) == address(0)) revert ManagerAddressIsZero();
-        if(!IRoleBase(mgr).hasRole(_msgSender())) revert NotPermittedToCall();
+        _onlyRoleBearer();
         _;
     }
 
-    function _setRoleManager(
-        IRoleBase newManager
-    )
-        private
-    {
+    // Allow only account with role access
+    function _onlyRoleBearer() internal view {
+        IRoleBase mgr = roleManager;
+        if(address(mgr) == address(0)) 'Manager is zero'._throw();
+        if(!_hasRole(_msgSender())) 'Access denied'._throw();
+    }
+
+    function _hasRole(address target) internal view returns(bool hasRole) {
+        _hasRole = IRoleBase(mgr).hasRole(target);
+    }  
+
+    /// @dev Set role manager
+    function _setRoleManager(IRoleBase newManager) private{
         roleManager = newManager;
     }
 

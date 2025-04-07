@@ -18,11 +18,13 @@ Collateral staked in the pool can optionally be channeled into the yield strateg
 <!-- https://youtu.be/2huZ2onFBb0 --> 
 
 ## Problem
+- Financial exclusion.
 - High interest rate monopoly.
 - Centralized and rigid liquidity pattern.
 - Low transparency and financial exclusion (especially for the lower class of users).
 
 ## Solution
+- Financial Inclusion for all classes of users.
 - Near-zero interest loans via peer-funding mechanism.
 - User-driven liquidity pool through our FlexPool design.
 - Enhanced flexibility and inclusion for all classes of users.

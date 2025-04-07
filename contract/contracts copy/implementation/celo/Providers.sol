@@ -6,6 +6,20 @@ import { ERC20Manager, IERC20 } from "../../peripherals/ERC20Manager.sol";
 import { MinimumLiquidity, IRoleBase, ErrorLib } from "../../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+/**
+ * @title Providers
+ * @author Simplifi (Bobeu)
+ * @notice Deployable Providers contract is a general liquidity pool purposely for funding Flexpools.
+ * Contributors that cannot afford unit contributions can access providers pool to source for funds. 
+ * Loans accessed in this pool are not withdrawable by the borrower. Since there is a direct relationship
+ * between the Providers contract and the Flexpool's, borrowed funds are moved straight to the Flexpool contract
+ * and registered on behalf of the contributor.
+ * With this contract, you can perform the following actions:
+ * - Provider liquidity.
+ * - Remove liquidity
+ * - Borrow to finance Flexpool
+ * - Get the list of providers
+ */
 contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     using ErrorLib for string;
     event LiquidityProvided(Common.Provider);
@@ -66,7 +80,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
             if(!isExistProvider){
                 slot = providers.length;
                 slots[caller] = slot;
-                providers.push(Common.Provider( slot, prov.amount + liquidity, rate, 0, caller));
+                providers.push(Common.Provider( slot, prov.amount + liquidity, rate, 0, caller, 0));
             } else {
                 prov = providers[slot];
                 providers[slot].amount = prov.amount + liquidity;
@@ -99,7 +113,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
         Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount); 
-        if(!IFactory(flexpoolFactory).joinViaProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
+        if(!IFactory(flexpoolFactory).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
 
         emit Borrowed(provs, _msgSender());
     }
@@ -153,7 +167,8 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     }
 
     // Returns providers in storage.
-    function getProviders() public view returns(Common.Providers[] memory) {
-        return providers;
+    function getProviders() public view returns(Common.Providers[] memory prov) {
+        prov = providers;
+        return prov;
     }
 }

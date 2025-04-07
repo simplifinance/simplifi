@@ -3,6 +3,7 @@
 pragma solidity 0.8.24;
 
 import { Common } from "../apis/Common.sol";
+import { ISafeFactory } from "../apis/ISafeFactory.sol";
 
 /**
  * @title : Safe storage contract
@@ -12,39 +13,20 @@ import { Common } from "../apis/Common.sol";
  *          The strategy utilizes the SafeGlobal protocol on the frontend to deploy a new Safe account for every unique 
  *          contribution unit.
  */
-abstract contract Safe {
+abstract contract SafeManager {
+
+    // Safe factory contract
+    ISafeFactory public immutable safeFactory;
 
     // Mapping of unit contribution to Safe struct
     mapping (uint256 => Common.Safe) private safes;
 
     /**
-     * @dev Returns the safe information
-     * @param unit : Unit contribution
+        * @dev Checks, validate and return safe for the target address.
+        * @param unit : Unit contribution.
     */
-    function _getSafe(uint256 unit) public view returns(Common.Safe memory safe){
-        safe = safes[unit];
-    }
-
-    // function _validateSafe(uint unit, address safe) internal {
-    //     if(_getSafe(unit).id == address(0)) {
-
-    //     }
-    // }
-
-    /**
-     * @dev Returns the safe information
-     * See _getSafe
-    */
-    function getSafe(uint256 unit) public view returns(Common.Safe memory){
-        return _getSafe(unit);
-    }
-
-    /**
-     * @dev Returns the safe information
-     * @param unit : Unit contribution
-     * @param safe : Safe Struct
-    */
-    function _setSafe(Common.Safe memory safe, uint256 unit) internal virtual {
-        safes[unit] = safe;
+    function _getSafe(uint256 unit) internal returns(address safe) {
+        safe = ISafeactory(safeFactory).pingSafe(unit);
+        assert(safe != address(0));
     }
 }

@@ -32,6 +32,7 @@ abstract contract ERC20Manager is MsgSender {
     function _validateAllowance(IERC20 asset, address owner, uint value) internal returns(uint allowance) {
         assert(asset != address(0));
         assert(owner != address(0));
+        if(!ISupportedAsset(assetManager).isSupportedAsset(asset)) 'Unsupported Asset'._throw();
         allowance = IERC20(asset).allowance(owner, address(this));
         if(allowance < value) 'Value exceed allowance'._throw();;
     }
@@ -43,7 +44,7 @@ abstract contract ERC20Manager is MsgSender {
      * @param beneficiary : Recipient of the allowance
      * @param value : Value to compare allowance to
     */
-    function _checkAndWithdrawAllowance(IERC20 asset, address owner, address beneficiary, uint value) internal returns(string memory errorMessage, uint allowance) {
+    function _checkAndWithdrawAllowance(IERC20 asset, address owner, address beneficiary, uint value) internal returns(uint allowance) {
         allowance = _validateAllowance(asset, owner, value);
         assert(beneficiary != address(0));
         assert(address(asset) != address(0));

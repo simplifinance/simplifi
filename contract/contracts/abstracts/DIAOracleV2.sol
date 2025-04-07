@@ -2,10 +2,7 @@
 
 pragma solidity 0.8.24;
 
-interface IDIAOracleV2{
-    function getValue(string memory) external returns (uint128, uint128);
-}
-
+import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
 /**
 * @title A sample contract showing how DIA oracles can be used in contracts.
 */

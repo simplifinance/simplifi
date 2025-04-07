@@ -3,11 +3,18 @@
 pragma solidity 0.8.24;
 
 interface Common {
+    event PoolCreated(Pool);
+    event NewContributorAdded(Pool);
+    event GetFinanced(Pool);
+    event Payback(Pool);
+    event Liquidated(Pool);
+    event Cancellation(uint unit);
+    event PoolEdited(Pool);
+
     enum Stage {
         JOIN, 
         GET, 
         PAYBACK, 
-        WITHDRAW,
         CANCELED,
         ENDED
     }
@@ -18,67 +25,55 @@ interface Common {
 
     enum Router { PERMISSIONLESS, PERMISSIONED }
 
-    struct Safe {
-        address id;
-        bytes32 ownerHash;
-    }
-
     struct Pool {
-        // address admin;
-        // address beneficiary;
-        // LowInt lInt;
-        // BigInt bigInt;
-        // Interest interest;
-        LInt lInt;
-        BigInt bigInt;
+        Low low;
+        Big bigInt;
         Addresses addrs;
         Router router;
         Stage stage;
-        Interest interest;
         Status status;
     }
 
-    struct LowInt {
-        uint quorum;
-        uint selector;
-        uint colCoverage;
-        uint duration;
-        uint intRate;
-        uint cSlot;
-        uint allGh;
-        uint userCount;
+    struct Low {
+        uint8 maxQuorum;
+        uint8 selector;
+        uint24 colCoverage;
+        uint32 duration;
+        uint8 allGh;
+        uint8 userCount;
     }
 
-    struct BigInt {
+    struct Big {
         uint256 unit;
         uint256 currentPool;
-        uint recordId;
-        uint unitId;
+        uint96 recordId;
+        uint96 unitId;
     }
 
     struct Point {
         uint contributor;
-        uint creator; 
+        uint creator;
+        uint referrals;
     }
 
-    struct Interest {
-        uint fullInterest;
-        uint intPerSec;
-        uint intPerChoiceOfDur;
-    }
+    // struct Interest {
+    //     uint fullInterest;
+    //     uint intPerSec;
+    //     uint intPerChoiceOfDur;
+    // }
 
     /**
      * @notice Structured types - Address
      * @param asset : Contract address of the asset in use.
      * @param lastPaid: Last contributor who got finance.
-     * @param bank : Strategy for each pool or epoch. See Strategy.sol for more details.
+     * @param safe : Strategy for each pool or epoch. See Strategy.sol for more details.
      * @param admin : Pool creator.
      * 
     */
     struct Addresses {
         address asset;
         address lastPaid;
-        address bank;
+        address safe;
         address admin;
     }
 
@@ -94,14 +89,15 @@ interface Common {
      * @param interestPaid : The amount of interest paid  
     */
     struct Contributor {
-        uint paybackTime;
-        uint turnStartTime;
-        uint getFinanceTime;
+        uint32 paybackTime;
+        uint32 turnStartTime;
+        uint32 getFinanceTime;
         uint loan;
         uint colBals;
         address id;
         bool sentQuota;
-        uint interestPaid;
+        // uint interestPaid;
+        Providers[] providers;
     }
 
     struct Price {
@@ -115,5 +111,47 @@ interface Common {
         uint rate;
         uint earnStartDate;
         address account;
+        uint accruals;
+    }
+
+    struct Payback_Safe {
+        address user; 
+        address asset; 
+        uint256 debt;
+        uint256 attestedInitialBal;
+        bool allGF; 
+        Contributor[] cData;
+        bool isSwapped;
+        address defaulted;
+        uint rId;
+        IERC20 collateralToken;
+    }
+
+    struct Slot {
+        uint value;
+        bool isMember;
+        bool isAdmin;
+    }
+
+    struct ReadDataReturnValue {
+        Pool pool;
+        Contributor[] cData;
+    }
+
+    struct UpdatePoolData {
+        uint unit;
+        uint96 unitId,
+        uint96 recordId,
+        uint8 maxQuorum;
+        uint24 colCoverage;
+        uint16 durationInHours;
+        address creator;
+    }
+
+    struct Analytics {
+        uint256 tvlCollateral;
+        uint256 tvlBase;
+        uint totalPermissioned;
+        uint totalPermissionless;
     }
 }
