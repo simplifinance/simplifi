@@ -35,7 +35,7 @@ library Utils {
     /**     @dev Calculation of percentage.
         *   This is how we calculate percentage to arrive at expected value with 
         *   precision.
-        *   We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
+        *   We choose a base value (numerator as 10000) repesenting a 100% of the principal value. This means if Alice wish to set 
         *   her interest rate to 0.05% for instance, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
         *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
         *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
@@ -154,15 +154,15 @@ library Utils {
     )
         internal 
         pure 
-        returns(Common.Interest memory _itr) 
+        returns(Common.Interest memory it) 
     {
-        Common.Interest memory it;
-        require(fullDurationInSec <= _maxDurationInSec(), "Utils: FullDur or DurOfChoice oerflow");
+        assert(fullDurationInSec <= _maxDurationInSec());
         it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
         if(it.fullInterest > 0) {
-            it.intPerSec = it.fullInterest.mul(1).div(fullDurationInSec);
+            unchecked {
+                it.intPerSec = (it.fullInterest * 1) / fullDurationInSec;
+            }
         }
-        _itr = it; 
     }
 
     /**

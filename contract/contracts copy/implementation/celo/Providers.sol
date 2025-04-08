@@ -26,6 +26,11 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     event LiquidityRemoved(Common.Provider);
     event Borrowed(Common.Provider[] memory provs, address borrower);
 
+    struct Data {
+        uint id;
+        bool hasIndex;
+    }
+
     // Flexpool factory contract
     IFactory public immutable flexpoolFactory;
 
@@ -36,7 +41,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
      * @dev Mapping of providers to their position in the providers list
      * @notice Slot '0' is reserved
      */
-    mapping (address provider => uint id) public slots;
+    mapping (address provider => Data) public slots;
 
     /**
      * ============= Constructor ================
@@ -57,33 +62,32 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         MinimumLiquidity(_roleManager)
     {
         if(address(_flexpoolFactory) == address(0)) '_flexpoolFactory is zero'._throw();
-        providers.push();
         flexpoolFactory = _flexpoolFactory;
     }
 
     /**
     * @dev Utility for provide liquidity
     * @notice User must approve this contract with the liquidiy amount prior to this call.
-    *       We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
-    *       her interest rate to 0.05% for instance, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
-    *       Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
-    *       zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
-    *       The minimum interest rate to set is 0.01% if interest must be set at least.
-    *       To reiterate, raw interest must be multiplied by 100 before giving as input. 
+    * @param rate: Interest rate the provider is willing to charge.      
+    *   We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
+    *   her interest rate to 0.05% for instance, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
+    *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
+    *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
+    *   The minimum interest rate to set is 0.01% if interest must be set at least.
+    *   To reiterate, raw interest must be multiplied by 100 before giving as input. 
     */
     function provideLiquidity(uint16 rate) public returns(bool) {
         if(rate >= type(uint16).max) "Invalid rate"._throw();
-        (Common.Provider memory prov, uint slot, address caller) = _getProvider();
-        bool isExistProvider = slot > 0;
-        uint liquidity = _checkAndWithdrawAllowance(baseAsset, caller, address(this), minimumLiquidity);
+        address sender = _msgSender();
+        Data memory data = slots[sender];
+        uint liquidity = _checkAndWithdrawAllowance(baseAsset, sender, address(this), minimumLiquidity);
         unchecked {
-            if(!isExistProvider){
+            if(!data.hasIndex){
                 slot = providers.length;
-                slots[caller] = slot;
-                providers.push(Common.Provider( slot, prov.amount + liquidity, rate, 0, caller, 0));
+                slots[sender] = Data(slot, true);
+                providers.push(Common.Provider(slot, liquidity, rate, 0, sender, 0));
             } else {
-                prov = providers[slot];
-                providers[slot].amount = prov.amount + liquidity;
+                providers[data.id].amount += liquidity;
             }
         }
 
@@ -100,7 +104,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         if(prov.amount == 0) "Nothing to remove"._throw();
         providers[slot].amount = 0;
         _setApprovalFor(baseAsset, caller, prov.amount);
-        prov.amount = 0;
+        // prov.amount = 0;
         emit LiquidityRemoved(prov);
     }
 
@@ -123,6 +127,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
      * to accommodate the requested loan, otherwise operation fails.
      * @param providersSlot : Array of selected providers slots
      * @param amount : Requested loan amount
+     * @return : A list of providers that financed the contribution
      */
     function _aggregateLiquidityFromProviders(
         uint[] memory providersSlots, 
@@ -135,22 +140,22 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         uint amountLeft = amount;
         for(uint i = 0; i < providersSlots.length; i++) {
             uint slot = providersSlots[i];
+            if(slot >= providers.length) 'Invalid slot detected'._throw();
             Common.Provider memory prov = providers[slot];
-            if(slot > 0) {
-                unchecked {
-                    if(prov.amount >= amountLeft) {
-                        providers[slot].amount = lprov.amount - amountLeft;
-                        amountLeft = 0;
-                        break;
-                    } else {
-                        amountLeft -= prov.amount;
-                        providers[slot].amount = 0;
-                    }
+            unchecked {
+                if(prov.amount >= amountLeft) {
+                    providers[slot].amount = prov.amount - amountLeft; 
+                    amountLeft = 0;
+                } else {
+                    amountLeft -= prov.amount; 
+                    providers[slot].amount = 0;
                 }
             }
+
             uint snapshotBal = providers[slot].amount;
             prov.amount -= snapshotBal; // Record actual amount the provider lends to the borrower
             provs[i] = prov;
+            if(amountLeft == 0) break;
         }
         if(amountLeft > 0) 'Loan exceed aggregate providers bal'._throw();
     }
@@ -162,7 +167,9 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         returns(Common.Provider memory prov, uint slot, address caller) 
     {
         caller = _msgSender();
-        slot = slots[caller];
+        Data memory data = slots[caller];
+        if(!data.hasIndex) 'User is not a provider'._throw();
+        slot = data.id;
         prov = providers[slot];
     }
 

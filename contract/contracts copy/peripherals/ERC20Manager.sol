@@ -15,6 +15,11 @@ abstract contract ERC20Manager is MsgSender {
     // Base asset contract e.g cUSD
     IERC20 public immutable baseAsset;
 
+    modifier onlySupportedAsset(IERC20 asset) {
+        if(!ISupportedAsset(assetManager).isSupportedAsset(asset)) 'Unsupported Asset'._throw();
+        _;
+    }
+
     // ============= Constructor ================
 
     constructor(address _assetManager, IERC20 _baseAsset) {
@@ -29,10 +34,17 @@ abstract contract ERC20Manager is MsgSender {
      * @param owner : Owner account
      * @param value : Value to compare allowance to
      */
-    function _validateAllowance(IERC20 asset, address owner, uint value) internal returns(uint allowance) {
+    function _validateAllowance(
+        IERC20 asset, 
+        address owner, 
+        uint value
+    ) 
+        onlySupportedAsset(asset)
+        internal 
+        returns(uint allowance) 
+    {
         assert(asset != address(0));
         assert(owner != address(0));
-        if(!ISupportedAsset(assetManager).isSupportedAsset(asset)) 'Unsupported Asset'._throw();
         allowance = IERC20(asset).allowance(owner, address(this));
         if(allowance < value) 'Value exceed allowance'._throw();;
     }

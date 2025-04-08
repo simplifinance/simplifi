@@ -4,11 +4,13 @@ pragma solidity 0.8.24;
 
 import { Epoches, Common } from "./Epoches.sol";
 import { Slots } from "./Slots.sol" ;
-import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { Price } from "./Price.sol";
+import { Utils } from "../libraries/Utils.sol";
+import { AwardPoint, IRoleBase, IERC20, ErrorLib } from "./AwardPoint.sol";
+import { ISafe } from "../apis/ISafe.sol";
 
-abstract contract Contributor is Epoches, Slots, Price {
+abstract contract Contributor is Epoches, Slots, AwardPoint {
     using ErrorLib for string;
+    using Utils for uint;
 
     /**
      * @dev Mapping of recordId to contributors
@@ -16,6 +18,17 @@ abstract contract Contributor is Epoches, Slots, Price {
      * van have multiple records, it makes sense to track contributors in each pool with their record Id
     */
     mapping(uint96 recordId => Common.Contributor[]) private contributors;
+
+    // ============= constructor ============
+    constructor(
+        address _diaOracleAddress, 
+        address _assetManager, 
+        IRoleBase _roleManager,
+        IERC20 _baseAsset,
+        IPoint _pointFactory
+    ) 
+       AwardPoint(_roleManager, _pointFactory, _baseAsset, _diaOracleAddress, _assetManager)
+    {}
 
     /**
      * @dev Only contributor in a pool is allowed
@@ -61,7 +74,12 @@ abstract contract Contributor is Epoches, Slots, Price {
         _expected = contributors[_getRecordId(unit)][selector];
     }
 
-    function _setProviders(Common.Provider[] memory providers, address user, uint unit) internal {
+    function _setProviders(
+        Common.Provider[] memory providers, 
+        address user, 
+        uint unit,
+        uint recordId
+    ) internal {
         contributors[recordId][_getSlot(user, unit).value].providers = providers;
         // for(uint i = 0; i < providers.length; i++) {
         //     contributors[recordId][slot].providers.push(providers[i]);
@@ -164,57 +182,58 @@ abstract contract Contributor is Epoches, Slots, Price {
         _setContributor(dataOfActualCaller, recordId, slotOfActualCaller.value, false);
     }
 
-
-    uint32 paybackTime;
-        uint32 turnStartTime;
-        uint32 getFinanceTime;
-        uint loan;
-        uint colBals;
-        address id;
-        bool sentQuota;
-        // uint interestPaid;
-        Providers[] providers;
-        
-    function _completeGetFinance(Common.Pool memory pool) internal returns(Common.Pool memory pool, Common.Contributor memory profile) {
-        (uint colBal,) = getCollateralQuote(unit);
-        pool.addrs.lastPaid = _msgSender();
-        pool.low.selector ++;
-        uint slot = _getSlot(pool.addrs.lastPaid, pool.big.unit).value;
-        contributors[pool.big.recordId][slot].paybackTime = _now() + pool.low.duration;
-        contributors[pool.big.recordId][slot].colBals = colBal;
-
-        // computedCol = _computeCollateral(arg.pool.bigInt.currentPool, uint24(arg.pool.lInt.colCoverage), arg.colPriceInDecimals, IERC20(self.pData.collateralToken).decimals());
-        arg.pool.addrs.lastPaid = caller;
-        arg.pool.lInt.selector ++;
-        // console.log("ComputedCol", computedCol);
-        _validateAndWithdrawAllowance(caller, address(self.pData.collateralToken), computedCol, arg.pool.addrs.bank);
-        Common.Contributor memory cData = Common.Contributor({
-        durOfChoice: arg.durOfChoice, 
-        interestPaid: 0,
-        // expInterest: arg.pool.bigInt.currentPool.computeInterestsBasedOnDuration(uint16(arg.pool.lInt.intRate), uint24(arg.pool.lInt.duration) ,arg.durOfChoice).intPerChoiceOfDur,
-        paybackTime: _now().add(arg.durOfChoice),
-        turnStartTime: cbt.turnStartTime,
-        getFinanceTime: cbt.getFinanceTime,
-        loan: IBank(arg.pool.addrs.bank).getFinance(caller, arg.pool.addrs.asset, arg.pool.bigInt.currentPool, arg.fee, computedCol, arg.pool.bigInt.recordId),
-        colBals: computedCol,
-        id: caller,
-        sentQuota: cbt.sentQuota
-        });
-        _updateUserData(
-        self,
-        Common.UpdateUserParam(
-            cData,
-            _getSlot(self.slots, caller, arg.unit),
-            arg.pool.lInt.cSlot,
-            arg.unit,
-            caller
-        )
-        );
-        arg.pool.stage = Common.Stage.PAYBACK;
-        arg.pool.bigInt.currentPool = _defaults().zero;
-        _p = arg.pool;
-
+    /**
+     * @dev Complete the getFinance task
+     * @param pool : Existing pool. Must not be an empty pool.
+     * @param collateral : Expected collateral
+     */
+    function _completeGetFinance(Common.Pool memory pool, uint collateral) internal returns(Common.Pool memory _pool) {
+        _pool = pool;
+        _pool.low.selector ++;
+        uint slot = _getSlot(_pool.addrs.lastPaid, _pool.big.unit).value;
+        contributors[_pool.big.recordId][slot].paybackTime = _now() + _pool.low.duration;
+        contributors[_pool.big.recordId][slot].colBals = collateral;
+        Common.Provider memory providers = contributors[_pool.big.recordId][slot].providers;
+        for(uint i = 0; i < providers.length; i++){
+            contributors[_pool.big.recordId][slot].providers[i].earnStartDate = _now();
+            contributors[_pool.big.recordId][slot].providers[i].accruals = providers[i].amount.computeInterestsBasedOnDuration(providers[i].rate, _pool.low.duration);
+        }
+        _pool.big.currentPool = 0;
+        _pool.stage = Common.Stage.PAYBACK;
     }
+
+    function _payback(
+        uint unit, 
+        address user,
+        bool isSwapped,
+        address defaulted
+    ) 
+        internal 
+        returns(Common.Pool memory pool, Common.Provider memory providers, uint attestedInitialBal)
+    {
+        uint debt = _getCurrentDebt(unit, user);
+        if(debt == 0) 'No debt found'._throw();
+        pool = _getPool(unit); 
+        uint slot = _getSlot(user, unit).value;
+        Common.Contributor memory profile = _getContributor(user, unit);
+        providers = profile.providers;
+        contributors[pool.big.recordId][slot].loan = 0;
+        contributors[pool.big.recordId][slot].colBals = 0;
+        contributors[pool.big.recordId][slot].paybackTime = _now();
+        if(awardPoint) _awardPoint(user, 2, 0, false);
+        if(pool.low.maxQuorum == pool.low.allGh){
+            pool.stage = Common.Stage.ENDED;
+        } else {
+            pool.stage = Common.Stage.GET;
+            unchecked {
+                pool.big.currentPool = pool.big.unit * pool.low.maxQuorum;
+            }
+        }
+        attestedInitialBal = IERC20(baseAsset).balanceOf(pool.addrs.safe);
+        (, uint _) = _checkAndWithdrawAllowance(IERC20(baseAsset), user, pool.addrs.safe, debt);
+        if(!ISafe(pool.addrs.safe).payback(Common.Payback_Bank(user, baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.recordId], _isSwapped, _defaulted, pool.big.recordId, colToken))) 'Call to Safe failed'._throw();
+    }
+
 
     /**
      * @dev Return past pools using unitId. 
@@ -272,17 +291,17 @@ abstract contract Contributor is Epoches, Slots, Price {
      * @return collateral Collateral
      * @return colCoverage Collateral coverage
      */
-    function getCollateralQuote(uint256 unit)
-        public
+    function _getCollateralQuote(uint256 unit)
+        internal
         view
-        _onlyContributor(msg.sender, unit) 
-        // onlyInitialized(unit, true)
+        _onlyContributor(_msgSender(), unit) 
+        _onlyIfUnitIsActive(unit)
         returns(uint collateral, uint24 colCoverage)
     {
         Common.Pool memory pool = _getPool(unit);
         unchecked {
             (collateral, colCoverage) = collateral = (Common.Price(
-                    _getCollateralTokenPrice(), 
+                    _getCollateralTokenPrice(pool.addrs.colAsset), 
                     diaOracleAddress == address(0)? 18 : 8
                 ).computeCollateral(
                     uint24(pool.low.colCoverage), 
@@ -291,7 +310,6 @@ abstract contract Contributor is Epoches, Slots, Price {
                 uint24(pool.low.colCoverage)
             );
         }
-        return (collateral, colCoverage);
     }
 
     /**
@@ -299,13 +317,14 @@ abstract contract Contributor is Epoches, Slots, Price {
      * @param unit : Unit contribution
      * @param target : Target user.
      */
-    function getCurrentDebt(
+    function _getCurrentDebt(
         uint256 unit,
         address target
     ) 
-        external
+        internal
         view 
-        // onlyInitialized(unit, true)
+        _onlyIfUnitIsActive(unit)
+        _onlyContributor(target, unit)
         returns (uint256 debt) 
     {
         Common.Provider[] memory profile = _getContributor(target, unit);
@@ -313,40 +332,18 @@ abstract contract Contributor is Epoches, Slots, Price {
         if(profile.providers.length > 0) {
             unchecked {
                 for(uint i = 0; i < profile.providers.length; i++){
-                    debt += profile.providers[i].accruals;
+                    Common.Provider memory provider = profile.providers[i];
+                    if(_now() > provider.earnStartDate) {
+                        debt += provider.accruals.intPerSec * (_now() - provider.earnStartDate);
+                    }
                 }
             }
         }
-        
-        return debt;
     }
 
     function _now() internal view returns(uint32 time) {
         time = uint32(block.timestamp);
     }
 
-    // /**
-    //  * @dev Returns contributor's profile in a pool.
-    //  * @param unit : unit contribution
-    //  * @param user : User
-    //  */
-    // function getProfile(
-    //     uint256 unit,
-    //     address user
-    // )
-    //     external
-    //     view
-    //     onlyInitialized(unit, false)
-    //     returns(Contributor memory) 
-    // {
-    //     return _getProfile(user, unit);
-    // }
-
-    // /**
-    //  * @dev Return the current number of contributors in a pool
-    //  * @param unit : Unit contribution.
-    //  */
-    // function getUserCount(uint256 unit) external view returns(uint _count) {
-    //     _count = userCounts[unit];
-    // }
+    
 }

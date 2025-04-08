@@ -1,34 +1,23 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-// import { Agent } from "./Agent.sol";
-// import { Pools } from "./Pools.sol";
-// import { Safe } from "./Safe.sol";
-import { Contributor, Common, ErrorLib } from "./Contributor.sol";
-// import { IERC20 } from "../apis/IERC20.sol";
-// import { TokenInUse } from "./TokenInUse.sol";
-// import { Point } from "./Point.sol";
-// import { Utils } from "../libraries/Utils.sol";
-import { ERC20Manager, IERC20 } from "./ERC20Manager.sol";
-import { IPoint } from "../apis/IPoint.sol";
+import { Contributor, Common, ErrorLib, Utils } from "./Contributor.sol";
 import { Safe, ISafe } from "./Safe.sol";
 
-contract Pool is Safe, Contributor, ERC20Manager {
+contract Pool is Safe, Contributor {
     using Utils for *;
     using ErrorLib for string;
 
-    // Point factory address
-    IPoint public immutable pointFactory;
-
+    // ================ Constructor ==============
     constructor(
+        address _diaOracleAddress, 
         address _assetManager, 
+        IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory
     ) 
-        ERC20Manager(_assetManager, _baseAsset)
-    {
-        pointFactory = _pointFactory;
-    }
+        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory)
+    {}
 
     /**
      * @dev Create a pool internally
@@ -45,8 +34,9 @@ contract Pool is Safe, Contributor, ERC20Manager {
         uint8 maxQuorum,
         uint16 durationInHours,
         uint24 colCoverage,
-        Common.Router router
-    ) internal _onlyIfUnitIsActive(unit) returns(Common.Pool memory pool) {
+        Common.Router router,
+        IERC20 colAsset
+    ) internal _onlyIfUnitIsNotActive(unit)  onlySupportedAsset(colAsset) returns(Common.Pool memory pool) {
         if(durationInHours == 0 || durationInHours > 720) 'Invalid duration'._throw();
         if(router == Common.Router.PERMISSIONLESS){
             if(users.length > 1) 'List exceed 1 for router1'._throw();
@@ -54,7 +44,7 @@ contract Pool is Safe, Contributor, ERC20Manager {
             if(users.length < 2) 'List too low for router2'._throw();
         }
         (uint96 unitId, uint96 recordId) = _generateIds(unit);
-        pool = _updatePool(unitId, Common.UpdatePoolData(unit, unitId, recordId, maxQuorum, colCoverage, durationInHours, user));
+        pool = _updatePool(unitId, Common.UpdatePoolData(unit, unitId, recordId, maxQuorum, colCoverage, colAsset, durationInHours, user));
         pool = _addUserToPool(unit, users, pool);
         _setPool(unitId,  pool);
         _completeAddUser(user[0], pool);
@@ -64,7 +54,7 @@ contract Pool is Safe, Contributor, ERC20Manager {
         uint256 unit, 
         address[] memory users
         Common.Pool memory pool
-    ) internal _onlyIfUnitIsNotActive(unit) returns(Common.Pool memory _pool) {
+    ) internal returns(Common.Pool memory _pool) {
         _pool = pool;
         for(uint i = 0; i < users.length; i++) {
             (Common.Contributor memory profile, uint8 slot);
@@ -106,17 +96,10 @@ contract Pool is Safe, Contributor, ERC20Manager {
         }
         // _setPool(pool.big.unitId, pool);
     }
-
+    
     function _completeAddUser(address user, Common.Pool memory pool) internal {
         (, uint _) = _checkAndWithdrawAllowance(IERC20(baseAsset), user, pool.addrs.safe, pool.big.unit);
         if(!ISafe(pool.addrs.safe).addUp(user, pool.big.recordId)) 'Add user failed'._throw();
-    }
-
-    ///@dev Award points for users
-    function _awardPoint(address target, uint8 asMember, uint8 asAdmin, bool deduct) internal {
-        (bool done, Common.Point memory point) = (false, Common.Point(asMember, asAdmin, 0));
-        done = deduct? IPoint(pointFactory).deductPoint(user, point) : IPoint(pointFactory).setPoint(target, point);
-        if(!done) 'Point award failed'._throw();
     }
 
     /**
@@ -126,10 +109,31 @@ contract Pool is Safe, Contributor, ERC20Manager {
     function _updatePool(Common.UpdatePoolData memory data) internal returns(Common.Pool memory pool) {
         pool.low = Common.Low(data.maxQuorum, 0, data.colCoverage, data.durationInHours * 1 hours, 0, 1);
         pool.big = Common.Big(data.unit, data.unit, data.recordId, data.unitId);
-        pool.addrs = Common.Address(address(0), _getSafe(data.unit), data.admin);
+        pool.addrs = Common.Address(data.colAsset, address(0), _getSafe(data.unit), data.admin);
         pool.router = data.router;
         pool.status = Common.Status.TAKEN;
         pool.stage = Common.Stage.JOIN;
+    }
+
+    /**
+     * @dev Returns amount of collateral required in a pool.
+     * @param unit : EpochId
+     * @return collateral Collateral
+     * @return colCoverage Collateral coverage
+     */
+    function getCollateralQuote(uint256 unit) public view returns(uint collateral, uint24 colCoverage)
+    {
+       return _getCollateralQuote(unit);
+    }
+
+    /**
+     * Returns the current debt of target user.
+     * @param unit : Unit contribution
+     * @param target : Target user.
+     */
+    function getCurrentDebt(uint256 unit, address target) public view returns(uint256 debt) 
+    {
+       return _getCurrentDebt(unit, target);
     }
     
 }

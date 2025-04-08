@@ -90,7 +90,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param amount : Value
      * @notice Consideration is given to the previous allowances given to users.
      */
-    function _setAllowance(address to, address asset, uint256 amount) private {
+    function _setAllowance(address to, IERC20 asset, uint256 amount) private {
         uint prev = IERC20(asset).allowance(address(this), to);
         unchecked {
             IERC20(asset).approve(to, amount + prev);
@@ -103,7 +103,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param cData : Contributors data
      */
     function _tryRoundUp(
-        address asset,
+        IERC20 asset,
         Common.Contributor[] memory cData
     ) internal {
         uint erc20Balances = IERC20(asset).balanceOf(address(this));
@@ -137,13 +137,13 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      */
     function getFinance(
         address user,
-        address asset,
+        IERC20 baseAsset,
         uint256 loan,
         uint fee,
         uint256 calculatedCol,
         uint recordId
-    ) external hasAccess(user, recordId) onlyRoleBearer returns (uint) {
-        assert(asset != address(0) && user != address(0));
+    ) external hasAccess(user, recordId) onlyRoleBearer returns (bool) {
+        assert(address(baseAsset) != address(0) && user != address(0));
         collateralBalances[user][recordId] = calculatedCol;
         uint loanable = loan;
         if (fee > 0) {
@@ -154,21 +154,22 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 }
             }
         }
-        _setAllowance(user, asset, loanable);
-        return loan;
+        _setAllowance(user, baseAsset, loanable);
+        return true;
     }
 
     /**
      * @dev Pays back loan
      * @param _p : Parameters of type PaybackParam
      * _p.user : Current txn.origin not msg.sender
-     * _p.asset : Asset base
+     * _p.baseAsset : Asset base
      * _p.debt : Amount owing by user
      * _p.attestedInitialBal : Initial recorded balance of this contract before asset was transfered from the user.
      * _p.allGF : Whether all the contributors have get finance or not
      * _p.cData : Contributors data
      * _p.isSwapped : If isSwapped is true, meaning the actual contributor defaulted.
      * _p.defaulted : Address of the defaulted
+     * _p.collaterAsset: Asset used as collateral
      * _p.recordId : Record Id. Every pool has a record Id i.e pool.bigInt.recordId
      */
     function payback(Common.Payback_Safe memory _p) 
@@ -188,10 +189,10 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         collateralBalances[_p.user][_p.recordId] = 0;
         
         assert(
-            IERC20(_p.asset).balanceOf(address(this)) >=
+            IERC20(_p.baseAsset).balanceOf(address(this)) >=
                 (_p.attestedInitialBal + _p.debt)
         );
-        _setAllowance(_p.user, address(_p.collateralToken), col);
+        _setAllowance(_p.user, _p.collateralAsset, col);
         if (_p.allGF) _tryRoundUp(_p.asset, _p.cData);
         return true;
     }
@@ -199,17 +200,17 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     /**
      * Called when a contributor remove a pool
      * @param user : Contributor
-     * @param asset : Asset base
+     * @param baseAsset : Asset base
      * @param unit : Unit contribution
      * @param recordId : Record Id
      */
     function cancel(
         address user,
-        address asset,
+        IERC20 baseAsset,
         uint unit,
         uint recordId
     ) external onlyRoleBearer hasAccess(user, recordId) returns (bool) {
-        _setAllowance(user, asset, unit);
+        _setAllowance(user, baseAsset, unit);
         _removeUser(user, recordId);
         return true;
     }

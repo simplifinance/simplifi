@@ -2,6 +2,8 @@
 
 pragma solidity 0.8.24;
 
+import { IERC20 } from './IERC20.sol';
+
 interface Common {
     event PoolCreated(Pool);
     event NewContributorAdded(Pool);
@@ -56,11 +58,10 @@ interface Common {
         uint referrals;
     }
 
-    // struct Interest {
-    //     uint fullInterest;
-    //     uint intPerSec;
-    //     uint intPerChoiceOfDur;
-    // }
+    struct Interest {
+        uint fullInterest;
+        uint intPerSec;
+    }
 
     /**
      * @notice Structured types - Address
@@ -71,7 +72,7 @@ interface Common {
      * 
     */
     struct Addresses {
-        address asset;
+        IERC20 colAsset;
         address lastPaid;
         address safe;
         address admin;
@@ -111,12 +112,12 @@ interface Common {
         uint rate;
         uint earnStartDate;
         address account;
-        uint accruals;
+        Interest accruals;
     }
 
     struct Payback_Safe {
         address user; 
-        address asset; 
+        IERC20 baseAsset; 
         uint256 debt;
         uint256 attestedInitialBal;
         bool allGF; 
@@ -124,7 +125,7 @@ interface Common {
         bool isSwapped;
         address defaulted;
         uint rId;
-        IERC20 collateralToken;
+        IERC20 collateralAsset;
     }
 
     struct Slot {
@@ -144,6 +145,7 @@ interface Common {
         uint96 recordId,
         uint8 maxQuorum;
         uint24 colCoverage;
+        IERC20 colAsset;
         uint16 durationInHours;
         address creator;
     }

@@ -41,9 +41,5 @@ abstract contracts PastEpoches {
         result = records[recordId];
         return result;
     }
-    // function _generateCSlot() internal returns(uint _cSlot) {
-    //     cSlots.increment();
-    //     _cSlot = cSlots.current();
-    // }
-    
+
 }
