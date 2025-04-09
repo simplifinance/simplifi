@@ -1,17 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "./OnlyRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
+import { ERC20Manager, IRoleBase, IERC20, ISupportedAsset } from "./ERC20Manager.sol";
 
-abstract contract MinimumLiquidity is OnlyRoleBase {
+abstract contract MinimumLiquidity is ERC20Manager {
     using ErrorLib for *;
 
     // Minimum liquidity a provider can make
     uint public minimumLiquidity;
 
     // ============= Constructor ================
-    constructor(IRoleBase _roleManager) OnlyRoleBase(_roleManager){
+    constructor(
+        ISupportedAsset _assetManager,
+        IERC20 _baseAsset, 
+        IRoleBase _roleManager
+    ) ERC20Manager(_assetManager, _baseAsset, _roleManager){
         if(address(_roleManager) == address(0)) '_roleManager is zero'._throw();
     }
 

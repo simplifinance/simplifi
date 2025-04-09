@@ -4,11 +4,10 @@ pragma solidity 0.8.24;
 
 import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
 import { IERC20 } from "../apis/IERC20.sol";
-import { OnlyRoleBase, IRoleBase } from "./OnlyRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { ERC20Manager, IERC20, ISupportedAsset } from "./ERC20Manager.sol";
+import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase } from "./ERC20Manager.sol";
 
-abstract contract Price is OnlyRoleBase, ERC20Manager {
+abstract contract Price is ERC20Manager {
     using ErrorLib for *;
 
     // DIA oracle address
@@ -24,8 +23,7 @@ abstract contract Price is OnlyRoleBase, ERC20Manager {
         IRoleBase _roleManager,
         IERC20 _baseAsset
     ) 
-        OnlyRoleBase(_roleManager)
-        ERC20Manager(_assetManager, _baseAsset)
+        ERC20Manager(_assetManager, _baseAsset, _roleManager)
     {
         diaOracleAddress = _diaOracleAddress;
     }

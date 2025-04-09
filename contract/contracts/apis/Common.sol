@@ -97,7 +97,6 @@ interface Common {
         uint colBals;
         address id;
         bool sentQuota;
-        Provider[] providers;
     }
 
     struct Price {
@@ -123,7 +122,7 @@ interface Common {
         Contributor[] cData;
         bool isSwapped;
         address defaulted;
-        uint recordId;
+        uint96 recordId;
         IERC20 collateralAsset;
     }
 
@@ -147,6 +146,7 @@ interface Common {
         IERC20 colAsset;
         uint16 durationInHours;
         address creator;
+        Router router; 
     }
 
     struct Analytics {
@@ -161,6 +161,12 @@ interface Common {
         uint16 makerRate;
         uint currentEpoches;
         uint recordEpoches;
+    }
+
+    struct ContributorReturnValue {
+        Contributor profile;
+        uint8 slot;
+        Common.Provider[] providers;
     }
 
 }

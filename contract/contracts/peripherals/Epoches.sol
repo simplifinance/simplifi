@@ -57,9 +57,9 @@ abstract contract Epoches is PastEpoches {
     }
 
     // Generate unit Id and record Id
-    function _generateIds(uint256 unit) internal returns(uint unitId, uint recordId) {
+    function _generateIds(uint256 unit) internal returns(uint96 unitId, uint96 recordId) {
         epoches.increment();
-        unitId = epoches.current();
+        unitId = uint96(epoches.current());
         indexes[unit] = unitId;
         recordId = _generateRecordId();
     }

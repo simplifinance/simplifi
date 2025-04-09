@@ -4,8 +4,12 @@ pragma solidity 0.8.24;
 
 import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ISupportedAsset } from "../apis/ISupportedAsset.sol"; 
+import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
+  using ErrorLib for *;
+
+  // Supported assets
   address[] private assets;
 
   /**
@@ -20,7 +24,7 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
    * @dev Asset must be supported before they can be used.
    */
   modifier onlySupportedAsset(address _asset) {
-    if(!supportedAssets[_asset]) revert UnSupportedAsset(_asset);
+    if(!supportedAssets[_asset]) 'Unsupported asset'._throw();
     _;
   }
 
@@ -34,13 +38,9 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   ) 
     OnlyRoleBase(_roleManager) 
   {
-    require(_asset != address(0), "Asset cannot be empty");
+    if(_asset == address(0)) 'Default asset is empty'._throw();
     _supportAsset(_asset);
   }
-
-  // fallback(bytes calldata data) external returns(bytes memory) {
-  //   return "Function not found";
-  // }
 
   /**
    * @dev Support a new asset
@@ -98,6 +98,13 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   function getSupportedAssets() public view returns(address[] memory _assets) {
     _assets = assets;
     return _assets;
+  }
+
+  /// @dev Returns the default supported asset
+  function getDefaultSupportedCollateralAsset() external view returns(address _default) {
+    _default = assets[0];
+    assert(_default != address(0));
+    return _default;
   }
 
 }

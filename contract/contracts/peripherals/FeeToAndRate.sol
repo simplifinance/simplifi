@@ -2,17 +2,18 @@
 
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "./OnlyRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { Utils } from "../libraries/Utils.sol";
+import { Pool, IRoleBase, ISupportedAsset, IERC20, IPoint } from "./Pool.sol";
 
-/**
+/** 
+ * 
  * @title FeeToAndRate
  * @author : Simplifi. Written by Isaac Jesse a.k.a Bobeu https://github.com/bobeu
  * @notice : Non-deployable contract for updating and retrieving the fee receiver account and the platform rate.
  * It should be implemented by the child contract.
  */
-abstract contract FeeToAndRate is OnlyRoleBase {
+abstract contract FeeToAndRate is Pool {
     using ErrorLib for *;
 
     // Fee recipient
@@ -26,8 +27,17 @@ abstract contract FeeToAndRate is OnlyRoleBase {
      * @param _roleManager : Role manager contract
      * @param _feeTo : Fee recipient
      * @param _makerRate : Platform fee
+     * 
      */
-    constructor(IRoleBase _roleManager, address _feeTo, uint16 _makerRate) OnlyRoleBase(_roleManager) {
+    constructor(
+        address _feeTo, 
+        uint16 _makerRate,
+        address _diaOracleAddress, 
+        IRoleBase _roleManager, 
+        ISupportedAsset _assetManager, 
+        IERC20 _baseAsset,
+        IPoint _pointFactory
+    ) Pool(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory) {
         if(_feeTo == feeTo) '_feeTo is empty'._throw();
         if(_makerRate > Utils._getBase()) 'Invalid maker rate'._throw();
         feeTo = _feeTo;

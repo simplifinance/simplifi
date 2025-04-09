@@ -5,9 +5,7 @@ pragma solidity 0.8.24;
  * @title Interface of the Safe manager
  * @author : Simplifinance (Written by Bobeu)
  */
-interface ISafeFactory {
-  error ZeroAddress(address);
-  
+interface ISafeFactory {  
   /**
    * Query safe for user
    * @param unit : Address to get safe for

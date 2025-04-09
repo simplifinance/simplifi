@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 
 import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
 import { IERC20 } from "../../apis/IERC20.sol";
+import { IFactory } from "../../apis/IFactory.sol";
 import { ISafe } from "../../apis/ISafe.sol";
 import { Common } from "../../apis/Common.sol";
 import { OnlyRoleBase, IRoleBase } from "../../peripherals/OnlyRoleBase.sol";
@@ -112,6 +113,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     function _tryRoundUp(
         IERC20 baseAsset,
         uint unit,
+        uint96 recordId,
         Common.Contributor[] memory data
     ) internal {
         uint erc20Balances = IERC20(baseAsset).balanceOf(address(this));
@@ -125,7 +127,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 }
                 if(erc20Balances > 0) {
                     for(uint i = 0; i < data.length; i++) {
-                        erc20Balances -= _settleAccruals(data[i], unit, baseAsset);
+                        erc20Balances -= _settleAccruals(data[i], unit, recordId, baseAsset);
                     }
                     if(erc20Balances > 0) {
                         if(!IERC20(baseAsset).transfer(feeTo, erc20Balances)) 'Fee2 transfer failed'._throw();
@@ -203,7 +205,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         }
         assert(IERC20(_p.baseAsset).balanceOf(address(this)) >= (_p.attestedInitialBal + _p.debt));
         _setAllowance(_p.user, _p.collateralAsset, col);
-        if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.cData);
+        if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.recordId, _p.cData);
         return col;
     }
 
@@ -215,15 +217,21 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param unit : Unit contribution
      * @param baseAsset : Asset used as contribution currency
      */
-    function _settleAccruals(Common.Contributor memory data, uint unit, IERC20 baseAsset) internal returns(uint totalPaidOut) {
+    function _settleAccruals(
+        Common.Contributor memory data, 
+        uint unit, 
+        uint96 recordId,
+        IERC20 baseAsset
+    ) internal returns(uint totalPaidOut) {
         uint amtLeft = paybacks[data.id];
+        Common.Provider[] memory providers = IFactory(_msgSender()).getContributorProviders(data.id, recordId);
         unchecked {
-            if(data.providers.length > 0) {
-                for(uint i = 0; i < data.providers.length; i++) {
-                    uint providerPay = data.providers[i].amount + (data.providers[i].accruals.intPerSec * (data.paybackTime - data.providers[i].earnStartDate));
+            if(providers.length > 0) {
+                for(uint i = 0; i < providers.length; i++) {
+                    uint providerPay = providers[i].amount + (providers[i].accruals.intPerSec * (data.paybackTime - providers[i].earnStartDate));
                     assert(amtLeft >= providerPay);
                     amtLeft -= providerPay;
-                    _setAllowance(data.providers[i].account, baseAsset, providerPay);
+                    _setAllowance(providers[i].account, baseAsset, providerPay);
                 }
                 totalPaidOut += amtLeft;
             } else {

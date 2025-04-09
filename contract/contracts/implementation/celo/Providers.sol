@@ -2,8 +2,7 @@
 pragma solidity 0.8.24;
 
 import { IFactory, Common } from "../../apis/IFactory.sol";
-import { ERC20Manager, IERC20 } from "../../peripherals/ERC20Manager.sol";
-import { MinimumLiquidity, IRoleBase, ErrorLib } from "../../peripherals/MinimumLiquidity.sol";
+import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset} from "../../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
@@ -20,7 +19,7 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
  * - Borrow to finance Flexpool
  * - Get the list of providers
  */
-contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
+contract Providers is MinimumLiquidity, ReentrancyGuard {
     using ErrorLib for *;
     event LiquidityProvided(Common.Provider);
     event LiquidityRemoved(Common.Provider);
@@ -35,7 +34,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     IFactory public immutable flexpoolFactory;
 
     // List of providers
-    Common.Providers[] private providers;
+    Common.Provider[] private providers;
 
     /**
      * @dev Mapping of providers to their position in the providers list
@@ -56,10 +55,9 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
         IFactory _flexpoolFactory,
         IRoleBase _roleManager, 
         IERC20 _baseAsset,
-        address _assetManager
-    ) 
-        ERC20Manager(_assetManager, _baseAsset) 
-        MinimumLiquidity(_roleManager)
+        ISupportedAsset _assetManager 
+    )
+        MinimumLiquidity(_assetManager, _baseAsset, _roleManager)
     {
         if(address(_flexpoolFactory) == address(0)) '_flexpoolFactory is zero'._throw();
         flexpoolFactory = _flexpoolFactory;
@@ -76,22 +74,24 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     *   The minimum interest rate to set is 0.01% if interest must be set at least.
     *   To reiterate, raw interest must be multiplied by 100 before giving as input. 
     */
-    function provideLiquidity(uint16 rate) public returns(bool) {
+    function provideLiquidity(uint16 rate) public whenNotPaused returns(bool) {
         if(rate >= type(uint16).max) "Invalid rate"._throw();
         address sender = _msgSender();
         Data memory data = slots[sender];
+        Common.Interest memory interest;
         uint liquidity = _checkAndWithdrawAllowance(baseAsset, sender, address(this), minimumLiquidity);
         unchecked {
             if(!data.hasIndex){
-                slot = providers.length;
-                slots[sender] = Data(slot, true);
-                providers.push(Common.Provider(slot, liquidity, rate, 0, sender, 0));
+                data.id = providers.length;
+                data.hasIndex = true;
+                slots[sender] = data;
+                providers.push(Common.Provider(data.id, liquidity, rate, 0, sender, interest));
             } else {
                 providers[data.id].amount += liquidity;
             }
         }
 
-        emit LiquidityProvided(providers[slot]);
+        emit LiquidityProvided(providers[data.id]);
         return true;
     }
 
@@ -99,13 +99,14 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
      * @dev Remove liquidity.
      * @notice Liquidity can be removed anytime provided the balance exceeds zero
      */
-    function removeLiquidity() public nonReentrant returns(bool) {
+    function removeLiquidity() public whenNotPaused nonReentrant returns(bool) {
         (Common.Provider memory prov, uint slot, address caller) = _getProvider();
         if(prov.amount == 0) "Nothing to remove"._throw();
         providers[slot].amount = 0;
         _setApprovalFor(baseAsset, caller, prov.amount);
-        // prov.amount = 0;
+
         emit LiquidityRemoved(prov);
+        return true;
     }
 
     /**
@@ -113,13 +114,14 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
      * @param providersSlots : Selected providers' slots are required 
      * @param amount : Amount user wish to borrow.
      */
-    function borrow(uint[] memory providersSlots, uint amount) public returns(bool) {
+    function borrow(uint[] memory providersSlots, uint amount) public whenNotPaused returns(bool) {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
         Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount); 
         if(!IFactory(flexpoolFactory).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
 
         emit Borrowed(provs, _msgSender());
+        return true;
     }
 
     /**
@@ -127,14 +129,13 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
      * to accommodate the requested loan, otherwise operation fails.
      * @param providersSlots : Array of selected providers slots
      * @param amount : Requested loan amount
-     * @return : A list of providers that financed the contribution
+     * Return a list of providers that financed the contribution
      */
     function _aggregateLiquidityFromProviders(
         uint[] memory providersSlots, 
         uint amount
     ) 
         internal 
-        view 
         returns(Common.Provider[] memory provs)
     {
         uint amountLeft = amount;
@@ -174,7 +175,7 @@ contract Providers is ERC20Manager, MinimumLiquidity, ReentrancyGuard {
     }
 
     // Returns providers in storage.
-    function getProviders() public view returns(Common.Providers[] memory prov) {
+    function getProviders() public view returns(Common.Provider[] memory prov) {
         prov = providers;
         return prov;
     }

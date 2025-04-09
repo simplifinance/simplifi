@@ -1,0 +1,13 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "errorMsg",
+        "type": "string"
+      }
+    ],
+    "name": "ErrorOccurred",
+    "type": "error"
+  }
+]

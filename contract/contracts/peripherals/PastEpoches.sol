@@ -15,7 +15,7 @@ abstract contract PastEpoches {
     Counters.Counter private cSlots;
 
     // Mapping of recordIds to past pools
-    mapping(uint recordId => Common.Pool pastPools) private records; 
+    mapping(uint96 recordId => Common.Pool pastPools) private records; 
 
     // Return past pool counter
     function _getPastEpoches() internal view returns(uint96 recordId) {
@@ -29,7 +29,7 @@ abstract contract PastEpoches {
     }
 
     /// @dev Add a completed pool to history 
-    function _setRecord(uint recordId, Common.Pool memory pool) internal {
+    function _setRecord(uint96 recordId, Common.Pool memory pool) internal {
         records[recordId] = pool;
     }
 
@@ -37,7 +37,7 @@ abstract contract PastEpoches {
      * @dev Return past pool at recordId 
      * @param recordId : Record Id
      */
-    function _getPastPool(uint recordId) internal view returns(Common.Pool memory result) {
+    function _getPastPool(uint96 recordId) internal view returns(Common.Pool memory result) {
         result = records[recordId];
         return result;
     }

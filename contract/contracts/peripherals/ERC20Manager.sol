@@ -4,9 +4,9 @@ pragma solidity 0.8.24;
 import { IERC20 } from "../apis/IERC20.sol";
 import { ISupportedAsset } from "../apis/ISupportedAsset.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { MsgSender } from "./OnlyRoleBase.sol";
+import { Pausable, IRoleBase } from "./Pausable.sol";
 
-abstract contract ERC20Manager is MsgSender {
+abstract contract ERC20Manager is Pausable {
     using ErrorLib for *;
 
     // Supportasset manager contract
@@ -22,7 +22,7 @@ abstract contract ERC20Manager is MsgSender {
 
     // ============= Constructor ================
 
-    constructor(ISupportedAsset _assetManager, IERC20 _baseAsset) {
+    constructor(ISupportedAsset _assetManager, IERC20 _baseAsset, IRoleBase _roleManager) Pausable(_roleManager) {
         if((_assetManager == assetManager)) "_assetManager is zero"._throw();
         if((_baseAsset == baseAsset)) "_baseAsset is zero"._throw();
         assetManager = _assetManager;

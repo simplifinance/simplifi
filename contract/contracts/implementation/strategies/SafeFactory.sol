@@ -6,7 +6,7 @@ import { ISafeFactory } from "../../apis/ISafeFactory.sol";
 import { Safe, OnlyRoleBase, IRoleBase } from "./Safe.sol";
 
 /**@title SafeFactory: A standalone contract that manages safe creation and retrieval, 
-          deletion, read and write data.
+  deletion, read and write data.
  */
 contract SafeFactory is ISafeFactory, OnlyRoleBase {
   // using Clones for address;

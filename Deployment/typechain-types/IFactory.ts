@@ -24,45 +24,39 @@ import type {
 } from "../../common";
 
 export declare namespace Common {
-  export type LIntStruct = {
-    quorum: BigNumberish;
+  export type LowStruct = {
+    maxQuorum: BigNumberish;
     selector: BigNumberish;
     colCoverage: BigNumberish;
     duration: BigNumberish;
-    intRate: BigNumberish;
-    cSlot: BigNumberish;
     allGh: BigNumberish;
     userCount: BigNumberish;
   };
 
-  export type LIntStructOutput = [
-    quorum: bigint,
+  export type LowStructOutput = [
+    maxQuorum: bigint,
     selector: bigint,
     colCoverage: bigint,
     duration: bigint,
-    intRate: bigint,
-    cSlot: bigint,
     allGh: bigint,
     userCount: bigint
   ] & {
-    quorum: bigint;
+    maxQuorum: bigint;
     selector: bigint;
     colCoverage: bigint;
     duration: bigint;
-    intRate: bigint;
-    cSlot: bigint;
     allGh: bigint;
     userCount: bigint;
   };
 
-  export type BigIntStruct = {
+  export type BigStruct = {
     unit: BigNumberish;
     currentPool: BigNumberish;
     recordId: BigNumberish;
     unitId: BigNumberish;
   };
 
-  export type BigIntStructOutput = [
+  export type BigStructOutput = [
     unit: bigint,
     currentPool: bigint,
     recordId: bigint,
@@ -70,148 +64,83 @@ export declare namespace Common {
   ] & { unit: bigint; currentPool: bigint; recordId: bigint; unitId: bigint };
 
   export type AddressesStruct = {
-    asset: AddressLike;
+    colAsset: AddressLike;
     lastPaid: AddressLike;
-    bank: AddressLike;
+    safe: AddressLike;
     admin: AddressLike;
   };
 
   export type AddressesStructOutput = [
-    asset: string,
+    colAsset: string,
     lastPaid: string,
-    bank: string,
+    safe: string,
     admin: string
-  ] & { asset: string; lastPaid: string; bank: string; admin: string };
-
-  export type InterestStruct = {
-    fullInterest: BigNumberish;
-    intPerSec: BigNumberish;
-    intPerChoiceOfDur: BigNumberish;
-  };
-
-  export type InterestStructOutput = [
-    fullInterest: bigint,
-    intPerSec: bigint,
-    intPerChoiceOfDur: bigint
-  ] & { fullInterest: bigint; intPerSec: bigint; intPerChoiceOfDur: bigint };
+  ] & { colAsset: string; lastPaid: string; safe: string; admin: string };
 
   export type PoolStruct = {
-    lInt: Common.LIntStruct;
-    bigInt: Common.BigIntStruct;
+    low: Common.LowStruct;
+    big: Common.BigStruct;
     addrs: Common.AddressesStruct;
     router: BigNumberish;
     stage: BigNumberish;
-    interest: Common.InterestStruct;
     status: BigNumberish;
   };
 
   export type PoolStructOutput = [
-    lInt: Common.LIntStructOutput,
-    bigInt: Common.BigIntStructOutput,
+    low: Common.LowStructOutput,
+    big: Common.BigStructOutput,
     addrs: Common.AddressesStructOutput,
     router: bigint,
     stage: bigint,
-    interest: Common.InterestStructOutput,
     status: bigint
   ] & {
-    lInt: Common.LIntStructOutput;
-    bigInt: Common.BigIntStructOutput;
+    low: Common.LowStructOutput;
+    big: Common.BigStructOutput;
     addrs: Common.AddressesStructOutput;
     router: bigint;
     stage: bigint;
-    interest: Common.InterestStructOutput;
     status: bigint;
   };
 
-  export type ContributorStruct = {
-    durOfChoice: BigNumberish;
-    paybackTime: BigNumberish;
-    turnStartTime: BigNumberish;
-    getFinanceTime: BigNumberish;
-    loan: BigNumberish;
-    colBals: BigNumberish;
-    id: AddressLike;
-    sentQuota: boolean;
-    interestPaid: BigNumberish;
+  export type InterestStruct = {
+    fullInterest: BigNumberish;
+    intPerSec: BigNumberish;
   };
 
-  export type ContributorStructOutput = [
-    durOfChoice: bigint,
-    paybackTime: bigint,
-    turnStartTime: bigint,
-    getFinanceTime: bigint,
-    loan: bigint,
-    colBals: bigint,
-    id: string,
-    sentQuota: boolean,
-    interestPaid: bigint
+  export type InterestStructOutput = [
+    fullInterest: bigint,
+    intPerSec: bigint
+  ] & { fullInterest: bigint; intPerSec: bigint };
+
+  export type ProviderStruct = {
+    slot: BigNumberish;
+    amount: BigNumberish;
+    rate: BigNumberish;
+    earnStartDate: BigNumberish;
+    account: AddressLike;
+    accruals: Common.InterestStruct;
+  };
+
+  export type ProviderStructOutput = [
+    slot: bigint,
+    amount: bigint,
+    rate: bigint,
+    earnStartDate: bigint,
+    account: string,
+    accruals: Common.InterestStructOutput
   ] & {
-    durOfChoice: bigint;
-    paybackTime: bigint;
-    turnStartTime: bigint;
-    getFinanceTime: bigint;
-    loan: bigint;
-    colBals: bigint;
-    id: string;
-    sentQuota: boolean;
-    interestPaid: bigint;
-  };
-
-  export type SlotStruct = {
-    value: BigNumberish;
-    isMember: boolean;
-    isAdmin: boolean;
-  };
-
-  export type SlotStructOutput = [
-    value: bigint,
-    isMember: boolean,
-    isAdmin: boolean
-  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
-
-  export type PointStruct = {
-    contributor: BigNumberish;
-    creator: BigNumberish;
-  };
-
-  export type PointStructOutput = [contributor: bigint, creator: bigint] & {
-    contributor: bigint;
-    creator: bigint;
-  };
-
-  export type ReadDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
+    slot: bigint;
+    amount: bigint;
+    rate: bigint;
+    earnStartDate: bigint;
+    account: string;
+    accruals: Common.InterestStructOutput;
   };
 }
 
 export interface IFactoryInterface extends Interface {
   getFunction(
-    nameOrSignature:
-      | "createPermissionedPool"
-      | "createPermissionlessPool"
-      | "enquireLiquidation"
-      | "getCurrentDebt"
-      | "getEpoches"
-      | "getFinance"
-      | "getPoint"
-      | "getPoolData"
-      | "getProfile"
-      | "getRecord"
-      | "getRecordEpoches"
-      | "getSlot"
-      | "joinAPool"
-      | "liquidate"
-      | "payback"
-      | "removeLiquidityPool"
+    nameOrSignature: "contributeThroughProvider" | "getContributorProviders"
   ): FunctionFragment;
 
   getEvent(
@@ -222,131 +151,33 @@ export interface IFactoryInterface extends Interface {
       | "NewContributorAdded"
       | "Payback"
       | "PoolCreated"
+      | "PoolEdited"
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "createPermissionedPool",
-    values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      AddressLike,
-      AddressLike[]
-    ]
+    functionFragment: "contributeThroughProvider",
+    values: [Common.ProviderStruct[], AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "createPermissionlessPool",
-    values: [
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      AddressLike
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "enquireLiquidation",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getCurrentDebt",
-    values: [BigNumberish, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEpoches",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getFinance",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPoint",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPoolData",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getProfile",
-    values: [BigNumberish, AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRecord",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getRecordEpoches",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getSlot",
+    functionFragment: "getContributorProviders",
     values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "joinAPool",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "liquidate",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "payback",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeLiquidityPool",
-    values: [BigNumberish]
   ): string;
 
   decodeFunctionResult(
-    functionFragment: "createPermissionedPool",
+    functionFragment: "contributeThroughProvider",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "createPermissionlessPool",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "enquireLiquidation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getCurrentDebt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getFinance", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getPoint", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getPoolData",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getProfile", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getRecord", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getRecordEpoches",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getSlot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "joinAPool", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "liquidate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "payback", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "removeLiquidityPool",
+    functionFragment: "getContributorProviders",
     data: BytesLike
   ): Result;
 }
 
 export namespace CancellationEvent {
-  export type InputTuple = [epochId: BigNumberish];
-  export type OutputTuple = [epochId: bigint];
+  export type InputTuple = [unit: BigNumberish];
+  export type OutputTuple = [unit: bigint];
   export interface OutputObject {
-    epochId: bigint;
+    unit: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -414,6 +245,18 @@ export namespace PoolCreatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace PoolEditedEvent {
+  export type InputTuple = [arg0: Common.PoolStruct];
+  export type OutputTuple = [arg0: Common.PoolStructOutput];
+  export interface OutputObject {
+    arg0: Common.PoolStructOutput;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export interface IFactory extends BaseContract {
   connect(runner?: ContractRunner | null): IFactory;
   waitForDeployment(): Promise<this>;
@@ -457,107 +300,20 @@ export interface IFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  createPermissionedPool: TypedContractMethod<
+  contributeThroughProvider: TypedContractMethod<
     [
-      intRate: BigNumberish,
-      durationInHours: BigNumberish,
-      colCoverage: BigNumberish,
-      unitLiquidity: BigNumberish,
-      liquidAsset: AddressLike,
-      contributors: AddressLike[]
+      providers: Common.ProviderStruct[],
+      borrower: AddressLike,
+      unit: BigNumberish
     ],
     [boolean],
     "nonpayable"
   >;
 
-  createPermissionlessPool: TypedContractMethod<
-    [
-      intRate: BigNumberish,
-      quorum: BigNumberish,
-      durationInHours: BigNumberish,
-      colCoverage: BigNumberish,
-      unitLiquidity: BigNumberish,
-      liquidAsset: AddressLike
-    ],
-    [boolean],
-    "nonpayable"
-  >;
-
-  enquireLiquidation: TypedContractMethod<
-    [unit: BigNumberish],
-    [
-      [
-        Common.ContributorStructOutput,
-        boolean,
-        bigint,
-        Common.SlotStructOutput,
-        string
-      ] & {
-        _liq: Common.ContributorStructOutput;
-        defaulted: boolean;
-        currentDebt: bigint;
-        slot: Common.SlotStructOutput;
-      }
-    ],
+  getContributorProviders: TypedContractMethod<
+    [target: AddressLike, recordId: BigNumberish],
+    [Common.ProviderStructOutput[]],
     "view"
-  >;
-
-  getCurrentDebt: TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
-
-  getEpoches: TypedContractMethod<[], [bigint], "view">;
-
-  getFinance: TypedContractMethod<
-    [unit: BigNumberish, daysOfUseInHr: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
-
-  getPoint: TypedContractMethod<
-    [user: AddressLike],
-    [Common.PointStructOutput],
-    "view"
-  >;
-
-  getPoolData: TypedContractMethod<
-    [unitId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
-    "view"
-  >;
-
-  getProfile: TypedContractMethod<
-    [unit: BigNumberish, user: AddressLike],
-    [Common.ContributorStructOutput],
-    "view"
-  >;
-
-  getRecord: TypedContractMethod<
-    [rId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
-    "view"
-  >;
-
-  getRecordEpoches: TypedContractMethod<[], [bigint], "view">;
-
-  getSlot: TypedContractMethod<
-    [user: AddressLike, unit: BigNumberish],
-    [Common.SlotStructOutput],
-    "view"
-  >;
-
-  joinAPool: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-
-  liquidate: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-
-  payback: TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-
-  removeLiquidityPool: TypedContractMethod<
-    [unit: BigNumberish],
-    [boolean],
-    "nonpayable"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -565,120 +321,23 @@ export interface IFactory extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "createPermissionedPool"
+    nameOrSignature: "contributeThroughProvider"
   ): TypedContractMethod<
     [
-      intRate: BigNumberish,
-      durationInHours: BigNumberish,
-      colCoverage: BigNumberish,
-      unitLiquidity: BigNumberish,
-      liquidAsset: AddressLike,
-      contributors: AddressLike[]
+      providers: Common.ProviderStruct[],
+      borrower: AddressLike,
+      unit: BigNumberish
     ],
     [boolean],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "createPermissionlessPool"
+    nameOrSignature: "getContributorProviders"
   ): TypedContractMethod<
-    [
-      intRate: BigNumberish,
-      quorum: BigNumberish,
-      durationInHours: BigNumberish,
-      colCoverage: BigNumberish,
-      unitLiquidity: BigNumberish,
-      liquidAsset: AddressLike
-    ],
-    [boolean],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "enquireLiquidation"
-  ): TypedContractMethod<
-    [unit: BigNumberish],
-    [
-      [
-        Common.ContributorStructOutput,
-        boolean,
-        bigint,
-        Common.SlotStructOutput,
-        string
-      ] & {
-        _liq: Common.ContributorStructOutput;
-        defaulted: boolean;
-        currentDebt: bigint;
-        slot: Common.SlotStructOutput;
-      }
-    ],
+    [target: AddressLike, recordId: BigNumberish],
+    [Common.ProviderStructOutput[]],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "getCurrentDebt"
-  ): TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getFinance"
-  ): TypedContractMethod<
-    [unit: BigNumberish, daysOfUseInHr: BigNumberish],
-    [boolean],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "getPoint"
-  ): TypedContractMethod<
-    [user: AddressLike],
-    [Common.PointStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getPoolData"
-  ): TypedContractMethod<
-    [unitId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getProfile"
-  ): TypedContractMethod<
-    [unit: BigNumberish, user: AddressLike],
-    [Common.ContributorStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRecord"
-  ): TypedContractMethod<
-    [rId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getRecordEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getSlot"
-  ): TypedContractMethod<
-    [user: AddressLike, unit: BigNumberish],
-    [Common.SlotStructOutput],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "joinAPool"
-  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "liquidate"
-  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "payback"
-  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
-  getFunction(
-    nameOrSignature: "removeLiquidityPool"
-  ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
 
   getEvent(
     key: "Cancellation"
@@ -721,6 +380,13 @@ export interface IFactory extends BaseContract {
     PoolCreatedEvent.InputTuple,
     PoolCreatedEvent.OutputTuple,
     PoolCreatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "PoolEdited"
+  ): TypedContractEvent<
+    PoolEditedEvent.InputTuple,
+    PoolEditedEvent.OutputTuple,
+    PoolEditedEvent.OutputObject
   >;
 
   filters: {
@@ -788,6 +454,17 @@ export interface IFactory extends BaseContract {
       PoolCreatedEvent.InputTuple,
       PoolCreatedEvent.OutputTuple,
       PoolCreatedEvent.OutputObject
+    >;
+
+    "PoolEdited(tuple)": TypedContractEvent<
+      PoolEditedEvent.InputTuple,
+      PoolEditedEvent.OutputTuple,
+      PoolEditedEvent.OutputObject
+    >;
+    PoolEdited: TypedContractEvent<
+      PoolEditedEvent.InputTuple,
+      PoolEditedEvent.OutputTuple,
+      PoolEditedEvent.OutputObject
     >;
   };
 }

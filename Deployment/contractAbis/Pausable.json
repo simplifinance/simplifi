@@ -5,18 +5,19 @@
     "type": "error"
   },
   {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "errorMsg",
+        "type": "string"
+      }
+    ],
+    "name": "ErrorOccurred",
+    "type": "error"
+  },
+  {
     "inputs": [],
     "name": "ExpectedPause",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "ManagerAddressIsZero",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "NotPermittedToCall",
     "type": "error"
   },
   {
@@ -47,19 +48,6 @@
   },
   {
     "inputs": [],
-    "name": "ownershipManager",
-    "outputs": [
-      {
-        "internalType": "contract IOwnerShip",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "pause",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -79,6 +67,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "roleManager",
+    "outputs": [
+      {
+        "internalType": "contract IRoleBase",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",
@@ -86,7 +87,7 @@
         "type": "address"
       }
     ],
-    "name": "setOwnershipManager",
+    "name": "setRoleManager",
     "outputs": [
       {
         "internalType": "bool",
