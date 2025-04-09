@@ -2,38 +2,19 @@
 
 pragma solidity 0.8.24;
 
-import { SafeMath } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/math/SafeMath.sol";
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
 import { Common } from "../apis/Common.sol";
+import { ErrorLib } from "./ErrorLib.sol";
 
 library Utils {
     using Address for address;
-    using SafeMath for uint256;
-
-    error InsufficientCollateral(uint256 actual, uint256 expected);
-    error CollateralCoverageCannotGoBelow_100();
-    error InvalidDenominator(string message);
-
-    ///@dev Requires all conditions to be true 
-    function assertTrue_2(bool a, bool b, string memory errorMessage) internal pure {
-        require(a && b, errorMessage);
-    }
-
-    ///@dev Requires single condition to be true 
-    function assertTrue(bool condition, string memory errorMessage) internal pure {
-        require(condition, errorMessage);
-    }
-
-    ///@dev Requires conditions to be true 
-    function assertFalse(bool condition, string memory errorMessage) internal pure {
-        require(!condition, errorMessage);
-    }
+    using ErrorLib for *;
 
     /**     @dev Calculation of percentage.
         *   This is how we calculate percentage to arrive at expected value with 
         *   precision.
-        *   We choose a base value (numerator as 10000) repesenting a 100% of input value. This means if Alice wish to set 
+        *   We choose a base value (numerator as 10000) repesenting a 100% of the principal value. This means if Alice wish to set 
         *   her interest rate to 0.05% for instance, she only need to multiply it by 100 i.e 0.05 * 100 = 5. Her input will be 5. 
         *   Since Solidity do not accept decimals as input, in our context, the minimum value to parse is '0' indicating 
         *   zero interest rate. If user wish to set interest at least, the minimum value will be 1 reprensenting 0.01%.
@@ -57,9 +38,11 @@ library Utils {
     {
         uint16 base = _getBase(); 
         if(interest == 0 || principal == 0) return 0;
-        assertTrue(interest < type(uint16).max, "Interest overflow");
-        assertTrue(principal > base, "Principal should be greater than 10000");
-        _return = principal.mul(interest).div(base);
+        if(interest >= type(uint16).max) 'Interest overflow'._throw(); 
+        if(principal <= base) 'Principal should be greater than 10000'._throw();
+        unchecked {
+            _return = (principal * interest) / base;
+        }
     }
 
     /**
@@ -106,11 +89,16 @@ library Utils {
         pure 
         returns(uint256 expCol) 
     {
-        uint8 minCCR = 100;
-        if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
-        uint48 _ccr = uint48(uint(ccr).mul(100));
-        uint totalLoan = loanReqInDecimals.mul(10**price.decimals).div(price.price);
-        expCol = totalLoan.mul(_ccr).div(_getBase());
+        // uint8 minCCR = 100;
+        // if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
+        if(ccr == 0) expCol = 0;
+        else {
+            unchecked {
+                uint48 _ccr = uint48(ccr * 100);
+                uint totalLoan = (loanReqInDecimals * (10**price.decimals)) / price.price;
+                expCol = (totalLoan * _ccr) / _getBase();
+            }
+        }
     }
 
     /**
@@ -145,19 +133,19 @@ library Utils {
     function computeInterestsBasedOnDuration(
         uint principal,
         uint16 rate,
-        uint24 fullDurationInSec
+        uint32 fullDurationInSec
     )
         internal 
         pure 
-        returns(Common.Interest memory _itr) 
+        returns(Common.Interest memory it) 
     {
-        Common.Interest memory it;
-        require(fullDurationInSec <= _maxDurationInSec(), "Utils: FullDur or DurOfChoice oerflow");
+        assert(fullDurationInSec <= _maxDurationInSec());
         it.fullInterest = _getPercentage(principal, rate); // Full interest for fullDurationInSec
         if(it.fullInterest > 0) {
-            it.intPerSec = it.fullInterest.mul(1).div(fullDurationInSec);
+            unchecked {
+                it.intPerSec = (it.fullInterest * 1) / fullDurationInSec;
+            }
         }
-        _itr = it; 
     }
 
     /**
@@ -165,10 +153,6 @@ library Utils {
      */
     function _maxDurationInSec() internal pure returns(uint24 max) {
         max = 2592000;
-    }
-
-    function notZeroAddress(address target) internal pure {
-        require(target != address(0), "Zero address");
     }
 
     function _now() internal view returns(uint64 date) {

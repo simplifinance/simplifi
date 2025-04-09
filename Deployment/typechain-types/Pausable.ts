@@ -25,35 +25,35 @@ import type {
 export interface PausableInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "ownershipManager"
       | "pause"
       | "paused"
-      | "setOwnershipManager"
+      | "roleManager"
+      | "setRoleManager"
       | "unpause"
   ): FunctionFragment;
 
   getEvent(nameOrSignatureOrTopic: "Paused" | "Unpaused"): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "ownershipManager",
-    values?: undefined
-  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "setOwnershipManager",
+    functionFragment: "roleManager",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setRoleManager",
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
 
-  decodeFunctionResult(
-    functionFragment: "ownershipManager",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "setOwnershipManager",
+    functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setRoleManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
@@ -126,13 +126,13 @@ export interface Pausable extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  ownershipManager: TypedContractMethod<[], [string], "view">;
-
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
-  setOwnershipManager: TypedContractMethod<
+  roleManager: TypedContractMethod<[], [string], "view">;
+
+  setRoleManager: TypedContractMethod<
     [newManager: AddressLike],
     [boolean],
     "nonpayable"
@@ -145,16 +145,16 @@ export interface Pausable extends BaseContract {
   ): T;
 
   getFunction(
-    nameOrSignature: "ownershipManager"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "pause"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "paused"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "setOwnershipManager"
+    nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "setRoleManager"
   ): TypedContractMethod<[newManager: AddressLike], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "unpause"

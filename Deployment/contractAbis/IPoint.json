@@ -1,0 +1,120 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "contributor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referrals",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Common.Point",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "name": "deductPoint",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getPoint",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "contributor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referrals",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Common.Point",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "contributor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referrals",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Common.Point",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "name": "setPoint",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

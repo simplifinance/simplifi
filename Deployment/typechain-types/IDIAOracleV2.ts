@@ -17,7 +17,7 @@ import type {
   TypedEventLog,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../../../common";
 
 export interface IDIAOracleV2Interface extends Interface {
   getFunction(nameOrSignature: "getValue"): FunctionFragment;
@@ -71,9 +71,9 @@ export interface IDIAOracleV2 extends BaseContract {
   ): Promise<this>;
 
   getValue: TypedContractMethod<
-    [key: string],
-    [[bigint, bigint] & { price: bigint; timestamp: bigint }],
-    "view"
+    [arg0: string],
+    [[bigint, bigint]],
+    "nonpayable"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -82,11 +82,7 @@ export interface IDIAOracleV2 extends BaseContract {
 
   getFunction(
     nameOrSignature: "getValue"
-  ): TypedContractMethod<
-    [key: string],
-    [[bigint, bigint] & { price: bigint; timestamp: bigint }],
-    "view"
-  >;
+  ): TypedContractMethod<[arg0: string], [[bigint, bigint]], "nonpayable">;
 
   filters: {};
 }

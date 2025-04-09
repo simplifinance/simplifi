@@ -14,29 +14,9 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
-      name: "IERC1155Errors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC1155Errors__factory>;
-    getContractFactory(
-      name: "IERC20Errors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20Errors__factory>;
-    getContractFactory(
-      name: "IERC721Errors",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC721Errors__factory>;
-    getContractFactory(
-      name: "ERC20",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20__factory>;
-    getContractFactory(
       name: "IERC20Metadata",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Metadata__factory>;
-    getContractFactory(
-      name: "IERC20Permit",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IERC20Permit__factory>;
     getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -50,41 +30,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuard__factory>;
     getContractFactory(
-      name: "AbstractFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AbstractFactory__factory>;
-    getContractFactory(
-      name: "DIAOracleV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.DIAOracleV2__factory>;
-    getContractFactory(
-      name: "IDIAOracleV2",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IDIAOracleV2__factory>;
-    getContractFactory(
-      name: "OnlyOwner",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OnlyOwner__factory>;
-    getContractFactory(
-      name: "Pausable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Pausable__factory>;
-    getContractFactory(
       name: "Common",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Common__factory>;
-    getContractFactory(
-      name: "IAssetClass",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IAssetClass__factory>;
-    getContractFactory(
-      name: "IBank",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IBank__factory>;
-    getContractFactory(
-      name: "IBankFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IBankFactory__factory>;
     getContractFactory(
       name: "IDIAOracleV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -102,100 +50,115 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IFactory__factory>;
     getContractFactory(
-      name: "IOwnerShip",
+      name: "IPoint",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.IOwnerShip__factory>;
+    ): Promise<Contracts.IPoint__factory>;
     getContractFactory(
-      name: "AssetClass",
+      name: "IRoleBase",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.AssetClass__factory>;
+    ): Promise<Contracts.IRoleBase__factory>;
     getContractFactory(
-      name: "Factory",
+      name: "ISafe",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Factory__factory>;
+    ): Promise<Contracts.ISafe__factory>;
     getContractFactory(
-      name: "OwnerShip",
+      name: "ISafeFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.OwnerShip__factory>;
+    ): Promise<Contracts.ISafeFactory__factory>;
     getContractFactory(
-      name: "SimpliToken",
+      name: "ISupportedAsset",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SimpliToken__factory>;
+    ): Promise<Contracts.ISupportedAsset__factory>;
     getContractFactory(
-      name: "Bank",
+      name: "FlexpoolFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Bank__factory>;
+    ): Promise<Contracts.FlexpoolFactory__factory>;
     getContractFactory(
-      name: "BankFactory",
+      name: "Providers",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.BankFactory__factory>;
+    ): Promise<Contracts.Providers__factory>;
     getContractFactory(
-      name: "TestBaseAsset",
+      name: "Points",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TestBaseAsset__factory>;
+    ): Promise<Contracts.Points__factory>;
     getContractFactory(
-      name: "Attorney",
+      name: "RoleManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Attorney__factory>;
+    ): Promise<Contracts.RoleManager__factory>;
     getContractFactory(
-      name: "ERC20Abstract",
+      name: "Safe",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20Abstract__factory>;
+    ): Promise<Contracts.Safe__factory>;
     getContractFactory(
-      name: "Escape",
+      name: "SafeFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Escape__factory>;
+    ): Promise<Contracts.SafeFactory__factory>;
     getContractFactory(
-      name: "Reserve",
+      name: "SupportedAssetManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Reserve__factory>;
+    ): Promise<Contracts.SupportedAssetManager__factory>;
     getContractFactory(
-      name: "TokenDistributor",
+      name: "ErrorLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenDistributor__factory>;
+    ): Promise<Contracts.ErrorLib__factory>;
     getContractFactory(
-      name: "TokenInteractor",
+      name: "AwardPoint",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenInteractor__factory>;
+    ): Promise<Contracts.AwardPoint__factory>;
     getContractFactory(
-      name: "Lib",
+      name: "Contributor",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Lib__factory>;
+    ): Promise<Contracts.Contributor__factory>;
     getContractFactory(
-      name: "Utils",
+      name: "DIAOracleV2",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Utils__factory>;
+    ): Promise<Contracts.DIAOracleV2__factory>;
+    getContractFactory(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IDIAOracleV2__factory>;
+    getContractFactory(
+      name: "ERC20Manager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Manager__factory>;
+    getContractFactory(
+      name: "FeeToAndRate",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FeeToAndRate__factory>;
+    getContractFactory(
+      name: "MinimumLiquidity",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MinimumLiquidity__factory>;
+    getContractFactory(
+      name: "OnlyRoleBase",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.OnlyRoleBase__factory>;
+    getContractFactory(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pausable__factory>;
+    getContractFactory(
+      name: "Pool",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Pool__factory>;
+    getContractFactory(
+      name: "Price",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Price__factory>;
+    getContractFactory(
+      name: "SafeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SafeManager__factory>;
+    getContractFactory(
+      name: "Slots",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Slots__factory>;
 
-    getContractAt(
-      name: "IERC1155Errors",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC1155Errors>;
-    getContractAt(
-      name: "IERC20Errors",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC20Errors>;
-    getContractAt(
-      name: "IERC721Errors",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC721Errors>;
-    getContractAt(
-      name: "ERC20",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "IERC20Metadata",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Metadata>;
-    getContractAt(
-      name: "IERC20Permit",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IERC20Permit>;
     getContractAt(
       name: "IERC20",
       address: string | ethers.Addressable,
@@ -212,50 +175,10 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ReentrancyGuard>;
     getContractAt(
-      name: "AbstractFactory",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.AbstractFactory>;
-    getContractAt(
-      name: "DIAOracleV2",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.DIAOracleV2>;
-    getContractAt(
-      name: "IDIAOracleV2",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IDIAOracleV2>;
-    getContractAt(
-      name: "OnlyOwner",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.OnlyOwner>;
-    getContractAt(
-      name: "Pausable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Pausable>;
-    getContractAt(
       name: "Common",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Common>;
-    getContractAt(
-      name: "IAssetClass",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IAssetClass>;
-    getContractAt(
-      name: "IBank",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IBank>;
-    getContractAt(
-      name: "IBankFactory",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.IBankFactory>;
     getContractAt(
       name: "IDIAOracleV2",
       address: string | ethers.Addressable,
@@ -277,110 +200,140 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IFactory>;
     getContractAt(
-      name: "IOwnerShip",
+      name: "IPoint",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.IOwnerShip>;
+    ): Promise<Contracts.IPoint>;
     getContractAt(
-      name: "AssetClass",
+      name: "IRoleBase",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.AssetClass>;
+    ): Promise<Contracts.IRoleBase>;
     getContractAt(
-      name: "Factory",
+      name: "ISafe",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Factory>;
+    ): Promise<Contracts.ISafe>;
     getContractAt(
-      name: "OwnerShip",
+      name: "ISafeFactory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.OwnerShip>;
+    ): Promise<Contracts.ISafeFactory>;
     getContractAt(
-      name: "SimpliToken",
+      name: "ISupportedAsset",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.SimpliToken>;
+    ): Promise<Contracts.ISupportedAsset>;
     getContractAt(
-      name: "Bank",
+      name: "FlexpoolFactory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Bank>;
+    ): Promise<Contracts.FlexpoolFactory>;
     getContractAt(
-      name: "BankFactory",
+      name: "Providers",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.BankFactory>;
+    ): Promise<Contracts.Providers>;
     getContractAt(
-      name: "TestBaseAsset",
+      name: "Points",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.TestBaseAsset>;
+    ): Promise<Contracts.Points>;
     getContractAt(
-      name: "Attorney",
+      name: "RoleManager",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Attorney>;
+    ): Promise<Contracts.RoleManager>;
     getContractAt(
-      name: "ERC20Abstract",
+      name: "Safe",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.ERC20Abstract>;
+    ): Promise<Contracts.Safe>;
     getContractAt(
-      name: "Escape",
+      name: "SafeFactory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Escape>;
+    ): Promise<Contracts.SafeFactory>;
     getContractAt(
-      name: "Reserve",
+      name: "SupportedAssetManager",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Reserve>;
+    ): Promise<Contracts.SupportedAssetManager>;
     getContractAt(
-      name: "TokenDistributor",
+      name: "ErrorLib",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.TokenDistributor>;
+    ): Promise<Contracts.ErrorLib>;
     getContractAt(
-      name: "TokenInteractor",
+      name: "AwardPoint",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.TokenInteractor>;
+    ): Promise<Contracts.AwardPoint>;
     getContractAt(
-      name: "Lib",
+      name: "Contributor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Lib>;
+    ): Promise<Contracts.Contributor>;
     getContractAt(
-      name: "Utils",
+      name: "DIAOracleV2",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.Utils>;
+    ): Promise<Contracts.DIAOracleV2>;
+    getContractAt(
+      name: "IDIAOracleV2",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IDIAOracleV2>;
+    getContractAt(
+      name: "ERC20Manager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Manager>;
+    getContractAt(
+      name: "FeeToAndRate",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FeeToAndRate>;
+    getContractAt(
+      name: "MinimumLiquidity",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MinimumLiquidity>;
+    getContractAt(
+      name: "OnlyRoleBase",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.OnlyRoleBase>;
+    getContractAt(
+      name: "Pausable",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pausable>;
+    getContractAt(
+      name: "Pool",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Pool>;
+    getContractAt(
+      name: "Price",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Price>;
+    getContractAt(
+      name: "SafeManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SafeManager>;
+    getContractAt(
+      name: "Slots",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Slots>;
 
-    deployContract(
-      name: "IERC1155Errors",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC1155Errors>;
-    deployContract(
-      name: "IERC20Errors",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Errors>;
-    deployContract(
-      name: "IERC721Errors",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Errors>;
-    deployContract(
-      name: "ERC20",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
-    deployContract(
-      name: "IERC20Permit",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Permit>;
     deployContract(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -394,41 +347,9 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
-      name: "AbstractFactory",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AbstractFactory>;
-    deployContract(
-      name: "DIAOracleV2",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DIAOracleV2>;
-    deployContract(
-      name: "IDIAOracleV2",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDIAOracleV2>;
-    deployContract(
-      name: "OnlyOwner",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OnlyOwner>;
-    deployContract(
-      name: "Pausable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
       name: "Common",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Common>;
-    deployContract(
-      name: "IAssetClass",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IAssetClass>;
-    deployContract(
-      name: "IBank",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IBank>;
-    deployContract(
-      name: "IBankFactory",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IBankFactory>;
     deployContract(
       name: "IDIAOracleV2",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -446,100 +367,115 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IFactory>;
     deployContract(
-      name: "IOwnerShip",
+      name: "IPoint",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IOwnerShip>;
+    ): Promise<Contracts.IPoint>;
     deployContract(
-      name: "AssetClass",
+      name: "IRoleBase",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AssetClass>;
+    ): Promise<Contracts.IRoleBase>;
     deployContract(
-      name: "Factory",
+      name: "ISafe",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Factory>;
+    ): Promise<Contracts.ISafe>;
     deployContract(
-      name: "OwnerShip",
+      name: "ISafeFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OwnerShip>;
+    ): Promise<Contracts.ISafeFactory>;
     deployContract(
-      name: "SimpliToken",
+      name: "ISupportedAsset",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SimpliToken>;
+    ): Promise<Contracts.ISupportedAsset>;
     deployContract(
-      name: "Bank",
+      name: "FlexpoolFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Bank>;
+    ): Promise<Contracts.FlexpoolFactory>;
     deployContract(
-      name: "BankFactory",
+      name: "Providers",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.BankFactory>;
+    ): Promise<Contracts.Providers>;
     deployContract(
-      name: "TestBaseAsset",
+      name: "Points",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TestBaseAsset>;
+    ): Promise<Contracts.Points>;
     deployContract(
-      name: "Attorney",
+      name: "RoleManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Attorney>;
+    ): Promise<Contracts.RoleManager>;
     deployContract(
-      name: "ERC20Abstract",
+      name: "Safe",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Abstract>;
+    ): Promise<Contracts.Safe>;
     deployContract(
-      name: "Escape",
+      name: "SafeFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Escape>;
+    ): Promise<Contracts.SafeFactory>;
     deployContract(
-      name: "Reserve",
+      name: "SupportedAssetManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Reserve>;
+    ): Promise<Contracts.SupportedAssetManager>;
     deployContract(
-      name: "TokenDistributor",
+      name: "ErrorLib",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenDistributor>;
+    ): Promise<Contracts.ErrorLib>;
     deployContract(
-      name: "TokenInteractor",
+      name: "AwardPoint",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenInteractor>;
+    ): Promise<Contracts.AwardPoint>;
     deployContract(
-      name: "Lib",
+      name: "Contributor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Lib>;
+    ): Promise<Contracts.Contributor>;
     deployContract(
-      name: "Utils",
+      name: "DIAOracleV2",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Utils>;
+    ): Promise<Contracts.DIAOracleV2>;
+    deployContract(
+      name: "IDIAOracleV2",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
+    deployContract(
+      name: "ERC20Manager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Manager>;
+    deployContract(
+      name: "FeeToAndRate",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FeeToAndRate>;
+    deployContract(
+      name: "MinimumLiquidity",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MinimumLiquidity>;
+    deployContract(
+      name: "OnlyRoleBase",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyRoleBase>;
+    deployContract(
+      name: "Pausable",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pausable>;
+    deployContract(
+      name: "Pool",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pool>;
+    deployContract(
+      name: "Price",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Price>;
+    deployContract(
+      name: "SafeManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeManager>;
+    deployContract(
+      name: "Slots",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Slots>;
 
-    deployContract(
-      name: "IERC1155Errors",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC1155Errors>;
-    deployContract(
-      name: "IERC20Errors",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Errors>;
-    deployContract(
-      name: "IERC721Errors",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC721Errors>;
-    deployContract(
-      name: "ERC20",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
-    deployContract(
-      name: "IERC20Permit",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IERC20Permit>;
     deployContract(
       name: "IERC20",
       args: any[],
@@ -556,50 +492,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ReentrancyGuard>;
     deployContract(
-      name: "AbstractFactory",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AbstractFactory>;
-    deployContract(
-      name: "DIAOracleV2",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.DIAOracleV2>;
-    deployContract(
-      name: "IDIAOracleV2",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IDIAOracleV2>;
-    deployContract(
-      name: "OnlyOwner",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OnlyOwner>;
-    deployContract(
-      name: "Pausable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Pausable>;
-    deployContract(
       name: "Common",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Common>;
-    deployContract(
-      name: "IAssetClass",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IAssetClass>;
-    deployContract(
-      name: "IBank",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IBank>;
-    deployContract(
-      name: "IBankFactory",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IBankFactory>;
     deployContract(
       name: "IDIAOracleV2",
       args: any[],
@@ -621,85 +517,135 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IFactory>;
     deployContract(
-      name: "IOwnerShip",
+      name: "IPoint",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.IOwnerShip>;
+    ): Promise<Contracts.IPoint>;
     deployContract(
-      name: "AssetClass",
+      name: "IRoleBase",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.AssetClass>;
+    ): Promise<Contracts.IRoleBase>;
     deployContract(
-      name: "Factory",
+      name: "ISafe",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Factory>;
+    ): Promise<Contracts.ISafe>;
     deployContract(
-      name: "OwnerShip",
+      name: "ISafeFactory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.OwnerShip>;
+    ): Promise<Contracts.ISafeFactory>;
     deployContract(
-      name: "SimpliToken",
+      name: "ISupportedAsset",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SimpliToken>;
+    ): Promise<Contracts.ISupportedAsset>;
     deployContract(
-      name: "Bank",
+      name: "FlexpoolFactory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Bank>;
+    ): Promise<Contracts.FlexpoolFactory>;
     deployContract(
-      name: "BankFactory",
+      name: "Providers",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.BankFactory>;
+    ): Promise<Contracts.Providers>;
     deployContract(
-      name: "TestBaseAsset",
+      name: "Points",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TestBaseAsset>;
+    ): Promise<Contracts.Points>;
     deployContract(
-      name: "Attorney",
+      name: "RoleManager",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Attorney>;
+    ): Promise<Contracts.RoleManager>;
     deployContract(
-      name: "ERC20Abstract",
+      name: "Safe",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20Abstract>;
+    ): Promise<Contracts.Safe>;
     deployContract(
-      name: "Escape",
+      name: "SafeFactory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Escape>;
+    ): Promise<Contracts.SafeFactory>;
     deployContract(
-      name: "Reserve",
+      name: "SupportedAssetManager",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Reserve>;
+    ): Promise<Contracts.SupportedAssetManager>;
     deployContract(
-      name: "TokenDistributor",
+      name: "ErrorLib",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenDistributor>;
+    ): Promise<Contracts.ErrorLib>;
     deployContract(
-      name: "TokenInteractor",
+      name: "AwardPoint",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenInteractor>;
+    ): Promise<Contracts.AwardPoint>;
     deployContract(
-      name: "Lib",
+      name: "Contributor",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Lib>;
+    ): Promise<Contracts.Contributor>;
     deployContract(
-      name: "Utils",
+      name: "DIAOracleV2",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Utils>;
+    ): Promise<Contracts.DIAOracleV2>;
+    deployContract(
+      name: "IDIAOracleV2",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IDIAOracleV2>;
+    deployContract(
+      name: "ERC20Manager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Manager>;
+    deployContract(
+      name: "FeeToAndRate",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FeeToAndRate>;
+    deployContract(
+      name: "MinimumLiquidity",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MinimumLiquidity>;
+    deployContract(
+      name: "OnlyRoleBase",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.OnlyRoleBase>;
+    deployContract(
+      name: "Pausable",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pausable>;
+    deployContract(
+      name: "Pool",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Pool>;
+    deployContract(
+      name: "Price",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Price>;
+    deployContract(
+      name: "SafeManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeManager>;
+    deployContract(
+      name: "Slots",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Slots>;
 
     // default types
     getContractFactory(

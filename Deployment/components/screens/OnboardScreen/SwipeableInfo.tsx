@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useAccount, useConnect } from "wagmi";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
-export default function SwipeableInfo() { 
+export default function SwipeableInfo() {
   const AutoSwipeableViews = autoPlay(SwipeableViews);
   const { isConnected, connector } = useAccount();
   const { connectAsync } = useConnect();
@@ -49,11 +49,11 @@ export default function SwipeableInfo() {
                 ))
               }
             </AutoSwipeableViews>
-            <div className={`${flexSpread} gap-4`}>
-              <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
-              <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
-            </div>
-          </OnboardWrapperDiv>
+          <div className={`${flexSpread} gap-4`}>
+            <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
+            <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
+          </div>
+        </OnboardWrapperDiv>
       }
     </div>
   );
