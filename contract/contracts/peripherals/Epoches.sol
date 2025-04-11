@@ -12,20 +12,20 @@ abstract contract Epoches is PastEpoches {
     // Past/completed pools
     Counters.Counter private epoches;
 
-    // Mapping of unitId to Pool
-    mapping(uint unitId => Common.Pool currentPools) private pools; 
+    // Mapping of unitId to current Pool
+    mapping(uint96 => Common.Pool) private pools; 
 
     /**
      * @dev Mapping of unit contribution to unitId
      * For every unit amount of contribution, there is a corresponding index for retrieving data from the storage.
      */
-    mapping(uint256 unitContribution => uint unitId) private indexes; 
+    mapping(uint256 => uint96) private indexes; 
 
     /**
      * @dev Verify that the contribution unit is not active. 
      * @notice When unit is not active, it can be relaunched. 
      */
-    modifier _onlyIfUnitIsNotActive(uint256 unit){
+    modifier _onlyIfUnitIsNotActive(uint unit){
         if(_isUnitActive(unit)) 'Unit is active'._throw();
         _;
     }
@@ -33,7 +33,7 @@ abstract contract Epoches is PastEpoches {
     /**
      * @dev Verify that the contribution unit is 
      */
-    modifier _onlyIfUnitIsActive(uint256 unit){
+    modifier _onlyIfUnitIsActive(uint unit){
         if(!_isUnitActive(unit)) 'Unit is inActive'._throw();
         _;
     }
@@ -47,7 +47,7 @@ abstract contract Epoches is PastEpoches {
         result = pools[_getUnitId(unit)].status == Common.Status.TAKEN;
     }
 
-    function _getUnitId(uint unit) internal view returns(uint _unitId) {
+    function _getUnitId(uint unit) internal view returns(uint96 _unitId) {
         _unitId = indexes[unit];
     }
 
@@ -57,24 +57,24 @@ abstract contract Epoches is PastEpoches {
     }
 
     // Generate unit Id and record Id
-    function _generateIds(uint256 unit) internal returns(uint96 unitId, uint96 recordId) {
+    function _generateIds(uint unit) internal returns(uint96 unitId, uint96 recordId) {
         epoches.increment();
         unitId = uint96(epoches.current());
         indexes[unit] = unitId;
         recordId = _generateRecordId();
     }
 
-    function _getPool(uint256 unit) internal view returns(Common.Pool memory result) {
+    function _getPool(uint unit) internal view returns(Common.Pool memory result) {
         result = pools[_getUnitId(unit)];
     }
 
     // Return past pool counter
-    function _getEpoches() internal view returns(uint _ep) {
-        _ep = epoches.current();
+    function _getEpoches() internal view returns(uint96 _epoches) {
+        _epoches = uint96(epoches.current());
     }
 
     /// @dev Update pool in storage 
-    function _setPool(uint unitId, Common.Pool memory pool) internal {
+    function _setPool(uint96 unitId, Common.Pool memory pool) internal {
         pools[unitId] = pool;
     }
 
@@ -98,8 +98,15 @@ abstract contract Epoches is PastEpoches {
         pure
         returns(bool filled) 
     {
-        uint expected = pool.big.unit * pool.low.maxQuorum;
-        filled = !isPermissioned? pool.low.userCount == pool.low.maxQuorum : expected == pool.big.currentPool;
+        unchecked {
+            filled = !isPermissioned? pool.low.userCount == pool.low.maxQuorum : pool.big.currentPool == (pool.big.unit * pool.low.maxQuorum);
+        }
     }
+
+    /**@dev Sets new last paid */
+    function _setLastPaid(address to, uint unit) internal {
+        pools[_getPool(unit).big.unitId].addrs.lastPaid = to;
+    }
+
 
 }

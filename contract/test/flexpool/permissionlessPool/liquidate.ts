@@ -1,0 +1,129 @@
+import { deployContracts, retrieveSafeContract } from "../../deployments";
+import { loadFixture, time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
+import { ethers } from "hardhat";
+import { expect } from "chai";
+import { 
+  bn,
+  UNIT_LIQUIDITY,
+  COLLATER_COVERAGE_RATIO,
+  DURATION_IN_HOURS,
+  ZERO,
+  INTEREST_RATE,
+  formatAddr,
+  DURATION_IN_SECS,
+  ONE_HOUR_ONE_MINUTE,
+} from "../../utilities";
+import { createPermissionedPool, createPermissionlessPool, getFinance, joinEpoch, liquidate, withdraw } from "../../utils";
+
+describe("Permissioned: Liquidate", function () {
+  async function deployContractsFixcture() {
+    return { ...await deployContracts(ethers.getSigners) };
+  }
+  
+  describe("Liquidation is when a contributor getFinance and did not pay back the loan within due date", function () {
+    it("If the payback date has passed, liquidation should succeed", async function () {
+      const {
+        baseAsset,
+        flexpool,
+        collateralAsset,
+        signers : { signer1, signer2, signer3, deployer, signer1Addr, signer3Addr },
+        flexpoolAddr 
+      } = await loadFixture(deployContractsFixcture);
+
+      const create = await createPermissionlessPool(
+        {
+          asset: baseAsset,
+          colCoverage: COLLATER_COVERAGE_RATIO,
+          durationInHours: DURATION_IN_HOURS,
+          factory: flexpool,
+          intRate: INTEREST_RATE,
+          quorum: 2,
+          signer: signer1,
+          unitLiquidity: UNIT_LIQUIDITY,
+          deployer,
+          collateralToken:collateralAsset
+        }
+      );
+
+      const join = await joinEpoch({
+        contribution: create.pool.pool.big.unit,
+        deployer,
+        unit: create.pool.pool.big.unit,
+        factory: flexpool,
+        factoryAddr: formatAddr(flexpoolAddr),
+        signers: [signer2],
+        testAsset: baseAsset,
+        collateral: collateralAsset
+      });
+
+      const quoted = await flexpool.connect(signer1).getCollateralQuote(create.pool.pool.big.unit);
+      const gf = await getFinance({
+        unit: create.pool.pool.big.unit,
+        factory: flexpool,
+        signers: [signer1],
+        colQuote: quoted.collateral,
+        collateral: collateralAsset,
+        asset: baseAsset,
+        deployer
+      });
+      
+      await withdraw({
+        asset: baseAsset,
+        factory: flexpool,
+        owner: formatAddr(gf.pool.pool.addrs.safe),
+        spender: signer1,
+        collateral: collateralAsset,
+        unit: create.pool.pool.big.unit
+      });
+ 
+      // Fastrack block time
+      const future = await time.latest() + (DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
+      await time.increaseTo(future);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
+      const s3BfLiq = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);
+      expect(s3BfLiq.access).to.be.false;
+      const { liq: { balances: bal, pool: pl, profile: pr }, baseBalB4Liq, baseBalAfterLiq} = await liquidate({
+        asset: baseAsset,
+        deployer,
+        unit: create.pool.pool.big.unit,
+        factory: flexpool,
+        signers: [signer3],
+        debt: debtToDate,
+        collateral: collateralAsset
+      });
+      expect(bn(baseBalAfterLiq).gte(bn(ZERO))).to.be.true;
+
+      const { baseBalB4, baseBalAfter, colBalAfter, colBalB4 } = await withdraw({
+        asset: baseAsset,
+        factory: flexpool,
+        owner: formatAddr(gf.pool.pool.addrs.safe),
+        spender: signer3,
+        collateral: collateralAsset,
+        unit: create.pool.pool.big.unit
+      });
+      const s3AfterLiq = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);
+      expect(s3AfterLiq.access).to.be.false;
+      expect(s3AfterLiq.collateralBalance).to.be.eq(ZERO);
+      /** 
+       * Liquidator should inherit the profile data of expected borrower except for id.
+      */
+      expect(pr.id).to.be.equal(signer3Addr);
+      expect(pr.colBals).to.be.equal(ZERO);
+      expect(bn(pr.paybackTime).gte(bn(gf.profile.paybackTime))).to.be.true;
+      expect(baseBalAfter).to.be.equal(baseBalB4);
+      
+      expect(bn(colBalAfter).gt(bn(colBalB4))). to.be.true;
+      expect(pl.pool.big.currentPool).to.be.equal(join.pool.pool.big.currentPool);
+
+      const s1 = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
+      const s3AfterWit = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);
+
+      expect(s1.access).to.be.false;
+      expect(s1.collateralBalance).to.be.eq(ZERO);
+      
+      expect(s3AfterWit.access).to.be.false;
+      expect(s3AfterWit.collateralBalance).to.be.eq(ZERO);
+    });
+  })
+})

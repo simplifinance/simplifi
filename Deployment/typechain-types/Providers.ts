@@ -74,6 +74,7 @@ export interface ProvidersInterface extends Interface {
       | "provideLiquidity"
       | "removeLiquidity"
       | "roleManager"
+      | "safeFactory"
       | "setMinimumLiquidity"
       | "setRoleManager"
       | "slots"
@@ -125,6 +126,10 @@ export interface ProvidersInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "safeFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setMinimumLiquidity",
     values: [BigNumberish]
   ): string;
@@ -165,6 +170,10 @@ export interface ProvidersInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -323,6 +332,8 @@ export interface Providers extends BaseContract {
 
   roleManager: TypedContractMethod<[], [string], "view">;
 
+  safeFactory: TypedContractMethod<[], [string], "view">;
+
   setMinimumLiquidity: TypedContractMethod<
     [_minLiquidity: BigNumberish],
     [void],
@@ -383,6 +394,9 @@ export interface Providers extends BaseContract {
   ): TypedContractMethod<[], [boolean], "nonpayable">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setMinimumLiquidity"

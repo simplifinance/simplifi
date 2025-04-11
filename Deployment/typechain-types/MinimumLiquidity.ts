@@ -32,6 +32,7 @@ export interface MinimumLiquidityInterface extends Interface {
       | "pause"
       | "paused"
       | "roleManager"
+      | "safeFactory"
       | "setMinimumLiquidity"
       | "setRoleManager"
       | "unpause"
@@ -52,6 +53,10 @@ export interface MinimumLiquidityInterface extends Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "roleManager",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -77,6 +82,10 @@ export interface MinimumLiquidityInterface extends Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -169,6 +178,8 @@ export interface MinimumLiquidity extends BaseContract {
 
   roleManager: TypedContractMethod<[], [string], "view">;
 
+  safeFactory: TypedContractMethod<[], [string], "view">;
+
   setMinimumLiquidity: TypedContractMethod<
     [_minLiquidity: BigNumberish],
     [void],
@@ -204,6 +215,9 @@ export interface MinimumLiquidity extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setMinimumLiquidity"

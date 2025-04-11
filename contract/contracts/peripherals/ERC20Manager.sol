@@ -4,9 +4,9 @@ pragma solidity 0.8.24;
 import { IERC20 } from "../apis/IERC20.sol";
 import { ISupportedAsset } from "../apis/ISupportedAsset.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { Pausable, IRoleBase } from "./Pausable.sol";
+import { SafeGetter, IRoleBase, ISafeFactory } from "./SafeGetter.sol";
 
-abstract contract ERC20Manager is Pausable {
+abstract contract ERC20Manager is SafeGetter {
     using ErrorLib for *;
 
     // Supportasset manager contract
@@ -16,16 +16,24 @@ abstract contract ERC20Manager is Pausable {
     IERC20 public immutable baseAsset;
 
     modifier onlySupportedAsset(IERC20 asset) {
-        if(!ISupportedAsset(assetManager).isSupportedAsset(address(asset))) 'Unsupported Asset'._throw();
+        if(asset != baseAsset){
+            if(!ISupportedAsset(assetManager).isSupportedAsset(address(asset))) 'Unsupported Asset'._throw();
+        }
         _;
     }
 
     // ============= Constructor ================
 
-    constructor(ISupportedAsset _assetManager, IERC20 _baseAsset, IRoleBase _roleManager) Pausable(_roleManager) {
-        if((_assetManager == assetManager)) "_assetManager is zero"._throw();
-        if((_baseAsset == baseAsset)) "_baseAsset is zero"._throw();
+    constructor(
+        ISupportedAsset _assetManager, 
+        IERC20 _baseAsset, 
+        IRoleBase _roleManager, 
+        ISafeFactory _safeFactory
+    ) SafeGetter(_safeFactory, _roleManager) {
+        if(_assetManager == assetManager) "_assetManager is zero"._throw();
+        if(_baseAsset == baseAsset) "_baseAsset is zero"._throw();
         assetManager = _assetManager;
+        baseAsset = _baseAsset;
     }
 
     /**

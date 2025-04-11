@@ -14,9 +14,29 @@ import * as Contracts from ".";
 declare module "hardhat/types/runtime" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
     getContractFactory(
+      name: "IERC1155Errors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC1155Errors__factory>;
+    getContractFactory(
+      name: "IERC20Errors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Errors__factory>;
+    getContractFactory(
+      name: "IERC721Errors",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Errors__factory>;
+    getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
+    getContractFactory(
       name: "IERC20Metadata",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20Metadata__factory>;
+    getContractFactory(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC20Permit__factory>;
     getContractFactory(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -70,34 +90,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ISupportedAsset__factory>;
     getContractFactory(
-      name: "FlexpoolFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.FlexpoolFactory__factory>;
-    getContractFactory(
-      name: "Providers",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Providers__factory>;
-    getContractFactory(
-      name: "Points",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Points__factory>;
-    getContractFactory(
-      name: "RoleManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.RoleManager__factory>;
-    getContractFactory(
-      name: "Safe",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Safe__factory>;
-    getContractFactory(
-      name: "SafeFactory",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SafeFactory__factory>;
-    getContractFactory(
-      name: "SupportedAssetManager",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SupportedAssetManager__factory>;
-    getContractFactory(
       name: "ErrorLib",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ErrorLib__factory>;
@@ -146,19 +138,108 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Price__factory>;
     getContractFactory(
-      name: "SafeManager",
+      name: "Safe",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.SafeManager__factory>;
+    ): Promise<Contracts.Safe__factory>;
+    getContractFactory(
+      name: "SafeGetter",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SafeGetter__factory>;
     getContractFactory(
       name: "Slots",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Slots__factory>;
+    getContractFactory(
+      name: "Attorney",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Attorney__factory>;
+    getContractFactory(
+      name: "ERC20Abstract",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20Abstract__factory>;
+    getContractFactory(
+      name: "Escape",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Escape__factory>;
+    getContractFactory(
+      name: "Reserve",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Reserve__factory>;
+    getContractFactory(
+      name: "TokenDistributor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokenDistributor__factory>;
+    getContractFactory(
+      name: "TokenInteractor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokenInteractor__factory>;
+    getContractFactory(
+      name: "FlexpoolFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FlexpoolFactory__factory>;
+    getContractFactory(
+      name: "Providers",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Providers__factory>;
+    getContractFactory(
+      name: "Points",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Points__factory>;
+    getContractFactory(
+      name: "RoleManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.RoleManager__factory>;
+    getContractFactory(
+      name: "SafeFactory",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SafeFactory__factory>;
+    getContractFactory(
+      name: "SupportedAssetManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SupportedAssetManager__factory>;
+    getContractFactory(
+      name: "SimpliToken",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.SimpliToken__factory>;
+    getContractFactory(
+      name: "BaseAsset",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.BaseAsset__factory>;
+    getContractFactory(
+      name: "Faucet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Faucet__factory>;
 
+    getContractAt(
+      name: "IERC1155Errors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC1155Errors>;
+    getContractAt(
+      name: "IERC20Errors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Errors>;
+    getContractAt(
+      name: "IERC721Errors",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Errors>;
+    getContractAt(
+      name: "ERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
     getContractAt(
       name: "IERC20Metadata",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20Metadata>;
+    getContractAt(
+      name: "IERC20Permit",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC20Permit>;
     getContractAt(
       name: "IERC20",
       address: string | ethers.Addressable,
@@ -225,41 +306,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ISupportedAsset>;
     getContractAt(
-      name: "FlexpoolFactory",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.FlexpoolFactory>;
-    getContractAt(
-      name: "Providers",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Providers>;
-    getContractAt(
-      name: "Points",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Points>;
-    getContractAt(
-      name: "RoleManager",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.RoleManager>;
-    getContractAt(
-      name: "Safe",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Safe>;
-    getContractAt(
-      name: "SafeFactory",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SafeFactory>;
-    getContractAt(
-      name: "SupportedAssetManager",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.SupportedAssetManager>;
-    getContractAt(
       name: "ErrorLib",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -320,20 +366,120 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Price>;
     getContractAt(
-      name: "SafeManager",
+      name: "Safe",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
-    ): Promise<Contracts.SafeManager>;
+    ): Promise<Contracts.Safe>;
+    getContractAt(
+      name: "SafeGetter",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SafeGetter>;
     getContractAt(
       name: "Slots",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Slots>;
+    getContractAt(
+      name: "Attorney",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Attorney>;
+    getContractAt(
+      name: "ERC20Abstract",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20Abstract>;
+    getContractAt(
+      name: "Escape",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Escape>;
+    getContractAt(
+      name: "Reserve",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Reserve>;
+    getContractAt(
+      name: "TokenDistributor",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokenDistributor>;
+    getContractAt(
+      name: "TokenInteractor",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokenInteractor>;
+    getContractAt(
+      name: "FlexpoolFactory",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FlexpoolFactory>;
+    getContractAt(
+      name: "Providers",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Providers>;
+    getContractAt(
+      name: "Points",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Points>;
+    getContractAt(
+      name: "RoleManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.RoleManager>;
+    getContractAt(
+      name: "SafeFactory",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SafeFactory>;
+    getContractAt(
+      name: "SupportedAssetManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SupportedAssetManager>;
+    getContractAt(
+      name: "SimpliToken",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.SimpliToken>;
+    getContractAt(
+      name: "BaseAsset",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.BaseAsset>;
+    getContractAt(
+      name: "Faucet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Faucet>;
 
+    deployContract(
+      name: "IERC1155Errors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC1155Errors>;
+    deployContract(
+      name: "IERC20Errors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Errors>;
+    deployContract(
+      name: "IERC721Errors",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC721Errors>;
+    deployContract(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
+    deployContract(
+      name: "IERC20Permit",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Permit>;
     deployContract(
       name: "IERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -387,34 +533,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISupportedAsset>;
     deployContract(
-      name: "FlexpoolFactory",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FlexpoolFactory>;
-    deployContract(
-      name: "Providers",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Providers>;
-    deployContract(
-      name: "Points",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Points>;
-    deployContract(
-      name: "RoleManager",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RoleManager>;
-    deployContract(
-      name: "Safe",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Safe>;
-    deployContract(
-      name: "SafeFactory",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SafeFactory>;
-    deployContract(
-      name: "SupportedAssetManager",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SupportedAssetManager>;
-    deployContract(
       name: "ErrorLib",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ErrorLib>;
@@ -463,19 +581,108 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Price>;
     deployContract(
-      name: "SafeManager",
+      name: "Safe",
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SafeManager>;
+    ): Promise<Contracts.Safe>;
+    deployContract(
+      name: "SafeGetter",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeGetter>;
     deployContract(
       name: "Slots",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Slots>;
+    deployContract(
+      name: "Attorney",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Attorney>;
+    deployContract(
+      name: "ERC20Abstract",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Abstract>;
+    deployContract(
+      name: "Escape",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Escape>;
+    deployContract(
+      name: "Reserve",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Reserve>;
+    deployContract(
+      name: "TokenDistributor",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenDistributor>;
+    deployContract(
+      name: "TokenInteractor",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenInteractor>;
+    deployContract(
+      name: "FlexpoolFactory",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FlexpoolFactory>;
+    deployContract(
+      name: "Providers",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Providers>;
+    deployContract(
+      name: "Points",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Points>;
+    deployContract(
+      name: "RoleManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RoleManager>;
+    deployContract(
+      name: "SafeFactory",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeFactory>;
+    deployContract(
+      name: "SupportedAssetManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SupportedAssetManager>;
+    deployContract(
+      name: "SimpliToken",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpliToken>;
+    deployContract(
+      name: "BaseAsset",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaseAsset>;
+    deployContract(
+      name: "Faucet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Faucet>;
 
+    deployContract(
+      name: "IERC1155Errors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC1155Errors>;
+    deployContract(
+      name: "IERC20Errors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Errors>;
+    deployContract(
+      name: "IERC721Errors",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC721Errors>;
+    deployContract(
+      name: "ERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
     deployContract(
       name: "IERC20Metadata",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.IERC20Metadata>;
+    deployContract(
+      name: "IERC20Permit",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IERC20Permit>;
     deployContract(
       name: "IERC20",
       args: any[],
@@ -542,41 +749,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ISupportedAsset>;
     deployContract(
-      name: "FlexpoolFactory",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.FlexpoolFactory>;
-    deployContract(
-      name: "Providers",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Providers>;
-    deployContract(
-      name: "Points",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Points>;
-    deployContract(
-      name: "RoleManager",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.RoleManager>;
-    deployContract(
-      name: "Safe",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Safe>;
-    deployContract(
-      name: "SafeFactory",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SafeFactory>;
-    deployContract(
-      name: "SupportedAssetManager",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SupportedAssetManager>;
-    deployContract(
       name: "ErrorLib",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -637,15 +809,95 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Price>;
     deployContract(
-      name: "SafeManager",
+      name: "Safe",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.SafeManager>;
+    ): Promise<Contracts.Safe>;
+    deployContract(
+      name: "SafeGetter",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeGetter>;
     deployContract(
       name: "Slots",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Slots>;
+    deployContract(
+      name: "Attorney",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Attorney>;
+    deployContract(
+      name: "ERC20Abstract",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20Abstract>;
+    deployContract(
+      name: "Escape",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Escape>;
+    deployContract(
+      name: "Reserve",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Reserve>;
+    deployContract(
+      name: "TokenDistributor",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenDistributor>;
+    deployContract(
+      name: "TokenInteractor",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenInteractor>;
+    deployContract(
+      name: "FlexpoolFactory",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FlexpoolFactory>;
+    deployContract(
+      name: "Providers",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Providers>;
+    deployContract(
+      name: "Points",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Points>;
+    deployContract(
+      name: "RoleManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.RoleManager>;
+    deployContract(
+      name: "SafeFactory",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SafeFactory>;
+    deployContract(
+      name: "SupportedAssetManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SupportedAssetManager>;
+    deployContract(
+      name: "SimpliToken",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.SimpliToken>;
+    deployContract(
+      name: "BaseAsset",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.BaseAsset>;
+    deployContract(
+      name: "Faucet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Faucet>;
 
     // default types
     getContractFactory(

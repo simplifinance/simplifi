@@ -106,6 +106,19 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "safeFactory",
+    "outputs": [
+      {
+        "internalType": "contract ISafeFactory",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "address",

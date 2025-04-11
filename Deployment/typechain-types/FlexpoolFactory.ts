@@ -137,6 +137,46 @@ export declare namespace Common {
     accruals: Common.InterestStructOutput;
   };
 
+  export type ContributorStruct = {
+    paybackTime: BigNumberish;
+    turnStartTime: BigNumberish;
+    getFinanceTime: BigNumberish;
+    loan: BigNumberish;
+    colBals: BigNumberish;
+    id: AddressLike;
+    sentQuota: boolean;
+  };
+
+  export type ContributorStructOutput = [
+    paybackTime: bigint,
+    turnStartTime: bigint,
+    getFinanceTime: bigint,
+    loan: bigint,
+    colBals: bigint,
+    id: string,
+    sentQuota: boolean
+  ] & {
+    paybackTime: bigint;
+    turnStartTime: bigint;
+    getFinanceTime: bigint;
+    loan: bigint;
+    colBals: bigint;
+    id: string;
+    sentQuota: boolean;
+  };
+
+  export type SlotStruct = {
+    value: BigNumberish;
+    isMember: boolean;
+    isAdmin: boolean;
+  };
+
+  export type SlotStructOutput = [
+    value: bigint,
+    isMember: boolean,
+    isAdmin: boolean
+  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
+
   export type AnalyticsStruct = {
     tvlCollateral: BigNumberish;
     tvlBase: BigNumberish;
@@ -175,34 +215,6 @@ export declare namespace Common {
     recordEpoches: bigint;
   };
 
-  export type ContributorStruct = {
-    paybackTime: BigNumberish;
-    turnStartTime: BigNumberish;
-    getFinanceTime: BigNumberish;
-    loan: BigNumberish;
-    colBals: BigNumberish;
-    id: AddressLike;
-    sentQuota: boolean;
-  };
-
-  export type ContributorStructOutput = [
-    paybackTime: bigint,
-    turnStartTime: bigint,
-    getFinanceTime: bigint,
-    loan: bigint,
-    colBals: bigint,
-    id: string,
-    sentQuota: boolean
-  ] & {
-    paybackTime: bigint;
-    turnStartTime: bigint;
-    getFinanceTime: bigint;
-    loan: bigint;
-    colBals: bigint;
-    id: string;
-    sentQuota: boolean;
-  };
-
   export type ReadDataReturnValueStruct = {
     pool: Common.PoolStruct;
     cData: Common.ContributorStruct[];
@@ -215,18 +227,6 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorStructOutput[];
   };
-
-  export type SlotStruct = {
-    value: BigNumberish;
-    isMember: boolean;
-    isAdmin: boolean;
-  };
-
-  export type SlotStructOutput = [
-    value: bigint,
-    isMember: boolean,
-    isAdmin: boolean
-  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
 }
 
 export interface FlexpoolFactoryInterface extends Interface {
@@ -244,12 +244,15 @@ export interface FlexpoolFactoryInterface extends Interface {
       | "deactivateReward"
       | "diaOracleAddress"
       | "editPool"
+      | "enquireLiquidation"
       | "feeTo"
       | "getCollateralQuote"
       | "getContributorProviders"
       | "getCurrentDebt"
+      | "getEpoches"
       | "getFactoryData"
       | "getFinance"
+      | "getPastEpoches"
       | "getPoolData"
       | "getPoolRecord"
       | "getProfile"
@@ -332,6 +335,10 @@ export interface FlexpoolFactoryInterface extends Interface {
     functionFragment: "editPool",
     values: [BigNumberish, BigNumberish, BigNumberish, BigNumberish]
   ): string;
+  encodeFunctionData(
+    functionFragment: "enquireLiquidation",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getCollateralQuote",
@@ -343,7 +350,11 @@ export interface FlexpoolFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCurrentDebt",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEpoches",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getFactoryData",
@@ -352,6 +363,10 @@ export interface FlexpoolFactoryInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getFinance",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPastEpoches",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolData",
@@ -437,6 +452,10 @@ export interface FlexpoolFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "editPool", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "enquireLiquidation",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCollateralQuote",
@@ -450,11 +469,16 @@ export interface FlexpoolFactoryInterface extends Interface {
     functionFragment: "getCurrentDebt",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getFactoryData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getFinance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPastEpoches",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getPoolData",
     data: BytesLike
@@ -717,6 +741,18 @@ export interface FlexpoolFactory extends BaseContract {
     "nonpayable"
   >;
 
+  enquireLiquidation: TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
+
   feeTo: TypedContractMethod<[], [string], "view">;
 
   getCollateralQuote: TypedContractMethod<
@@ -731,11 +767,9 @@ export interface FlexpoolFactory extends BaseContract {
     "view"
   >;
 
-  getCurrentDebt: TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
+  getCurrentDebt: TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
+
+  getEpoches: TypedContractMethod<[], [bigint], "view">;
 
   getFactoryData: TypedContractMethod<
     [],
@@ -748,6 +782,8 @@ export interface FlexpoolFactory extends BaseContract {
     [boolean],
     "nonpayable"
   >;
+
+  getPastEpoches: TypedContractMethod<[], [bigint], "view">;
 
   getPoolData: TypedContractMethod<
     [unit: BigNumberish],
@@ -892,6 +928,19 @@ export interface FlexpoolFactory extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "enquireLiquidation"
+  ): TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "feeTo"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -910,17 +959,19 @@ export interface FlexpoolFactory extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getCurrentDebt"
-  ): TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
+  ): TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getFactoryData"
   ): TypedContractMethod<[], [Common.ViewFactoryDataStructOutput], "view">;
   getFunction(
     nameOrSignature: "getFinance"
   ): TypedContractMethod<[unit: BigNumberish], [boolean], "nonpayable">;
+  getFunction(
+    nameOrSignature: "getPastEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<

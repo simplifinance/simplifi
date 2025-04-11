@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import { IFactory, Common } from "../../apis/IFactory.sol";
-import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset} from "../../peripherals/MinimumLiquidity.sol";
+import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from "../../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
@@ -55,9 +55,10 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         IFactory _flexpoolFactory,
         IRoleBase _roleManager, 
         IERC20 _baseAsset,
-        ISupportedAsset _assetManager 
+        ISupportedAsset _assetManager,
+        ISafeFactory _safeFactory
     )
-        MinimumLiquidity(_assetManager, _baseAsset, _roleManager)
+        MinimumLiquidity(_assetManager, _baseAsset, _roleManager, _safeFactory)
     {
         if(address(_flexpoolFactory) == address(0)) '_flexpoolFactory is zero'._throw();
         flexpoolFactory = _flexpoolFactory;

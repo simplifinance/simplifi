@@ -20,6 +20,11 @@
         "internalType": "contract ISupportedAsset",
         "name": "_assetManager",
         "type": "address"
+      },
+      {
+        "internalType": "contract ISafeFactory",
+        "name": "_safeFactory",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -445,6 +450,19 @@
     "outputs": [
       {
         "internalType": "contract IRoleBase",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "safeFactory",
+    "outputs": [
+      {
+        "internalType": "contract ISafeFactory",
         "name": "",
         "type": "address"
       }

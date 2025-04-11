@@ -31,6 +31,7 @@ export interface PriceInterface extends Interface {
       | "pause"
       | "paused"
       | "roleManager"
+      | "safeFactory"
       | "setPair"
       | "setRoleManager"
       | "unpause"
@@ -51,6 +52,10 @@ export interface PriceInterface extends Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "roleManager",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeFactory",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -76,6 +81,10 @@ export interface PriceInterface extends Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPair", data: BytesLike): Result;
@@ -165,6 +174,8 @@ export interface Price extends BaseContract {
 
   roleManager: TypedContractMethod<[], [string], "view">;
 
+  safeFactory: TypedContractMethod<[], [string], "view">;
+
   setPair: TypedContractMethod<
     [collateralAsset: AddressLike, pair: string],
     [boolean],
@@ -200,6 +211,9 @@ export interface Price extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setPair"

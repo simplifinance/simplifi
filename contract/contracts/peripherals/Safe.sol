@@ -3,12 +3,12 @@
 pragma solidity 0.8.24;
 
 import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
-import { IERC20 } from "../../apis/IERC20.sol";
-import { IFactory } from "../../apis/IFactory.sol";
-import { ISafe } from "../../apis/ISafe.sol";
-import { Common } from "../../apis/Common.sol";
-import { OnlyRoleBase, IRoleBase } from "../../peripherals/OnlyRoleBase.sol";
-import { ErrorLib } from "../../libraries/ErrorLib.sol";
+import { IERC20 } from "../apis/IERC20.sol";
+import { IFactory } from "../apis/IFactory.sol";
+import { ISafe } from "../apis/ISafe.sol";
+import { Common } from "../apis/Common.sol";
+import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     using ErrorLib for *;
@@ -36,7 +36,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
 
     ///@dev Only users with access role are allowed
     modifier hasAccess(address user, uint recordId) {
-        if (!access[user][recordId]) 'User doed not have access'._throw();
+        if (!access[user][recordId]) 'User does not have access'._throw();
         _;
     }
 
@@ -154,7 +154,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         uint fee,
         uint256 calculatedCol,
         uint recordId
-    ) external hasAccess(user, recordId) onlyRoleBearer returns (bool) {
+    ) external hasAccess(user, recordId) onlyRoleBearer returns(bool) {
         assert(address(baseAsset) != address(0) && user != address(0));
         collateralBalances[user][recordId] = calculatedCol;
         uint loanable = loan;

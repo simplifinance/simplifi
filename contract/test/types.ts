@@ -1,19 +1,21 @@
-import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 import { ContractTransactionResponse, ethers } from "ethers";
 import { Hex, Address as ContractAddress } from "viem";
 import type { 
-  AssetClass, 
-  Factory, 
-  OwnerShip, 
-  BankFactory, 
-  TestBaseAsset, 
-  Bank, 
-  Escape, 
-  Attorney, 
-  Reserve,
-  TokenDistributor, 
-  SimpliToken } from "../typechain-types";
-import { Common } from "../typechain-types/contracts/apis/IFactory";
+  Points as Point, 
+  RoleManager as RoleMgr, 
+  SupportedAssetManager as SupportedAssetMgr, 
+  FlexpoolFactory as Flex, 
+  Providers as ProviderContract, 
+  SimpliToken as Collateral, 
+  BaseAsset as Base,
+  SafeFactory as SafeFactry,
+  Safe,
+  Reserve as Rsv,
+  Escape as Esc,
+  TokenDistributor as Tkd,
+  Attorney as Attn
+} from "../typechain-types";
+import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -47,14 +49,14 @@ export interface CreateRouterParam {
   amount: bigint;
   asset: Address;
   participants: Addresses;
-  contract: FactoryContract;
+  contract: FlexpoolFactory;
   creator: Signer;
 }
 
 export interface FunctionParam {
   unit: bigint; 
   from: Signer;
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   account?: Address;
 }
 
@@ -73,40 +75,39 @@ export interface PermissionLessBandParam {
   deployer: Signer;
   durationInHours: number;
   unitLiquidity: bigint;
-  asset: TestBaseAssetContract;
-  factory: FactoryContract;
+  asset: BaseAsset;
+  factory: FlexpoolFactory;
   signer: Signer;
-  collateralToken: SimpliTokenContract;
+  collateralToken: SimpliToken;
 }
 
 export interface RemoveLiquidityParam {
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   signer: Signer;
   unit: bigint;
 }
 
 export interface PermissionedBandParam {
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   signer: Signer;
   deployer: Signer;
   intRate: number;
   durationInHours: number;
   colCoverage: number;
   unitLiquidity: bigint;
-  asset: TestBaseAssetContract;
-  contributors: Addresses;
-  collateralToken: SimpliTokenContract;
+  asset: BaseAsset;
+  contributors: Signer[];
+  collateralToken: SimpliToken;
 }
 
 export interface BandParam {
   unit: bigint;
-  hrsOfUse_choice?: number;
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   signers: Signer[];
 }
 
 export interface SetVariableParam {
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   signer: Signer;
   feeTo: Address;
   assetMgr: Address;
@@ -119,99 +120,126 @@ export interface Balances {
   base: bigint;
 }
 
+export interface Contributor {
+  paybackTime: number;
+  turnStartTime: number;
+  getFinanceTime: number;
+  loan: bigint;
+  colBals: bigint;
+  id: Address;
+  sentQuota: boolean;
+}
+
 export interface FactoryTxReturn {
   pool: Common.ReadDataReturnValueStructOutput;
   balances?: Balances;
   profile: Common.ContributorStructOutput;
-  slot: Common.SlotStruct;
-  // cData: Common.ContributorStructOutput[];
-  
+  slot: Common.SlotStructOutput;
 }
 
 export interface FundAccountParam {
-  asset: TestBaseAssetContract | SimpliTokenContract;
+  asset: BaseAsset | SimpliToken;
   testAssetAddr?: Address;
   recipients: Address[];
   sender: Signer;
   amount: bigint;
 }
 
+export interface MintParam {
+  asset: BaseAsset | SimpliToken;
+  recipients: Signer[];
+  amount: bigint;
+}
+
 export interface JoinABandParam {
-  testAsset: TestBaseAssetContract;
-  factory: FactoryContract;
+  testAsset: BaseAsset;
+  factory: FlexpoolFactory;
   factoryAddr: Address;
   signers: SignersArr;
   deployer: Signer;
   unit: bigint;
   contribution: bigint;
-  collateral: SimpliTokenContract;
+  collateral: SimpliToken;
 }
 
 export interface LiquidateParam extends BandParam {
   debt?: bigint;
-  asset: TestBaseAssetContract;
+  asset: BaseAsset;
   deployer: Signer;
-  collateral: SimpliTokenContract;
+  collateral: SimpliToken;
 }
 
 export interface GetFinanceParam extends BandParam {
   colQuote: bigint;
-  asset: TestBaseAssetContract;
-  collateral: SimpliTokenContract;
+  asset: BaseAsset;
+  collateral: SimpliToken;
   deployer: Signer;
 }
 
 export interface PaybackParam extends LiquidateParam {
-  asset: TestBaseAssetContract;
-  collateral: SimpliTokenContract;
+  asset: BaseAsset;
+  collateral: SimpliToken;
 }
 
 export interface GetPaidParam {
-  factory: FactoryContract;
+  factory: FlexpoolFactory;
   signers: SignersArr;
   unit: bigint;
   runPayback: boolean;
-  tcUSD: TestBaseAssetContract;
+  tcUSD: BaseAsset;
   signerAddrs: Addresses;
   strategies: Addresses;
   trusteeAddr: Address;
 }
 
-export type FactoryContract = Factory & {
+export type FlexpoolFactory = Flex & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type AssetManagerContract = AssetClass & {
+export type SupportedAssetManager = SupportedAssetMgr & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type TestBaseAssetContract = TestBaseAsset & {
+export type RoleManager = RoleMgr & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type BankFactoryContract = BankFactory & {
+export type Points = Point & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type BankContract = Bank & {
+export type Providers = ProviderContract & {
   deploymentTransaction(): ContractTransactionResponse;
 };
 
-export type EscapeContract = Escape & {
+export type SimpliToken = Collateral & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-export type AttorneyContract = Attorney & {
+
+export type BaseAsset = Base & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-export type TokenDistributorContract = TokenDistributor & {
+
+export type SafeContract = Safe & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-export type SimpliTokenContract = SimpliToken & {
+
+export type SafeFactory = SafeFactry & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-export type ReserveContract = Reserve & {
+
+export type TokenDistributor = Tkd & {
   deploymentTransaction(): ContractTransactionResponse;
 };
-export type OwnershipManagerContract = OwnerShip & {
+
+export type Escape = Esc & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+
+export type Reserve = Rsv & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+
+export type Attorney = Attn & {
   deploymentTransaction(): ContractTransactionResponse;
 };

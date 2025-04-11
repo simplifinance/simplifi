@@ -24,6 +24,46 @@ import type {
 } from "../../common";
 
 export declare namespace Common {
+  export type ContributorStruct = {
+    paybackTime: BigNumberish;
+    turnStartTime: BigNumberish;
+    getFinanceTime: BigNumberish;
+    loan: BigNumberish;
+    colBals: BigNumberish;
+    id: AddressLike;
+    sentQuota: boolean;
+  };
+
+  export type ContributorStructOutput = [
+    paybackTime: bigint,
+    turnStartTime: bigint,
+    getFinanceTime: bigint,
+    loan: bigint,
+    colBals: bigint,
+    id: string,
+    sentQuota: boolean
+  ] & {
+    paybackTime: bigint;
+    turnStartTime: bigint;
+    getFinanceTime: bigint;
+    loan: bigint;
+    colBals: bigint;
+    id: string;
+    sentQuota: boolean;
+  };
+
+  export type SlotStruct = {
+    value: BigNumberish;
+    isMember: boolean;
+    isAdmin: boolean;
+  };
+
+  export type SlotStructOutput = [
+    value: bigint,
+    isMember: boolean,
+    isAdmin: boolean
+  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
+
   export type LowStruct = {
     maxQuorum: BigNumberish;
     selector: BigNumberish;
@@ -102,34 +142,6 @@ export declare namespace Common {
     status: bigint;
   };
 
-  export type ContributorStruct = {
-    paybackTime: BigNumberish;
-    turnStartTime: BigNumberish;
-    getFinanceTime: BigNumberish;
-    loan: BigNumberish;
-    colBals: BigNumberish;
-    id: AddressLike;
-    sentQuota: boolean;
-  };
-
-  export type ContributorStructOutput = [
-    paybackTime: bigint,
-    turnStartTime: bigint,
-    getFinanceTime: bigint,
-    loan: bigint,
-    colBals: bigint,
-    id: string,
-    sentQuota: boolean
-  ] & {
-    paybackTime: bigint;
-    turnStartTime: bigint;
-    getFinanceTime: bigint;
-    loan: bigint;
-    colBals: bigint;
-    id: string;
-    sentQuota: boolean;
-  };
-
   export type ReadDataReturnValueStruct = {
     pool: Common.PoolStruct;
     cData: Common.ContributorStruct[];
@@ -142,18 +154,6 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorStructOutput[];
   };
-
-  export type SlotStruct = {
-    value: BigNumberish;
-    isMember: boolean;
-    isAdmin: boolean;
-  };
-
-  export type SlotStructOutput = [
-    value: bigint,
-    isMember: boolean,
-    isAdmin: boolean
-  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
 }
 
 export interface FeeToAndRateInterface extends Interface {
@@ -165,9 +165,12 @@ export interface FeeToAndRateInterface extends Interface {
       | "baseAsset"
       | "deactivateReward"
       | "diaOracleAddress"
+      | "enquireLiquidation"
       | "feeTo"
       | "getCollateralQuote"
       | "getCurrentDebt"
+      | "getEpoches"
+      | "getPastEpoches"
       | "getPoolData"
       | "getPoolRecord"
       | "getProfile"
@@ -208,6 +211,10 @@ export interface FeeToAndRateInterface extends Interface {
     functionFragment: "diaOracleAddress",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "enquireLiquidation",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "feeTo", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getCollateralQuote",
@@ -215,7 +222,15 @@ export interface FeeToAndRateInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getCurrentDebt",
-    values: [BigNumberish, AddressLike]
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getEpoches",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPastEpoches",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolData",
@@ -284,6 +299,10 @@ export interface FeeToAndRateInterface extends Interface {
     functionFragment: "diaOracleAddress",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "enquireLiquidation",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "feeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getCollateralQuote",
@@ -291,6 +310,11 @@ export interface FeeToAndRateInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentDebt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPastEpoches",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -413,6 +437,18 @@ export interface FeeToAndRate extends BaseContract {
 
   diaOracleAddress: TypedContractMethod<[], [string], "view">;
 
+  enquireLiquidation: TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
+
   feeTo: TypedContractMethod<[], [string], "view">;
 
   getCollateralQuote: TypedContractMethod<
@@ -421,11 +457,11 @@ export interface FeeToAndRate extends BaseContract {
     "view"
   >;
 
-  getCurrentDebt: TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
+  getCurrentDebt: TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
+
+  getEpoches: TypedContractMethod<[], [bigint], "view">;
+
+  getPastEpoches: TypedContractMethod<[], [bigint], "view">;
 
   getPoolData: TypedContractMethod<
     [unit: BigNumberish],
@@ -508,6 +544,19 @@ export interface FeeToAndRate extends BaseContract {
     nameOrSignature: "diaOracleAddress"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "enquireLiquidation"
+  ): TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "feeTo"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
@@ -519,11 +568,13 @@ export interface FeeToAndRate extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "getCurrentDebt"
-  ): TypedContractMethod<
-    [unit: BigNumberish, target: AddressLike],
-    [bigint],
-    "view"
-  >;
+  ): TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getPastEpoches"
+  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<

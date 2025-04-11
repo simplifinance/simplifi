@@ -1,75 +1,26 @@
 import { ethers } from "hardhat";
 import type {
    Address, 
-   AssetManagerContract, 
-   FactoryContract, 
-   OwnershipManagerContract, 
+   FlexpoolFactory, 
+   Providers, 
+   RoleManager, 
    Signer, 
    Signers,
-   BankFactoryContract,
-   TestBaseAssetContract,
-   EscapeContract,
-   ReserveContract,
-   AttorneyContract,
-   TokenDistributorContract,
-   SimpliTokenContract,
-   BankContract
+   SafeContract,
+   SupportedAssetManager,
+   BaseAsset,
+   Points,
+   SimpliToken,
+   SafeFactory,
+   Attorney,
+   Reserve,
+   TokenDistributor,
+   Escape
 } from "./types";
 
-import { executeTransaction, FEE, formatAddr, MAKER_RATE, proposeTransaction, QUORUM, signTransaction, TrxnType, } from "./utilities";
+import { FEE, MAKER_RATE, QUORUM } from "./utilities";
 import { expect } from "chai";
-// import { abi } from "../artifacts/contracts/implementations/strategies/Bank.sol/Bank.json";
 import { zeroAddress } from "viem";
-
-/**
- * Deploys and return an instance of the Reserve contract
- * @param deployer : Deployer address
- * @returns : Contract instance
- */
-export async function deployOwnershipManager(deployer: Signer) : Promise<OwnershipManagerContract> {
-  const OwnershipManager = await ethers.getContractFactory("OwnerShip");
-  return (await OwnershipManager.connect(deployer).deploy()).waitForDeployment();
-}
-
-/**
- * Deploys and return an instance of the BankFactory contract.
- * @param deployer : Deployer address
- * @returns Contract instance
- */
-export async function deployBankFactory(ownershipManager: Address, feeTo: Address, deployer: Signer) : Promise<BankFactoryContract> {
-  const BankFactory = await ethers.getContractFactory("BankFactory");
-  return (await BankFactory.connect(deployer).deploy(ownershipManager, feeTo)).waitForDeployment();
-}
-
-/**
- * Deploys and return an instance of the Asset contract
- * @param deployer : Deployer address
- * @returns Contract instance
- */
-export async function deployAssetClass(testAddr: Address, ownershipManager: Address, deployer: Signer) :Promise< AssetManagerContract> {
-  const AssetMgr = await ethers.getContractFactory("AssetClass");
-  return (await AssetMgr.connect(deployer).deploy(testAddr, ownershipManager)).waitForDeployment();
-}
-
-/**
- * Deploys and return an address instance of the Bank
- * @param deployer : Deployer address
- * @returns Contract address
- */
-export async function deployBank(ownershipManager: Address, deployer: Signer) {
-  const SmartBank = await ethers.getContractFactory("Bank");
-  return await (await (await SmartBank.connect(deployer).deploy(ownershipManager)).waitForDeployment()).getAddress();
-}
-
-/**
- * Deploys and return an address instance of the Bank
- * @param deployer : Deployer address
- * @returns Contract address
- */
-export async function deployTestAsset(deployer: Signer, ownershipManager: Address, collateralToken: Address): Promise<TestBaseAssetContract> {
-  const testAsset = await ethers.getContractFactory("TestBaseAsset");
-  return (await testAsset.connect(deployer).deploy(ownershipManager, collateralToken)).waitForDeployment();
-}
 
 /**
  * Deploys and return an instance of the Escape contract.
@@ -77,7 +28,7 @@ export async function deployTestAsset(deployer: Signer, ownershipManager: Addres
  * @param ownershipManager : OwnerShip contract
  * @returns Contract instance
  */
-async function deployEscape(ownershipManager: Address, deployer: Signer) : Promise<EscapeContract> {
+async function deployEscape(ownershipManager: Address, deployer: Signer) : Promise<Escape> {
   const BankFactory = await ethers.getContractFactory("Escape");
   return (await BankFactory.connect(deployer).deploy(ownershipManager)).waitForDeployment();
 }
@@ -88,7 +39,7 @@ async function deployEscape(ownershipManager: Address, deployer: Signer) : Promi
  * @param ownershipManager : OwnerShip contract
  * @returns Contract instance
  */
-async function deployReserve(ownershipManager: Address, deployer: Signer) : Promise<ReserveContract> {
+async function deployReserve(ownershipManager: Address, deployer: Signer) : Promise<Reserve> {
   const BankFactory = await ethers.getContractFactory("Reserve");
   return (await BankFactory.connect(deployer).deploy(ownershipManager)).waitForDeployment();
 }
@@ -106,7 +57,7 @@ async function deployAttorney(
   fee: bigint,
   feeTo: Address,
   ownershipManager: Address
-) : Promise<AttorneyContract> {
+) : Promise<Attorney> {
   const BankFactory = await ethers.getContractFactory("Attorney");
   return (await BankFactory.connect(deployer).deploy(fee, feeTo, ownershipManager)).waitForDeployment();
 }
@@ -124,7 +75,7 @@ async function deployTokenDistributor(
   ownershipManager: Address,
   signers: Address[],
   quorum: number,
-) : Promise<TokenDistributorContract> {
+) : Promise<TokenDistributor> {
   const BankFactory = await ethers.getContractFactory("TokenDistributor");
   return (await BankFactory.connect(deployer).deploy(ownershipManager, signers, quorum)).waitForDeployment();
 }
@@ -139,122 +90,197 @@ async function deployCollateralAsset(
   attorney: Address,
   reserve: Address,
   tokenDistributor: Address,
-  ownershipManager: Address, 
-) :Promise<SimpliTokenContract> {
+  roleManager: Address, 
+) :Promise<SimpliToken> {
   const AssetMgr = await ethers.getContractFactory("SimpliToken");
-  return (await AssetMgr.connect(deployer).deploy(attorney, reserve, tokenDistributor, ownershipManager)).waitForDeployment();
+  return (await AssetMgr.connect(deployer).deploy(attorney, reserve, tokenDistributor, roleManager)).waitForDeployment();
 }
 
 
 /**
- * Deploy public router
- *
+ * Deploys and return an instance of the Safe Factory contract
+ * @param deployer : Deployer address
+ * @returns : Contract instance
+ */
+export async function deploySafeFactory(deployer: Signer, roleManager: Address, feeTo: Address) : Promise<SafeFactory> {
+  const OwnershipManager = await ethers.getContractFactory("SafeFactory");
+  return (await OwnershipManager.connect(deployer).deploy(roleManager, feeTo)).waitForDeployment();
+}
+
+/**
+ * Deploys and return an instance of the RoleManager contract
+ * @param deployer : Deployer address
+ * @returns : Contract instance
+ */
+export async function deployRoleManager(deployer: Signer) : Promise<RoleManager> {
+  const OwnershipManager = await ethers.getContractFactory("RoleManager");
+  return (await OwnershipManager.connect(deployer).deploy()).waitForDeployment();
+}
+
+/**
+ * Deploys and return an instance of the Point contract
+ * @param deployer : Deployer address
+ * @returns : Contract instance
+ */
+export async function deployPointsContract(deployer: Signer, roleManager: Address) : Promise<Points> {
+  const OwnershipManager = await ethers.getContractFactory("Points");
+  return (await OwnershipManager.connect(deployer).deploy(roleManager)).waitForDeployment();
+}
+
+/**
+ * Deploys and return an instance of the Providers contract.
+ * @param deployer : Deployer address
+ * @param flexpoolFactory : Flexpool factory contract
+ * @param roleManager: Role manager contract
+ * @param baseAsset : Base asset contract
+ * @param supportedAssetMgr : Supported manager contract
+ * @returns Contract instance
+ */
+export async function deployProvider(flexpoolFactory: Address, roleManager: Address, baseAsset: Address, supportedAssetMgr: Address, safeFactory: Address, deployer: Signer) : Promise<Providers> {
+  const BankFactory = await ethers.getContractFactory("Providers");
+  return (await BankFactory.connect(deployer).deploy(flexpoolFactory, roleManager, baseAsset, supportedAssetMgr, safeFactory)).waitForDeployment();
+}
+
+/**
+  * Deploys and return an instance of the SupportedAssetManager contract
+  * @param collateralAsset : Collateral asset ciontract
+  * @param roleManager : Role manager contract
+  * @param deployer : Deployer address
+  * @returns Contract instance
+ */
+export async function deploySupportedAssetManager(collateralAsset: Address, roleManager: Address, deployer: Signer) :Promise<SupportedAssetManager> {
+  const AssetMgr = await ethers.getContractFactory("SupportedAssetManager");
+  return (await AssetMgr.connect(deployer).deploy(collateralAsset, roleManager)).waitForDeployment();
+}
+
+/**
+ * Deploys and return an address instance of the Base Asset contract
+ * @param deployer : Deployer address
+ * @returns Contract address
+ */
+export async function deployBaseAsset(deployer: Signer): Promise<BaseAsset> {
+  const testAsset = await ethers.getContractFactory("BaseAsset");
+  return (await testAsset.connect(deployer).deploy()).waitForDeployment();
+}
+
+/**
+ * Deploy an instance of the FlexpoolFactory contract
  * @param deployer : Deployer.
- * @param collateralToken : Simplifinance Token address.
- * @param assetMgr : Asset address.
- * @param bankFactory : Bank admin address.
- * @param ownershipMgr : Ownership manager address.
  * @param feeTo : Fee receiver.
+ * @param makerRate : Platform fee
+ * @param diaOracleAddress : DiaOracle Address
+ * @param roleManager : Role manager contract
+ * @param assetManager : Supported asset manager
+ * @param baseAsset : Base asset contract
+ * @param pointFactory : Point factory contract
  * @returns Contract instance.
 */
 
-export async function deployFactory(
-  assetMgr: Address, 
-  bankFactory: Address, 
-  feeTo: Address, 
-  ownershipMgr: Address, 
-  deployer: Signer, 
-  collateralToken: Address
-) : Promise<FactoryContract> {
-  const Factory = await ethers.getContractFactory("Factory");
+export async function deployFlexpool(
+  deployer: Signer,
+  feeTo: Address,
+  diaOracleAddress: Address, 
+  roleManager: Address, 
+  assetManager: Address, 
+  baseAsset: Address,
+  pointFactory: Address,
+  safeFactory: Address,
+) : Promise<FlexpoolFactory> {
+  const Factory = await ethers.getContractFactory("FlexpoolFactory");
   return (await Factory.connect(deployer).deploy(
-    MAKER_RATE, 
     feeTo, 
-    assetMgr, 
-    bankFactory, 
-    ownershipMgr,
-    zeroAddress,
-    collateralToken 
+    MAKER_RATE, 
+    diaOracleAddress, 
+    roleManager,
+    assetManager,
+    baseAsset,
+    pointFactory,
+    safeFactory
   )).waitForDeployment();
 }
 
-export async function retrieveContract(bank: Address) : Promise<BankContract> {
-  return ethers.getContractAt('Bank', bank);
+export async function retrieveSafeContract(safeAddress: Address) : Promise<SafeContract> {
+  return ethers.getContractAt('Safe', safeAddress);
 }
 
 export async function deployContracts(getSigners_: () => Signers) {
   const [deployer, alc1, alc2, feeTo, signer1, signer2, signer3, extra ] = await getSigners_();
-  const deployerAddr = await deployer.getAddress();
-  const extraAddr = await extra.getAddress();
-  const signer3Addr = await signer3.getAddress();
-  const signer1Addr = await signer1.getAddress();
-  const feeToAddr = await feeTo.getAddress();
-  const alc1Addr = await alc1.getAddress();
-  const alc2Addr = await alc2.getAddress();
+  const deployerAddr = await deployer.getAddress() as Address;
+  const extraAddr = await extra.getAddress() as Address;
+  const signer3Addr = await signer3.getAddress() as Address;
+  const signer1Addr = await signer1.getAddress() as Address;
+  const feeToAddr = await feeTo.getAddress() as Address;
+  const alc1Addr = await alc1.getAddress() as Address;
+  const alc2Addr = await alc2.getAddress() as Address;
   const signer2Addr = await signer2.getAddress();
   const signers = [deployerAddr, extraAddr, signer3Addr, signer1Addr] as Address[];
   const INITIAL_MINT : bigint = 200000000000000000000000n;
-  const ownershipMgr = await deployOwnershipManager(deployer);
-  const ownershipMgrAddr = await ownershipMgr.getAddress() as Address;
-  
-  const attorney = await deployAttorney(deployer, FEE, feeToAddr as Address, ownershipMgrAddr);
+
+  const roleManager = await deployRoleManager(deployer);
+  const roleManagerAddr = await roleManager.getAddress() as Address;
+
+  const attorney = await deployAttorney(deployer, FEE, feeToAddr as Address, roleManagerAddr);
   const attorneyAddr = await attorney.getAddress() as Address;
  
-  const reserve = await deployReserve(ownershipMgrAddr, deployer);
+  const reserve = await deployReserve(roleManagerAddr, deployer);
   const reserveAddr = await reserve.getAddress() as Address;
 
-  const distributor = await deployTokenDistributor(deployer, ownershipMgrAddr, signers, QUORUM-1);
+  const distributor = await deployTokenDistributor(deployer, roleManagerAddr, signers, QUORUM-1);
   const distributorAddr = await distributor.getAddress() as Address;
-  
-  const collateralToken = await deployCollateralAsset(deployer, attorneyAddr, reserveAddr, distributorAddr, ownershipMgrAddr);
-  const collateralTokenAddr = await collateralToken.getAddress() as Address;
 
-  const tAsset = await deployTestAsset(deployer, ownershipMgrAddr, collateralTokenAddr);
-  const testAssetAddr = await tAsset.getAddress() as Address;
-
-  const assetMgr = await deployAssetClass(formatAddr(testAssetAddr), ownershipMgrAddr, deployer);
-  const assetMgrAddr = await assetMgr.getAddress() as Address;
-
-  
-  const escape = await deployEscape(ownershipMgrAddr, deployer);
+  const escape = await deployEscape(roleManagerAddr, deployer);
   const escapeAddr = await escape.getAddress() as Address;
   
-  await distributor.connect(deployer).setToken(collateralTokenAddr);
-  await attorney.connect(deployer).setToken(collateralTokenAddr);
-  const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
-  await signTransaction({signer: signer3, contract: distributor, requestId: request.id});
-  await executeTransaction({contract: distributor, reqId: request.id, signer: extra});
+  const safeFactory = await deploySafeFactory(deployer, roleManagerAddr, feeToAddr );
+  const safeFactoryAddr = await safeFactory.getAddress() as Address;
+
+  const baseAsset = await deployBaseAsset(deployer);
+  const baseAssetAddr = await baseAsset.getAddress() as Address;
+
+  const collateralAsset = await deployCollateralAsset(deployer, attorneyAddr, reserveAddr, distributorAddr, roleManagerAddr);
+  const collateralAssetAddr = await collateralAsset.getAddress() as Address;
+ 
+  const points = await deployPointsContract(deployer, roleManagerAddr);
+  const pointsAddr = await points.getAddress() as Address;
   
-  const bankFactory = await deployBankFactory(ownershipMgrAddr, feeToAddr as Address, deployer);
-  const bankFactoryAddr = await bankFactory.getAddress() as Address;
-  const factory = await deployFactory(assetMgrAddr, bankFactoryAddr, feeToAddr as Address, ownershipMgrAddr, deployer, collateralTokenAddr);
-  const factoryAddr = await factory.getAddress();
-  await ownershipMgr.connect(deployer).setPermission([factoryAddr, bankFactoryAddr, deployerAddr,]);
-  const isSupported = await assetMgr.isSupportedAsset(testAssetAddr);
-  const isListed = await assetMgr.listed(testAssetAddr);
+  const supportedAssetMgr = await deploySupportedAssetManager(collateralAssetAddr, roleManagerAddr, deployer);
+  const supportedAssetMgrAddr = await supportedAssetMgr.getAddress() as Address;
+
+  const flexpool = await deployFlexpool(deployer, feeToAddr as Address, zeroAddress, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr, safeFactoryAddr);
+  const flexpoolAddr = await flexpool.getAddress() as Address;
+
+  const providers = await deployProvider(flexpoolAddr, roleManagerAddr,baseAssetAddr, supportedAssetMgrAddr, safeFactoryAddr, deployer);
+  const providersAddr = await providers.getAddress() as Address;
+  
+  await roleManager.connect(deployer).setRole([flexpoolAddr, providersAddr, supportedAssetMgrAddr, deployerAddr]);
+  const isSupported = await supportedAssetMgr.isSupportedAsset(collateralAssetAddr);
+  const isListed = await supportedAssetMgr.listed(collateralAssetAddr);
+  await distributor.connect(deployer).setToken(collateralAssetAddr);
+  await attorney.connect(deployer).setToken(collateralAssetAddr);
+
   expect(isListed).to.be.true;
   expect(isSupported).to.be.true;
 
   return {
-    attorney,
-    attorneyAddr,
-    bankFactory,
-    assetMgr,
-    testAssetAddr,
-    tAsset,
+    INITIAL_MINT,
+    flexpool,
+    flexpoolAddr,
+    pointsAddr,
+    points,
+    providers,
+    providersAddr,
+    collateralAsset,
+    collateralAssetAddr,
+    baseAsset,
+    baseAssetAddr,
+    distributor,
     reserve,
+    distributorAddr,
+    reserveAddr,
     escape,
     escapeAddr,
-    reserveAddr,
-    distributor,
-    distributorAddr,
-    collateralToken,
-    collateralTokenAddr,
-    factory,
-    INITIAL_MINT,
-    assetMgrAddr,
-    factoryAddr,
-    bankFactoryAddr,
+    attorney,
+    attorneyAddr,
     signers_distributor: signers,
     signers: { deployer, alc1, alc2, feeTo, signer1, signer2, signer3, extra, deployerAddr, alc1Addr, alc2Addr, feeToAddr, signer1Addr, signer2Addr, signer3Addr, extraAddr }
   };

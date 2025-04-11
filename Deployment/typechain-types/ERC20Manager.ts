@@ -30,6 +30,7 @@ export interface ERC20ManagerInterface extends Interface {
       | "pause"
       | "paused"
       | "roleManager"
+      | "safeFactory"
       | "setRoleManager"
       | "unpause"
   ): FunctionFragment;
@@ -48,6 +49,10 @@ export interface ERC20ManagerInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "safeFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setRoleManager",
     values: [AddressLike]
   ): string;
@@ -62,6 +67,10 @@ export interface ERC20ManagerInterface extends Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -148,6 +157,8 @@ export interface ERC20Manager extends BaseContract {
 
   roleManager: TypedContractMethod<[], [string], "view">;
 
+  safeFactory: TypedContractMethod<[], [string], "view">;
+
   setRoleManager: TypedContractMethod<
     [newManager: AddressLike],
     [boolean],
@@ -174,6 +185,9 @@ export interface ERC20Manager extends BaseContract {
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setRoleManager"
