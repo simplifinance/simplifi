@@ -35,6 +35,11 @@
         "internalType": "contract IPoint",
         "name": "_pointFactory",
         "type": "address"
+      },
+      {
+        "internalType": "contract ISafeFactory",
+        "name": "_safeFactory",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
@@ -1127,6 +1132,89 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "unit",
+        "type": "uint256"
+      }
+    ],
+    "name": "enquireLiquidation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint32",
+            "name": "paybackTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "turnStartTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint32",
+            "name": "getFinanceTime",
+            "type": "uint32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "loan",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "colBals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "id",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "sentQuota",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Common.Contributor",
+        "name": "profile",
+        "type": "tuple"
+      },
+      {
+        "internalType": "bool",
+        "name": "defaulter",
+        "type": "bool"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "value",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isMember",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isAdmin",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct Common.Slot",
+        "name": "slot",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "feeTo",
     "outputs": [
@@ -1237,11 +1325,6 @@
         "internalType": "uint256",
         "name": "unit",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
       }
     ],
     "name": "getCurrentDebt",
@@ -1250,6 +1333,19 @@
         "internalType": "uint256",
         "name": "debt",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getEpoches",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
       }
     ],
     "stateMutability": "view",
@@ -1329,6 +1425,19 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPastEpoches",
+    "outputs": [
+      {
+        "internalType": "uint96",
+        "name": "",
+        "type": "uint96"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {

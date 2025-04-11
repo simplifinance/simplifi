@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 
 import { Common } from "../apis/Common.sol";
 import { ISafeFactory } from "../apis/ISafeFactory.sol";
+import { Pausable, IRoleBase } from "./Pausable.sol";
 
 /**
  * @title : Safe storage contract
@@ -13,13 +14,17 @@ import { ISafeFactory } from "../apis/ISafeFactory.sol";
  *          The strategy utilizes the SafeGlobal protocol on the frontend to deploy a new Safe account for every unique 
  *          contribution unit.
  */
-abstract contract SafeManager {
+abstract contract SafeGetter is Pausable {
 
     // Safe factory contract
     ISafeFactory public immutable safeFactory;
 
     // Mapping of unit contribution to Safe struct
     mapping (uint256 => address) private safes;
+
+    constructor(ISafeFactory _safeFactory, IRoleBase _roleManager) Pausable(_roleManager) {
+        safeFactory = _safeFactory;
+    }
 
     /**
         * @dev Checks, validate and return safe for the target address.

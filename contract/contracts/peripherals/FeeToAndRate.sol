@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { Utils } from "../libraries/Utils.sol";
-import { Pool, IRoleBase, ISupportedAsset, IERC20, IPoint } from "./Pool.sol";
+import { Pool, IRoleBase, ISupportedAsset, IERC20, IPoint, ISafeFactory } from "./Pool.sol";
 
 /** 
  * 
@@ -36,8 +36,9 @@ abstract contract FeeToAndRate is Pool {
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
-        IPoint _pointFactory
-    ) Pool(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory) {
+        IPoint _pointFactory,
+        ISafeFactory _safeFactory
+    ) Pool(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory) {
         if(_feeTo == feeTo) '_feeTo is empty'._throw();
         if(_makerRate > Utils._getBase()) 'Invalid maker rate'._throw();
         feeTo = _feeTo;

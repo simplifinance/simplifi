@@ -19,7 +19,7 @@ import type {
   TypedEventLog,
   TypedListener,
   TypedContractMethod,
-} from "../../../common";
+} from "../../common";
 
 export declare namespace ISafe {
   export type ViewDataStruct = {

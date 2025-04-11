@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { ERC20Manager, IRoleBase, IERC20, ISupportedAsset } from "./ERC20Manager.sol";
+import { ERC20Manager, IRoleBase, IERC20, ISupportedAsset, ISafeFactory } from "./ERC20Manager.sol";
 
 abstract contract MinimumLiquidity is ERC20Manager {
     using ErrorLib for *;
@@ -14,8 +14,9 @@ abstract contract MinimumLiquidity is ERC20Manager {
     constructor(
         ISupportedAsset _assetManager,
         IERC20 _baseAsset, 
-        IRoleBase _roleManager
-    ) ERC20Manager(_assetManager, _baseAsset, _roleManager){
+        IRoleBase _roleManager,
+        ISafeFactory _safeFactory
+    ) ERC20Manager(_assetManager, _baseAsset, _roleManager, _safeFactory){
         if(address(_roleManager) == address(0)) '_roleManager is zero'._throw();
     }
 

@@ -35,6 +35,7 @@ export interface AwardPointInterface extends Interface {
       | "paused"
       | "pointFactory"
       | "roleManager"
+      | "safeFactory"
       | "setPair"
       | "setRoleManager"
       | "unpause"
@@ -74,6 +75,10 @@ export interface AwardPointInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "safeFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPair",
     values: [AddressLike, string]
   ): string;
@@ -109,6 +114,10 @@ export interface AwardPointInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPair", data: BytesLike): Result;
@@ -206,6 +215,8 @@ export interface AwardPoint extends BaseContract {
 
   roleManager: TypedContractMethod<[], [string], "view">;
 
+  safeFactory: TypedContractMethod<[], [string], "view">;
+
   setPair: TypedContractMethod<
     [collateralAsset: AddressLike, pair: string],
     [boolean],
@@ -253,6 +264,9 @@ export interface AwardPoint extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setPair"

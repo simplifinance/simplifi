@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { IPoint } from "../apis/IPoint.sol";
 import { Common } from "../apis/Common.sol";
-import { Price, IRoleBase, ErrorLib, IERC20, ISupportedAsset } from './Price.sol';
+import { Price, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from './Price.sol';
 
 abstract contract AwardPoint is Price {
     using ErrorLib for *;
@@ -25,9 +25,10 @@ abstract contract AwardPoint is Price {
         IPoint _pointFactory,
         IERC20 _baseAsset,
         address _diaOracleAddress, 
-        ISupportedAsset _assetManager
+        ISupportedAsset _assetManager,
+        ISafeFactory _safeFactory
     ) 
-        Price(_diaOracleAddress, _assetManager, _roleManager, _baseAsset)
+        Price(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _safeFactory)
     {
         if(address(_pointFactory) == address(0)) 'IPointFactory is zero'._throw();
         awardPoint = true;

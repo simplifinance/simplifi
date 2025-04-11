@@ -18,7 +18,7 @@ abstract contract Slots {
      */
     function _createSlot(
         address target, 
-        uint256 unit,
+        uint unit,
         uint8 position,
         bool isAdmin,
         bool isMember
@@ -37,7 +37,7 @@ abstract contract Slots {
      * @param unit : unit contribution
      * @param slot : Slot
      */
-    function _setSlot( address target, uint256 unit, Common.Slot memory slot, bool setEmpty) internal {
+    function _setSlot( address target, uint unit, Common.Slot memory slot, bool setEmpty) internal {
         Common.Slot memory empty;
         slots[target][unit] = setEmpty? empty : slot;
     }
@@ -49,13 +49,13 @@ abstract contract Slots {
     */
     function _getSlot(
         address target, 
-        uint256 unit
+        uint unit
     ) internal view returns(Common.Slot memory slot) {
         slot = slots[target][unit];
     }
 
     // For detailed doc, see _getSlot
-    function getSlot(address target, uint256 unit) 
+    function getSlot(address target, uint unit) 
         external 
         view 
         // onlyInitialized(unit, false)

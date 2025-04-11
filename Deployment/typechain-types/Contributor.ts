@@ -24,6 +24,46 @@ import type {
 } from "../../common";
 
 export declare namespace Common {
+  export type ContributorStruct = {
+    paybackTime: BigNumberish;
+    turnStartTime: BigNumberish;
+    getFinanceTime: BigNumberish;
+    loan: BigNumberish;
+    colBals: BigNumberish;
+    id: AddressLike;
+    sentQuota: boolean;
+  };
+
+  export type ContributorStructOutput = [
+    paybackTime: bigint,
+    turnStartTime: bigint,
+    getFinanceTime: bigint,
+    loan: bigint,
+    colBals: bigint,
+    id: string,
+    sentQuota: boolean
+  ] & {
+    paybackTime: bigint;
+    turnStartTime: bigint;
+    getFinanceTime: bigint;
+    loan: bigint;
+    colBals: bigint;
+    id: string;
+    sentQuota: boolean;
+  };
+
+  export type SlotStruct = {
+    value: BigNumberish;
+    isMember: boolean;
+    isAdmin: boolean;
+  };
+
+  export type SlotStructOutput = [
+    value: bigint,
+    isMember: boolean,
+    isAdmin: boolean
+  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
+
   export type LowStruct = {
     maxQuorum: BigNumberish;
     selector: BigNumberish;
@@ -102,34 +142,6 @@ export declare namespace Common {
     status: bigint;
   };
 
-  export type ContributorStruct = {
-    paybackTime: BigNumberish;
-    turnStartTime: BigNumberish;
-    getFinanceTime: BigNumberish;
-    loan: BigNumberish;
-    colBals: BigNumberish;
-    id: AddressLike;
-    sentQuota: boolean;
-  };
-
-  export type ContributorStructOutput = [
-    paybackTime: bigint,
-    turnStartTime: bigint,
-    getFinanceTime: bigint,
-    loan: bigint,
-    colBals: bigint,
-    id: string,
-    sentQuota: boolean
-  ] & {
-    paybackTime: bigint;
-    turnStartTime: bigint;
-    getFinanceTime: bigint;
-    loan: bigint;
-    colBals: bigint;
-    id: string;
-    sentQuota: boolean;
-  };
-
   export type ReadDataReturnValueStruct = {
     pool: Common.PoolStruct;
     cData: Common.ContributorStruct[];
@@ -142,18 +154,6 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorStructOutput[];
   };
-
-  export type SlotStruct = {
-    value: BigNumberish;
-    isMember: boolean;
-    isAdmin: boolean;
-  };
-
-  export type SlotStructOutput = [
-    value: bigint,
-    isMember: boolean,
-    isAdmin: boolean
-  ] & { value: bigint; isMember: boolean; isAdmin: boolean };
 }
 
 export interface ContributorInterface extends Interface {
@@ -165,6 +165,7 @@ export interface ContributorInterface extends Interface {
       | "baseAsset"
       | "deactivateReward"
       | "diaOracleAddress"
+      | "enquireLiquidation"
       | "getPoolData"
       | "getPoolRecord"
       | "getProfile"
@@ -174,6 +175,7 @@ export interface ContributorInterface extends Interface {
       | "paused"
       | "pointFactory"
       | "roleManager"
+      | "safeFactory"
       | "setPair"
       | "setRoleManager"
       | "unpause"
@@ -201,6 +203,10 @@ export interface ContributorInterface extends Interface {
   encodeFunctionData(
     functionFragment: "diaOracleAddress",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "enquireLiquidation",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolData",
@@ -233,6 +239,10 @@ export interface ContributorInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "safeFactory",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPair",
     values: [AddressLike, string]
   ): string;
@@ -261,6 +271,10 @@ export interface ContributorInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "enquireLiquidation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "getPoolData",
     data: BytesLike
   ): Result;
@@ -282,6 +296,10 @@ export interface ContributorInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "roleManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeFactory",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "setPair", data: BytesLike): Result;
@@ -371,6 +389,18 @@ export interface Contributor extends BaseContract {
 
   diaOracleAddress: TypedContractMethod<[], [string], "view">;
 
+  enquireLiquidation: TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
+
   getPoolData: TypedContractMethod<
     [unit: BigNumberish],
     [Common.ReadDataReturnValueStructOutput],
@@ -404,6 +434,8 @@ export interface Contributor extends BaseContract {
   pointFactory: TypedContractMethod<[], [string], "view">;
 
   roleManager: TypedContractMethod<[], [string], "view">;
+
+  safeFactory: TypedContractMethod<[], [string], "view">;
 
   setPair: TypedContractMethod<
     [collateralAsset: AddressLike, pair: string],
@@ -441,6 +473,19 @@ export interface Contributor extends BaseContract {
   getFunction(
     nameOrSignature: "diaOracleAddress"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "enquireLiquidation"
+  ): TypedContractMethod<
+    [unit: BigNumberish],
+    [
+      [Common.ContributorStructOutput, boolean, Common.SlotStructOutput] & {
+        profile: Common.ContributorStructOutput;
+        defaulter: boolean;
+        slot: Common.SlotStructOutput;
+      }
+    ],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
@@ -483,6 +528,9 @@ export interface Contributor extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "roleManager"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "safeFactory"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "setPair"

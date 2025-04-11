@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import { ISafeFactory } from "../../apis/ISafeFactory.sol";
-import { Safe, OnlyRoleBase, IRoleBase } from "./Safe.sol";
+import { ISafeFactory } from "../apis/ISafeFactory.sol";
+import { Safe, OnlyRoleBase, IRoleBase } from "../peripherals/Safe.sol";
 
 /**@title SafeFactory: A standalone contract that manages safe creation and retrieval, 
   deletion, read and write data.

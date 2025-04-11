@@ -107,6 +107,7 @@ const config: HardhatUserConfig = {
         runs: 200,
       },
       evmVersion: "constantinople",
+      // viaIR: true
       }
     },
 };

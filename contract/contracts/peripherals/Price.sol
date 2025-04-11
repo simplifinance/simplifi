@@ -5,7 +5,7 @@ pragma solidity 0.8.24;
 import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
 import { IERC20 } from "../apis/IERC20.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase } from "./ERC20Manager.sol";
+import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase, ISafeFactory } from "./ERC20Manager.sol";
 
 abstract contract Price is ERC20Manager {
     using ErrorLib for *;
@@ -21,9 +21,10 @@ abstract contract Price is ERC20Manager {
         address _diaOracleAddress, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
-        IERC20 _baseAsset
+        IERC20 _baseAsset,
+        ISafeFactory _safeFactory
     ) 
-        ERC20Manager(_assetManager, _baseAsset, _roleManager)
+        ERC20Manager(_assetManager, _baseAsset, _roleManager, _safeFactory)
     {
         diaOracleAddress = _diaOracleAddress;
     }

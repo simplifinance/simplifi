@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset } from "../../peripherals/FeeToAndRate.sol";
+import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset, ISafeFactory } from "../../peripherals/FeeToAndRate.sol";
 import { IFactory, Common } from '../../apis/IFactory.sol';
 import { IERC20 } from "../../apis/IERC20.sol";
 import { IPoint } from "../../apis/IPoint.sol";
@@ -42,9 +42,10 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
-        IPoint _pointFactory
+        IPoint _pointFactory,
+        ISafeFactory _safeFactory
     ) 
-        FeeToAndRate(_feeTo, _makerRate, _diaOracleAddress, _roleManager, _assetManager, _baseAsset, _pointFactory)
+        FeeToAndRate(_feeTo, _makerRate, _diaOracleAddress, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**
@@ -61,7 +62,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     */
     function createPool( 
         address[] calldata users,
-        uint256 unit,
+        uint unit,
         uint8 maxQuorum,
         uint16 durationInHours,
         uint24 colCoverage,
@@ -120,6 +121,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     function contribute(uint unit) public whenNotPaused returns(bool) {
         Common.Pool memory pool = _getPool(unit);
         pool = _joinAPool(unit, _msgSender(), pool);
+        _setPool(pool.big.unitId, pool);
         _recordAnalytics(unit, 0, Common.Stage.JOIN, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.NewContributorAdded(pool);
 
@@ -165,8 +167,9 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @return bool : Success or Failure
      * @notice : To get finance, the unit contribution must be active. In the event the expected contributor failed to 
      * call, we swap their profile for the current msg.sender provided the grace period of 1hr has passed.
-     */
-    function getFinance(uint256 unit) public whenNotPaused returns(bool) {
+    */
+    function getFinance(uint256 unit) public _onlyIfUnitIsActive(unit) whenNotPaused returns(bool) {
+        _onlyContributor(_msgSender(), unit, false);
         (uint collateral,) = _getCollateralQuote(unit);
         Common.Pool memory pool = _getPool(unit);
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
@@ -182,12 +185,13 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
                 if(_msgSender() != profile.id) 'TurnTime has not pass'._throw();
             }
             pool.low.allGh += 1;
-            pool.addrs.lastPaid = profile.id;
         }
+        pool.addrs.lastPaid = profile.id;
         _recordAnalytics(pool.big.currentPool, collateral, Common.Stage.GET, pool.router == Common.Router.PERMISSIONLESS);
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
         if(!ISafe(pool.addrs.safe).getFinance(profile.id, baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(makerRate)), collateral, pool.big.recordId)) 'Safe call failed'._throw();
-        pool = _completeGetFinance(pool, collateral);
+        (pool, profile) = _completeGetFinance(pool, collateral, profile);
+        _setContributor(profile, pool.big.recordId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unit).value), false);
         _setPool(pool.big.unitId, pool);
 
         emit Common.GetFinanced(pool);
@@ -199,8 +203,9 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @dev Payback. For detailed documentation, see _payback
      * @param unit : Unit contribution
      */
-    function payback(uint256 unit) public whenNotPaused returns(bool) {
+    function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
+        _setPool(pool.big.unitId, pool);
         _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
 
@@ -217,16 +222,18 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         @param unit : Unit contribution.
     */
     function liquidate(uint256 unit) public whenNotPaused returns(bool) {
-        (Common.Contributor memory profile, bool defaulted, Common.Slot memory slot) = _enquireLiquidation(unit);
-        if(!defaulted) 'Not defaulted'._throw();
+        (Common.Contributor memory _defaulter, bool isDefaulted, Common.Slot memory slot) = _enquireLiquidation(unit);
+        if(!isDefaulted) 'Not defaulted'._throw();
         address liquidator = _msgSender() ;
-        Common.Pool memory pool = _getPool(unit);
         _onlyNonContributor(liquidator, unit);
-        _changeContributorAddress(liquidator, pool.big.recordId, slot.value);
-        _setSlot(liquidator, unit, slot, false);
-        _setSlot(profile.id, unit, slot, true);
-        pool.addrs.lastPaid = liquidator;
-        return payback(unit);
+        _replaceContributor(liquidator, _getPool(unit).big.recordId, slot, _defaulter.id, unit);
+        assert(liquidator != _defaulter.id);
+        _setLastPaid(liquidator, unit); 
+        (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
+        _setPool(pool.big.unitId, pool);
+        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
+        emit Common.Payback(pool);
+        return true;
     }
 
     /**

@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { Contributor, Common, ErrorLib, Utils, IRoleBase, IERC20, IPoint, ISupportedAsset } from "./Contributor.sol";
-import { SafeManager } from "./SafeManager.sol";
+import "hardhat/console.sol";
+import { 
+    Contributor, 
+    Common, 
+    ErrorLib, 
+    Utils, 
+    IRoleBase, 
+    IERC20, 
+    IPoint, 
+    ISupportedAsset,
+    ISafeFactory
+} from "./Contributor.sol";
 import { ISafe } from "../apis/ISafe.sol";
 
-abstract contract Pool is SafeManager, Contributor {
+abstract contract Pool is Contributor {
     using Utils for *;
     using ErrorLib for *;
 
@@ -15,9 +25,10 @@ abstract contract Pool is SafeManager, Contributor {
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
-        IPoint _pointFactory
+        IPoint _pointFactory,
+        ISafeFactory _safeFactory
     ) 
-        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory)
+        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**
@@ -38,11 +49,11 @@ abstract contract Pool is SafeManager, Contributor {
         uint24 colCoverage,
         Common.Router router,
         IERC20 colAsset
-    ) internal _onlyIfUnitIsNotActive(unit)  onlySupportedAsset(colAsset) returns(Common.Pool memory pool) {
+    ) internal _onlyIfUnitIsNotActive(unit) onlySupportedAsset(colAsset) returns(Common.Pool memory pool) {
         if(durationInHours == 0 || durationInHours > 720) 'Invalid duration'._throw();
         if(router == Common.Router.PERMISSIONLESS){
-            if(users.length > 0) 'List should be empty'._throw();
-            users[0] = sender;
+            if(users.length > 1 || users.length == 0) 'Expect 1 item in list'._throw();
+            assert(users[0] == sender);
         } else {
             if(users.length < 2) 'List too low for router2'._throw();
             if(sender != users[0]) 'Sender not in list'._throw();
@@ -65,20 +76,16 @@ abstract contract Pool is SafeManager, Contributor {
         address[] memory users,
         Common.Pool memory pool
     ) internal returns(Common.Pool memory _pool) {
-        _pool = pool;
         for(uint i = 0; i < users.length; i++) {
             Common.ContributorReturnValue memory data;
-            if(i == 0) data = _initializeContributor(_pool, unit, users[i], true, true, true);
+            if(i == 0) data = _initializeContributor(pool, unit, users[i], true, true, true);
             else {
                 if(users[0] == users[i]) 'Creator spotted twice'._throw();
-                data = _initializeContributor(_pool, unit, users[i], false, true, false);
+                data = _initializeContributor(pool, unit, users[i], false, true, false);
             }
-            _setContributor(data.profile, _pool.big.recordId, data.slot, false);
+            _setContributor(data.profile, pool.big.recordId, data.slot, false);
         }
-        unchecked {
-            _pool.big.currentPool += unit;
-            _pool.low.userCount += 1;
-        }
+        _pool = pool;
     }
 
     /**
@@ -92,27 +99,31 @@ abstract contract Pool is SafeManager, Contributor {
         address user,
         Common.Pool memory pool
     ) internal _onlyIfUnitIsActive(unit) returns(Common.Pool memory _pool) {
-        _pool = pool;
         if(pool.stage != Common.Stage.JOIN) 'Invalid stage'._throw();
         Common.ContributorReturnValue memory data;
-        if(_pool.router == Common.Router.PERMISSIONED) {
+        unchecked {
+            pool.big.currentPool += pool.big.unit;
+            pool.low.userCount += 1;
+        }
+        if(pool.router == Common.Router.PERMISSIONED) {
             _onlyContributor(user, unit, false);
             data = _getContributor(user, unit);
             data.profile.sentQuota = true;
         } else {
             _onlyNonContributor(user, unit);
-            data = _initializeContributor(_pool, unit, user, false, true, true);
+            data = _initializeContributor(pool, unit, user, false, true, true);
         }
-        _setContributor(data.profile, _pool.big.recordId, data.slot, false);
-        unchecked {
-            _pool.big.currentPool += unit;
-            _pool.low.userCount += 1;
-            if(_isPoolFilled(_pool, _pool.router == Common.Router.PERMISSIONED)) {
-                _setTurnStartTime(address(0), unit, _now());
-                _pool.stage = Common.Stage.GET;
-                _pool.status = Common.Status.AVAILABLE; 
-            }
+        _setContributor(data.profile, pool.big.recordId, data.slot, false);
+        // console.log("current pool", pool.big.currentPool);
+        // console.log("Unit", pool.big.unit);
+        // console.log("UserCOunt", pool.low.userCount);
+        // console.log("Maxquorum", pool.low.maxQuorum);
+        if(_isPoolFilled(pool, pool.router == Common.Router.PERMISSIONED)) {
+            _setTurnStartTime(address(0), unit, _now());
+            pool.stage = Common.Stage.GET;
         }
+        _pool = pool;
+        _completeAddUser(user, pool);
     }
     
     /**
@@ -130,7 +141,9 @@ abstract contract Pool is SafeManager, Contributor {
      * @param data : Function argument of type Common.UpdatePoolData
      */
     function _updatePool(Common.UpdatePoolData memory data) internal returns(Common.Pool memory pool) {
-        pool.low = Common.Low(data.maxQuorum, 0, data.colCoverage, data.durationInHours * 1 hours, 0, 1);
+        unchecked {
+            pool.low = Common.Low(data.maxQuorum, 0, data.colCoverage, uint32(uint(data.durationInHours) * 1 hours), 0, 1);
+        }
         pool.big = Common.Big(data.unit, data.unit, data.recordId, data.unitId);
         pool.addrs = Common.Addresses(data.colAsset, address(0), _getSafe(data.unit), data.creator);
         pool.router = data.router;
@@ -152,10 +165,20 @@ abstract contract Pool is SafeManager, Contributor {
     /**
      * Returns the current debt of target user.
      * @param unit : Unit contribution
-     * @param target : Target user.
      */
-    function getCurrentDebt(uint256 unit, address target) public view returns(uint256 debt) 
+    function getCurrentDebt(uint256 unit) public view returns(uint256 debt) 
     {
-       return _getCurrentDebt(unit, target, false);
-    }   
+       (debt,) = _getCurrentDebt(unit);
+       return debt;
+    }
+
+    /**@dev Return Current epoches */
+    function getEpoches() public view returns(uint96) {
+        return _getEpoches();
+    }
+
+    /**@dev Return Past epoches */
+    function getPastEpoches() public view returns(uint96) {
+        return _getPastEpoches();
+    }
 }

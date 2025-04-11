@@ -1,12 +1,13 @@
-import { Address, Addresses, NullNoPromise, Signer, StrBigHex, TokenDistributorContract } from "./types";
+import { Address, Addresses, NullNoPromise, Signer, StrBigHex, } from "./types";
 import { ethers, Web3 } from "hardhat";
 import BigNumber from "bignumber.js";
 import { Hex } from "viem";
 import { expect } from "chai";
 
 export const locker = { LOCKED: "LOCKED", UNLOCKED: "UNLOCKED" };
-export enum FuncTag { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED };
+export enum FuncTag { JOIN, GET, PAYBACK, CANCELED, ENDED };
 export enum Status { AVAILABLE, TAKEN };
+export enum Router { PERMISSIONLESS, PERMISSIONED }
 export const bigintToStr = (x:bigint) => x.toString();
 export const toHex = (x: any) => Web3.utils.numberToHex(x);
 export const buildstring = (affx: string, start: string, times: number) => `${affx}${`${start}`.repeat(times)}`;
@@ -71,7 +72,7 @@ export const INTEREST_RATE = 50; // 0.5%
 export const DURATION_IN_HOURS = 24;
 export const DURATION_OF_CHOICE_IN_HR = 6;
 export const DURATION_OF_CHOICE_IN_SECS = bn(DURATION_OF_CHOICE_IN_HR).times(60).times(60).toNumber();
-export const DURATION_IN_SECS = bn(DURATION_IN_HOURS).times(60).times(60).toString();
+export const DURATION_IN_SECS = DURATION_IN_HOURS * 60 * 60;
 export const ONE_HOUR_ONE_MINUTE = (60 * 60) + 60;
 /**
  * As an example, we set the collateral ratio to 50% i.e 1.5
@@ -226,44 +227,4 @@ export const compareEqualNumber = (a: StrBigHex, b: StrBigHex): NullNoPromise =>
 export const compareEqualString = (a: string, b: string): NullNoPromise => {
   expect(a).to.equal(b);
 };
-
-// Propose a new transaction
-export async function proposeTransaction (
-  {signer, contract, recipient, amount, delayInHrs, trxType} 
-    : 
-    {contract: TokenDistributorContract, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType}
-)
-{
-    await contract.connect(signer).proposeTransaction(recipient, amount, delayInHrs, trxType);
-    const reqId = await contract.requestIDs();
-    const request = await contract.getTransactionRequest(reqId);
-    expect(reqId).to.be.eq(request.id);
-    return request;
-}
-
-// Sign transaction
-export async function signTransaction (
-  {signer, contract, requestId} 
-    : 
-    {contract: TokenDistributorContract, signer: Signer, requestId: bigint}
-)
-{
-    await contract.connect(signer).signTransaction(requestId);
-    const request = await contract.getTransactionRequest(requestId);
-    return request;
-}
-
-/**
- * Execute pending transactions
- */
-export async function executeTransaction(
-  { contract, signer, reqId } 
-    : 
-  {contract: TokenDistributorContract, signer: Signer, reqId: bigint}) 
-{
-  // Execute transaction
-  await contract.connect(signer).executeTransaction(reqId);
-  const request = await contract.getTransactionRequest(reqId);
-  return request; 
-}
 
