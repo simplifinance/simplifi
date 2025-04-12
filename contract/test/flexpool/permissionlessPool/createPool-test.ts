@@ -80,7 +80,7 @@ describe("Permissionless: CreatePool test", function () {
             expect(allGh).to.be.equal(ZERO);
             expect(selector).to.be.equal(ZERO);
             
-            const prof_1 = await flexpool.getProfile(unit, signer1Addr);
+            const prof_1 = (await flexpool.getProfile(unit, signer1Addr)).profile;
             expect(prof_1.id).to.be.equal(signer1Addr);
             expect(members[0].id).to.be.equal(signer1Addr);
             expect(id).to.be.equal(signer1Addr);

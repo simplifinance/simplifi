@@ -69,7 +69,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         uint96 recordId = _getRecordId(unit);
         result.slot = uint8(_getSlot(target, unit).value);
         result.profile = contributors[recordId][result.slot];
-        result.providers = unitProviders[recordId][target];
+        result.providers = _getContributorProviders(target, recordId);
     }
 
     /**
@@ -310,10 +310,9 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         external
         view
         // onlyInitialized(unit, false)
-        returns(Common.Contributor memory result) 
+        returns(Common.ContributorReturnValue memory) 
     {
-        result = _getContributor(target, unit).profile;
-        return result; 
+        return _getContributor(target, unit);
     }
 
     function _replaceContributor(address liquidator, uint96 recordId, Common.Slot memory slot, address _defaulter, uint unit) internal {

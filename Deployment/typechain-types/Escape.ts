@@ -19,7 +19,7 @@ import type {
   TypedEventLog,
   TypedListener,
   TypedContractMethod,
-} from "../../../common";
+} from "../../common";
 
 export interface EscapeInterface extends Interface {
   getFunction(

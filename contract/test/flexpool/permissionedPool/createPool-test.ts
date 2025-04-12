@@ -3,7 +3,6 @@ import { loadFixture, } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { 
-  bn,
   UNIT_LIQUIDITY,
   ZERO_ADDRESS,
   COLLATER_COVERAGE_RATIO,
@@ -36,7 +35,6 @@ describe("Permissioned: CreatePool test", function () {
             pool: { 
                 pool: {
                     addrs: { colAsset, safe, lastPaid, admin }, 
-                    stage, 
                     low: { colCoverage, duration, selector, allGh, }, 
                     big: { currentPool, unit},
                     router
@@ -81,7 +79,7 @@ describe("Permissioned: CreatePool test", function () {
         expect(allGh).to.be.equal(ZERO);
         expect(selector).to.be.equal(ZERO);
 
-        const prof_1 = await flexpool.getProfile(unit, signer1Addr);
+        const prof_1 = (await flexpool.getProfile(unit, signer1Addr)).profile;
         expect(prof_1.id).to.be.equal(signer1Addr);
         expect(members[0].id).to.be.equal(signer1Addr);
         expect(members[1].id).to.be.equal(signer2Addr);
@@ -101,8 +99,8 @@ describe("Permissioned: CreatePool test", function () {
         expect(position).to.be.equal(ZERO);
         expect(router).to.be.equal(BigInt(Router.PERMISSIONED));
         
-        const prof_2 = await flexpool.getProfile(unit, signer2Addr);
-        const prof_3 = await flexpool.getProfile(unit, signer3Addr);
+        const prof_2 = (await flexpool.getProfile(unit, signer2Addr)).profile;
+        const prof_3 = (await flexpool.getProfile(unit, signer3Addr)).profile;
 
         // Equal address
         expect(prof_2.id).to.be.equal(signer2Addr);

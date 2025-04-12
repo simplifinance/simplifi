@@ -142,7 +142,7 @@ describe("Permissionless: Swap contributors", function () {
       });  
 
       expect(pay.profile.colBals).to.be.equal(ZERO);
-      const prof = await flexpool.getProfile(create.pool.pool.big.unit, signer3Addr);
+      const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer3Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
       const quoted_2 = await flexpool.connect(signer1).getCollateralQuote(create.pool.pool.big.unit);
       /**

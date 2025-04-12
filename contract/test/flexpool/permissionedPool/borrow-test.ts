@@ -62,7 +62,6 @@ describe("Permissioned: Borrow", function () {
               asset: baseAsset,
               deployer
             });
-            console.log("Loan", gf.profile.loan.toString());
             expect(gf.balances?.collateral).to.be.equal(quoted.collateral);
             expect(gf.balances?.base).to.be.eq(join.balances.base); 
             expect(gf.pool.pool.low.selector).to.be.eq(BigInt(1));
@@ -88,7 +87,6 @@ describe("Permissioned: Borrow", function () {
               collateral: collateralAsset,
               unit: UNIT_LIQUIDITY
             });
-            console.log("baseBalAfter", baseBalAfter.toString());
             expect(balances?.collateral).to.be.equal(quoted.collateral);
             expect(balances?.base).to.be.equal(aggregateFee);
             expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true;

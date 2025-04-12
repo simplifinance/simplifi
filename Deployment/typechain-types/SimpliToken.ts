@@ -57,7 +57,6 @@ export interface SimpliTokenInterface extends Interface {
       | "getLockedInfo"
       | "increaseAllowance"
       | "lockToken"
-      | "mint"
       | "name"
       | "panicUnlock"
       | "pause"
@@ -123,10 +122,6 @@ export interface SimpliTokenInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "lockToken",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "mint",
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -197,7 +192,6 @@ export interface SimpliTokenInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "lockToken", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "panicUnlock",
@@ -419,12 +413,6 @@ export interface SimpliToken extends BaseContract {
     "nonpayable"
   >;
 
-  mint: TypedContractMethod<
-    [to: AddressLike, amount: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   name: TypedContractMethod<[], [string], "view">;
 
   panicUnlock: TypedContractMethod<
@@ -545,13 +533,6 @@ export interface SimpliToken extends BaseContract {
   ): TypedContractMethod<
     [_routeTo: AddressLike, amount: BigNumberish],
     [boolean],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "mint"
-  ): TypedContractMethod<
-    [to: AddressLike, amount: BigNumberish],
-    [void],
     "nonpayable"
   >;
   getFunction(

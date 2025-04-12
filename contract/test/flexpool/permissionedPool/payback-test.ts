@@ -119,7 +119,7 @@ describe("Permissioned: Payback", function () {
       const rs = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       expect(rs.collateralBalance).to.be.eq(0n);
       
-      const prof = await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr);
+      const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
       expect(await signer1.provider?.getBalance(pay.pool.pool.addrs.safe)).to.be.equal(ZERO);
       expect(bn(colBalAfter).gt(bn(colBalB4))).to.be.true;

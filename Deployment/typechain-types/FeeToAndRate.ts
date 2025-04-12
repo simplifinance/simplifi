@@ -154,6 +154,57 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorStructOutput[];
   };
+
+  export type InterestStruct = {
+    fullInterest: BigNumberish;
+    intPerSec: BigNumberish;
+  };
+
+  export type InterestStructOutput = [
+    fullInterest: bigint,
+    intPerSec: bigint
+  ] & { fullInterest: bigint; intPerSec: bigint };
+
+  export type ProviderStruct = {
+    slot: BigNumberish;
+    amount: BigNumberish;
+    rate: BigNumberish;
+    earnStartDate: BigNumberish;
+    account: AddressLike;
+    accruals: Common.InterestStruct;
+  };
+
+  export type ProviderStructOutput = [
+    slot: bigint,
+    amount: bigint,
+    rate: bigint,
+    earnStartDate: bigint,
+    account: string,
+    accruals: Common.InterestStructOutput
+  ] & {
+    slot: bigint;
+    amount: bigint;
+    rate: bigint;
+    earnStartDate: bigint;
+    account: string;
+    accruals: Common.InterestStructOutput;
+  };
+
+  export type ContributorReturnValueStruct = {
+    profile: Common.ContributorStruct;
+    slot: BigNumberish;
+    providers: Common.ProviderStruct[];
+  };
+
+  export type ContributorReturnValueStructOutput = [
+    profile: Common.ContributorStructOutput,
+    slot: bigint,
+    providers: Common.ProviderStructOutput[]
+  ] & {
+    profile: Common.ContributorStructOutput;
+    slot: bigint;
+    providers: Common.ProviderStructOutput[];
+  };
 }
 
 export interface FeeToAndRateInterface extends Interface {
@@ -477,7 +528,7 @@ export interface FeeToAndRate extends BaseContract {
 
   getProfile: TypedContractMethod<
     [unit: BigNumberish, target: AddressLike],
-    [Common.ContributorStructOutput],
+    [Common.ContributorReturnValueStructOutput],
     "view"
   >;
 
@@ -593,7 +644,7 @@ export interface FeeToAndRate extends BaseContract {
     nameOrSignature: "getProfile"
   ): TypedContractMethod<
     [unit: BigNumberish, target: AddressLike],
-    [Common.ContributorStructOutput],
+    [Common.ContributorReturnValueStructOutput],
     "view"
   >;
   getFunction(

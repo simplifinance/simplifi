@@ -1,26 +1,28 @@
 import { ethers } from "hardhat";
 import type {
-   Address, 
-   FlexpoolFactory, 
-   Providers, 
-   RoleManager, 
-   Signer, 
-   Signers,
-   SafeContract,
-   SupportedAssetManager,
-   BaseAsset,
-   Points,
-   SimpliToken,
-   SafeFactory,
-   Attorney,
-   Reserve,
-   TokenDistributor,
-   Escape
+  Address, 
+  FlexpoolFactory, 
+  Providers, 
+  RoleManager, 
+  Signer, 
+  Signers,
+  SafeContract,
+  SupportedAssetManager,
+  BaseAsset,
+  Points,
+  SimpliToken,
+  SafeFactory,
+  Attorney,
+  Reserve,
+  TokenDistributor,
+  Escape,
+  Faucet
 } from "./types";
 
-import { FEE, MAKER_RATE, QUORUM } from "./utilities";
+import { FEE, MAKER_RATE, QUORUM, TrxnType, UNIT_LIQUIDITY } from "./utilities";
 import { expect } from "chai";
 import { zeroAddress } from "viem";
+import { executeTransaction, proposeTransaction, signTransaction } from "./utils";
 
 /**
  * Deploys and return an instance of the Escape contract.
@@ -78,6 +80,23 @@ async function deployTokenDistributor(
 ) : Promise<TokenDistributor> {
   const BankFactory = await ethers.getContractFactory("TokenDistributor");
   return (await BankFactory.connect(deployer).deploy(ownershipManager, signers, quorum)).waitForDeployment();
+}
+
+/**
+ * Deploys and return an instance of the Asset contract
+ * @param deployer : Deployer address
+ * @returns Contract instance
+*/
+async function deployFaucet(
+  deployer: Signer,
+  roleManager: Address, 
+  collateralToken: Address,
+  baseToken: Address,
+  baseTokenAmount: bigint,
+  colTokenAmount: bigint
+) :Promise<Faucet> {
+  const AssetMgr = await ethers.getContractFactory("Faucet");
+  return (await AssetMgr.connect(deployer).deploy(roleManager, collateralToken, baseToken, baseTokenAmount, colTokenAmount)).waitForDeployment();
 }
 
 /**
@@ -248,6 +267,9 @@ export async function deployContracts(getSigners_: () => Signers) {
 
   const flexpool = await deployFlexpool(deployer, feeToAddr as Address, zeroAddress, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr, safeFactoryAddr);
   const flexpoolAddr = await flexpool.getAddress() as Address;
+  
+  const faucet = await deployFaucet(deployer, roleManagerAddr, collateralAssetAddr, baseAssetAddr, UNIT_LIQUIDITY, UNIT_LIQUIDITY * 2n);
+  const faucetAddr = await faucet.getAddress() as Address;
 
   const providers = await deployProvider(flexpoolAddr, roleManagerAddr,baseAssetAddr, supportedAssetMgrAddr, safeFactoryAddr, deployer);
   const providersAddr = await providers.getAddress() as Address;
@@ -257,6 +279,10 @@ export async function deployContracts(getSigners_: () => Signers) {
   const isListed = await supportedAssetMgr.listed(collateralAssetAddr);
   await distributor.connect(deployer).setToken(collateralAssetAddr);
   await attorney.connect(deployer).setToken(collateralAssetAddr);
+
+  const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
+  await signTransaction({signer: signer3, contract: distributor, requestId: request.id});
+  await executeTransaction({contract: distributor, reqId: request.id, signer: extra});
 
   expect(isListed).to.be.true;
   expect(isSupported).to.be.true;
@@ -278,6 +304,8 @@ export async function deployContracts(getSigners_: () => Signers) {
     distributorAddr,
     reserveAddr,
     escape,
+    faucet,
+    faucetAddr,
     escapeAddr,
     attorney,
     attorneyAddr,

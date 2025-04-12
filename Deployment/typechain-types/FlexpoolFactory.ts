@@ -227,6 +227,22 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorStructOutput[];
   };
+
+  export type ContributorReturnValueStruct = {
+    profile: Common.ContributorStruct;
+    slot: BigNumberish;
+    providers: Common.ProviderStruct[];
+  };
+
+  export type ContributorReturnValueStructOutput = [
+    profile: Common.ContributorStructOutput,
+    slot: bigint,
+    providers: Common.ProviderStructOutput[]
+  ] & {
+    profile: Common.ContributorStructOutput;
+    slot: bigint;
+    providers: Common.ProviderStructOutput[];
+  };
 }
 
 export interface FlexpoolFactoryInterface extends Interface {
@@ -799,7 +815,7 @@ export interface FlexpoolFactory extends BaseContract {
 
   getProfile: TypedContractMethod<
     [unit: BigNumberish, target: AddressLike],
-    [Common.ContributorStructOutput],
+    [Common.ContributorReturnValueStructOutput],
     "view"
   >;
 
@@ -990,7 +1006,7 @@ export interface FlexpoolFactory extends BaseContract {
     nameOrSignature: "getProfile"
   ): TypedContractMethod<
     [unit: BigNumberish, target: AddressLike],
-    [Common.ContributorStructOutput],
+    [Common.ContributorReturnValueStructOutput],
     "view"
   >;
   getFunction(

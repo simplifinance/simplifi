@@ -134,7 +134,7 @@ describe("Permissioned: Go as intended", function () {
 
       // Before withdrawing collateral, the balance should be intact.
       expect(pay_2.profile.colBals).to.be.equal(ZERO);
-      const prof_2 = await flexpool.getProfile(create.pool.pool.big.unit, signer2Addr);
+      const prof_2 = (await flexpool.getProfile(create.pool.pool.big.unit, signer2Addr)).profile;
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof_2.colBals).to.be.equal(ZERO);

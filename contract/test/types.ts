@@ -10,6 +10,7 @@ import type {
   BaseAsset as Base,
   SafeFactory as SafeFactry,
   Safe,
+  Faucet as Fct,
   Reserve as Rsv,
   Escape as Esc,
   TokenDistributor as Tkd,
@@ -145,10 +146,11 @@ export interface FundAccountParam {
   amount: bigint;
 }
 
-export interface MintParam {
+export interface TransferParam {
   asset: BaseAsset | SimpliToken;
-  recipients: Signer[];
+  recipients: Address[];
   amount: bigint;
+  sender: Signer;
 }
 
 export interface JoinABandParam {
@@ -241,5 +243,9 @@ export type Reserve = Rsv & {
 };
 
 export type Attorney = Attn & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+
+export type Faucet = Fct & {
   deploymentTransaction(): ContractTransactionResponse;
 };

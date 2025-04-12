@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { TokenInteractor, IRoleBase} from "./TokenInteractor.sol";
+import { TokenInteractor, IRoleBase} from "../peripherals/token/TokenInteractor.sol";
 
 /**
  * @title Reserve
