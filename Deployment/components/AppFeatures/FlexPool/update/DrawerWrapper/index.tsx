@@ -1,11 +1,11 @@
 import React from "react";
 import { flexSpread, FuncTag, } from "@/constants";
-import { Provider } from './Provider';
+import { Contributor } from './Contributor';
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import { Address, FormattedData, FormattedPoolContentProps, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
 import { formatAddr, } from "@/utilities";
-import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndBankBalances";
+import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndSafeBalances";
 import AccessAndCollateralBalances from "./AccessAndCollateralBalances";
 import CollateralQuote from "./CollateralQuote";
 import { useAccount } from "wagmi";
@@ -26,17 +26,17 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
         colCoverageInString,
         intPercentString,
         durationToNumber,
-        fullInterestInEther,
         intPerSecInEther,
         stageToNumber,
         lastPaid,
         isPermissionless,
         formattedSafe,
         unit_bigint,
-        rId,
+        recordId,
+        asset
         // isAdmin
     } = formattedPool;
-
+    const collateralAsset = formatAddr(asset.toString());
     const extractAddresses = () => {
         let addrs : Address[] = [];
         cDataFormatted.forEach((cd) => {
@@ -75,7 +75,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         />
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3 className="">Bank</h3>
+                        <h3 className="">Safe</h3>
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
@@ -90,12 +90,13 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     </li>
                     <li className={`${flexSpread}`} >
                         <h3 className="">{"Reserved Id"}</h3>
-                        <p className="">{`${rId.toString()}`}</p>
+                        <p className="">{`${recordId.toString()}`}</p>
                     </li>
                 </ul>
                 <CollateralQuote unit={unit_bigint} />
                 <LiquidityAndStrategyBalances
                     formattedSafe={formattedSafe}
+                    collateralAsset={collateralAsset}
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
                     isCancelledPool={quorumToNumber === 0 && stageToNumber === FuncTag.ENDED}
@@ -103,9 +104,10 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                 />
 
                 <AccessAndCollateralBalances 
+                    collateralAsset={collateralAsset}
                     formattedSafe={formattedSafe}
                     handleCloseDrawer={() => toggleDrawer(0)}
-                    rId={rId}
+                    recordId={recordId}
                 />
 
                 <ul className={`${BOXSTYLING} text-xs`}>
@@ -120,6 +122,10 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Id</h3>
                         <p>{unitIdToNumber}</p>
+                    </li>
+                    <li className={`w-full ${flexSpread}`}>
+                        <h3>Record Id</h3>
+                        <p>{recordId.toString()}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Last Paid</h3>
@@ -146,10 +152,10 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <h3>{"Int/Sec"}</h3>
                         <p className="px-2 text-xs md:textsm">{`${intPerSecInEther} ${currency}`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    {/* <li className={`w-full ${flexSpread}`}>
                         <h3>Full Interest</h3>
                         <p>{`${fullInterestInEther} ${currency}`}</p>
-                    </li>
+                    </li> */}
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Stage</h3>
                         <p>{FuncTag[stageToNumber]}</p>
@@ -174,7 +180,7 @@ export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggl
             <React.Fragment>
                 {
                     cDataFormatted.map((data, i) => (
-                        <Provider
+                        <Contributor
                             formattedData={data}
                             key={i} 
                             index={i}

@@ -1,6 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import { Input } from "../../Input";
+// import { Input } from "../../Input";
 import type { Address, InputProp, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr, toBN } from "@/utilities";
@@ -11,7 +11,7 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import { CustomButton } from "@/components/utilities/CustomButton";
 import Quorum from "../userInputsComponents/Quorum";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
-import Interest from "../userInputsComponents/Interest";
+import Interest from "../userInputsComponents/CollateralAsset";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
@@ -102,10 +102,10 @@ export const Permissioned = () => {
                                 id:"Duration",
                                 element: (<Duration isLargeScreen={isLargeScreen} inputProp={duration} handleChange={onChange}/>),
                             },
-                            {
-                                id: "Interest",
-                                element: (<Interest isLargeScreen={isLargeScreen} inputProp={interest} handleChange={onChange}/>),
-                            },
+                            // {
+                            //     id: "Interest",
+                            //     element: (<Interest isLargeScreen={isLargeScreen} inputProp={interest} handleChange={onChange}/>),
+                            // },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
                                 element: (<CollateralMultiplier isLargeScreen={isLargeScreen} inputProp={ccr} handleChange={onChange}/>),
@@ -150,11 +150,11 @@ export const Permissioned = () => {
                         value: duration.value,
                         affix: `${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
                     },
-                    {
-                        title: 'Int. Rate',
-                        value: toBN(interest.value).div(100).toString(),
-                        affix: `%`
-                    },
+                    // {
+                    //     title: 'Int. Rate',
+                    //     value: toBN(interest.value).div(100).toString(),
+                    //     affix: `%`
+                    // },
                     {
                         title: 'Collateral Index',
                         value: toBN(ccr.value).div(100).toString(),

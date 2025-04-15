@@ -1,32 +1,26 @@
-import { Address } from "@/interfaces";
-import { createPublicClient, createWalletClient, http } from "viem";import { privateKeyToAccount } from "viem/accounts";
-import { celoAlfajores } from "viem/chains";
+import { createPublicClient, createWalletClient, http, custom } from "viem";
+import { supportedChains } from "./utils/chains";
 
-export function getClients() {
-    return {
-        getPublicClient: () => {
-            return createPublicClient({
-                chain: celoAlfajores,
-                transport: http(),
-            })
-        },
-        getWalletClient: () => {
-            if(!process.env.NEXT_PUBLIC_AGENT_KEY) throw new Error('Agent key not detected');
-            const account = privateKeyToAccount(process.env.NEXT_PUBLIC_AGENT_KEY as Address);
-            return createWalletClient({
-                chain: celoAlfajores,
-                account: account.address,
-                transport: http()
-            })
-        },
-        user: () => {
-            const client = createPublicClient({
-                chain: celoAlfajores,
-                transport: http()
-            });
-            return client.account;
-        }
-    }
-}
+// Returns public . Useful for reading from the blockchain
+export const publicClients = [
+    createPublicClient({
+        chain: supportedChains.celoAlfajores,
+        transport: http(),
+    }),
+    createPublicClient({
+        chain: supportedChains.blaze,
+        transport: http(),
+    }),
+];
 
-
+// Returns wallet clients. Useful for sending transaction to the blockchain
+export const walletClients = [
+    createWalletClient({
+        chain: supportedChains.celoAlfajores,
+        transport: custom(window.ethereum),
+    }),
+    createWalletClient({
+        chain: supportedChains.blaze,
+        transport: custom(window.ethereum),
+    }),
+];

@@ -1,4 +1,4 @@
-import { Address, Config } from "@/interfaces";
+import { Address, Config, TransferFromParam } from "@/interfaces";
 import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { getContractData  } from "../../utils/getContractData";
@@ -7,14 +7,19 @@ import BigNumber from "bignumber.js";
 import { formatEther } from "viem";
 import { transferFromAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
+import assert from "assert";
 
-export default async function withdrawLoan(args: TransferFromParam) {
-  const { callback, config, account: spender, bank: owner} = args;
-  const {token: address} = getContractData(config.state.chainId);
-  const allowance = await getAllowance({config, account: spender, spender, owner });
+/**
+ * @dev Withdraw allowance of spender from the safe 
+ * @param args : Argument of type TransferFromParam See interfaces.ts
+*/
+export default async function withdrawCollateral(args: TransferFromParam) {
+  const { callback, config, account: spender, safe: owner, contractAddress} = args;
+  assert(contractAddress);
+  const allowance = await getAllowance({config, account: spender, spender, owner, contractAddress });
   if(new BigNumber(allowance.toString()).gt(0)) {
     await simulateContract(config, {
-      address,
+      address: contractAddress!,
       account: spender,
       abi: transferFromAbi,
       functionName: 'transferFrom', 
@@ -29,8 +34,4 @@ export default async function withdrawLoan(args: TransferFromParam) {
   } else {
     callback?.({message: `${allowance} allowance found`});
   }
-}
-
-export interface TransferFromParam extends Config {
-  bank: Address;
 }

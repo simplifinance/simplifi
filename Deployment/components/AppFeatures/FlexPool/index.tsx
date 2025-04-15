@@ -11,14 +11,9 @@ import useAppStorage from '@/components/contexts/StateContextProvider/useAppStor
 
 export default function Flexpool() {
   const [isPastEpoches, setEpochType] = React.useState<boolean>(false);
-  const { addNode } = useAppStorage();
+  const { setActivepath } = useAppStorage();
 
-  const handleButtonClick = () => {
-    addNode({
-      type: 'Current',
-      item: createFlexpool()
-    })
-  }
+  const handleButtonClick = () => setActivepath('CreateFlexpool');
 
   return (
     <div className='space-y-4'>

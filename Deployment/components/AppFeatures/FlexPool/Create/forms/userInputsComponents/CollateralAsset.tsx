@@ -10,7 +10,7 @@ const rates = () => {
     return [...Array(1000).keys()];
 }
 
-export default function Interest({inputProp: interest, handleChange} : InputCategoryProp) {    
+export default function CollateralAsset({inputProp: interest, handleChange} : InputCategoryProp) {    
     return (
         <div className='relative'>
             <button

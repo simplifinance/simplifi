@@ -8,7 +8,7 @@ export default async function getCollateralQuote(args: {config: WagmiConfig, uni
   return await readContract(config, {
     abi: getCollateralQuoteAbi,
     address: getContractData(config.state.chainId).factory, 
-    functionName: "getCollaterlQuote",
+    functionName: "getCollateralQuote",
     args: [unit]
   });  
 }

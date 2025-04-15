@@ -7,6 +7,6 @@ import { IERC20 } from "../../../apis/IERC20.sol";
 
 contract BaseAsset is ERC20 {
   constructor() ERC20("Base Asset", "BSD") {
-    _mint(msg.sender, 1000000 * (10**18));
+    _mint(msg.sender, 50_000_000 * (10**18));
   }
 }

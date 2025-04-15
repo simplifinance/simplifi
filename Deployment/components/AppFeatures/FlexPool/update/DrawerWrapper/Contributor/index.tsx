@@ -7,7 +7,7 @@ import { Chevron } from "@/components/utilities/Icons";
 import { getContractData } from "@/apis/utils/getContractData";
 import { useAccount } from "wagmi";
 
-export const Provider = ({ formattedData, index, isAdmin }: ProviderProps) => {
+export const Contributor = ({ formattedData, index, isAdmin }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const handleCollapse = () => setOpen(!open);
     const { chainId } = useAccount();

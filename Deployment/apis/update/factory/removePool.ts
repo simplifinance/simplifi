@@ -6,6 +6,11 @@ import { removeLiquidityPoolAbi } from "@/apis/utils/abis";
 import { formatEther } from "viem";
 import { errorMessage } from "../formatError";
 
+/**
+ * @dev Send removePool request
+ * @param args : Arguments of type CommonParams. See interfaces.ts
+ * @returns : Transaction result
+ */
 export default async function removePool(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getContractData(config.state.chainId).factory;
@@ -14,7 +19,7 @@ export default async function removePool(args: CommonParam) {
     address,
     account,
     abi: removeLiquidityPoolAbi,
-    functionName: "removeLiquidityPool",
+    functionName: "closePool",
     args: [unit]
   }).then(async({request}) => {
     const hash = await writeContract(config, request );

@@ -1,9 +1,130 @@
 
-export const getUserDataAbi = [
-
+export const getProfileAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "unit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "target",
+        "type": "address"
+      }
+    ],
+    "name": "getProfile",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "uint32",
+                "name": "paybackTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "turnStartTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint32",
+                "name": "getFinanceTime",
+                "type": "uint32"
+              },
+              {
+                "internalType": "uint256",
+                "name": "loan",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "colBals",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "id",
+                "type": "address"
+              },
+              {
+                "internalType": "bool",
+                "name": "sentQuota",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct Common.Contributor",
+            "name": "profile",
+            "type": "tuple"
+          },
+          {
+            "internalType": "uint8",
+            "name": "slot",
+            "type": "uint8"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "slot",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "rate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "earnStartDate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "account",
+                "type": "address"
+              },
+              {
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "fullInterest",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "intPerSec",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct Common.Interest",
+                "name": "accruals",
+                "type": "tuple"
+              }
+            ],
+            "internalType": "struct Common.Provider[]",
+            "name": "providers",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct Common.ContributorReturnValue",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
 ] as const;
 
-export const getBankDataAbi = [
+export const getSafeDataAbi = [
   {
     "inputs": [],
     "name": "getData",
@@ -31,28 +152,6 @@ export const getBankDataAbi = [
   },
 ] as const;
 
-export const depositCollateralAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
-      }
-    ],
-    "name": "depositCollateral",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-] as const;
-
 export const getCollateralQuoteAbi = [
   {
     "inputs": [
@@ -62,7 +161,7 @@ export const getCollateralQuoteAbi = [
         "type": "uint256"
       }
     ],
-    "name": "getCollaterlQuote",
+    "name": "getCollateralQuote",
     "outputs": [
       {
         "internalType": "uint256",
@@ -87,18 +186,13 @@ export const getCurrentDebtAbi = [
         "internalType": "uint256",
         "name": "unit",
         "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "target",
-        "type": "address"
       }
     ],
     "name": "getCurrentDebt",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "debt",
         "type": "uint256"
       }
     ],
@@ -116,7 +210,7 @@ export const removeLiquidityPoolAbi = [
         "type": "uint256"
       }
     ],
-    "name": "removeLiquidityPool",
+    "name": "closePool",
     "outputs": [
       {
         "internalType": "bool",
@@ -125,25 +219,6 @@ export const removeLiquidityPoolAbi = [
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "routers",
-    "outputs": [
-      {
-        "internalType": "enum C3.Router",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
 ] as const;
@@ -199,11 +274,6 @@ export const getFinanceAbi = [
         "internalType": "uint256",
         "name": "unit",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "daysOfUseInHr",
-        "type": "uint8"
       }
     ],
     "name": "getFinance",
@@ -214,22 +284,27 @@ export const getFinanceAbi = [
         "type": "bool"
       }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
 ] as const;
 
-export const createPermissionlessLiquidityPoolAbi = [
+export const createPoolAbi = [
   {
     "inputs": [
       {
-        "internalType": "uint16",
-        "name": "intRate",
-        "type": "uint16"
+        "internalType": "address[]",
+        "name": "users",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "unit",
+        "type": "uint256"
       },
       {
         "internalType": "uint8",
-        "name": "quorum",
+        "name": "maxQuorum",
         "type": "uint8"
       },
       {
@@ -243,17 +318,17 @@ export const createPermissionlessLiquidityPoolAbi = [
         "type": "uint24"
       },
       {
-        "internalType": "uint256",
-        "name": "unitLiquidity",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "isPermissionless",
+        "type": "bool"
       },
       {
-        "internalType": "address",
-        "name": "asset",
+        "internalType": "contract IERC20",
+        "name": "colAsset",
         "type": "address"
       }
     ],
-    "name": "createPermissionlessPool",
+    "name": "createPool",
     "outputs": [
       {
         "internalType": "bool",
@@ -266,54 +341,7 @@ export const createPermissionlessLiquidityPoolAbi = [
   },
 ] as const;
 
-export const createPermissionedLiquidityPoolAbi = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint16",
-        "name": "intRate",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint16",
-        "name": "durationInHours",
-        "type": "uint16"
-      },
-      {
-        "internalType": "uint24",
-        "name": "colCoverage",
-        "type": "uint24"
-      },
-      {
-        "internalType": "uint256",
-        "name": "unitLiquidity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "asset",
-        "type": "address"
-      },
-      {
-        "internalType": "address[]",
-        "name": "contributors",
-        "type": "address[]"
-      }
-    ],
-    "name": "createPermissionedPool",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-] as const;
-
-export const addToPoolAbi = [
+export const contributeAbi = [
   {
     "inputs": [
       {
@@ -322,7 +350,7 @@ export const addToPoolAbi = [
         "type": "uint256"
       }
     ],
-    "name": "joinAPool",
+    "name": "contribute",
     "outputs": [
       {
         "internalType": "bool",
@@ -335,16 +363,16 @@ export const addToPoolAbi = [
   },
 ] as const;
 
-export const getRecordAbi = [
+export const getPoolRecordAbi = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "rId",
-        "type": "uint256"
+        "internalType": "uint96",
+        "name": "recordId",
+        "type": "uint96"
       }
     ],
-    "name": "getRecord",
+    "name": "getPoolRecord",
     "outputs": [
       {
         "components": [
@@ -353,62 +381,42 @@ export const getRecordAbi = [
               {
                 "components": [
                   {
-                    "internalType": "uint256",
-                    "name": "quorum",
-                    "type": "uint256"
+                    "internalType": "uint8",
+                    "name": "maxQuorum",
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "selector",
-                    "type": "uint256"
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint24",
                     "name": "colCoverage",
-                    "type": "uint256"
+                    "type": "uint24"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint32",
                     "name": "duration",
-                    "type": "uint256"
+                    "type": "uint32"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "intRate",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "cSlot",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "allGh",
-                    "type": "uint256"
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "userCount",
-                    "type": "uint256"
+                    "type": "uint8"
                   }
                 ],
-                "internalType": "struct C3.Uints",
-                "name": "uints",
+                "internalType": "struct Common.Low",
+                "name": "low",
                 "type": "tuple"
               },
               {
                 "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "fullInterest",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "intPerSec",
-                    "type": "uint256"
-                  },
                   {
                     "internalType": "uint256",
                     "name": "unit",
@@ -420,25 +428,25 @@ export const getRecordAbi = [
                     "type": "uint256"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "unitId",
-                    "type": "uint256"
+                    "internalType": "uint96",
+                    "name": "recordId",
+                    "type": "uint96"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "rId",
-                    "type": "uint256"
+                    "internalType": "uint96",
+                    "name": "unitId",
+                    "type": "uint96"
                   }
                 ],
-                "internalType": "struct C3.Uint256s",
-                "name": "uint256s",
+                "internalType": "struct Common.Big",
+                "name": "big",
                 "type": "tuple"
               },
               {
                 "components": [
                   {
-                    "internalType": "address",
-                    "name": "asset",
+                    "internalType": "contract IERC20",
+                    "name": "colAsset",
                     "type": "address"
                   },
                   {
@@ -448,7 +456,7 @@ export const getRecordAbi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "bank",
+                    "name": "safe",
                     "type": "address"
                   },
                   {
@@ -457,51 +465,46 @@ export const getRecordAbi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct C3.Addresses",
+                "internalType": "struct Common.Addresses",
                 "name": "addrs",
                 "type": "tuple"
               },
               {
-                "internalType": "enum C3.Status",
-                "name": "status",
-                "type": "uint8"
-              },
-              {
-                "internalType": "enum C3.Router",
+                "internalType": "enum Common.Router",
                 "name": "router",
                 "type": "uint8"
               },
               {
-                "internalType": "enum C3.FuncTag",
+                "internalType": "enum Common.Stage",
                 "name": "stage",
+                "type": "uint8"
+              },
+              {
+                "internalType": "enum Common.Status",
+                "name": "status",
                 "type": "uint8"
               }
             ],
-            "internalType": "struct C3.Pool",
+            "internalType": "struct Common.Pool",
             "name": "pool",
             "type": "tuple"
           },
           {
             "components": [
               {
-                "internalType": "uint256",
-                "name": "durOfChoice",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "paybackTime",
+                "type": "uint32"
               },
               {
-                "internalType": "uint256",
-                "name": "expInterest",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "turnStartTime",
+                "type": "uint32"
               },
               {
-                "internalType": "uint256",
-                "name": "payDate",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "turnTime",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "getFinanceTime",
+                "type": "uint32"
               },
               {
                 "internalType": "uint256",
@@ -524,13 +527,13 @@ export const getRecordAbi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct C3.Contributor[]",
+            "internalType": "struct Common.Contributor[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct C3.ReadDataReturnValue",
-        "name": "",
+        "internalType": "struct Common.ReadDataReturnValue",
+        "name": "result",
         "type": "tuple"
       }
     ],
@@ -544,7 +547,7 @@ export const getPoolDataAbi = [
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "unitId",
+        "name": "unit",
         "type": "uint256"
       }
     ],
@@ -557,62 +560,42 @@ export const getPoolDataAbi = [
               {
                 "components": [
                   {
-                    "internalType": "uint256",
-                    "name": "quorum",
-                    "type": "uint256"
+                    "internalType": "uint8",
+                    "name": "maxQuorum",
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "selector",
-                    "type": "uint256"
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint24",
                     "name": "colCoverage",
-                    "type": "uint256"
+                    "type": "uint24"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint32",
                     "name": "duration",
-                    "type": "uint256"
+                    "type": "uint32"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "intRate",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "cSlot",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "allGh",
-                    "type": "uint256"
+                    "type": "uint8"
                   },
                   {
-                    "internalType": "uint256",
+                    "internalType": "uint8",
                     "name": "userCount",
-                    "type": "uint256"
+                    "type": "uint8"
                   }
                 ],
-                "internalType": "struct C3.Uints",
-                "name": "uints",
+                "internalType": "struct Common.Low",
+                "name": "low",
                 "type": "tuple"
               },
               {
                 "components": [
-                  {
-                    "internalType": "uint256",
-                    "name": "fullInterest",
-                    "type": "uint256"
-                  },
-                  {
-                    "internalType": "uint256",
-                    "name": "intPerSec",
-                    "type": "uint256"
-                  },
                   {
                     "internalType": "uint256",
                     "name": "unit",
@@ -624,25 +607,25 @@ export const getPoolDataAbi = [
                     "type": "uint256"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "unitId",
-                    "type": "uint256"
+                    "internalType": "uint96",
+                    "name": "recordId",
+                    "type": "uint96"
                   },
                   {
-                    "internalType": "uint256",
-                    "name": "rId",
-                    "type": "uint256"
+                    "internalType": "uint96",
+                    "name": "unitId",
+                    "type": "uint96"
                   }
                 ],
-                "internalType": "struct C3.Uint256s",
-                "name": "uint256s",
+                "internalType": "struct Common.Big",
+                "name": "big",
                 "type": "tuple"
               },
               {
                 "components": [
                   {
-                    "internalType": "address",
-                    "name": "asset",
+                    "internalType": "contract IERC20",
+                    "name": "colAsset",
                     "type": "address"
                   },
                   {
@@ -652,7 +635,7 @@ export const getPoolDataAbi = [
                   },
                   {
                     "internalType": "address",
-                    "name": "bank",
+                    "name": "safe",
                     "type": "address"
                   },
                   {
@@ -661,51 +644,46 @@ export const getPoolDataAbi = [
                     "type": "address"
                   }
                 ],
-                "internalType": "struct C3.Addresses",
+                "internalType": "struct Common.Addresses",
                 "name": "addrs",
                 "type": "tuple"
               },
               {
-                "internalType": "enum C3.Status",
-                "name": "status",
-                "type": "uint8"
-              },
-              {
-                "internalType": "enum C3.Router",
+                "internalType": "enum Common.Router",
                 "name": "router",
                 "type": "uint8"
               },
               {
-                "internalType": "enum C3.FuncTag",
+                "internalType": "enum Common.Stage",
                 "name": "stage",
+                "type": "uint8"
+              },
+              {
+                "internalType": "enum Common.Status",
+                "name": "status",
                 "type": "uint8"
               }
             ],
-            "internalType": "struct C3.Pool",
+            "internalType": "struct Common.Pool",
             "name": "pool",
             "type": "tuple"
           },
           {
             "components": [
               {
-                "internalType": "uint256",
-                "name": "durOfChoice",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "paybackTime",
+                "type": "uint32"
               },
               {
-                "internalType": "uint256",
-                "name": "expInterest",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "turnStartTime",
+                "type": "uint32"
               },
               {
-                "internalType": "uint256",
-                "name": "payDate",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "turnTime",
-                "type": "uint256"
+                "internalType": "uint32",
+                "name": "getFinanceTime",
+                "type": "uint32"
               },
               {
                 "internalType": "uint256",
@@ -728,13 +706,13 @@ export const getPoolDataAbi = [
                 "type": "bool"
               }
             ],
-            "internalType": "struct C3.Contributor[]",
+            "internalType": "struct Common.Contributor[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct C3.ReadDataReturnValue",
-        "name": "",
+        "internalType": "struct Common.ReadDataReturnValue",
+        "name": "result",
         "type": "tuple"
       }
     ],
@@ -754,12 +732,12 @@ export const getFactoryDataAbi = [
             "components": [
               {
                 "internalType": "uint256",
-                "name": "tvlInXFI",
+                "name": "tvlCollateral",
                 "type": "uint256"
               },
               {
                 "internalType": "uint256",
-                "name": "tvlInUsd",
+                "name": "tvlBase",
                 "type": "uint256"
               },
               {
@@ -773,36 +751,14 @@ export const getFactoryDataAbi = [
                 "type": "uint256"
               }
             ],
-            "internalType": "struct IFactory.Analytics",
+            "internalType": "struct Common.Analytics",
             "name": "analytics",
             "type": "tuple"
           },
           {
-            "components": [
-              {
-                "internalType": "address",
-                "name": "feeTo",
-                "type": "address"
-              },
-              {
-                "internalType": "address",
-                "name": "assetAdmin",
-                "type": "address"
-              },
-              {
-                "internalType": "uint16",
-                "name": "makerRate",
-                "type": "uint16"
-              },
-              {
-                "internalType": "address",
-                "name": "bankFactory",
-                "type": "address"
-              }
-            ],
-            "internalType": "struct IFactory.ContractData",
-            "name": "contractData",
-            "type": "tuple"
+            "internalType": "uint16",
+            "name": "makerRate",
+            "type": "uint16"
           },
           {
             "internalType": "uint256",
@@ -815,8 +771,8 @@ export const getFactoryDataAbi = [
             "type": "uint256"
           }
         ],
-        "internalType": "struct IFactory.ViewFactoryData",
-        "name": "",
+        "internalType": "struct Common.ViewFactoryData",
+        "name": "data",
         "type": "tuple"
       }
     ],
@@ -921,3 +877,374 @@ export const transferFromAbi = [
     "type": "function"
   },
 ] as const;
+
+export const provideLiquidityAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint16",
+        "name": "rate",
+        "type": "uint16"
+      }
+    ],
+    "name": "provideLiquidity",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const removeLiquidityAbi = [
+  {
+    "inputs": [],
+    "name": "removeLiquidity",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const borrowAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "providersSlots",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "borrow",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const getProvidersAbi = [
+  {
+    "inputs": [],
+    "name": "getProviders",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "slot",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "earnStartDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          },
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "fullInterest",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "intPerSec",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct Common.Interest",
+            "name": "accruals",
+            "type": "tuple"
+          }
+        ],
+        "internalType": "struct Common.Provider[]",
+        "name": "prov",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+] as const;
+
+export const lockTokenAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_routeTo",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "lockToken",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const unlockTokenAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "unlockToken",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const panicUnlockTokenAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "lostAccount",
+        "type": "address"
+      }
+    ],
+    "name": "panicUnlock",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+] as const;
+
+export const activateRewardAbi = [
+  {
+    "inputs": [],
+    "name": "activateReward",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const getPointAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "getPoint",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "contributor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referrals",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Common.Point",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },  
+] as const;
+
+export const getPointsAbi = [
+  {
+    "inputs": [],
+    "name": "getPoints",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "contributor",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "creator",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "referrals",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct Common.Point[]",
+        "name": "_points",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+] as const;
+
+export const registerToEarnPointAbi = [
+  {
+    "inputs": [],
+    "name": "registerToEarnPoints",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const faucetAbi = [
+  {
+    "inputs": [],
+    "name": "claimTestTokens",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;
+
+export const approveAbi = [
+  {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+  },
+] as const;
+
+export const getUserDataAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "recordId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getUserData",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bool",
+            "name": "access",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "collateralBalance",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct ISafe.ViewUserData",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+] as const;
+

@@ -2,6 +2,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
+import { parseEther } from 'viem';
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -9,7 +10,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const {deploy, execute, read, } = deployments;
 	const {deployer, oracle, feeTo, cUSDAddr} = await getNamedAccounts();
   const serviceRate = 10; // 0.1%
-  const FEE = '10000000000000000000';
+  const FEE = parseEther('10');
+  const baseAmount = parseEther('1000');
+  const collacteralAmount = parseEther('3000');
+  const amountToFaucet = parseEther('3000000');
   const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27", deployer];
 
   // console.log("Oracle: ", oracle);
@@ -22,6 +26,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       log: true,
     });
     console.log(`RoleManager deployed to: ${roleManager.address}`);
+
+    const baseAsset = await deploy("BaseAsset", {
+      from: deployer,
+      args: [],
+      log: true,
+    });
+    console.log(`Escape contract deployed to: ${baseAsset.address}`);
 
     const escape = await deploy("Escape", {
       from: deployer,
@@ -73,6 +84,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     log: true,
   });
   console.log(`SimpliToken deployed to: ${collateralToken.address}`);
+
+  const faucet = await deploy("Faucet", {
+    from: deployer,
+    args: [roleManager.address, collateralToken.address, baseAsset.address, baseAmount, collacteralAmount],
+    log: true,
+  });
+  console.log(`Escape contract deployed to: ${faucet.address}`);
 
   /**
    * Deploy AssetManager
@@ -139,6 +157,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   
 
   await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportedAssetManager.address, distributor.address, providers.address]);
+  await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
 };
 
 export default func;

@@ -6,14 +6,14 @@ import React from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useReadContracts, useConfig } from "wagmi";
 import getReadFunctions from "../readContractConfig";
-import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, TrxState, VoidFunc } from "@/interfaces";
+import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionlessPoolParams, TrxState, VoidFunc } from "@/interfaces";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import withdrawLoan from "@/apis/update/testToken/withdrawLoan";
+import withdrawLoan from "@/apis/update/collateralToken/withdrawCollateral";
 import { Spinner } from "@/components/utilities/Spinner";
 import Message from "../Message";
 import { formatError } from "@/apis/update/formatError";
 
-export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, param } : BalancesProps) {
+export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, collateralAsset, param } : BalancesProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     
     const { address, chainId } = useAccount();
@@ -55,7 +55,7 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
         await withdrawLoan({
             config,
             account: currentUser,
-            bank: formattedSafe,
+            safe: formattedSafe,
             callback,
         }).then(() => callback_after(false))
         .catch((error) => callback_after(true, error))
@@ -64,8 +64,7 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
     const rekey = async() => {
         const unitLiquidity = toBN(formatEther(quota || 0n)).decimalPlaces(0, 1).toNumber();
         const unitLiquidity_ = parseEther(unitLiquidity.toString());
-        const {colCoverage, contributors, allGH, durationInHours, intRate: rate} = param;
-        const intRate = rate * 100;
+        const {colCoverage, contributors, allGH, durationInHours, } = param;
 
         if(unitLiquidity === 0 || isCancelledPool) {
             alert(`${isCancelledPool? 'This Pool cannot be rekeyed.' : 'Invalid balances.'} Please create a new FlexPool`);
@@ -78,17 +77,18 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
             config,
             contributors: contributors!,
             durationInHours,
-            intRate,
+            collateralAsset,
             unitLiquidity: unitLiquidity_,
             callback
         }
 
-        const createPermissionlessPoolParam : CreatePermissionLessPoolParams = {
+        const createPermissionlessPoolParam : CreatePermissionlessPoolParams = {
             account: currentUser,
             colCoverage,
             config,
+            collateralAsset,
+            contributors: contributors!,
             durationInHours,
-            intRate,
             quorum: allGH,
             unitLiquidity: unitLiquidity_,
             callback
@@ -99,6 +99,7 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
             config,
             txnType: 'CREATE',
             unit: quota!,
+            contractAddress: asset
         }
         await handleTransact({
             callback,
@@ -152,5 +153,5 @@ interface BalancesProps {
     param: RekeyParam;
     isCancelledPool: boolean;
     handleCloseDrawer: VoidFunc;
-    // stage: number;
+    collateralAsset: Address;
 }

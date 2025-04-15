@@ -356,7 +356,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     }
 
     /**
-     * Returns the current debt of target user.
+     * Returns the current debt of last paid acount i.e the contributor that last got finance
      * @param unit : Unit contribution
      * @notice For every contributor that provide liquidity through providers, they are required to 
      * pay interest in proportion to the providers' rate. Every other contributors in the same pool 

@@ -11,11 +11,11 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import { Spinner } from "@/components/utilities/Spinner";
 import { formatError } from "@/apis/update/formatError";
 import Message from "../Message";
-import withdrawCollateral from "@/apis/update/bank/withdrawCollateral";
-import depositCollateral from "@/apis/update/bank/depositCollateral";
+import withdrawCollateral from "@/apis/update/collateralToken/withdrawCollateral";
 import { CollateralInput } from "./CollateralInput";
+import { Button } from "@/components/ui/button";
 
-export default function AccessAndCollateralBalances({ handleCloseDrawer, formattedSafe, rId} : AccessAndCollateralBalanceProps) {
+export default function AccessAndCollateralBalances({ handleCloseDrawer, formattedSafe, recordId, collateralAsset} : AccessAndCollateralBalanceProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     const [showInput, setShowInput] = React.useState<boolean>(false);
     const [amount, setAmount] = React.useState<string>('0');
@@ -49,33 +49,33 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
     const { data, isPending } = useReadContract({
         ...readUserDataConfig({
             user: currentUser, 
-            bank: formattedSafe,
-            rId
+            safe: formattedSafe,
+            recordId
         }),
         query: {refetchInterval: 5000}
     });
 
-    const handleSubmit = async() => {
-        if(amount === '0') return null;
-        handleModalClose();
-        setLoading(true);
-        await depositCollateral({
-            config,
-            account: currentUser,
-            bank: formattedSafe,
-            rId,
-            callback,
-            value: parseEther(amount, 'wei')
-        }).then(() => callback_after(false))
-        .catch((error) => callback_after(true, error))
-    }
+    // const handleSubmit = async() => {
+    //     if(amount === '0') return null;
+    //     handleModalClose();
+    //     setLoading(true);
+    //     await depositCollateral({
+    //         config,
+    //         account: currentUser,
+    //         bank: formattedSafe,
+    //         rId,
+    //         callback,
+    //         value: parseEther(amount, 'wei')
+    //     }).then(() => callback_after(false))
+    //     .catch((error) => callback_after(true, error))
+    // }
 
     const withdraw = async() => {
         setLoading(true);
         await withdrawCollateral({
             account: currentUser,
-            bank: formattedSafe,
-            rId,
+            safe: formattedSafe,
+            contractAddress: collateralAsset,
             config,
             callback, 
         }).then(() => callback_after(false))
@@ -96,17 +96,24 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
                 <div className={`${flexSpread}`}>
                     <h1>In Use</h1>
                     {
-                        isPending || !data? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(data?.collateral.balance || 0n)).decimalPlaces(2).toString()} ${currency}`}</h1>
+                        isPending || !data? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(data?.collateralBalance || 0n)).decimalPlaces(2).toString()} ${currency}`}</h1>
                     }
                 </div>
                 <div className={`${flexSpread}`}>
                     <h1>Withdrawable</h1>
                     {
-                        isPending || !data? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(data?.collateral.withdrawable || 0n)).decimalPlaces(2).toString()} ${currency}`}</h1>
+                        isPending || !data? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(data?.collateralBalance || 0n)).decimalPlaces(2).toString()} ${currency}`}</h1>
                     }
                 </div>
             </div>
-            <ButtonTemplate
+            <Button
+                onClick={withdraw}
+                className=""
+            
+            >
+                {loading? <Spinner color="#fed7aa" /> : 'Withdraw'}
+            </Button>
+            {/* <ButtonTemplate
                 buttonAContent={loading? <Spinner color="#fed7aa" /> : 'Deposit'}
                 buttonBContent={loading? <Spinner color="#fed7aa" /> : 'Withdraw'}
                 disableButtonA={!data?.access}
@@ -114,15 +121,15 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
                 overrideClassName="text-orange-200"
                 buttonAFunc={() => setShowInput(true)}
                 buttonBFunc={withdraw}
-            />
+            /> */}
             <Message />
-            <CollateralInput 
+            {/* <CollateralInput 
                 amount={amount}
                 handleModalClose={handleModalClose}
                 handleSubmit={handleSubmit}
                 modalOpen={showInput}
                 onChange={onChange}
-            />
+            /> */}
         </Stack>
     );
 }
@@ -130,5 +137,6 @@ export default function AccessAndCollateralBalances({ handleCloseDrawer, formatt
 interface AccessAndCollateralBalanceProps {
     formattedSafe: Address;
     handleCloseDrawer: VoidFunc;
-    rId: bigint;
+    recordId: bigint;
+    collateralAsset: Address;
 }
