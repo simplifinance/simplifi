@@ -1,4 +1,5 @@
 // import { Contract, ContractTransactionResponse } from "ethers";
+import { expect } from "chai";
 import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
 import type { 
     Address, 
@@ -17,10 +18,11 @@ import type {
     FactoryTxReturn,
     FlexpoolFactory,
     Balances,
-    CollateralAsset,
-    MintParam, } from "./types";
+    SimpliToken,
+    TransferParam,
+    TokenDistributor, } from "./types";
   
-  import { bn, formatAddr } from "./utilities";
+  import { bn, formatAddr, TrxnType } from "./utilities";
   
   /**
    * @dev Create public pool
@@ -37,10 +39,11 @@ import type {
     const users : Address[] = [];
     users.push(signerAddr);
     const isPermissionless = true;
-    await mint({
+    await transferAsset({
       amount: x.unitLiquidity,
       asset: x.asset,
-      recipients: [x.signer]
+      recipients: [signerAddr],
+      sender: x.deployer
     });
   
     await approve({
@@ -50,12 +53,11 @@ import type {
       testAsset: x.asset
     }) 
     await x.factory.connect(x.signer).createPool( users, x.unitLiquidity, x.quorum, x.durationInHours, x.colCoverage, isPermissionless, x.collateralToken);
-    // const unitId = await x.factory.getEpoches();
     const pool = await x.factory.getPoolData(x.unitLiquidity);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unitLiquidity, signerAddr);
+    const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
     const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
     return { pool, balances, profile, slot};
   }
@@ -72,11 +74,13 @@ import type {
   {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signerAddr = await x.signer.getAddress();
+    const recipients = await getAddressFromSigners(x.contributors);
     const isPermissionless = false;
-    await mint({
+    await transferAsset({
       amount: x.unitLiquidity,
       asset: x.asset,
-      recipients: x.contributors,
+      recipients: recipients,
+      sender: x.deployer
     });
     
     await approve({
@@ -99,7 +103,7 @@ import type {
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unitLiquidity, signerAddr);
+    const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
     const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
   
     return { pool, balances, profile, slot };
@@ -115,12 +119,15 @@ import type {
   {
     const signer = x.signers[0];
     const signerAddr = await signer.getAddress();
+    const recipients = await getAddressFromSigners([signer]);
     const spender = await x.factory.getAddress() as Address;
-    await mint({
+    await transferAsset({
       amount: x.colQuote * 2n,
       asset: x.collateral,
-      recipients: [signer]
+      recipients: recipients,
+      sender: x.deployer
     });
+
     await approve({
       owner: signer,
       amount: x.colQuote,
@@ -133,7 +140,7 @@ import type {
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signerAddr);
+    const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
     const slot = await x.factory.getSlot(signerAddr, x.unit);
   
     return { balances, pool, profile, slot };
@@ -156,13 +163,15 @@ import type {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signer = x.signers[0];
     const signerAddr = await signer.getAddress();
+    const recipients = await getAddressFromSigners([signer]);
     await x.factory.getCurrentDebt(x.unit);
     const bal = await x.asset.balanceOf(signerAddr);
     if(bn(x.debt).gt(bn(bal))){
-      await mint({
+      await transferAsset({
         amount: x.debt! - bal,
         asset: x.asset,
-        recipients: [signer]
+        recipients: recipients,
+        sender: x.deployer
       });
     }
     await approve({
@@ -177,7 +186,7 @@ import type {
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signerAddr);
+    const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
     return {
       pool,
       balances,
@@ -188,7 +197,7 @@ import type {
   export async function approve(
     {owner, spender, amount, testAsset} 
       : 
-        {owner: Signer, spender: Address, testAsset: BaseAsset | CollateralAsset, amount: bigint, }) 
+        {owner: Signer, spender: Address, testAsset: BaseAsset | SimpliToken, amount: bigint, }) 
   {
     await testAsset.connect(owner).approve(spender, amount);
   }
@@ -201,13 +210,15 @@ import type {
   export async function liquidate(x: LiquidateParam)  {
     const factoryAddr = formatAddr(await x.factory.getAddress());
     const signer = x.signers[0];
+    const recipients = await getAddressFromSigners([signer]);
     const signerAddr = await signer.getAddress();
     let baseBalB4Liq : bigint = 0n;
 
-    await mint({
+    await transferAsset({
       amount: x.debt!,
       asset: x.asset,
-      recipients: [signer]
+      recipients: recipients,
+      sender: x.deployer
     }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signerAddr));
     const colBalB4Liq = await x.collateral.balanceOf(signerAddr);
     await approve({
@@ -216,15 +227,12 @@ import type {
       spender: factoryAddr,
       testAsset: x.asset
     });
-    // const unitId = await x.factory.getEpoches();
-    // console.log(`baseBalB4Liq: `, baseBalB4Liq);
     await x.factory.connect(signer).liquidate(x.unit);
-    // console.log(`Bal Af Liq: `, await x.asset.balanceOf(signerAddr))
     const pool = await x.factory.getPoolData(x.unit);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
-    const profile = await x.factory.getProfile(x.unit, signerAddr);
+    const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
     const slot = await x.factory.getSlot(signerAddr, x.unit);
     const baseBalAfterLiq = await x.asset.balanceOf(signerAddr);
     const colBalAfterLiq = await x.collateral.balanceOf(signerAddr);
@@ -267,29 +275,15 @@ import type {
     assetMgr.supportAsset(asset);
   }
   
-  // /**
-  //  * @dev Send Collateral or base tokens to the accounts provided as signers in `x`.
-  //  * 
-  //  * @param x : Parameters of type FundAccountParam
-  //  * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
-  //  */
-  // export async function transferAsset(x: FundAccountParam) : Null {
-  //   for(let i = 0; i < x.recipients.length; i++) {
-  //     x.asset.connect(x.sender).transfer(formatAddr(x.recipients[i]), x.amount);
-  //     // console.log("transferAsset", await x.asset.balanceOf(x.recipients[i]));
-  //   }
-  // }
-
   /**
    * @dev Send Collateral or base tokens to the accounts provided as signers in `x`.
    * 
    * @param x : Parameters of type FundAccountParam
    * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
    */
-  export async function mint(x: MintParam) : Null {
+  export async function transferAsset(x: TransferParam) : Null {
     for(let i = 0; i < x.recipients.length; i++) {
-      const recipient = await x.recipients[i].getAddress();
-      x.asset.connect(x.recipients[i]).mint([recipient], x.amount);
+      x.asset.connect(x.sender).transfer(formatAddr(x.recipients[i]), x.amount);
     }
   }
   
@@ -306,7 +300,7 @@ import type {
       asset: BaseAsset,
       factory: FlexpoolFactory,
       spender: Signer,
-      collateral: CollateralAsset,
+      collateral: SimpliToken,
       unit: bigint
     }
   ){
@@ -338,14 +332,14 @@ import type {
     await x.factory.connect(x.signer).closePool(x.unit);
   }
   
-  // export async function getAddressFromSigners(signers: Signer[]) {
-  //   let addrs : Addresses = [];
-  //   for(let i = 0; i < signers.length; i++) {
-  //     const signerAddr = await signers[i].getAddress();
-  //     addrs.push(formatAddr(signerAddr));
-  //   }
-  //   return addrs;
-  // }
+  export async function getAddressFromSigners(signers: Signer[]) {
+    let addrs : Address[] = [];
+    for(let i = 0; i < signers.length; i++) {
+      const addr = await signers[i].getAddress() as Address;
+      addrs.push(addr);
+    }
+    return addrs;
+  }
   
   /**
    * @dev Join a band
@@ -362,11 +356,12 @@ import type {
     }>
   {
     // const testAssetAddr = formatAddr(await x.testAsset.getAddress());
-    // const recipients = await getAddressFromSigners(x.signers);
-    await mint({
+    const recipients = await getAddressFromSigners(x.signers);
+    await transferAsset({
       amount: x.contribution,
       asset: x.testAsset,
-      recipients: x.signers,
+      recipients: recipients,
+      sender: x.deployer
     });
     let profiles : Common.ContributorStructOutput[] = [];
     for(let i= 0; i < x.signers.length; i++) {
@@ -379,7 +374,7 @@ import type {
       });
       await x.factory.connect(signer).contribute(x.unit);
       const signerAddr = await signer.getAddress();
-      const profile = await x.factory.getProfile(x.unit, signerAddr);
+      const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
       profiles.push(profile);
     }
     const pool = await x.factory.getPoolData(x.unit);
@@ -393,3 +388,44 @@ import type {
       profiles
     }
   }
+
+  // Propose a new transaction
+export async function proposeTransaction (
+  {signer, contract, recipient, amount, delayInHrs, trxType} 
+  : 
+  {contract: TokenDistributor, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType}
+)
+{
+  await contract.connect(signer).proposeTransaction(recipient, amount, delayInHrs, trxType);
+  const reqId = await contract.requestIDs();
+  const request = await contract.getTransactionRequest(reqId);
+  expect(reqId).to.be.eq(request.id);
+  return request;
+}
+
+// Sign transaction
+export async function signTransaction (
+  {signer, contract, requestId} 
+    : 
+    {contract: TokenDistributor, signer: Signer, requestId: bigint}
+)
+{
+    await contract.connect(signer).signTransaction(requestId);
+    const request = await contract.getTransactionRequest(requestId);
+    return request;
+}
+
+/**
+ * Execute pending transactions
+ */
+export async function executeTransaction(
+  { contract, signer, reqId } 
+    : 
+  {contract: TokenDistributor, signer: Signer, reqId: bigint}) 
+{
+  // Execute transaction
+  await contract.connect(signer).executeTransaction(reqId);
+  const request = await contract.getTransactionRequest(reqId);
+  return request; 
+}
+

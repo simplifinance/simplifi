@@ -71,9 +71,9 @@ contract SimpliToken is ERC20Abstract {
         return true;
     }
 
-    function mint(address[] memory tos, uint amount) public {
-      for(uint i = 0; i < tos.length; i++) {
-        _mint(tos[i], amount);
-      }
-    }
+    // function mint(address[] memory tos, uint amount) public {
+    //   for(uint i = 0; i < tos.length; i++) {
+    //     _mint(tos[i], amount);
+    //   }
+    // }
 }

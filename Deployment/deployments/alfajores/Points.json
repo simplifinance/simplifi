@@ -1,0 +1,398 @@
+{
+  "address": "0x3E900B33381d24CcF0187fF891818Fe418d414C3",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IRoleBase",
+          "name": "_roleManager",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "errorMsg",
+          "type": "string"
+        }
+      ],
+      "name": "ErrorOccurred",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "contributor",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creator",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "referrals",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Common.Point",
+          "name": "_point",
+          "type": "tuple"
+        }
+      ],
+      "name": "deductPoint",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getPoint",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "contributor",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creator",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "referrals",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Common.Point",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPoints",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "contributor",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creator",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "referrals",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Common.Point[]",
+          "name": "_points",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "registerToEarnPoints",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "roleManager",
+      "outputs": [
+        {
+          "internalType": "contract IRoleBase",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "contributor",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "creator",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "referrals",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Common.Point",
+          "name": "_point",
+          "type": "tuple"
+        }
+      ],
+      "name": "setPoint",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newManager",
+          "type": "address"
+        }
+      ],
+      "name": "setRoleManager",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb1980a211d9cd098a4784c2de6acdb2ce5a3cc4278a7296ff5ec6ee976b16ddf",
+  "receipt": {
+    "to": null,
+    "from": "0xD7c271d20c9E323336bFC843AEb8deC23B346352",
+    "contractAddress": "0x3E900B33381d24CcF0187fF891818Fe418d414C3",
+    "transactionIndex": 1,
+    "gasUsed": "623985",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x5d331fba9f54665c31751dba7fae4c7d6974aa324d70479d78096a2f1acfb412",
+    "transactionHash": "0xb1980a211d9cd098a4784c2de6acdb2ce5a3cc4278a7296ff5ec6ee976b16ddf",
+    "logs": [],
+    "blockNumber": 43513863,
+    "cumulativeGasUsed": "667743",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "e53fffc54a45618d4e5c0d23ea7a22bb",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IRoleBase\",\"name\":\"_roleManager\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"errorMsg\",\"type\":\"string\"}],\"name\":\"ErrorOccurred\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"contributor\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"creator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"referrals\",\"type\":\"uint256\"}],\"internalType\":\"struct Common.Point\",\"name\":\"_point\",\"type\":\"tuple\"}],\"name\":\"deductPoint\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getPoint\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"contributor\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"creator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"referrals\",\"type\":\"uint256\"}],\"internalType\":\"struct Common.Point\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPoints\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"contributor\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"creator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"referrals\",\"type\":\"uint256\"}],\"internalType\":\"struct Common.Point[]\",\"name\":\"_points\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"registerToEarnPoints\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"roleManager\",\"outputs\":[{\"internalType\":\"contract IRoleBase\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"contributor\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"creator\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"referrals\",\"type\":\"uint256\"}],\"internalType\":\"struct Common.Point\",\"name\":\"_point\",\"type\":\"tuple\"}],\"name\":\"setPoint\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newManager\",\"type\":\"address\"}],\"name\":\"setRoleManager\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"deductPoint(address,(uint256,uint256,uint256))\":{\"details\":\"Update points for the target user if they are already initialized otherwise create a new spot for them. \",\"params\":{\"_point\":\": Point struct containing essential data;\",\"user\":\": Unit contribution\"}},\"getPoint(address)\":{\"details\":\"Returns the point See _getPoint\"},\"registerToEarnPoints()\":{\"details\":\"Register user to earn points\"},\"setPoint(address,(uint256,uint256,uint256))\":{\"details\":\"Update points for the target user if they are already initialized otherwise create a new spot for them. \",\"params\":{\"_point\":\": Point struct containing essential data;\",\"user\":\": Unit contribution\"}},\"setRoleManager(address)\":{\"params\":{\"newManager\":\": New manager address\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"registerToEarnPoints()\":{\"notice\":\"Users automatically earn 5 points for signing up\"},\"setRoleManager(address)\":{\"notice\":\"Set Role manager\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/standalone/Points.sol\":\"Points\"},\"evmVersion\":\"constantinople\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/apis/Common.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IERC20 } from './IERC20.sol';\\r\\n\\r\\ninterface Common {\\r\\n    event PoolCreated(Pool);\\r\\n    event NewContributorAdded(Pool);\\r\\n    event GetFinanced(Pool);\\r\\n    event Payback(Pool);\\r\\n    event Liquidated(Pool);\\r\\n    event Cancellation(uint unit);\\r\\n    event PoolEdited(Pool);\\r\\n\\r\\n    enum Stage {\\r\\n        JOIN, \\r\\n        GET, \\r\\n        PAYBACK, \\r\\n        CANCELED,\\r\\n        ENDED\\r\\n    }\\r\\n\\r\\n    enum Status { AVAILABLE, TAKEN }\\r\\n\\r\\n    enum Branch { CURRENT, RECORD }\\r\\n\\r\\n    enum Router { PERMISSIONLESS, PERMISSIONED }\\r\\n\\r\\n    struct Pool {\\r\\n        Low low;\\r\\n        Big big;\\r\\n        Addresses addrs;\\r\\n        Router router;\\r\\n        Stage stage;\\r\\n        Status status;\\r\\n    }\\r\\n\\r\\n    struct Low {\\r\\n        uint8 maxQuorum;\\r\\n        uint8 selector;\\r\\n        uint24 colCoverage;\\r\\n        uint32 duration;\\r\\n        uint8 allGh;\\r\\n        uint8 userCount;\\r\\n    }\\r\\n\\r\\n    struct Big {\\r\\n        uint256 unit;\\r\\n        uint256 currentPool;\\r\\n        uint96 recordId;\\r\\n        uint96 unitId;\\r\\n    }\\r\\n\\r\\n    struct Point {\\r\\n        uint contributor;\\r\\n        uint creator;\\r\\n        uint referrals;\\r\\n    }\\r\\n\\r\\n    struct Interest {\\r\\n        uint fullInterest;\\r\\n        uint intPerSec;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Structured types - Address\\r\\n     * @param asset : Contract address of the asset in use.\\r\\n     * @param lastPaid: Last contributor who got finance.\\r\\n     * @param safe : Strategy for each pool or epoch. See Strategy.sol for more details.\\r\\n     * @param admin : Pool creator.\\r\\n     * \\r\\n    */\\r\\n    struct Addresses {\\r\\n        IERC20 colAsset;\\r\\n        address lastPaid;\\r\\n        address safe;\\r\\n        address admin;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     *  @param isMember : Whether user is a member or not\\r\\n     *  @param turnStartTime: Time when the contributor's turn start to count.\\r\\n     *  @param getFinanceTime: Date when loan was disbursed\\r\\n     *  @param paybackTime: Date which the borrowed fund must be retured\\r\\n     *  @param loan: Total debts owed by the last fund recipient.\\r\\n     *  @param colBals: Collateral balances of the last recipient.\\r\\n     *  @param sentQuota : Whether an user/current msg.sender has received or not.\\r\\n     *  @param id : Address of the last recipient.\\r\\n     * @param interestPaid : The amount of interest paid  \\r\\n    */\\r\\n    struct Contributor {\\r\\n        uint32 paybackTime;\\r\\n        uint32 turnStartTime;\\r\\n        uint32 getFinanceTime;\\r\\n        uint loan;\\r\\n        uint colBals;\\r\\n        address id;\\r\\n        bool sentQuota;\\r\\n    }\\r\\n\\r\\n    struct Price {\\r\\n        uint128 price;\\r\\n        uint8 decimals;\\r\\n    }\\r\\n\\r\\n    struct Provider {\\r\\n        uint slot;\\r\\n        uint amount;\\r\\n        uint rate;\\r\\n        uint earnStartDate;\\r\\n        address account;\\r\\n        Interest accruals;\\r\\n    }\\r\\n\\r\\n    struct Payback_Safe {\\r\\n        address user; \\r\\n        IERC20 baseAsset; \\r\\n        uint256 debt;\\r\\n        uint256 attestedInitialBal;\\r\\n        bool allGF; \\r\\n        Contributor[] cData;\\r\\n        bool isSwapped;\\r\\n        address defaulted;\\r\\n        uint96 recordId;\\r\\n        IERC20 collateralAsset;\\r\\n    }\\r\\n\\r\\n    struct Slot {\\r\\n        uint value;\\r\\n        bool isMember;\\r\\n        bool isAdmin;\\r\\n    }\\r\\n\\r\\n    struct ReadDataReturnValue {\\r\\n        Pool pool;\\r\\n        Contributor[] cData;\\r\\n    }\\r\\n\\r\\n    struct UpdatePoolData {\\r\\n        uint unit;\\r\\n        uint96 unitId;\\r\\n        uint96 recordId;\\r\\n        uint8 maxQuorum;\\r\\n        uint24 colCoverage;\\r\\n        IERC20 colAsset;\\r\\n        uint16 durationInHours;\\r\\n        address creator;\\r\\n        Router router; \\r\\n    }\\r\\n\\r\\n    struct Analytics {\\r\\n        uint256 tvlCollateral;\\r\\n        uint256 tvlBase;\\r\\n        uint totalPermissioned;\\r\\n        uint totalPermissionless;\\r\\n    }\\r\\n\\r\\n    struct ViewFactoryData {\\r\\n        Analytics analytics;\\r\\n        uint16 makerRate;\\r\\n        uint currentEpoches;\\r\\n        uint recordEpoches;\\r\\n    }\\r\\n\\r\\n    struct ContributorReturnValue {\\r\\n        Contributor profile;\\r\\n        uint8 slot;\\r\\n        Common.Provider[] providers;\\r\\n    }\\r\\n\\r\\n}\",\"keccak256\":\"0xaf85c99363f8b17c839b5ca16d529e141c53a97c9e5f8d46202922532b2952c4\",\"license\":\"MIT\"},\"contracts/apis/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/IERC20.sol)\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport \\\"./IERC20Metadata.sol\\\";\\r\\n\\r\\n/**\\r\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\r\\n */\\r\\ninterface IERC20 is IERC20Metadata{\\r\\n    error NotCallable();\\r\\n    error AddressIsZero(address);\\r\\n    error NoPreviousLockDetected();\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\r\\n     * another (`to`).\\r\\n     *\\r\\n     * Note that `value` may be zero.\\r\\n     */\\r\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\r\\n     * a call to {approve}. `value` is the new allowance.\\r\\n     */\\r\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens in existence.\\r\\n     */\\r\\n    function totalSupply() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens owned by `account`.\\r\\n     */\\r\\n    function balanceOf(address account) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from the caller's account to `to`.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transfer(address to, uint256 amount) external returns (bool);\\r\\n    \\r\\n    /** \\r\\n     * @dev Moves `amounts` tokens from the caller's account to `to`.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event for each transfer.\\r\\n     * Note: BE AWARE OF THE GAS COST WHEN USING THIS FUNCTION. IT INCREASES \\r\\n                RELATIVE TO THE ACCOUNTS ARRAY\\r\\n     */\\r\\n    function batchTransfer(uint[] memory amounts, address[] memory accounts) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the remaining number of tokens that `spender` will be\\r\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\r\\n     * zero by default.\\r\\n     *\\r\\n     * This value changes when {approve} or {transferFrom} are called.\\r\\n     */\\r\\n    function allowance(address owner, address spender) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\r\\n     * that someone may use both the old and the new allowance by unfortunate\\r\\n     * transaction ordering. One possible solution to mitigate this race\\r\\n     * condition is to first reduce the spender's allowance to 0 and set the\\r\\n     * desired value afterwards:\\r\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\r\\n     *\\r\\n     * Emits an {Approval} event.\\r\\n     */\\r\\n    function approve(address spender, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from `from` to `to` using the\\r\\n     * allowance mechanism. `amount` is then deducted from the caller's\\r\\n     * allowance.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transferFrom(address from, address to, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**@dev Locks specific amount of JFT to the private ledger.\\r\\n        param: routeTo - Alternative address that funds will be sent to when panic call is made.\\r\\n        param: amount - Amount to lock.\\r\\n    */\\r\\n    function lockToken(address routeTo, uint256 amount) external returns(bool);\\r\\n\\r\\n    /**@dev Moves an 'amount' from private ledger to regular balances.\\r\\n        @param amount - Amount to unlock.\\r\\n        Note: If the lock duration was set, holder will not be able to unlock until the \\r\\n            set time has passed else they can withdraw to regular balance anytime.\\r\\n     */\\r\\n    function unlockToken(uint amount) external returns(bool);\\r\\n\\r\\n    /** @dev Returns seperate balances of @param who\\r\\n        return value will be in struct format having two values\\r\\n     */\\r\\n    function accountBalances(address who) external view returns(Balances memory);\\r\\n   \\r\\n    // /**@dev Return JFT's Metadata including the information of `who`\\r\\n    //  */\\r\\n    // function getInfo(address who) external view returns(Protected memory);\\r\\n\\r\\n    /**\\r\\n     * @dev PanicUnlock is meant to be invoked only by the Attorney.\\r\\n     * It should only be called when JFT holder has lost access to their account and they had \\r\\n     * earlier initiated a lock. The locked token is simply unlocked and sent to an escape address\\r\\n     * provided at the time the lock was activated.\\r\\n     * \\r\\n     * Note: Attorney charges a fee for doing this. \\r\\n     * @param account : Account that owns this token.\\r\\n     */\\r\\n    function panicUnlock(address account, Balances memory _bal) external returns(bool);\\r\\n\\r\\n    struct Protected {\\r\\n        uint256 value; // Total value currently locked\\r\\n        address escapeTo;\\r\\n    }\\r\\n\\r\\n    struct Balances {\\r\\n        uint256 spendable;\\r\\n        Protected locked;\\r\\n    }\\r\\n\\r\\n    struct TokenInfo {\\r\\n        uint8 decimals;\\r\\n        uint256 totalSupply;\\r\\n        string name;\\r\\n        string symbol;\\r\\n        address attorney;\\r\\n        // address rewarder;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x0f16e22e9c3da96f41e8237352b0d826ca0421b69340e09aedae74eb222428e6\",\"license\":\"MIT\"},\"contracts/apis/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @dev Interface for the optional metadata functions from the ERC20 standard.\\r\\n *\\r\\n * _Available since v4.1._\\r\\n */\\r\\ninterface IERC20Metadata {\\r\\n    /**\\r\\n     * @dev Returns the name of the token.\\r\\n     */\\r\\n    function name() external view returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the symbol of the token.\\r\\n     */\\r\\n    function symbol() external view returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the decimals places of the token.\\r\\n     */\\r\\n    function decimals() external view returns (uint8);\\r\\n}\\r\\n\",\"keccak256\":\"0xcb50d28f397609626ce66bde796d1ea41ce80b047482aea9d7f228b285c619ad\",\"license\":\"MIT\"},\"contracts/apis/IPoint.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { Common } from \\\"./Common.sol\\\";\\r\\n/**\\r\\n * @title Simplifi\\r\\n * @author : Bobeu - https://github.com/bobeu\\r\\n * @notice : Interface of the Point contract for managing user's rewards and points.\\r\\n */\\r\\ninterface IPoint {\\r\\n  struct Initializer {\\r\\n    bool isRegistered;\\r\\n    uint location;\\r\\n  }\\r\\n\\r\\n  function getPoint(address user) external view returns(Common.Point memory);\\r\\n  function setPoint(address user, Common.Point memory) external returns(bool);\\r\\n  function deductPoint(address user, Common.Point memory) external returns(bool);\\r\\n}\",\"keccak256\":\"0xc2e2aa8d99f77ecca14ffb80fa51aa0b6aafe43b1268a290100cae9f88ced7ad\",\"license\":\"MIT\"},\"contracts/apis/IRoleBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IRoleBase \\r\\n * Interface of the OwnerShip contract\\r\\n * @author Simplifi (Bobeu)\\r\\n */\\r\\ninterface IRoleBase {\\r\\n    function setRole(\\r\\n        address[] memory newRoleTos\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function removeRole(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function renounceRole() \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function getRoleBearer(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address);\\r\\n\\r\\n    function hasRole(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool);\\r\\n}\",\"keccak256\":\"0xa166efe0dfbcd8f4e00f33c155797b3e2d652087f630893518b0dec1f823519b\",\"license\":\"MIT\"},\"contracts/libraries/ErrorLib.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nlibrary ErrorLib {\\r\\n    error ErrorOccurred(string errorMsg);\\r\\n\\r\\n    /**\\r\\n     * @dev Reverts any operation.\\r\\n     * @param _error : Error struct\\r\\n     */\\r\\n    function _throw(string memory _error) internal pure {\\r\\n        if(bytes(_error).length > 0){ \\r\\n            revert ErrorOccurred(_error);\\r\\n        }\\r\\n    }\\r\\n\\r\\n}\",\"keccak256\":\"0x967582ca2a833932c7403e6950ede1972f1b7f94ecfedd2d3ddee9175d309e5a\",\"license\":\"MIT\"},\"contracts/peripherals/OnlyRoleBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IRoleBase } from \\\"../apis/IRoleBase.sol\\\";\\r\\nimport { ErrorLib } from \\\"../libraries/ErrorLib.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title MsgSender \\r\\n * @author Simplifi (Bobeu)\\r\\n * @notice Non-deployable contract simply returning the calling account.\\r\\n */\\r\\nabstract contract MsgSender {\\r\\n    function _msgSender() internal view virtual returns(address sender) {\\r\\n        sender = msg.sender;\\r\\n    }\\r\\n}\\r\\n\\r\\nabstract contract OnlyRoleBase is MsgSender {\\r\\n    using ErrorLib for *;\\r\\n\\r\\n    // Role manager address\\r\\n    IRoleBase public roleManager;\\r\\n\\r\\n    // ============= constructor ============\\r\\n    constructor(IRoleBase _roleManager)\\r\\n    {\\r\\n        _setRoleManager(_roleManager);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Caller must have owner role before execeution can proceed.\\r\\n     * The 'errorMessage' argument can be used to return error specific to \\r\\n     * a context e.g function call. \\r\\n     */\\r\\n    modifier onlyRoleBearer {\\r\\n        _onlyRoleBearer();\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // Allow only account with role access\\r\\n    function _onlyRoleBearer() internal view {\\r\\n        IRoleBase mgr = roleManager;\\r\\n        if(address(mgr) == address(0)) 'Manager is zero'._throw();\\r\\n        if(!_hasRole(_msgSender())) 'Access denied'._throw();\\r\\n    }\\r\\n\\r\\n    function _hasRole(address target) internal view returns(bool result) {\\r\\n        result = IRoleBase(roleManager).hasRole(target);\\r\\n    }  \\r\\n\\r\\n    /// @dev Set role manager\\r\\n    function _setRoleManager(IRoleBase newManager) private{\\r\\n        roleManager = newManager;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * Set Role manager\\r\\n     * @param newManager : New manager address\\r\\n     */\\r\\n    function setRoleManager(\\r\\n        address newManager\\r\\n    )\\r\\n        public\\r\\n        onlyRoleBearer\\r\\n        returns(bool)\\r\\n    {\\r\\n        _setRoleManager(IRoleBase(newManager));\\r\\n        return true;\\r\\n    }\\r\\n}\",\"keccak256\":\"0xa16a1ee72f3b6ef52356210cdc85a46ddd5a88d56c0c044c0740b68cf5b83438\",\"license\":\"MIT\"},\"contracts/standalone/Points.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IPoint, Common } from \\\"../apis/IPoint.sol\\\";\\r\\nimport { ErrorLib } from \\\"../libraries/ErrorLib.sol\\\";\\r\\nimport { OnlyRoleBase, IRoleBase } from \\\"../peripherals/OnlyRoleBase.sol\\\";\\r\\n\\r\\ncontract Points is IPoint, OnlyRoleBase {\\r\\n    using ErrorLib for *;\\r\\n\\r\\n    // All points \\r\\n    Common.Point[] private points;\\r\\n\\r\\n    // Mapping of unit contributors to Initializer struct\\r\\n    mapping(address users => Initializer) private initializer;\\r\\n\\r\\n    constructor(IRoleBase _roleManager) OnlyRoleBase(_roleManager) {} \\r\\n\\r\\n    /**\\r\\n     * @dev Returns the point\\r\\n     * @param user : Contributor\\r\\n    */\\r\\n    function _getPoint(address user) internal view returns(Common.Point memory point){\\r\\n        Initializer memory init = initializer[user];\\r\\n        if(init.isRegistered) {\\r\\n            point = points[init.location];\\r\\n        }\\r\\n        return point;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the point\\r\\n     * See _getPoint\\r\\n    */\\r\\n    function getPoint(address user) external view returns(Common.Point memory){\\r\\n        return _getPoint(user);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Register user to earn points\\r\\n     * @notice Users automatically earn 5 points for signing up\\r\\n     */\\r\\n    function registerToEarnPoints() public {\\r\\n        Initializer memory init = initializer[_msgSender()];\\r\\n        if(init.isRegistered) 'User is registered'._throw();\\r\\n        init.isRegistered = true;\\r\\n        init.location = points.length;\\r\\n        initializer[_msgSender()] = init;\\r\\n        points.push( Common.Point(0, 0, 5));\\r\\n        \\r\\n    } \\r\\n\\r\\n    /**\\r\\n     * @dev Update points for the target user if they are already initialized otherwise create a new spot for them. \\r\\n     * @param user : Unit contribution\\r\\n     * @param _point : Point struct containing essential data;\\r\\n    */\\r\\n    function setPoint(address user, Common.Point memory _point) external onlyRoleBearer returns(bool) {\\r\\n        Initializer memory init = initializer[user];\\r\\n        if(init.isRegistered) {\\r\\n            unchecked {\\r\\n                if(_point.contributor > 0) points[init.location].contributor += _point.contributor;\\r\\n                if(_point.creator > 0) points[init.location].creator += _point.creator;\\r\\n                if(_point.referrals > 0) points[init.location].referrals += _point.referrals;\\r\\n            }\\r\\n        }\\r\\n        return true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Update points for the target user if they are already initialized otherwise create a new spot for them. \\r\\n     * @param user : Unit contribution\\r\\n     * @param _point : Point struct containing essential data;\\r\\n    */\\r\\n    function deductPoint(address user, Common.Point memory _point) external onlyRoleBearer returns(bool) {\\r\\n        Initializer memory init = initializer[user];\\r\\n        if(init.isRegistered) {\\r\\n            Common.Point memory _p = points[init.location];\\r\\n            unchecked {\\r\\n                if(_point.contributor > 0 && _p.contributor > _point.contributor) points[init.location].contributor -= _p.contributor;\\r\\n                if(_point.creator > 0 && _p.creator > _point.creator) points[init.location].creator -= _p.creator;\\r\\n                if(_point.referrals > 0 && _p.referrals > _point.referrals) points[init.location].referrals -= _p.referrals;\\r\\n            }\\r\\n        }\\r\\n        return true;\\r\\n    }\\r\\n\\r\\n    // Retrieve the points array in storage\\r\\n    function getPoints() public view returns(Common.Point[] memory _points) {\\r\\n        _points = points;\\r\\n        return _points;\\r\\n    }\\r\\n}\",\"keccak256\":\"0xa613f6714c137a4df18b3b1dc49a52f70500a3acf6b2bda89a3f3105c99a70a5\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50604051610a71380380610a7183398101604081905261002f91610050565b600080546001600160a01b0319166001600160a01b03831617905550610080565b60006020828403121561006257600080fd5b81516001600160a01b038116811461007957600080fd5b9392505050565b6109e28061008f6000396000f3fe608060405234801561001057600080fd5b506004361061007c5760003560e01c8063dc5c14371161005b578063dc5c1437146100db578063f1d588c5146100fe578063f4b7095b14610111578063f7c8e5911461012657600080fd5b8062435da5146100815780634ff531b6146100b15780636bf2daaf146100d1575b600080fd5b600054610094906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100c46100bf3660046107f2565b610139565b6040516100a89190610814565b6100d961016c565b005b6100ee6100e9366004610835565b6102a8565b60405190151581526020016100a8565b6100ee61010c3660046107f2565b6103b8565b6101196103e6565b6040516100a891906108c3565b6100ee610134366004610835565b610463565b61015d60405180606001604052806000815260200160008152602001600081525090565b61016682610608565b92915050565b336000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526101d5576101d560405180604001604052806012815260200171155cd95c881a5cc81c9959da5cdd195c995960721b8152506106c2565b6001808252805460208084019182523360009081526002825260408082209551865460ff1916901515178655925194840194909455815160608101835284815290810184815260059282019283528354808501855593909452517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf660039093029283015591517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf782015590517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf890910155565b60006102b26106f0565b6001600160a01b0383166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526103ae5782511561032c578260000151600182602001518154811061031457610314610925565b60009182526020909120600390910201805490910190555b60208301511561036d578260200151600182602001518154811061035257610352610925565b60009182526020909120600160039092020101805490910190555b6040830151156103ae578260400151600182602001518154811061039357610393610925565b60009182526020909120600260039092020101805490910190555b5060019392505050565b60006103c26106f0565b600080546001600160a01b0319166001600160a01b0384161790555060015b919050565b60606001805480602002602001604051908101604052809291908181526020016000905b8282101561045a578382906000526020600020906003020160405180606001604052908160008201548152602001600182015481526020016002820154815250508152602001906001019061040a565b50505050905090565b600061046d6106f0565b6001600160a01b0383166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526103ae57600060018260200151815481106104c5576104c5610925565b90600052602060002090600302016040518060600160405290816000820154815260200160018201548152602001600282015481525050905060008460000151118015610513575083518151115b1561054d578060000151600183602001518154811061053457610534610925565b6000918252602090912060039091020180549190910390555b60008460200151118015610568575083602001518160200151115b156105a5578060200151600183602001518154811061058957610589610925565b6000918252602090912060016003909202010180549190910390555b600084604001511180156105c0575083604001518160400151115b156105fd57806040015160018360200151815481106105e1576105e1610925565b6000918252602090912060026003909202010180549190910390555b506001949350505050565b61062c60405180606001604052806000815260200160008152602001600081525090565b6001600160a01b0382166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526106bc57600181602001518154811061068257610682610925565b9060005260206000209060030201604051806060016040529081600082015481526020016001820154815260200160028201548152505091505b50919050565b8051156106ed578060405163cc86106360e01b81526004016106e4919061093b565b60405180910390fd5b50565b6000546001600160a01b031680610731576107316040518060400160405280600f81526020016e4d616e61676572206973207a65726f60881b8152506106c2565b61073a3361076c565b6106ed576106ed6040518060400160405280600d81526020016c1058d8d95cdcc819195b9a5959609a1b8152506106c2565b60008054604051633f784de560e11b81526001600160a01b03848116600483015290911690637ef09bca90602401602060405180830381865afa1580156107b7573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610166919061098a565b80356001600160a01b03811681146103e157600080fd5b60006020828403121561080457600080fd5b61080d826107db565b9392505050565b81518152602080830151908201526040808301519082015260608101610166565b600080828403608081121561084957600080fd5b610852846107db565b92506060601f198201121561086657600080fd5b506040516060810181811067ffffffffffffffff8211171561089857634e487b7160e01b600052604160045260246000fd5b8060405250602084013581526040840135602082015260608401356040820152809150509250929050565b6020808252825182820181905260009190848201906040850190845b81811015610919576109068385518051825260208082015190830152604090810151910152565b92840192606092909201916001016108df565b50909695505050505050565b634e487b7160e01b600052603260045260246000fd5b60006020808352835180602085015260005b818110156109695785810183015185820160400152820161094d565b506000604082860101526040601f19601f8301168501019250505092915050565b60006020828403121561099c57600080fd5b8151801515811461080d57600080fdfea26469706673582212200767dcbedb304e76567722eea77e2e21d4e2cc77a80f1b58f8b5efcc64f748f664736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007c5760003560e01c8063dc5c14371161005b578063dc5c1437146100db578063f1d588c5146100fe578063f4b7095b14610111578063f7c8e5911461012657600080fd5b8062435da5146100815780634ff531b6146100b15780636bf2daaf146100d1575b600080fd5b600054610094906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100c46100bf3660046107f2565b610139565b6040516100a89190610814565b6100d961016c565b005b6100ee6100e9366004610835565b6102a8565b60405190151581526020016100a8565b6100ee61010c3660046107f2565b6103b8565b6101196103e6565b6040516100a891906108c3565b6100ee610134366004610835565b610463565b61015d60405180606001604052806000815260200160008152602001600081525090565b61016682610608565b92915050565b336000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526101d5576101d560405180604001604052806012815260200171155cd95c881a5cc81c9959da5cdd195c995960721b8152506106c2565b6001808252805460208084019182523360009081526002825260408082209551865460ff1916901515178655925194840194909455815160608101835284815290810184815260059282019283528354808501855593909452517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf660039093029283015591517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf782015590517fb10e2d527612073b26eecdfd717e6a320cf44b4afac2b0732d9fcbe2b7fa0cf890910155565b60006102b26106f0565b6001600160a01b0383166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526103ae5782511561032c578260000151600182602001518154811061031457610314610925565b60009182526020909120600390910201805490910190555b60208301511561036d578260200151600182602001518154811061035257610352610925565b60009182526020909120600160039092020101805490910190555b6040830151156103ae578260400151600182602001518154811061039357610393610925565b60009182526020909120600260039092020101805490910190555b5060019392505050565b60006103c26106f0565b600080546001600160a01b0319166001600160a01b0384161790555060015b919050565b60606001805480602002602001604051908101604052809291908181526020016000905b8282101561045a578382906000526020600020906003020160405180606001604052908160008201548152602001600182015481526020016002820154815250508152602001906001019061040a565b50505050905090565b600061046d6106f0565b6001600160a01b0383166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526103ae57600060018260200151815481106104c5576104c5610925565b90600052602060002090600302016040518060600160405290816000820154815260200160018201548152602001600282015481525050905060008460000151118015610513575083518151115b1561054d578060000151600183602001518154811061053457610534610925565b6000918252602090912060039091020180549190910390555b60008460200151118015610568575083602001518160200151115b156105a5578060200151600183602001518154811061058957610589610925565b6000918252602090912060016003909202010180549190910390555b600084604001511180156105c0575083604001518160400151115b156105fd57806040015160018360200151815481106105e1576105e1610925565b6000918252602090912060026003909202010180549190910390555b506001949350505050565b61062c60405180606001604052806000815260200160008152602001600081525090565b6001600160a01b0382166000908152600260209081526040918290208251808401909352805460ff161580158452600190910154918301919091526106bc57600181602001518154811061068257610682610925565b9060005260206000209060030201604051806060016040529081600082015481526020016001820154815260200160028201548152505091505b50919050565b8051156106ed578060405163cc86106360e01b81526004016106e4919061093b565b60405180910390fd5b50565b6000546001600160a01b031680610731576107316040518060400160405280600f81526020016e4d616e61676572206973207a65726f60881b8152506106c2565b61073a3361076c565b6106ed576106ed6040518060400160405280600d81526020016c1058d8d95cdcc819195b9a5959609a1b8152506106c2565b60008054604051633f784de560e11b81526001600160a01b03848116600483015290911690637ef09bca90602401602060405180830381865afa1580156107b7573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610166919061098a565b80356001600160a01b03811681146103e157600080fd5b60006020828403121561080457600080fd5b61080d826107db565b9392505050565b81518152602080830151908201526040808301519082015260608101610166565b600080828403608081121561084957600080fd5b610852846107db565b92506060601f198201121561086657600080fd5b506040516060810181811067ffffffffffffffff8211171561089857634e487b7160e01b600052604160045260246000fd5b8060405250602084013581526040840135602082015260608401356040820152809150509250929050565b6020808252825182820181905260009190848201906040850190845b81811015610919576109068385518051825260208082015190830152604090810151910152565b92840192606092909201916001016108df565b50909695505050505050565b634e487b7160e01b600052603260045260246000fd5b60006020808352835180602085015260005b818110156109695785810183015185820160400152820161094d565b506000604082860101526040601f19601f8301168501019250505092915050565b60006020828403121561099c57600080fd5b8151801515811461080d57600080fdfea26469706673582212200767dcbedb304e76567722eea77e2e21d4e2cc77a80f1b58f8b5efcc64f748f664736f6c63430008180033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "deductPoint(address,(uint256,uint256,uint256))": {
+        "details": "Update points for the target user if they are already initialized otherwise create a new spot for them. ",
+        "params": {
+          "_point": ": Point struct containing essential data;",
+          "user": ": Unit contribution"
+        }
+      },
+      "getPoint(address)": {
+        "details": "Returns the point See _getPoint"
+      },
+      "registerToEarnPoints()": {
+        "details": "Register user to earn points"
+      },
+      "setPoint(address,(uint256,uint256,uint256))": {
+        "details": "Update points for the target user if they are already initialized otherwise create a new spot for them. ",
+        "params": {
+          "_point": ": Point struct containing essential data;",
+          "user": ": Unit contribution"
+        }
+      },
+      "setRoleManager(address)": {
+        "params": {
+          "newManager": ": New manager address"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "registerToEarnPoints()": {
+        "notice": "Users automatically earn 5 points for signing up"
+      },
+      "setRoleManager(address)": {
+        "notice": "Set Role manager"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 4486,
+        "contract": "contracts/standalone/Points.sol:Points",
+        "label": "roleManager",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(IRoleBase)1766"
+      },
+      {
+        "astId": 6525,
+        "contract": "contracts/standalone/Points.sol:Points",
+        "label": "points",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_array(t_struct(Point)1321_storage)dyn_storage"
+      },
+      {
+        "astId": 6530,
+        "contract": "contracts/standalone/Points.sol:Points",
+        "label": "initializer",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_struct(Initializer)1699_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_struct(Point)1321_storage)dyn_storage": {
+        "base": "t_struct(Point)1321_storage",
+        "encoding": "dynamic_array",
+        "label": "struct Common.Point[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IRoleBase)1766": {
+        "encoding": "inplace",
+        "label": "contract IRoleBase",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_struct(Initializer)1699_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct IPoint.Initializer)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Initializer)1699_storage"
+      },
+      "t_struct(Initializer)1699_storage": {
+        "encoding": "inplace",
+        "label": "struct IPoint.Initializer",
+        "members": [
+          {
+            "astId": 1696,
+            "contract": "contracts/standalone/Points.sol:Points",
+            "label": "isRegistered",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_bool"
+          },
+          {
+            "astId": 1698,
+            "contract": "contracts/standalone/Points.sol:Points",
+            "label": "location",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(Point)1321_storage": {
+        "encoding": "inplace",
+        "label": "struct Common.Point",
+        "members": [
+          {
+            "astId": 1316,
+            "contract": "contracts/standalone/Points.sol:Points",
+            "label": "contributor",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1318,
+            "contract": "contracts/standalone/Points.sol:Points",
+            "label": "creator",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1320,
+            "contract": "contracts/standalone/Points.sol:Points",
+            "label": "referrals",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

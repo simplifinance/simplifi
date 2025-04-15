@@ -91,6 +91,12 @@ const config: HardhatUserConfig = {
       4157: `privatekey://${PRIVATE_KEY}`,
       44787: `privatekey://${PRIVATE_KEY}`,
     },
+    cUSDAddr: {
+      default: 0,
+      4157: zeroAddress,
+      44787: "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+      42220: "0x765de816845861e75a25fca122bb6898b8b1282a"
+    },
     oracle: {
       default: zeroAddress,
       4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233',

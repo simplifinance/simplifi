@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { BigNumberish, ethers } from "ethers";
-import { Common } from "../contract/typechain-types/contracts/apis/IFactory";
+import { Common } from "./typechain-types/Contributor";
 
 export type Path = 'Yield' | 'Dao' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -11,7 +11,7 @@ export type Str = string;
 export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
-export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'Interest' | 'UnitLiquidity' | 'address';
+export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address';
 export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'NOT ALLOWED' | 'APPROVE' | 'CREATE' | 'ENDED' | 'REMOVE';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
@@ -20,7 +20,7 @@ export type ToggleDrawer = (value: number, setState: (value: number) => void) =>
 export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type PoolType = 'Permissioned' | 'Permissionless';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
-export type Profile = Common.ContributorStruct;
+export type Profile = Common.ContributorReturnValueStruct;
 export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
@@ -38,30 +38,24 @@ export interface ReadDataReturnValue {
 }
 
 export interface LiquidityPool {
-  lInt: Common.LIntStruct;
-  bigInt: Common.BigIntStruct;
+  low: Common.LowStruct;
+  big: Common.BigStruct;
   addrs: Common.AddressesStruct;
   status: BigNumberish;
   router: BigNumberish;
   stage: BigNumberish;
-  interest: Common.InterestStruct;
 }
-// cData: Readonly<Common.ContributorStruct[]>;
 
 export interface CreatePermissionedPoolParams extends Config{
-  intRate: number;
+  contributors: Address[];
+  unitLiquidity: bigint;
   durationInHours: number;
   colCoverage: number;
-  unitLiquidity: bigint;
-  contributors: Address[];
+  collateralAsset: Address;
 }
 
-export interface CreatePermissionLessPoolParams extends Config{
-  intRate: number;
+export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
   quorum: number;
-  durationInHours: number;
-  colCoverage: number;
-  unitLiquidity: bigint;
 }
 
 export interface GetProfileParam {
@@ -72,100 +66,96 @@ export interface GetProfileParam {
 export interface Config {
   config: WagmiConfig;
   account: Address;
-  value?: bigint;
-  callback?: TransactionCallback; 
+  callback?: TransactionCallback;
+  contractAddress?: Address;
 }
 
 export interface DepositCollateralParam extends Config {
-  bank: Address;
-  rId: bigint;
+  safe: Address;
+  recordId: bigint;
 }
 
 export interface CommonParam extends Config {
   unit: bigint;
 }
 
-export interface GetFinanceParam extends CommonParam {
-  daysOfUseInHr: number;
-  value: bigint;
-}
-
 export interface ScreenUserResult{
   isMember: boolean;
   isAdmin: boolean;
-  data: FormattedData;
+  userData: Profile;
 }
 
-export interface FormattedData {
-  paybackTimeInDateFormat: string;
-  paybackTimeInSec: number;
-  turnStartTimeInDateFormat: string;
-  turnStartTimeInSec: number;
-  durOfChoiceInSec: number;
-  colBalsInEther: string;
-  loanInEther: string;
-  interestPaidInEther: string;
-  idLowerCase: string;
-  idToString: string;
-  loanInBN: BigNumber;
-  sentQuota: boolean;
-}
+// export interface FormattedData {
+//   paybackTimeInDateFormat: string;
+//   paybackTimeInSec: number;
+//   turnStartTimeInDateFormat: string;
+//   turnStartTimeInSec: number;
+//   durOfChoiceInSec: number;
+//   colBalsInEther: string;
+//   loanInEther: string;
+//   interestPaidInEther: string;
+//   idLowerCase: string;
+//   idToString: string;
+//   loanInBN: BigNumber;
+//   sentQuota: boolean;
+// }
 
-export interface FormattedPoolContentProps {
-  unit: BigNumberish;
-  unit_bigint: bigint;
-  rId: bigint;
-  // pair: string;
-  quorumToNumber: number;
-  userCountToNumber: number;
-  allGetBool: boolean;
-  allGhToNumber: number;
-  unitIdToNumber: number;
-  unitIdBigint: bigint;
-  stageToNumber: number;
-  expectedPoolAmtBigint: bigint;
-  unitInEther: string;
-  intPercentString: string;
-  durationToNumber: number;
-  poolFilled: boolean;
-  isPermissionless: boolean;
-  selectorToNumber: number;
-  colCoverageInString: string;
-  fullInterestInEther: string;
-  intPerSecInEther: string;
-  currentPoolInEther: string;
-  adminLowerCase: string;
-  assetLowerCase: string;
-  admin: ethers.AddressLike;
-  asset: ethers.AddressLike;
-  isAdmin: boolean;
-  isMember: boolean;
-  cDataFormatted: FormattedData[];
-  intPerSec: BigNumberish;
-  lastPaid: Address;
-  formattedSafe: Address;
-  unitInBN: BigNumber;
-  currentPoolInBN: BigNumber;
-}
+// export interface FormattedPoolContentProps {
+//   unit: BigNumberish;
+//   unit_bigint: bigint;
+//   recordId: bigint;
+//   // pair: string;
+//   quorumToNumber: number;
+//   userCountToNumber: number;
+//   allGetBool: boolean;
+//   allGhToNumber: number;
+//   unitIdToNumber: number;
+//   unitIdBigint: bigint;
+//   stageToNumber: number;
+//   expectedPoolAmtBigint: bigint;
+//   unitInEther: string;
+//   intPercentString: string;
+//   durationToNumber: number;
+//   poolFilled: boolean;
+//   isPermissionless: boolean;
+//   selectorToNumber: number;
+//   colCoverageInString: string;
+//   fullowerestInEther: string;
+//   intPerSecInEther: string;
+//   currentPoolInEther: string;
+//   adminLowerCase: string;
+//   assetLowerCase: string;
+//   admin: ethers.AddressLike;
+//   asset: ethers.AddressLike;
+//   isAdmin: boolean;
+//   isMember: boolean;
+//   cDataFormatted: FormattedData[];
+//   intPerSec: BigNumberish;
+//   lastPaid: Address;
+//   formattedSafe: Address;
+//   unitInBN: BigNumber;
+//   currentPoolInBN: BigNumber;
+// }
 
 export interface AmountToApproveParam {
   txnType: ButtonText;
   config: WagmiConfig;
   unit: bigint;
   account: Address;
-  intPerSec?: BigNumberish | bigint;
-  lastPaid?: Address;
+  avgIntPerSec?: bigint;
+  contractAddress: Address;
 }
 
 export interface HandleTransactionParam {
   otherParam: AmountToApproveParam;
-  preferredDuration?: string; 
-  createPermissionlessPoolParam?: CreatePermissionLessPoolParams;
+  createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
   createPermissionedPoolParam?: CreatePermissionedPoolParams;
   router?: Router;
-  bank?: Address;
+  safe?: Address;
+  collateralAsset?: Address;
   callback: TransactionCallback;
 }
+
 export interface DrawerState {
   anchor: DrawerAnchor
   value: boolean;
@@ -199,7 +189,7 @@ export interface ContractData {
   feeTo: Address;
   assetAdmin: Address;
   makerRate: number;
-  bankFactory: Address;
+  safeFactory: Address;
 }
 
 export interface CommonToolArg {
@@ -209,7 +199,7 @@ export interface CommonToolArg {
 }
 
 export interface ProviderProps {
-  formattedData: FormattedData;
+  userData: Profile;
   index: number;
   isAdmin: boolean;
 }
@@ -218,4 +208,26 @@ export interface CustomNode {
   element: React.ReactNode; 
   path: Path;
   location: number;
+}
+
+export interface BorrowParam extends CommonParam {
+  providersSlots: bigint[];
+}
+
+export interface ApproveParam extends Config {
+  amountToApprove: bigint;
+  // spender: Address;
+}
+
+export interface GetAllowanceParam extends Config {
+  owner: Address;
+  spender: Address;
+}
+
+export interface TransferFromParam extends Config {
+  safe: Address;
+}
+
+export interface ProvideLiquidityParam extends CommonParam {
+  rate: number;
 }

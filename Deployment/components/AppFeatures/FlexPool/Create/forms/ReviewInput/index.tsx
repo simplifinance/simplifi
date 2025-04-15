@@ -3,7 +3,7 @@ import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
-import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionLessPoolParams, InputSelector, PoolType, TransactionCallback, TrxState, VoidFunc, } from "@/interfaces";
+import type { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionlessPoolParams, InputSelector, PoolType, TrxState, } from "@/interfaces";
 import { Chevron } from "@/components/utilities/Icons";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, handleTransact, toBigInt, toBN } from "@/utilities";
@@ -22,9 +22,9 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const account = formatAddr(useAccount().address);
     const config = useConfig();
     const { setstorage, setmessage, closeDisplayForm } = useAppStorage();
-    const unitLiquidity = toBigInt(toBN(values[1].value).toString());
+    const unitLiquidity = toBigInt(values[1].value);
     const colCoverage = toBN(values[4].value).times(100).toNumber();
-    const intRate = toBN(values[3].value).times(100).toNumber();
+    // const intRate = toBN(values[3].value).times(100).toNumber();
     const durationInHours = toBN(values[2].value).toNumber();
  
     const callback = (arg: TrxState) => {
@@ -34,18 +34,18 @@ export const ReviewInput = (props: ReviewInputProps) => {
         setstorage(arg);
     }
 
-    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE"};
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE", contractAddress};
     const createPermissionedPoolParam : CreatePermissionedPoolParams = {
         account,
         colCoverage,
         config,
         contributors: participants!,
         durationInHours,
-        intRate,
+        collateralAsset,
         unitLiquidity: parseEther(unitLiquidity.toString()),
         callback
     };
-    const createPermissionlessPoolParam : CreatePermissionLessPoolParams = {
+    const createPermissionlessPoolParam : CreatePermissionlessPoolParams = {
         account,
         colCoverage,
         config,

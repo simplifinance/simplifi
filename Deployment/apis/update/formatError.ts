@@ -1,3 +1,8 @@
+/**
+ * @dev Handle and format reverting errors
+ * @param args : Arguments of type DefaultErrorArgs.
+ * @returns : object containing formatted error
+*/
 function defaultErrors(arg: DefaultErrorArgs) {
     const { duration, epochId, maxEpochDuration, durationInSec, amount } = arg;
 

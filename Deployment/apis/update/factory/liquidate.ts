@@ -5,6 +5,11 @@ import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { liquidateAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 
+/**
+ * @dev Send liquidation request
+ * @param args : Arguments of type CommonParams. See interfaces.ts
+ * @returns : Transaction result
+ */
 export default async function liquidate(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getContractData(config.state.chainId).factory;

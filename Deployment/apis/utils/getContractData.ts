@@ -1,28 +1,44 @@
-import factory_xfi from "@/deployments/crossTest/Factory.json";
-import factory_celo from "@/deployments/alfajores/Factory.json";
-import token_xfi from "@/deployments/crossTest/TestBaseAsset.json";
-import token_celo from "@/deployments/alfajores/TestBaseAsset.json";
+import factory_xfi from "@/deployments/alfajores/FlexpoolFactory.json";
+import factory_celo from "@/deployments/alfajores/FlexpoolFactory.json";
+import colToken_celo from "@/deployments/alfajores/SimpliToken.json";
+import colToken_xfi from "@/deployments/alfajores/SimpliToken.json";
+import providers_celo from "@/deployments/alfajores/Providers.json";
+import providers_xfi from "@/deployments/alfajores/Providers.json";
+import points_celo from "@/deployments/alfajores/Points.json";
+import points_xfi from "@/deployments/alfajores/Points.json";
+import faucet_celo from "@/deployments/alfajores/Faucet.json";
+import faucet_xfi from "@/deployments/alfajores/Faucet.json";
 import { Address } from "@/interfaces";
-import { currencies, networks, pairs, supportedChains } from "@/constants";
+import { currencies, networks, pairs, supportedChainIds } from "@/constants";
 import { isSuportedChain } from "@/utilities";
+import { zeroAddress } from "viem";
 
-const contract_addrs = [token_xfi.address, token_celo.address] as const;
-const factories = [factory_xfi.address, factory_celo.address] as const;
+const collaterals = [colToken_celo.address, colToken_xfi.address] as const as Address[];
+const providers = [providers_celo.address, providers_xfi.address] as const as Address[];
+const points = [points_celo.address, points_xfi.address] as const as Address[];
+const faucets = [faucet_celo.address, faucet_xfi.address] as const as Address[];
+const factories = [factory_celo.address, factory_xfi.address] as const as Address[];
 
 export const formatAddr = (x: string | (Address | undefined)) : Address => {
-    if(!x || x === "") return `0x${'0'.repeat(40)}`;
-    return `0x${x.substring(2, 42)}`;
+    if(!x || x === "") return zeroAddress as Address;
+    return x as Address;
 };
 
+/**
+ * Return contracts addresses
+ * @param chainId : Id of the connected chain
+ * @returns object
+ */
 export const getContractData = (chainId: number) => {
-    let index = supportedChains[1];
-    if(!isSuportedChain(chainId)) index = supportedChains.indexOf(chainId);;
+    const index = !isSuportedChain(chainId)? supportedChainIds[0] : supportedChainIds.indexOf(chainId);
     return {
-        token: formatAddr(contract_addrs[index]),
-        factory: formatAddr(factories[index]),
+        token: collaterals[index],
+        faucets: faucets[index],
+        points: points[index],
+        providers: providers[index],
+        factory: factories[index],
         currency: currencies[index],
         network: networks[index],
         pair: pairs[index],
     };
 }
-// throw new Error('Unsupported chain')

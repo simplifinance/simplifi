@@ -12,7 +12,7 @@ export default function CollateralQuote({unit} : {unit: bigint}) {
     const { collateralQuoteConfig, currency } = getReadFunctions({chainId});
     const { data, isPending } = useReadContract({
         ...collateralQuoteConfig({unit}),
-        query: {refetchInterval: 5000}
+        query: {refetchInterval: 5000},
     });
 
     return(

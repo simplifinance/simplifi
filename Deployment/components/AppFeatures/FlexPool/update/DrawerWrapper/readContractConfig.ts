@@ -1,8 +1,12 @@
 import { 
-    getBankDataAbi, 
+    getSafeDataAbi, 
     getFactoryDataAbi, 
     getPoolDataAbi, 
-    getRecordAbi, 
+    getPoolRecordAbi, 
+    getProfileAbi,
+    getProvidersAbi,
+    getPointsAbi,
+    getPointAbi,
     getUserDataAbi,
     allowanceAbi,
     symbolAbi,
@@ -14,24 +18,24 @@ import { Address } from "@/interfaces";
 
 export default function getReadFunctions({chainId} : {chainId: number | undefined,}) {
     if(!chainId) chainId = 4157;
-    const {factory, token, ...rest}= getContractData(chainId);
+    const {factory, token, points, providers, ...rest}= getContractData(chainId);
 
-    const readBankDataConfig = ({bank}: {bank: Address}) => {
+    const readSafeDataConfig = ({safe}: {safe: Address}) => {
         const contractConfig = {
-            address: bank,
-            abi: getBankDataAbi,
+            address: safe,
+            abi: getSafeDataAbi,
             functionName: "getData",
-            args: [bank],
+            args: [safe],
         } as const;
         return contractConfig;
     }
     
-    const readUserDataConfig = ({user, bank, rId}: {user: Address, bank: Address, rId: bigint}) => {
+    const readUserDataConfig = ({user, safe, recordId}: {user: Address, safe: Address, recordId: bigint}) => {
         const contractConfig = {
-            address: bank,
+            address: safe,
             abi: getUserDataAbi,
             functionName: "getUserData",
-            args: [user, rId],
+            args: [user, recordId],
         } as const;
         return contractConfig;
     }
@@ -65,22 +69,22 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
     
-    const readPoolConfig = ({unitId} : {unitId: bigint}) => {
+    const readPoolConfig = ({unit} : {unit: bigint}) => {
         const contractConfig = {
             address: factory,
             abi: getPoolDataAbi,
             functionName: "getPoolData",
-            args: [unitId]
+            args: [unit]
         } as const;
         return contractConfig;
     }
     
-    const readRecordConfig = ({rId} : {rId: bigint}) => {
+    const readRecordConfig = ({recordId} : {recordId: bigint}) => {
         const contractConfig = {
             address: factory,
-            abi: getRecordAbi,
+            abi: getPoolRecordAbi,
             functionName: "getRecord",
-            args: [rId]
+            args: [recordId]
         } as const;
         return contractConfig;
     }
@@ -89,7 +93,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         const contractConfig = {
             address: factory,
             abi: getCollateralQuoteAbi,
-            functionName: "getCollaterlQuote",
+            functionName: "getCollateralQuote",
             args: [unit]
         } as const;
         return contractConfig;
@@ -107,18 +111,62 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
 
+    const getProvidersConfig = () => {
+        const contractConfig = {
+            address: providers,
+            abi: getProvidersAbi,
+            functionName: 'getProviders',
+        } as const;
+        return contractConfig;
+    }
+
+    const getPointsConfig = () => {
+        const contractConfig = {
+            address: points,
+            abi: getPointsAbi,
+            functionName: 'getPoints',
+        } as const;
+        return contractConfig;
+    }
+
+    const getPointConfig = (user: Address) => {
+        const contractConfig = {
+            address: points,
+            abi: getPointAbi,
+            functionName: 'getPoint',
+            args: [user]
+        } as const;
+        return contractConfig;
+    }
+
+    const getProfileConfig = (unit: bigint, user: Address) => {
+        const contractConfig = {
+            address: points,
+            abi: getProfileAbi,
+            functionName: 'getProfile',
+            args: [unit, user]
+        } as const;
+        return contractConfig;
+    }
+
     return {
-        readAllowanceConfig,
-        getFactoryDataConfig,
-        readRecordConfig,
         collateralQuoteConfig,
+        getFactoryDataConfig,
+        readAllowanceConfig,
         readBalanceConfig,
-        readSymbolConfig,
+        readRecordConfig,
         readPoolConfig,
+        getPointsConfig,
+        readSymbolConfig,
+        readSafeDataConfig,
+        getProvidersConfig,
         readUserDataConfig,
-        readBankDataConfig,
+        getPointConfig,
+        getProfileConfig,
+        providers,
         factory,
         token,
+        points,
         ...rest
     }
 }

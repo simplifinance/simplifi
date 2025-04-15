@@ -150,29 +150,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Slots__factory>;
     getContractFactory(
-      name: "Attorney",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Attorney__factory>;
-    getContractFactory(
       name: "ERC20Abstract",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Abstract__factory>;
     getContractFactory(
-      name: "Escape",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Escape__factory>;
-    getContractFactory(
-      name: "Reserve",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Reserve__factory>;
-    getContractFactory(
-      name: "TokenDistributor",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.TokenDistributor__factory>;
-    getContractFactory(
       name: "TokenInteractor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TokenInteractor__factory>;
+    getContractFactory(
+      name: "Attorney",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Attorney__factory>;
     getContractFactory(
       name: "FlexpoolFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -182,9 +170,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Providers__factory>;
     getContractFactory(
+      name: "Escape",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Escape__factory>;
+    getContractFactory(
       name: "Points",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Points__factory>;
+    getContractFactory(
+      name: "Reserve",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Reserve__factory>;
     getContractFactory(
       name: "RoleManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -197,6 +193,10 @@ declare module "hardhat/types/runtime" {
       name: "SupportedAssetManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.SupportedAssetManager__factory>;
+    getContractFactory(
+      name: "TokenDistributor",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.TokenDistributor__factory>;
     getContractFactory(
       name: "SimpliToken",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -381,35 +381,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Slots>;
     getContractAt(
-      name: "Attorney",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Attorney>;
-    getContractAt(
       name: "ERC20Abstract",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Abstract>;
     getContractAt(
-      name: "Escape",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Escape>;
-    getContractAt(
-      name: "Reserve",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Reserve>;
-    getContractAt(
-      name: "TokenDistributor",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.TokenDistributor>;
-    getContractAt(
       name: "TokenInteractor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.TokenInteractor>;
+    getContractAt(
+      name: "Attorney",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Attorney>;
     getContractAt(
       name: "FlexpoolFactory",
       address: string | ethers.Addressable,
@@ -421,10 +406,20 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Providers>;
     getContractAt(
+      name: "Escape",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Escape>;
+    getContractAt(
       name: "Points",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Points>;
+    getContractAt(
+      name: "Reserve",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Reserve>;
     getContractAt(
       name: "RoleManager",
       address: string | ethers.Addressable,
@@ -440,6 +435,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.SupportedAssetManager>;
+    getContractAt(
+      name: "TokenDistributor",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.TokenDistributor>;
     getContractAt(
       name: "SimpliToken",
       address: string | ethers.Addressable,
@@ -593,29 +593,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Slots>;
     deployContract(
-      name: "Attorney",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Attorney>;
-    deployContract(
       name: "ERC20Abstract",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Abstract>;
     deployContract(
-      name: "Escape",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Escape>;
-    deployContract(
-      name: "Reserve",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Reserve>;
-    deployContract(
-      name: "TokenDistributor",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenDistributor>;
-    deployContract(
       name: "TokenInteractor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TokenInteractor>;
+    deployContract(
+      name: "Attorney",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Attorney>;
     deployContract(
       name: "FlexpoolFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -625,9 +613,17 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Providers>;
     deployContract(
+      name: "Escape",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Escape>;
+    deployContract(
       name: "Points",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Points>;
+    deployContract(
+      name: "Reserve",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Reserve>;
     deployContract(
       name: "RoleManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -640,6 +636,10 @@ declare module "hardhat/types/runtime" {
       name: "SupportedAssetManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SupportedAssetManager>;
+    deployContract(
+      name: "TokenDistributor",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenDistributor>;
     deployContract(
       name: "SimpliToken",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -824,35 +824,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Slots>;
     deployContract(
-      name: "Attorney",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Attorney>;
-    deployContract(
       name: "ERC20Abstract",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Abstract>;
     deployContract(
-      name: "Escape",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Escape>;
-    deployContract(
-      name: "Reserve",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.Reserve>;
-    deployContract(
-      name: "TokenDistributor",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.TokenDistributor>;
-    deployContract(
       name: "TokenInteractor",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TokenInteractor>;
+    deployContract(
+      name: "Attorney",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Attorney>;
     deployContract(
       name: "FlexpoolFactory",
       args: any[],
@@ -864,10 +849,20 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Providers>;
     deployContract(
+      name: "Escape",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Escape>;
+    deployContract(
       name: "Points",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Points>;
+    deployContract(
+      name: "Reserve",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.Reserve>;
     deployContract(
       name: "RoleManager",
       args: any[],
@@ -883,6 +878,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.SupportedAssetManager>;
+    deployContract(
+      name: "TokenDistributor",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.TokenDistributor>;
     deployContract(
       name: "SimpliToken",
       args: any[],

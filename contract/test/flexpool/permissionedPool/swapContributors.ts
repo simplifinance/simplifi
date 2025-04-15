@@ -125,7 +125,7 @@ describe("Permissioned: Swap contributors", function () {
       });
       expect(pay.profile.colBals).to.be.equal(ZERO);
 
-      const prof = await flexpool.getProfile(create.pool.pool.big.unit, signer3Addr);
+      const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer3Addr)).profile;
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof.colBals).to.be.equal(ZERO);

@@ -94,7 +94,7 @@ describe("Permissioned: Complete An Epoch", function () {
       }); 
 
       expect(bn(pay.profile.colBals).lt(bn(gf.profile.colBals))).to.be.true;
-      const prof = await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr);
+      const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
       const gf_2 = await getFinance({
         unit: create.pool.pool.big.unit,
