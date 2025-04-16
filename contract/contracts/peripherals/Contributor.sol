@@ -67,8 +67,8 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         uint unit
     ) internal view returns(Common.ContributorReturnValue memory result) {
         uint96 recordId = _getRecordId(unit);
-        result.slot = uint8(_getSlot(target, unit).value);
-        result.profile = contributors[recordId][result.slot];
+        result.slot = _getSlot(target, unit);
+        result.profile = contributors[recordId][result.slot.value];
         result.providers = _getContributorProviders(target, recordId);
     }
 
@@ -151,8 +151,8 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         bool isMember,
         bool sentQuota            
     ) internal returns(Common.ContributorReturnValue memory data) {
-        data.slot = uint8(contributors[pool.big.recordId].length);
-        _createSlot(target, unit, data.slot, isAdmin, isMember);
+        data.slot.value = contributors[pool.big.recordId].length;
+        _createSlot(target, unit, uint8(data.slot.value), isAdmin, isMember);
         contributors[pool.big.recordId].push(); 
         data.profile.id = target;
         data.profile.sentQuota = sentQuota;
@@ -272,7 +272,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
      * associated with the current pool will return empty pool but may not return empty contributors.
      */
-    function getPoolRecord(uint96 recordId) public view returns(Common.ReadDataReturnValue memory result) {
+    function getPoolRecord(uint96 recordId) public view returns(Common.ReadRecordDataReturnValue memory result) {
         result.cData = contributors[recordId];
         result.pool = _getPastPool(recordId);
         return result;
@@ -283,8 +283,14 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @notice The correct unitId must be parsed. 
      * @param unit: UnitId 
      */
-    function getPoolData(uint unit) public view returns(Common.ReadDataReturnValue memory result) {
-        result.cData = contributors[_getPool(unit).big.recordId];
+    function getPoolData(uint unit) public view returns(Common.ReadPoolDataReturnValue memory result) {
+        Common.Contributor[] memory targets = contributors[_getPool(unit).big.recordId];
+        Common.ContributorReturnValue[] memory data = new Common.ContributorReturnValue[](targets.length);
+        for(uint i = 0; i < targets.length; i++) {
+            address target = targets[i].id;
+            data[i] = _getContributor(target, unit);
+        }
+        result.cData = data;
         result.pool = _getPool(unit);
         return result;
     }
@@ -398,10 +404,10 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     {
         Common.Pool memory pool = _getPool(unit);
         assert(pool.addrs.lastPaid != address(0));
-        Common.Contributor memory _default = _getContributor(pool.addrs.lastPaid, unit).profile;
-        if(_now() > _default.paybackTime) {
-            assert(pool.addrs.lastPaid == _default.id);
-            (_profile, isDefaulted, slot) = (_default, true, _getSlot(_default.id, unit));
+        Common.ContributorReturnValue memory _default = _getContributor(pool.addrs.lastPaid, unit);
+        if(_now() > _default.profile.paybackTime) {
+            assert(pool.addrs.lastPaid == _default.profile.id);
+            (_profile, isDefaulted, slot) = (_default.profile, true, _default.slot);
         } 
     }
 

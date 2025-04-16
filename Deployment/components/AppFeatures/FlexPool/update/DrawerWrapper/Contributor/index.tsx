@@ -6,35 +6,42 @@ import Collapse from "@mui/material/Collapse";
 import { Chevron } from "@/components/utilities/Icons";
 import { getContractData } from "@/apis/utils/getContractData";
 import { useAccount } from "wagmi";
+import { getTimeFromEpoch, toBN } from "@/utilities";
+import { parseEther } from "viem";
 
-export const Contributor = ({ formattedData, index, isAdmin }: ProviderProps) => {
+export const Contributor = ({ data }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
+    const [showExternalProviders, setShowExternalProviders] = React.useState<boolean>(false);
     const handleCollapse = () => setOpen(!open);
+    const toggleShowProviders = () => setShowExternalProviders(!showExternalProviders);
     const { chainId } = useAccount();
     const { currency } = getContractData(chainId || 4157);
 
     const { 
-        sentQuota,
-        idToString, 
-        loanInEther,
-        colBalsInEther,
-        durOfChoiceInSec,
-        interestPaidInEther,
-        paybackTimeInDateFormat,
-        turnStartTimeInDateFormat,
-    } = formattedData;
+        profile: {
+            getFinanceTime,
+            id,
+            colBals,
+            loan,
+            paybackTime,
+            sentQuota,
+            turnStartTime
+        },
+        slot: { value, isAdmin },
+        providers
+    } = data;
 
     return(
         <div >
             <button onClick={handleCollapse} className={`w-full ${flexSpread} text-orange-300 p-1 text-xs uppercase hover:text-orange-300 focus:font-semibold`}>
-                <h3>{`Prov. ${index + 1}`}</h3>
+                <h3>{`Contributor. ${value + 1}`}</h3>
                 <Chevron open={open} />
             </button>
             <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-gray1 p-4 text-orange-200'}>
                 <ul className="w-full space-y-2 text-xs relative">
                     <li className={`${flexSpread} underline underline-offset-4`}>
                         <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
-                        <AddressWrapper size={3} account={idToString} display overrideClassName="text-sm" copyIconSize="4"/>
+                        <AddressWrapper size={3} account={id.toString()} display overrideClassName="text-sm" copyIconSize="4"/>
                         <h3 className="absolute right-[40%]">
                             { adminBadge(isAdmin) }
                         </h3>
@@ -45,32 +52,77 @@ export const Contributor = ({ formattedData, index, isAdmin }: ProviderProps) =>
                     </li> */}
                     <li className={`${flexSpread}`}>
                         <h3>Time Until GetFinance</h3>
-                        <h3 className="text-end">{turnStartTimeInDateFormat}</h3>
+                        <h3 className="text-end">{getTimeFromEpoch(toBN(turnStartTime.toString()).toNumber())}</h3>
+                    </li>
+                    <li className={`${flexSpread}`}>
+                        <h3>Loan disbursement time</h3>
+                        <h3 className="text-end">{getTimeFromEpoch(toBN(getFinanceTime.toString()).toNumber())}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>Has Sent Quota</h3>
                         <h3>{sentQuota? 'Yes' : 'No'}</h3>
                     </li>
-                    <li className={`${flexSpread}`}>
+                    {/* <li className={`${flexSpread}`}>
                         <h3>Duration Choice</h3>
                         <h3>{durOfChoiceInSec > 0? durOfChoiceInSec / 3600 : 0}</h3>
-                    </li>
+                    </li> */}
                     <li className={`${flexSpread}`}>
                         <h3>Loan Bal</h3>
-                        <h3>{`${loanInEther} USDT`}</h3>
+                        <h3>{`${parseEther(loan.toString())} USDT`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{'Max. Date To Payback'}</h3>
-                        <h3 className="text-end">{ paybackTimeInDateFormat }</h3>
+                        <h3 className="text-end">{getTimeFromEpoch(toBN(paybackTime.toString()).toNumber())}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{"Col-Bal"}</h3>
-                        <h3>{`${colBalsInEther} ${currency}`}</h3>
+                        <h3>{`${parseEther(colBals.toString())} ${currency}`}</h3>
                     </li>
-                    <li className={`${flexSpread}`}>
-                        <h3>Interest Accrued</h3>
-                        <h3>{`${interestPaidInEther} ${currency}`}</h3>
-                    </li>
+                    <button onClick={toggleShowProviders} className={`w-full ${flexSpread} text-orange-300 p-1 text-xs uppercase hover:text-orange-300 focus:font-semibold`}>
+                        <h3>{(providers && providers.length > 0)? "External providers" : "No external fund providers"}</h3>
+                        <Chevron open={showExternalProviders} />
+                    </button>
+                    <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-gray1 p-4 text-orange-200'}>
+                        <div>
+                            {
+                                (providers && providers.length > 0) && providers.map((provider) => (
+                                    <ul>
+                                        <li>
+                                            <h3>Loan amount</h3>
+                                            <h3>{parseEther(provider.amount.toString())}</h3>
+                                        </li>
+                                        <li>
+                                            <h3>{"Expected interest/sec"}</h3>
+                                            <h3>{parseEther(provider.accruals.intPerSec.toString())}</h3>
+                                        </li>
+                                        <li>
+                                            <h3>{"Expected full interest"}</h3>
+                                            <h3>{parseEther(provider.accruals.fullInterest.toString())}</h3>
+                                        </li>
+                                        <li>
+                                            <h3>{"Start date"}</h3>
+                                            <h3>{getTimeFromEpoch(toBN(provider.earnStartDate.toString()).toNumber())}</h3>
+                                        </li>
+                                        <li>
+                                            <h3>{"Provider rate"}</h3>
+                                            <h3>{provider.rate.toString()}</h3>
+                                        </li>
+                                        <li>
+                                            <h3>{"Provider rate"}</h3>
+                                            <AddressWrapper
+                                                account={provider.account.toString()}
+                                                size={4}
+                                            />
+                                        </li>
+                                        <li>
+                                            <h3>{"Provider slot"}</h3>
+                                            <h3>{provider.slot.toString()}</h3>
+                                        </li>
+                                    </ul>
+                                ))
+                            }
+                        </div>
+                    </Collapse>
                 </ul>
             </Collapse>
         </div>

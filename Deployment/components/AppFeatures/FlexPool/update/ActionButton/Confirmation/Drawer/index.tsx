@@ -28,7 +28,7 @@ export default function Drawer({ openDrawer, styles, setDrawerState, children } 
             onClose={() => toggleDrawer(0, setDrawerState)}
         >
             <Box
-                style={{ width: isLargeScreen? 300 : 'auto', padding: '16px', background: '#121212', ...styles}}
+                style={{ width: isLargeScreen? 400 : 'auto', padding: '16px', background: '#121212', ...styles}}
                 role="presentation"
                 onClick={() => toggleDrawer(0, setDrawerState)}
                 onKeyDown={() => toggleDrawer(0, setDrawerState)}

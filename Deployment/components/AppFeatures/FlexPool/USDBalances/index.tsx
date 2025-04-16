@@ -15,7 +15,7 @@ export default function USDBalances() {
 
     const { address, chainId } = useAccount();
     const account = formatAddr(address);
-    const { token } = getContractData(chainId || 4157);
+    const { token } = getContractData(chainId || 44787);
     const { readBalanceConfig, readSymbolConfig } = getReadFunctions({chainId})
     const { data, } = useReadContracts({
         contracts: [
@@ -24,7 +24,7 @@ export default function USDBalances() {
         ],
         allowFailure: true,
         query: {refetchInterval: 5000}
-    });
+    }); 
 
     const balances = data?.[0].result;
     const symbol = data?.[1].result;

@@ -1,4 +1,4 @@
-```
+<!-- ```
     C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-testnet
     yarn run v1.22.22
     $ hardhat deploy --network crossTest --export deployments/contracts.json
@@ -181,11 +181,9 @@ Factory deployed to: 0x4976c4999187416eE499F3Fb9974966C74747eAd
   strategyManager: '0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d'
 ]
 Done in 35.90s.
-```
+``` -->
 
-% crossfi node
-
-```
+<!-- ```
   C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-testnet
 yarn run v1.22.22
 $ hardhat deploy --network crossTest --export deployments/contracts.json
@@ -214,7 +212,7 @@ Factory deployed to: 0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB
   strategyManager: '0xFCA8C9e854BD0Ca42D16bBE73Bc75bC427Cb401d'
 ]
 Done in 34.77s.
-```
+``` -->
 
 
 
@@ -312,3 +310,73 @@ We are very excited to have pushed this project to this stage. This is an accomp
 
 https://x.com/Sim_pliFi?t=lVINiuaAU5qTiCRGqww_JA&s=08
  -->
+
+
+15/4/2025
+C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-alfa
+yarn run v1.22.22
+$ hardhat deploy --network alfajores --export deployments/contracts.json
+Nothing to compile
+No need to generate any newer typings.
+reusing "RoleManager" at 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+RoleManager deployed to: 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+reusing "BaseAsset" at 0x476ED9B38aB286f6ce5DD70830067e645c754094
+Escape contract deployed to: 0x476ED9B38aB286f6ce5DD70830067e645c754094
+reusing "Escape" at 0xE9bC7eD3AaF48DC7E81c3e37DaDDb87d4059862B
+Escape contract deployed to: 0xE9bC7eD3AaF48DC7E81c3e37DaDDb87d4059862B
+reusing "Reserve" at 0xCe2f003766D426e404B4492A1293CD379c998b9B
+Reserve contract deployed to: 0xCe2f003766D426e404B4492A1293CD379c998b9B
+reusing "TokenDistributor" at 0x91EdD1Dc2c2Fa44EdFeB26bb1718c608fC68C805
+TokenDistributor deployed to: 0x91EdD1Dc2c2Fa44EdFeB26bb1718c608fC68C805
+reusing "Attorney" at 0x4CD0676d990ED89fC0F476252c5BEf145443aB28
+Attorney contract deployed to: 0x4CD0676d990ED89fC0F476252c5BEf145443aB28
+reusing "SimpliToken" at 0xf4991C26f62524073C4d8eFa57Df0Ce9bC5313Cd
+SimpliToken deployed to: 0xf4991C26f62524073C4d8eFa57Df0Ce9bC5313Cd
+deploying "Faucet" (tx: 0x4a560e37ab0ceff4c5641585de6bc6016e743345400584094bb9d4beb0ce2616)...: deployed at 0xcec7B50d2ccbBc7ac3e509b5C0dcBA11d67D351c with 819382 gas
+Escape contract deployed to: 0xcec7B50d2ccbBc7ac3e509b5C0dcBA11d67D351c
+deploying "Points" (tx: 0xeb3b8501b4f95fd140c80451ee7dcd4dce33550d05a96a957abf259bcdf66b2e)...: deployed at 0x187E1b8D5F3287db849374E8C966f648693971D1 with 623973 gas
+Point contract deployed to: 0x187E1b8D5F3287db849374E8C966f648693971D1
+deploying "SafeFactory" (tx: 0x9d520e1aa5375f6d0f1c1b9124c309a3efef7656de23d490b30365ce69722436)...: deployed at 0x13711fF6397B0510c1E774579EAB7C5fD85F03db with 1605139 gas
+SafeFactory deployed to: 0x13711fF6397B0510c1E774579EAB7C5fD85F03db
+reusing "SupportedAssetManager" at 0x8a7a88e6Af8F2A2966D0E46E09fc46E3c3943551
+SupportedAssetManager deployed to: 0x8a7a88e6Af8F2A2966D0E46E09fc46E3c3943551
+deploying "FlexpoolFactory" (tx: 0x12678a6a77081d6d71969de4dfce5f6f0ae07a8b6b7a5d960d3a2fb696a73f94)...: deployed at 0x8dA20f4e64Fe11FdB1addFf0C95F0D0d7C443f90 with 5373419 gas
+Factory deployed to: 0x8dA20f4e64Fe11FdB1addFf0C95F0D0d7C443f90
+deploying "Providers" (tx: 0xf794332bb2b208dbc2aaa919a8e2d34233d33ee42ada9a7e0758a1f4ec99c89c)...: deployed at 0xaF226c73e2a98CC9F5efefeef8f8F0Ce43f5d25D with 1367132 gas
+Providers deployed to: 0xaF226c73e2a98CC9F5efefeef8f8F0Ce43f5d25D
+Done in 154.58s.
+
+
+
+C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-alfa
+yarn run v1.22.22
+$ hardhat deploy --network alfajores --export deployments/contracts.json
+Nothing to compile
+No need to generate any newer typings.
+reusing "RoleManager" at 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+RoleManager deployed to: 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+reusing "BaseAsset" at 0x476ED9B38aB286f6ce5DD70830067e645c754094
+Escape contract deployed to: 0x476ED9B38aB286f6ce5DD70830067e645c754094
+reusing "Escape" at 0xE9bC7eD3AaF48DC7E81c3e37DaDDb87d4059862B
+Escape contract deployed to: 0xE9bC7eD3AaF48DC7E81c3e37DaDDb87d4059862B
+reusing "Reserve" at 0xCe2f003766D426e404B4492A1293CD379c998b9B
+Reserve contract deployed to: 0xCe2f003766D426e404B4492A1293CD379c998b9B
+reusing "TokenDistributor" at 0x91EdD1Dc2c2Fa44EdFeB26bb1718c608fC68C805
+TokenDistributor deployed to: 0x91EdD1Dc2c2Fa44EdFeB26bb1718c608fC68C805
+reusing "Attorney" at 0x4CD0676d990ED89fC0F476252c5BEf145443aB28
+Attorney contract deployed to: 0x4CD0676d990ED89fC0F476252c5BEf145443aB28
+reusing "SimpliToken" at 0xf4991C26f62524073C4d8eFa57Df0Ce9bC5313Cd
+SimpliToken deployed to: 0xf4991C26f62524073C4d8eFa57Df0Ce9bC5313Cd
+deploying "Faucet" (tx: 0xdf59c5f70ee62897215ef1b3bb090ecf5577ae3edc191e20f075002578a1c67f)...: deployed at 0x0B097193b0B7a6bC240591351173540467f5f3d4 with 819382 gas
+Escape contract deployed to: 0x0B097193b0B7a6bC240591351173540467f5f3d4
+deploying "Points" (tx: 0xdd567da7a7bf86f087384e3d0e96c35b70bdb8ba083b9ca6f196acc4716af03f)...: deployed at 0x76685868B6c270d081450c488372E04F6db11494 with 623973 gas
+Point contract deployed to: 0x76685868B6c270d081450c488372E04F6db11494
+deploying "SafeFactory" (tx: 0x6a4bc7d983945a9c1374200288fbf32edc317e7802487832ef897edcb5bdd685)...: deployed at 0x09472cBF305BF8323cb2E8DF79C942E76aeB38cd with 1605163 gas
+SafeFactory deployed to: 0x09472cBF305BF8323cb2E8DF79C942E76aeB38cd
+reusing "SupportedAssetManager" at 0x8a7a88e6Af8F2A2966D0E46E09fc46E3c3943551
+SupportedAssetManager deployed to: 0x8a7a88e6Af8F2A2966D0E46E09fc46E3c3943551
+deploying "FlexpoolFactory" (tx: 0x39bf948861240b6dcf88e2720e57380d708971108da8e3956e406a0958a8cbeb)...: deployed at 0x39bD775C6488Cc27897D4f5A215E6D6569c3ddf1 with 5449692 gas
+Factory deployed to: 0x39bD775C6488Cc27897D4f5A215E6D6569c3ddf1
+deploying "Providers" (tx: 0x72be597afae01b02b8e263263eee96be644471256a84700f9f7c3468d0079723)...: deployed at 0x5082d03870CC648156820BD0b2CDb2b31C6b6433 with 1367132 gas
+Providers deployed to: 0x5082d03870CC648156820BD0b2CDb2b31C6b6433
+Done in 84.98s.

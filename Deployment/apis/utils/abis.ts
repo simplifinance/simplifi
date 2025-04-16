@@ -1111,6 +1111,11 @@ export const getPointAbi = [
             "internalType": "uint256",
             "name": "referrals",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
           }
         ],
         "internalType": "struct Common.Point",
@@ -1120,7 +1125,7 @@ export const getPointAbi = [
     ],
     "stateMutability": "view",
     "type": "function"
-  },  
+  },
 ] as const;
 
 export const getPointsAbi = [
@@ -1144,6 +1149,11 @@ export const getPointsAbi = [
             "internalType": "uint256",
             "name": "referrals",
             "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "user",
+            "type": "address"
           }
         ],
         "internalType": "struct Common.Point[]",

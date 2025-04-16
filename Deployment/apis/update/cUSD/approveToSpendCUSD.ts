@@ -1,9 +1,12 @@
 import StableTokenABI from "@/apis/utils/cusd.json";
 import { celoAddresses, mockReceipt } from "@/constants";
 import { Address } from "@/interfaces";
-import { publicClients, walletClients } from "../../viemClient";
 import { TransactionReceipt } from "viem";
 import { getContractData } from "@/apis/utils/getContractData";
+import { createWalletClient, custom, } from "viem";
+import { celoAlfajores } from "viem/chains";
+import { configureCeloPublicClient } from "./sendCUSD";
+
 
 /**
  * @dev Get the cUSD contract addreses from the different chains
@@ -21,13 +24,15 @@ export const getCUSD = (chainId: number) : Address => {
 */
 export const getAllowanceInCUSD = async() => {
   const contractAddress = celoAddresses['44787'];
-  let walletClient = walletClients[0];
+  let walletClient = createWalletClient({
+    transport: custom(window.ethereum),
+    chain: celoAlfajores,
+  });
   let [address] = await walletClient.getAddresses();
-  const publicClient = publicClients[0];
   const spender = getContractData(44787).factory;
   let allowance : bigint = 0n;
   try {
-    allowance = await publicClient.readContract({
+    allowance = await configureCeloPublicClient().readContract({
       address: contractAddress,
       abi: StableTokenABI.abi,
       functionName: "allowance",
@@ -49,13 +54,15 @@ export const getAllowanceInCUSD = async() => {
 */
 export default async function approveToSpendCUSD(amount: bigint) {
   const contractAddress = celoAddresses['44787'];
-  let walletClient = walletClients[0];
+  let walletClient = createWalletClient({
+    transport: custom(window.ethereum),
+    chain: celoAlfajores,
+  });
   let [address] = await walletClient.getAddresses();
-  const publicClient = publicClients[0];
   const spender = getContractData(44787).factory;
   let receipt : TransactionReceipt = mockReceipt;
   try {
-    const allowance = await publicClient.readContract({
+    const allowance = await  configureCeloPublicClient().readContract({
       address: contractAddress,
       abi: StableTokenABI.abi,
       functionName: "allowance",
@@ -70,7 +77,7 @@ export default async function approveToSpendCUSD(amount: bigint) {
         account: address,
         args: [spender, amount],
       });
-      receipt = await publicClient.waitForTransactionReceipt({
+      receipt = await configureCeloPublicClient().waitForTransactionReceipt({
         hash: tx,
       });
     }    

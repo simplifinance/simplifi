@@ -215,33 +215,46 @@ export declare namespace Common {
     recordEpoches: bigint;
   };
 
-  export type ReadDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
-  };
-
   export type ContributorReturnValueStruct = {
     profile: Common.ContributorStruct;
-    slot: BigNumberish;
+    slot: Common.SlotStruct;
     providers: Common.ProviderStruct[];
   };
 
   export type ContributorReturnValueStructOutput = [
     profile: Common.ContributorStructOutput,
-    slot: bigint,
+    slot: Common.SlotStructOutput,
     providers: Common.ProviderStructOutput[]
   ] & {
     profile: Common.ContributorStructOutput;
-    slot: bigint;
+    slot: Common.SlotStructOutput;
     providers: Common.ProviderStructOutput[];
+  };
+
+  export type ReadPoolDataReturnValueStruct = {
+    pool: Common.PoolStruct;
+    cData: Common.ContributorReturnValueStruct[];
+  };
+
+  export type ReadPoolDataReturnValueStructOutput = [
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorReturnValueStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorReturnValueStructOutput[];
+  };
+
+  export type ReadRecordDataReturnValueStruct = {
+    pool: Common.PoolStruct;
+    cData: Common.ContributorStruct[];
+  };
+
+  export type ReadRecordDataReturnValueStructOutput = [
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorStructOutput[];
   };
 }
 
@@ -803,13 +816,13 @@ export interface FlexpoolFactory extends BaseContract {
 
   getPoolData: TypedContractMethod<
     [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
   getPoolRecord: TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadRecordDataReturnValueStructOutput],
     "view"
   >;
 
@@ -992,14 +1005,14 @@ export interface FlexpoolFactory extends BaseContract {
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
     [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getPoolRecord"
   ): TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadRecordDataReturnValueStructOutput],
     "view"
   >;
   getFunction(

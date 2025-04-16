@@ -1,4 +1,5 @@
 import { Analytics, Path, TrxState, VoidFunc } from "@/interfaces";
+import { Common } from "@/typechain-types/FlexpoolFactory";
 
 export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
@@ -17,7 +18,7 @@ export interface DataContextProps {
     openDisplayForm: VoidFunc;
     activePath: Path;
     setActivepath: (arg: Path) => void;
-    analytics: Analytics;
+    analytics: Common.AnalyticsStruct;
     currentEpoches: bigint;
     recordEpoches: bigint;
     symbol: string;

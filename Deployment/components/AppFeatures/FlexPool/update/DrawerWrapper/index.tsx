@@ -1,55 +1,48 @@
 import React from "react";
-import { flexSpread, FuncTag, } from "@/constants";
+import { flexSpread, Stage,  } from "@/constants";
 import { Contributor } from './Contributor';
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
-import { Address, FormattedData, FormattedPoolContentProps, } from "@/interfaces";
+import { Address, RekeyParam, FormattedCData, FormattedPoolData, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
 import { formatAddr, } from "@/utilities";
-import LiquidityAndStrategyBalances, { RekeyParam } from "./LiquidityAndSafeBalances";
+import LiquidityAndStrategyBalances from "./LiquidityAndSafeBalances";
 import AccessAndCollateralBalances from "./AccessAndCollateralBalances";
 import CollateralQuote from "./CollateralQuote";
 import { useAccount } from "wagmi";
-import { getContractData } from "@/apis/utils/getContractData";
+// import { getContractData } from "@/apis/utils/getContractData";
+import { zeroAddress } from "viem";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
-export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer } : InfoDisplayProps) => {
+export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoDisplayProps) => {
     const { chainId,} = useAccount();
-    const { token, currency } = getContractData(chainId || 4157);
+    // const { token, currency } = getContractData(chainId || 4157);
     const {
-        unitInEther,
-        currentPoolInEther,
-        unitIdToNumber,
-        allGhToNumber,
-        quorumToNumber,
-        cDataFormatted,
-        colCoverageInString,
-        intPercentString,
-        durationToNumber,
-        intPerSecInEther,
-        stageToNumber,
-        lastPaid,
-        isPermissionless,
-        formattedSafe,
-        unit_bigint,
-        recordId,
-        asset
-        // isAdmin
-    } = formattedPool;
-    const collateralAsset = formatAddr(asset.toString());
+        pool: { 
+            addrs: { colAsset, safe, lastPaid } ,
+            low: { colCoverage, duration, allGh, maxQuorum, selector },
+            big: { unit, unitId,  recordId, currentPool },
+            isPermissionless,
+            // router,
+            stage,
+        },
+        cData,
+    } = data;
+
+    const collateralAsset = formatAddr(colAsset.toString());
     const extractAddresses = () => {
         let addrs : Address[] = [];
-        cDataFormatted.forEach((cd) => {
-            addrs.push(formatAddr(cd.idToString))
+        cData.forEach((cd) => {
+            addrs.push(formatAddr(cd.profile.id.toString()))
         });
         return addrs;
     }
+    console.log("Collateral coverage: ", colCoverage);
     const rekeyParam : RekeyParam = {
-        colCoverage: Number(colCoverageInString),
-        durationInHours: durationToNumber,
-        intRate: Number(intPercentString),
+        colCoverage: colCoverage,
+        durationInHours: Number(duration.toString()),
         contributors: extractAddresses(),
-        allGH: allGhToNumber
+        allGH: allGh
     }
 
     return(
@@ -69,7 +62,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
-                            account={token}
+                            account={colAsset || zeroAddress}
                             overrideClassName="text-md" 
                             display 
                         />
@@ -79,53 +72,53 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
-                            account={formattedSafe}
+                            account={safe}
                             overrideClassName="text-md" 
                             display 
                         />
                     </li>
                     <li className={`${flexSpread}`} >
                         <h3 className="">{"Financed"}</h3>
-                        <p className="">{`${allGhToNumber}`}</p>
+                        <p className="">{`${allGh}`}</p>
                     </li>
                     <li className={`${flexSpread}`} >
                         <h3 className="">{"Reserved Id"}</h3>
                         <p className="">{`${recordId.toString()}`}</p>
                     </li>
                 </ul>
-                <CollateralQuote unit={unit_bigint} />
+                <CollateralQuote unit={unit.big} />
                 <LiquidityAndStrategyBalances
-                    formattedSafe={formattedSafe}
+                    formattedSafe={safe}
                     collateralAsset={collateralAsset}
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
-                    isCancelledPool={quorumToNumber === 0 && stageToNumber === FuncTag.ENDED}
+                    isCancelledPool={stage.toNum === Stage.CANCELED}
                     handleCloseDrawer={() => toggleDrawer(0)}
                 />
 
                 <AccessAndCollateralBalances 
                     collateralAsset={collateralAsset}
-                    formattedSafe={formattedSafe}
+                    formattedSafe={safe}
                     handleCloseDrawer={() => toggleDrawer(0)}
-                    recordId={recordId}
+                    recordId={recordId.big}
                 />
 
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Liquidity</h3>
-                        <p>{`$${unitInEther}`}</p>
+                        <p>{`$${unit.inEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Total Pooled Liquidity</h3>
-                        <p>{`$${currentPoolInEther}`}</p>
+                        <p>{`$${currentPool.inEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Unit Id</h3>
-                        <p>{unitIdToNumber}</p>
+                        <p>{unitId.str}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Record Id</h3>
-                        <p>{recordId.toString()}</p>
+                        <p>{recordId.str}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Last Paid</h3>
@@ -133,32 +126,32 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
                     </li>
                 </ul>
                 <ul className={`${BOXSTYLING} text-xs`}>
-                    <li className={`w-full ${flexSpread}`}>
+                    {/* <li className={`w-full ${flexSpread}`}>
                         <h3>Interest Percent</h3>
                         <p>{intPercentString}</p>
-                    </li>
+                    </li> */}
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Collateral Coverage Ratio</h3>
-                        <p>{colCoverageInString}</p>
+                        <p>{colCoverage}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Duration</h3>
-                        <p>{`${durationToNumber} hrs`}</p>
+                        <p>{`${duration.inHour} hrs`}</p>
                     </li>
                 </ul>
 
                 <ul className={`${BOXSTYLING} text-xs`}>
-                    <li className={`w-full ${flexSpread}`}>
-                        <h3>{"Int/Sec"}</h3>
+                    {/* <li className={`w-full ${flexSpread}`}>
+                        <h3>{"Int/Sec"}</h3>5321099538 yetunde kafayat
                         <p className="px-2 text-xs md:textsm">{`${intPerSecInEther} ${currency}`}</p>
-                    </li>
+                    </li> */}
                     {/* <li className={`w-full ${flexSpread}`}>
                         <h3>Full Interest</h3>
                         <p>{`${fullInterestInEther} ${currency}`}</p>
                     </li> */}
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Stage</h3>
-                        <p>{FuncTag[stageToNumber]}</p>
+                        <p>{stage.inStr}</p>
                     </li>
                 </ul>
             </div>
@@ -166,7 +159,7 @@ export const InfoDisplay = ({ formattedPool, actions, popUpDrawer, toggleDrawer 
     );
 }
 
-export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggleDrawer, cDataFormatted}) => {
+export const Contributors: React.FC<ContributorsProp> = ({popUpDrawer, isAdmin, toggleDrawer, cData}) => {
     return(
         <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.3)', height: "100%"}} >
             <div className="p-0 flex justify-between items-center text-lg md:text-xl font-bold">
@@ -179,12 +172,10 @@ export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggl
             </div>
             <React.Fragment>
                 {
-                    cDataFormatted.map((data, i) => (
+                    cData?.map((data, i) => (
                         <Contributor
-                            formattedData={data}
+                            data={data}
                             key={i} 
-                            index={i}
-                            isAdmin={isAdmin}
                         />
                     ))
                 }
@@ -194,14 +185,14 @@ export const Providers: React.FC<ProvidersProps> = ({popUpDrawer, isAdmin, toggl
 }
 
 interface InfoDisplayProps {
-    formattedPool: FormattedPoolContentProps;
+    data: FormattedPoolData;
     actions: React.ReactNode;
     popUpDrawer: number;
     toggleDrawer: (arg: number) => void;
 }
 
-interface ProvidersProps {
-    cDataFormatted: FormattedData[];
+interface ContributorsProp {
+    cData: FormattedCData[];
     popUpDrawer: number;
     toggleDrawer: (arg: number) => void;
     isAdmin: boolean;

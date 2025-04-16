@@ -1,17 +1,9 @@
 import { TransactionReceipt, zeroAddress } from 'viem';
-import { Address, Analytics, FormattedData, LiquidityPool, Path, Profile } from './interfaces';
+import { Address, Analytics, FormattedContributor, Pool, Path, Profile, FormattedCData } from './interfaces';
 import BigNumber from 'bignumber.js';
-import type { SafeVersion } from '@safe-global/types-kit';
 
-export enum FuncTag { 
-  JOIN,
-  GET, 
-  PAYBACK, 
-  WITHDRAW,
-  CANCELED,
-  ENDED
-}
-export const safeVersion : SafeVersion = '1.4.1';
+export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
+export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }
 export enum Router { PERMISSIONLESS, PERMISSIONED }
 export const initialZoom = '0%';
 export const defaultAnimationSteps = ['50%', '100%'];
@@ -38,7 +30,7 @@ export const profileMock : Profile = {
     id: '0',
     sentQuota: false
   },
-  slot: '0',
+  slot: {isAdmin: false, isMember: false, value: '0'},
   providers: [{
     account: zeroAddress,
     accruals: {intPerSec: '0', fullInterest: '0'},
@@ -49,7 +41,7 @@ export const profileMock : Profile = {
   }]
 };
 
-export const poolMock : LiquidityPool = {
+export const poolMock : Pool = {
   big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },
   stage: 0n,
   low: {
@@ -65,19 +57,18 @@ export const poolMock : LiquidityPool = {
   status: 0n
 }
 
-export const formattedMockData : FormattedData = {
-  paybackTimeInDateFormat: '',
-  paybackTimeInSec: 0,
-  turnStartTimeInDateFormat: '',
-  turnStartTimeInSec: 0,
-  durOfChoiceInSec: 0,
-  colBalsInEther: '',
-  loanInEther: '',
-  interestPaidInEther: '',
-  idLowerCase: '',
-  idToString: '',
-  loanInBN: new BigNumber(0),
-  sentQuota: false
+export const formattedMockData : FormattedCData = {
+  profile: {
+    paybackTime: { inDate: '0', inSec: 0},
+    getFinanceTime: { inDate: '0', inSec: 0},
+    turnStartTime: { inDate: '0', inSec: 0},
+    colBals: '0',
+    loan: {inBN: BigNumber(0), inEther: '0'},
+    id: zeroAddress,
+    sentQuota: 'Not Sent'
+  },
+  providers: [],
+  slot: {value: 0, isAdmin: false, isMember: false}
 }
 
 export const mockReceipt : TransactionReceipt = {

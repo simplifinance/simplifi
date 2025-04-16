@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Address, AmountToApproveParam, HandleTransactionParam, } from "@/interfaces";
+import { Address, AmountToApproveParam, FormattedCData, FormattedContributor, FormattedPoolData, FormattedProvider, FormattedProviders, FormattedSlot, HandleTransactionParam, } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -8,18 +8,17 @@ import addToPool from "./apis/update/factory/addToPool";
 import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
-// import { formatEther,} from "viem";
-// import { Common } from "./typechain-types/IFactory";
+import { Common } from "./typechain-types/Contributor";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
 import { getContractData } from "./apis/utils/getContractData";
-// import withdrawLoan from "./apis/update/collateralToken/withdrawCollateral";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { supportedChainIds } from "./constants";
+import { Router, Stage, StageStr, supportedChainIds } from "./constants";
 import approveToSpendCUSD, { getAllowanceInCUSD } from "./apis/update/cUSD/approveToSpendCUSD";
 import withdrawLoanInCUSD from "./apis/update/cUSD/withdrawLoanInCUSD";
+import { formatEther } from "viem";
 
 export type Operation = 'Open' | 'Closed';
 
@@ -184,115 +183,160 @@ export const handleTransact = async(param: HandleTransactionParam) => {
   }
 }
 
-// /**
-//  * Formats pool data
-//  * @param pool : Pool data
-//  * @returns : Formatted data
-//  */
-// export const formatPoolContent = (pool: ReadDataReturnValue, formatProfiles: boolean, currentUser: Address) : FormattedPoolContentProps => {
-//   const {
-//     pool: {
-//       big: { unit, currentPool, unitId: unitId_, recordId},
-//       low: { maxQuorum, allGh, userCount, duration, colCoverage, selector },
-//       addrs: { admin, colAsset, lastPaid, safe },
-//       router,
-//       stage
-//     },
-//     cData
-//   } = pool;
+/**
+ * Accepts raw blockchain data and converts it to usable data that can be rendered in the DOM, and easily
+ * work with.
+ * @param pool : Pool data
+ * @returns : Formatted data
+*/
+export const formatPoolData = (pool: Common.ReadPoolDataReturnValueStruct): FormattedPoolData => {
+  const {
+    pool: {
+      big: { unit, currentPool, unitId, recordId},
+      low: { maxQuorum, allGh, userCount, duration, colCoverage, selector },
+      addrs: { admin, colAsset, lastPaid, safe },
+      router,
+      stage
+    },
+    cData
+  } = pool;
   
-//   let cDataFormatted : FormattedData[] = [];
-//   const isPermissionless = toBN(router.toString()).toNumber() === Router.PERMISSIONLESS;
-//   const selectorToNumber = toBN(selector.toString()).toNumber();
-//   const colCoverageInString = toBN(colCoverage.toString()).toString();
-//   const currentPoolInEther = formatEther(toBigInt(toBN(currentPool.toString()).toString()));
-//   const allGetBool  = toBN(allGh.toString()).eq(toBN(userCount.toString()));
-//   const allGhToNumber = toBN(allGh.toString()).toNumber();
-//   const unitIdToNumber = toBN(unitId_.toString()).toNumber();
-//   const quorumToNumber = toBN(quorum.toString()).toNumber();
-//   const unitIdBigint = toBigInt(unitId_);
-//   const stageToNumber = toBN(stage.toString()).toNumber();
-//   const expectedPoolAmtBigint = toBigInt(toBN(unit.toString()).times(toBN(quorum.toString())).toString());
-//   const unitInEther =  formatEther(toBigInt(toBN(unit.toString()).toString())).toString();
-//   const userCountToNumber = toBN(userCount.toString()).toNumber();
-//   const intPercentString = toBN(intRate.toString()).div(100).toString();
-//   const durationToNumber = toBN(duration.toString()).div(3600).toNumber();
-//   const poolFilled = userCountToNumber === quorumToNumber;
-//   let isMember = false;
+  let formattedCData : FormattedCData[] = [];
+  const isPermissionless = toBN(router.toString()).toNumber() === Router.PERMISSIONLESS;
+  const userCountToNumber = toBN(userCount.toString()).toNumber();
+  const allGetFinance  = toBN(allGh.toString()).toNumber() === userCountToNumber;
+  const quorumToNumber = toBN(maxQuorum.toString()).toNumber();
+  const expectedPoolAmount = toBigInt(toBN(unit.toString()).times(toBN(maxQuorum.toString())).toString());
+  const poolFilled = userCountToNumber === quorumToNumber;
+  const stageInNum = toBN(stage.toString()).toNumber();
 
-//   if(formatProfiles && cData.length > 0) {
-//     cData.forEach((data) => {
-//       cDataFormatted.push(formatProfileData(data));
-//       if(data.id.toString().toLowerCase() === currentUser.toString().toLowerCase()) {
-//         isMember = true;
-//       }
-//     });
-//   }
+  if(cData && cData.length > 0) {
+    cData.forEach((data) => {
+      formattedCData.push(
+        {
+          profile: formatContributor(data.profile),
+          providers: formatProviders(data.providers),
+          slot: formatSlot(data.slot)
+        }
+      );
+    });
+  }
 
-//   return {
-//     unit,
-//     unit_bigint: BigInt(unit.toString()),
-//     rId: BigInt(recordId.toString()),
-//     quorumToNumber,
-//     userCountToNumber,
-//     allGetBool,
-//     allGhToNumber,
-//     unitIdToNumber,
-//     unitIdBigint,
-//     stageToNumber,
-//     expectedPoolAmtBigint,
-//     unitInEther,
-//     intPercentString,
-//     durationToNumber,
-//     poolFilled,
-//     isPermissionless,
-//     selectorToNumber,
-//     colCoverageInString,
-//     fullInterestInEther,
-//     intPerSecInEther,
-//     currentPoolInEther,
-//     unitInBN: toBN(unit.toString()),
-//     currentPoolInBN: toBN(currentPool.toString()),
-//     adminLowerCase: admin.toString().toLowerCase(),
-//     assetLowerCase: asset.toString().toLowerCase(),
-//     admin,
-//     asset,
-//     isMember,
-//     isAdmin: currentUser.toString().toLowerCase() === admin.toString().toLowerCase(),
-//     cDataFormatted,
-//     intPerSec,
-//     formattedSafe: formatAddr(bank.toString()),
-//     lastPaid: formatAddr(lastPaid.toString())
-//   }
-// }
+  const durationInSec = toBN(duration.toString()).toNumber();;
+  return {
+    pool: {
+      big: { 
+        unit: {big: toBigInt(unit), inEther: formatEther(toBigInt(unit))}, 
+        currentPool: {big: toBigInt(currentPool), inEther: formatEther(toBigInt(currentPool))},
+        unitId: {big: toBigInt(unitId), str: unitId.toString()}, 
+        recordId: {big: toBigInt(recordId), str: recordId.toString()},
+      },
+      low: { 
+        maxQuorum: toBN(maxQuorum.toString()).toNumber(), 
+        allGh: toBN(allGh.toString()).toNumber(),
+        userCount: userCountToNumber, 
+        duration: {inSec: durationInSec, inHour: durationInSec / 60}, 
+        colCoverage: toBN(colCoverage.toString()).toNumber(),
+        selector : toBN(selector.toString()).toNumber()
+      },
+      addrs: { 
+        admin: formatAddr(admin.toString()), 
+        colAsset: formatAddr(colAsset.toString()),
+        lastPaid: formatAddr(lastPaid.toString()), 
+        safe: formatAddr(safe.toString())
+      },
+      router: Router[toBN(router.toString()).toNumber()],
+      stage: {toNum: stageInNum, inStr: StageStr[stageInNum]},
+      poolFilled,
+      allGetFinance,
+      isPermissionless,
+      expectedPoolAmount,
+    },
+    cData: formattedCData
+  }
+}
 
-// export const formatProfileData = (param: Common.ContributorStruct) : FormattedData => {
-//   const { paybackTime, colBals, turnStartTime, durOfChoice, interestPaid, sentQuota, id, loan, } = param;
-//   const paybackTimeInSec = toBN(paybackTime.toString()).toNumber();
-//   const turnStartTimeInSec = toBN(turnStartTime.toString()).toNumber();
-//   const durOfChoiceInSec = toBN(durOfChoice.toString()).toNumber();
-//   const colBalsInEther = formatEther(toBigInt(toBN(colBals.toString()).toString()));
-//   const loanInEther = formatEther(toBigInt(toBN(loan.toString()).toString()));
-//   const loanInBN = toBN(loan.toString());
-//   const interestPaidInEther = formatEther(toBigInt(toBN(interestPaid.toString()).toString()));
-//   const paybackTimeInDateFormat = getTimeFromEpoch(paybackTimeInSec);
-//   const turnStartTimeInDateFormat = getTimeFromEpoch(turnStartTimeInSec);
-//   const idLowerCase = id.toString().toLowerCase()
+/**
+ * @dev Format contributors' data to usable form
+ * @param arg : Data of type Common.ContributorStruct. See @/typechain-types
+ * @returns  Formatted data of type  FormattedContributor. See @/interface.ts
+ */
+export const formatContributor = (arg: Common.ContributorStruct) : FormattedContributor => {
+  const { paybackTime, colBals, turnStartTime, sentQuota, id, loan, getFinanceTime } = arg;
+  const paybackTimeInSec = toBN(paybackTime.toString()).toNumber();
+  const turnStartTimeInSec = toBN(turnStartTime.toString()).toNumber();
+  const getFinanceTimeInSec = toBN(getFinanceTime.toString()).toNumber();
+  const colBalsInEther = formatEther(toBigInt(colBals));
+  const loanInBN = toBN(loan.toString());
+  const loanInEther = formatEther(toBigInt(loan));
+  const paybackTimeInDateFormat = getTimeFromEpoch(paybackTimeInSec);
+  const turnStartTimeInDateFormat = getTimeFromEpoch(turnStartTimeInSec);
+  const getFinanceTimeInDateFormat = getTimeFromEpoch(getFinanceTimeInSec);
 
-//   return {
-//     paybackTimeInDateFormat,
-//     paybackTimeInSec,
-//     turnStartTimeInDateFormat,
-//     turnStartTimeInSec,
-//     durOfChoiceInSec,
-//     colBalsInEther,
-//     loanInEther,
-//     interestPaidInEther,
-//     idLowerCase,
-//     idToString: id.toString(),
-//     loanInBN,
-//     sentQuota
-//   }
-// }
+  return {
+    paybackTime: {inSec: paybackTimeInSec, inDate: paybackTimeInDateFormat},
+    turnStartTime: { inSec: turnStartTimeInSec, inDate: turnStartTimeInDateFormat},
+    getFinanceTime: {inSec: getFinanceTimeInSec, inDate: getFinanceTimeInDateFormat},
+    loan: { inBN: loanInBN, inEther: loanInEther},
+    colBals: colBalsInEther,
+    id: formatAddr(id.toString()),
+    sentQuota: sentQuota? 'Sent' : 'Not Sent',
+  }
+}
 
+/**
+ * @dev Format providers' data to usable form
+ * @param arg : Data of type Common.ProviderStruct. See @/typechain-types
+ * @returns  Formatted data of type  FormattedProvider. See @/interface.ts
+ */
+const formatProvider = (arg: Common.ProviderStruct) : FormattedProvider => {
+  const { 
+    account,
+    accruals: { fullInterest, intPerSec },
+    amount,
+    earnStartDate,
+    rate,
+    slot
+  } = arg;
+  const earnStartDateInSec = toBN(earnStartDate.toString()).toNumber();
+  return {
+    account: formatAddr(account.toString()),
+    accruals: { fullInterest: formatEther(toBigInt(fullInterest)), intPerSec: formatEther(toBigInt(intPerSec)) },
+    amount: formatEther(toBigInt(amount)),
+    earnStartDate: {inSec: earnStartDateInSec, inDate: getTimeFromEpoch(earnStartDateInSec)},
+    rate: toBN(rate.toString()).div(100).toString(),
+    slot: toBN(slot.toString()).toNumber()
+  }
+}
+
+/**
+ * @dev Format slot data to usable form
+ * @param arg : Data of type Common.SlotStruct. See @/typechain-types
+ * @returns  Formatted data of type  FormattedSlot. See @/interface.ts
+*/
+const formatSlot = ({ isAdmin, isMember, value }: Common.SlotStruct) : FormattedSlot => {
+  return {
+    isAdmin,
+    isMember,
+    value: toBN(value.toString()).toNumber()
+  }
+}
+
+/**
+ * @dev Format a list of providers data to usable form
+ * @param arg : Data of type Common.ProviderStruct[]. See @/typechain-types
+ * @returns  Formatted data of type  FormattedProviders. See @/interface.ts
+*/
+export const formatProviders = (providers: Common.ProviderStruct[]): FormattedProviders => {
+  let formattedProviders : FormattedProviders = [];
+  if(providers && providers.length > 0) {
+    providers.forEach((provider) => {
+      formattedProviders.push(
+        formatProvider(provider)
+      );
+    })
+  }
+ 
+  return (formattedProviders);
+}
 

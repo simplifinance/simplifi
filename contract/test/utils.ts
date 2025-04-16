@@ -1,6 +1,7 @@
 // import { Contract, ContractTransactionResponse } from "ethers";
 import { expect } from "chai";
 import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
+import { Common as CMon } from "../typechain-types/contracts/peripherals/Contributor";
 import type { 
     Address, 
     BandParam, 
@@ -155,7 +156,7 @@ import type {
     x: PaybackParam
   ) 
   : Promise<{
-      pool: Common.ReadDataReturnValueStructOutput;
+      pool: CMon.ReadPoolDataReturnValueStructOutput;
       balances: Balances;
       profile: Common.ContributorStructOutput;
    }>
@@ -350,7 +351,7 @@ import type {
     x: JoinABandParam
   ) 
     : Promise<{
-      pool: Common.ReadDataReturnValueStructOutput;
+      pool: CMon.ReadPoolDataReturnValueStructOutput;
       balances: Balances;
       profiles: Common.ContributorStructOutput[];
     }>

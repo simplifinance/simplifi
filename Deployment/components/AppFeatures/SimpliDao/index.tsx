@@ -5,12 +5,12 @@ import { CustomNode } from "@/interfaces";
 import FlexPool from "../FlexPool";
 
 export default function SimpliDao() {
-  const { addNode } = useAppStorage();
+  const { setActivepath } = useAppStorage();
   React.useEffect(() => {
     setTimeout(() => {
-      addNode({type: 'Current', item: FlexPool()});
+      setActivepath('Flexpool');
     }, 2000);
-  }, [addNode]);
+  }, [setActivepath]);
 
   return(
     <Container maxWidth="xs" className="space-y-4 absolute left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]">

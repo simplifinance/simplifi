@@ -1,8 +1,9 @@
 import StableTokenABI from "@/apis/utils/cusd.json";
 import { celoAddresses, mockReceipt } from "@/constants";
 import { Address, TransactionCallback } from "@/interfaces";
-import { publicClients, walletClients } from "../../viemClient";
-import { TransactionReceipt } from "viem";
+import { createWalletClient, TransactionReceipt, custom, } from "viem";
+import { celoAlfajores } from "viem/chains";
+import { configureCeloPublicClient } from "./sendCUSD";
 
 /**
  * @dev Withdraw loan denominated in cUSD given as approval from the 'owner'
@@ -13,13 +14,15 @@ import { TransactionReceipt } from "viem";
  */
 export default async function withdrawLoanInCUSD(owner: Address, callback: TransactionCallback) {
   const contractAddress = celoAddresses['44787'];
-  let walletClient = walletClients[0];
+  let walletClient = createWalletClient({
+    transport: custom(window.ethereum),
+    chain: celoAlfajores,
+  });
   let [address] = await walletClient.getAddresses();
-  const publicClient = publicClients[0];
   let receipt : TransactionReceipt = mockReceipt;
   callback({message: "Withdrawing loan from safe"})
   try {
-    const allowance = await publicClient.readContract({
+    const allowance = await configureCeloPublicClient().readContract({
       address: contractAddress,
       abi: StableTokenABI.abi,
       functionName: "allowance",
@@ -34,7 +37,7 @@ export default async function withdrawLoanInCUSD(owner: Address, callback: Trans
         account: address,
         args: [owner, allowance],
       });
-      await publicClient.waitForTransactionReceipt({
+      await configureCeloPublicClient().waitForTransactionReceipt({
         hash: tx,
       }).then((result) => {
         receipt = result;

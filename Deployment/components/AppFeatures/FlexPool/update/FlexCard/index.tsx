@@ -1,14 +1,15 @@
 import React from "react";
-import type { ButtonObj, Address, AmountToApproveParam, FormattedData, ReadDataReturnValue, } from "@/interfaces";
-import { formatAddr, formatPoolContent } from "@/utilities";
-import { formattedMockData, FuncTag } from "@/constants";
+import type { ButtonObj, Address, AmountToApproveParam, ReadDataReturnValue, FormattedCData, } from "@/interfaces";
+import { formatAddr, formatPoolData } from "@/utilities";
+import { formattedMockData, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { ActionButton } from "../ActionButton";
-import { InfoDisplay, Providers } from '../DrawerWrapper';
+import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
 import { CustomButton } from "@/components/utilities/CustomButton";
 import { getContractData } from "@/apis/utils/getContractData";
+import BigNumber from "bignumber.js";
 
 /**
  * Filter the data list for current user
@@ -17,11 +18,11 @@ import { getContractData } from "@/apis/utils/getContractData";
  * @returns Object: <{isMember: boolean, data: FormattedData}>
  */
 const filterUser = (
-    cData: FormattedData[], 
+    cData: FormattedCData[], 
     currentUser: Address
-) : FormattedData => {
-    let result : FormattedData = formattedMockData;
-    const filtered = cData.filter(({idLowerCase}) => idLowerCase === currentUser.toString().toLowerCase());
+) : FormattedCData => {
+    let result : FormattedCData = formattedMockData;
+    const filtered = cData.filter(({ profile }) => profile.id.toLowerCase() === currentUser.toString().toLowerCase() );
     if(filtered?.length > 0) {
         result = filtered[0];
     }
@@ -35,6 +36,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
 
+    const { data } = props;
     const[buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'ADD LIQUIDITY', disable: false});
     const account = formatAddr(useAccount().address);
     const config = useConfig();
@@ -43,52 +45,43 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
 
-    const formattedPool = formatPoolContent(props, true, account);
+    const formattedPoolData = formatPoolData(data);
     const {
-        // pair,
-        unit,
-        currentPoolInBN,
-        unitInBN,
-        cDataFormatted, 
-        stageToNumber, 
-        isPermissionless,
-        unitIdToNumber,
-        // unitId_bigint,
-        quorumToNumber,
-        // formatted_bank,
-        intPercentString,
-        unitInEther,
-        intPerSec,
-        lastPaid,
-        isMember,
-        isAdmin,
-        // duration_toNumber,
-        userCountToNumber,
-    } = formattedPool;
+        cData,
+        pool: {
+            big: { unit, unitId, currentPool },
+            low: { userCount, maxQuorum, },
+            addrs: { lastPaid, colAsset, safe },
+            stage,
+            allGetFinance,
+            expectedPoolAmount,
+            isPermissionless,
+            poolFilled,
+            router
+        }
+    } = formattedPoolData;
 
-    const { paybackTimeInSec, loanInBN, sentQuota } = filterUser(cDataFormatted, account);
+    const { profile:{ sentQuota, loan, paybackTime }, providers, slot: { isAdmin, isMember } } = filterUser(cData, account);
     const otherParam: AmountToApproveParam = {
         config,
         account,
-        // epochId: epochId_bigint,
-        intPerSec,
-        lastPaid,
+        contractAddress: colAsset,
         txnType: buttonObj.value,
-        unit: BigInt(unit.toString())
+        unit: unit.big
     };
 
-    const msg_AddLiq = `Request to add liquidity to epoch ${unitIdToNumber}`;
-    const msg_getFin = `Getting finance from epoch ${unitIdToNumber}`;
-    const msg_Pay = `Paying back loan at epoch ${unitIdToNumber}`
-    const msg_Liq = `Setting liquidation at epoch ${unitIdToNumber}`;
-    const msg_Remv = `Request to remove Flexpool at epoch ${unitIdToNumber}`;
+    const msg_AddLiq = `Request to add liquidity to epoch ${unitId.str}`;
+    const msg_getFin = `Getting finance from epoch ${unitId.str}`;
+    const msg_Pay = `Paying back loan at epoch ${unitId.str}`
+    const msg_Liq = `Setting liquidation at epoch ${unitId.str}`;
+    const msg_Remv = `Request to remove Flexpool at epoch ${unitId.str}`;
 
     React.useEffect(() => {
-        switch (stageToNumber) {
-            case FuncTag.JOIN:
+        switch (stage.toNum) {
+            case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
-                        if(userCountToNumber === 1) {
+                        if(userCount === 1) {
                             setButtonObj({value: 'REMOVE', disable: false, displayMessage: msg_Remv});
                         } else {
                             setButtonObj({value: 'WAIT', disable: true});
@@ -102,7 +95,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     }
                 } else {
                     if(isAdmin) {
-                        if(currentPoolInBN.eq(unitInBN)){
+                        if(currentPool.big === unit.big){
                             setButtonObj({value: 'REMOVE', disable: false, displayMessage: msg_Remv});
                         } else {
                             setButtonObj({value: 'WAIT', disable: true});
@@ -117,18 +110,18 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 }
                 break;
     
-            case FuncTag.GET:
+            case Stage.GET:
                 if(isMember) {
                     setButtonObj({value: 'GET FINANCE', disable: false, displayMessage: msg_getFin});
                 } else setButtonObj({ value: 'NOT ALLOWED', disable: true});
                 break;
             
-            case FuncTag.PAYBACK:
+            case Stage.PAYBACK:
                 if(isMember){
-                    if(loanInBN.gt(0)) setButtonObj({value : 'PAYBACK', disable: false, displayMessage: msg_Pay});
+                    if(loan.inBN.gt(BigNumber(0))) setButtonObj({value : 'PAYBACK', disable: false, displayMessage: msg_Pay});
                     else setButtonObj({ value: 'NOT ALLOWED', disable: true});
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTimeInSec) setButtonObj({ value: 'LIQUIDATE', disable: false, displayMessage: msg_Liq});
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) setButtonObj({ value: 'LIQUIDATE', disable: false, displayMessage: msg_Liq});
                     else setButtonObj({ value: 'NOT ALLOWED', disable: true});
                 }
                 break;
@@ -136,15 +129,15 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 setButtonObj({ value: 'ENDED', disable: true});
                 break;
         }    
-    }, [stageToNumber]);
+    }, [stage.toNum]);
 
     return(
         <React.Fragment>
-            <div className={`relative ${stageToNumber === FuncTag.ENDED || stageToNumber === FuncTag.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
+            <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
                 <div className="flex gap-2 items-center ">
                     <button onClick={() => showPermissionDetail(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
                     <div className="relative ">
-                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCountToNumber}</h3>
+                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCount}</h3>
                         <button onClick={() => showProviderDetails(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">
                             { 
                                 isPermissionless?
@@ -163,26 +156,26 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 <div className="text-orangec font-medium">
                     <span className="flex items-center gap-2">
                         <h1>{'Unit Id:'}</h1>
-                        <h1>{unitIdToNumber}</h1>
+                        <h1>{unitId.str}</h1>
                     </span>
-                    <div className="flex items-center gap-2">
+                    {/* <div className="flex items-center gap-2">
                         <h3>{'Rate:'}</h3>
                         <h3>{`${intPercentString}%`}</h3>
-                    </div>
+                    </div> */}
                     <div className="flex items-center gap-2">
                         <h3>{'Stage:'}</h3>
-                        <h3>{FuncTag[stageToNumber]}</h3>
+                        <h3>{stage.inStr}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3>{'Quorum:'}</h3>
-                        <h3>{quorumToNumber}</h3>
+                        <h3>{maxQuorum}</h3>
                     </div>
                     <div className="flex items-center gap-2">
                         <h3 className="">{'Pair:'}</h3>
                         <h3 className="">{pair}</h3>
                     </div>
                     <h2 className="absolute right-0 top-[1px] text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[26px]">
-                        {`$${unitInEther}`}
+                        {`$${unit.inEther}`}
                     </h2>
                 </div>
                 <div className="w-full flex flex-col justify-between items-center">
@@ -195,20 +188,11 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                             More Info
                         </CustomButton>
                         <ActionButton
-                            {
-                                ...{
-                                    sentQuota,
-                                    loanInBN,
-                                    paybackTimeInSec,
-                                    otherParam,
-                                    buttonObj,
-                                    ...formattedPool,
-                                    inputModalOn,
-                                    confirmationDrawerOn,
-                                    setDrawerState: (arg:number) => setDrawerState(arg),
-                                    setInputModal: (arg:boolean) => setInputModal(arg)
-                                }
-                            }
+                            buttonObj={buttonObj}
+                            safe={safe}
+                            otherParam={otherParam}
+                            setDrawerState={(arg:number) => setDrawerState(arg)}
+                            confirmationDrawerOn={confirmationDrawerOn}
                         />
                     </div>
                 </div>
@@ -224,34 +208,25 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
                 }
             </PermissionPopUp>
-            <Providers
+            <Contributors
                 isAdmin={isAdmin}
                 popUpDrawer={providerDrawer}
                 toggleDrawer={showProviderDetails}
-                cDataFormatted={cDataFormatted} 
+                cData={cData}
             />
             {
                 (!confirmationDrawerOn && !inputModalOn) && 
                     <InfoDisplay 
-                        formattedPool={formattedPool} 
+                        data={formattedPoolData}
                         popUpDrawer={infoDrawer}
                         toggleDrawer={(arg) => setShowInfo(arg)}
                         actions={
                             <ActionButton 
-                                {
-                                    ...{
-                                        sentQuota,
-                                        loanInBN,
-                                        paybackTimeInSec,
-                                        otherParam,
-                                        buttonObj,
-                                        ...formattedPool,
-                                        inputModalOn,
-                                        confirmationDrawerOn,
-                                        setDrawerState: (arg:number) => setDrawerState(arg),
-                                        setInputModal: (arg:boolean) => setInputModal(arg)
-                                    }
-                                }
+                                buttonObj={buttonObj}
+                                safe={safe}
+                                otherParam={otherParam}
+                                setDrawerState={(arg:number) => setDrawerState(arg)}
+                                confirmationDrawerOn={confirmationDrawerOn}
                             />
                         } 
                     />

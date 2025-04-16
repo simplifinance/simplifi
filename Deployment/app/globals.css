@@ -38,13 +38,12 @@ body {
 }
 
 .appContainer {
-  /* color: #F9F4F4; */
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 300px 1fr 400px;
   grid-template-rows: auto 1fr;
   grid-template-areas: 
-  "navbar navbar"
-  "sidebar main"
+  "navbar navbar navbar"
+  "leftsidebar main rightmain"
 }
 
 nav{
@@ -55,12 +54,23 @@ nav{
 
 aside{
   top: 72px; 
-  grid-area: sidebar;
+  grid-area: leftsidebar;
   height: calc(100vh - 72px);
   position: fixed;
   width: 300px;
   align-self: start;
 }
+
+.main2{
+  top: 72px;
+  grid-area: rightmain;
+  height: calc(100vh - 72px);
+  position: fixed;
+  width: 400px;
+  align-self: start;
+  overflow: auto;
+}
+
 
 main{ 
   grid-area: main;
@@ -98,15 +108,6 @@ footer{
   left: 0;
   transform: translate(-50, -50);
 }
-
-/* .poweredbycrossfi::before, .poweredbycrossfi::after {
-  content: 'Powered by CrossFI';
-  font-size: 10px;
-  position: absolute;
-  color: #F87C00;
-  top: 6%;
-  right: 10%;
-} */
 
 .animateSidebar{
   margin: 0;
@@ -156,6 +157,7 @@ footer{
     grid-template-rows: auto 1fr;
     grid-template-areas:
     "navbar navbar" 
+    "rightmain rightmain"
     "main main"
   }
   aside{

@@ -6,14 +6,14 @@ import React from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount, useReadContracts, useConfig } from "wagmi";
 import getReadFunctions from "../readContractConfig";
-import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionlessPoolParams, TrxState, VoidFunc } from "@/interfaces";
+import { AmountToApproveParam, BalancesProps, CreatePermissionedPoolParams, CreatePermissionlessPoolParams, TrxState, VoidFunc } from "@/interfaces";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import withdrawLoan from "@/apis/update/collateralToken/withdrawCollateral";
 import { Spinner } from "@/components/utilities/Spinner";
 import Message from "../Message";
 import { formatError } from "@/apis/update/formatError";
 
-export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, collateralAsset, param } : BalancesProps) {
+export default function LiquidityAndSafeBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, collateralAsset, param } : BalancesProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
     
     const { address, chainId } = useAccount();
@@ -99,7 +99,7 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
             config,
             txnType: 'CREATE',
             unit: quota!,
-            contractAddress: asset
+            contractAddress: collateralAsset
         }
         await handleTransact({
             callback,
@@ -137,21 +137,4 @@ export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDr
             <Message />
         </Stack>
     );
-}
-
-export interface RekeyParam {
-    colCoverage: number;
-    contributors?: Address[];
-    durationInHours: number;
-    intRate: number;
-    allGH: number;
-}
-
-interface BalancesProps {
-    formattedSafe: Address;
-    isPermissionless: boolean;
-    param: RekeyParam;
-    isCancelledPool: boolean;
-    handleCloseDrawer: VoidFunc;
-    collateralAsset: Address;
 }

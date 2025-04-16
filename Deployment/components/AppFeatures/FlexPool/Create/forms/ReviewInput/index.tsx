@@ -24,7 +24,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
     const { setstorage, setmessage, closeDisplayForm } = useAppStorage();
     const unitLiquidity = toBigInt(values[1].value);
     const colCoverage = toBN(values[4].value).times(100).toNumber();
-    // const intRate = toBN(values[3].value).times(100).toNumber();
+    const collateralAsset = values[3].value as Address;
     const durationInHours = toBN(values[2].value).toNumber();
  
     const callback = (arg: TrxState) => {
@@ -34,7 +34,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
         setstorage(arg);
     }
 
-    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE", contractAddress};
+    const otherParam: AmountToApproveParam = { account, config, unit: parseEther(unitLiquidity.toString()), txnType: "CREATE", contractAddress: collateralAsset};
     const createPermissionedPoolParam : CreatePermissionedPoolParams = {
         account,
         colCoverage,
@@ -49,9 +49,10 @@ export const ReviewInput = (props: ReviewInputProps) => {
         account,
         colCoverage,
         config,
+        contributors: [account],
         quorum: toBN(values[0].value).toNumber(),
         durationInHours,
-        intRate,
+        collateralAsset,
         unitLiquidity: parseEther(unitLiquidity.toString()),
         callback
     };
@@ -76,7 +77,6 @@ export const ReviewInput = (props: ReviewInputProps) => {
         setLoading(true);
         switch (formType) {
             case 'Permissioned':
-                // console.log(router, createPermissionedPoolParam)
                 await handleTransact({
                     router,
                     callback,

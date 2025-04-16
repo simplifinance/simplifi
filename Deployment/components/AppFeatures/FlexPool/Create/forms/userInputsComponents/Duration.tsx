@@ -45,8 +45,3 @@ export default function Duration({inputProp: duration, handleChange} : InputCate
         </div>
     );
 }
-
-export type DurationProp = {
-    value: number;
-    open: boolean;
-}

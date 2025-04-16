@@ -235,6 +235,324 @@
         }
       ]
     },
+    "BaseAsset": {
+      "address": "0x476ED9B38aB286f6ce5DD70830067e645c754094",
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "allowance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "needed",
+              "type": "uint256"
+            }
+          ],
+          "name": "ERC20InsufficientAllowance",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "balance",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "needed",
+              "type": "uint256"
+            }
+          ],
+          "name": "ERC20InsufficientBalance",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "approver",
+              "type": "address"
+            }
+          ],
+          "name": "ERC20InvalidApprover",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            }
+          ],
+          "name": "ERC20InvalidReceiver",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            }
+          ],
+          "name": "ERC20InvalidSender",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            }
+          ],
+          "name": "ERC20InvalidSpender",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            }
+          ],
+          "name": "allowance",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "approve",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "decimals",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "name",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "symbol",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "transfer",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "value",
+              "type": "uint256"
+            }
+          ],
+          "name": "transferFrom",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "Escape": {
       "address": "0xE9bC7eD3AaF48DC7E81c3e37DaDDb87d4059862B",
       "abi": [
@@ -431,8 +749,314 @@
         }
       ]
     },
+    "Faucet": {
+      "address": "0x0B097193b0B7a6bC240591351173540467f5f3d4",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IRoleBase",
+              "name": "_roleManager",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "_collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IERC20",
+              "name": "_baseToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_baseTokenAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_colTokenAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "errorMsg",
+              "type": "string"
+            }
+          ],
+          "name": "ErrorOccurred",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "baseToken",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "baseTokenAmount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "claimTestTokens",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "collateralToken",
+          "outputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "collateralTokenAmount",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "tos",
+              "type": "address[]"
+            }
+          ],
+          "name": "mintBatch",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "roleManager",
+          "outputs": [
+            {
+              "internalType": "contract IRoleBase",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            }
+          ],
+          "name": "sendTokens",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "newAmt",
+              "type": "uint256"
+            }
+          ],
+          "name": "setBaseAmount",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "newToken",
+              "type": "address"
+            }
+          ],
+          "name": "setBaseToken",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "newAmt",
+              "type": "uint256"
+            }
+          ],
+          "name": "setCollateralAmount",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20",
+              "name": "newToken",
+              "type": "address"
+            }
+          ],
+          "name": "setCollateralToken",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newManager",
+              "type": "address"
+            }
+          ],
+          "name": "setRoleManager",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "testers",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "testersMap",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "lastColDispensed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "lastBaseDispensed",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "isWhitelisted",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
     "FlexpoolFactory": {
-      "address": "0x33d68F8298e01Ab9CA9813A89a8193d2C87D956d",
+      "address": "0x39bD775C6488Cc27897D4f5A215E6D6569c3ddf1",
       "abi": [
         {
           "inputs": [
@@ -2003,47 +2627,125 @@
                 {
                   "components": [
                     {
-                      "internalType": "uint32",
-                      "name": "paybackTime",
-                      "type": "uint32"
+                      "components": [
+                        {
+                          "internalType": "uint32",
+                          "name": "paybackTime",
+                          "type": "uint32"
+                        },
+                        {
+                          "internalType": "uint32",
+                          "name": "turnStartTime",
+                          "type": "uint32"
+                        },
+                        {
+                          "internalType": "uint32",
+                          "name": "getFinanceTime",
+                          "type": "uint32"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "loan",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "colBals",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "address",
+                          "name": "id",
+                          "type": "address"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "sentQuota",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct Common.Contributor",
+                      "name": "profile",
+                      "type": "tuple"
                     },
                     {
-                      "internalType": "uint32",
-                      "name": "turnStartTime",
-                      "type": "uint32"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "value",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isMember",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "isAdmin",
+                          "type": "bool"
+                        }
+                      ],
+                      "internalType": "struct Common.Slot",
+                      "name": "slot",
+                      "type": "tuple"
                     },
                     {
-                      "internalType": "uint32",
-                      "name": "getFinanceTime",
-                      "type": "uint32"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "loan",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "colBals",
-                      "type": "uint256"
-                    },
-                    {
-                      "internalType": "address",
-                      "name": "id",
-                      "type": "address"
-                    },
-                    {
-                      "internalType": "bool",
-                      "name": "sentQuota",
-                      "type": "bool"
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "slot",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "amount",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "rate",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "uint256",
+                          "name": "earnStartDate",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "address",
+                          "name": "account",
+                          "type": "address"
+                        },
+                        {
+                          "components": [
+                            {
+                              "internalType": "uint256",
+                              "name": "fullInterest",
+                              "type": "uint256"
+                            },
+                            {
+                              "internalType": "uint256",
+                              "name": "intPerSec",
+                              "type": "uint256"
+                            }
+                          ],
+                          "internalType": "struct Common.Interest",
+                          "name": "accruals",
+                          "type": "tuple"
+                        }
+                      ],
+                      "internalType": "struct Common.Provider[]",
+                      "name": "providers",
+                      "type": "tuple[]"
                     }
                   ],
-                  "internalType": "struct Common.Contributor[]",
+                  "internalType": "struct Common.ContributorReturnValue[]",
                   "name": "cData",
                   "type": "tuple[]"
                 }
               ],
-              "internalType": "struct Common.ReadDataReturnValue",
+              "internalType": "struct Common.ReadPoolDataReturnValue",
               "name": "result",
               "type": "tuple"
             }
@@ -2219,7 +2921,7 @@
                   "type": "tuple[]"
                 }
               ],
-              "internalType": "struct Common.ReadDataReturnValue",
+              "internalType": "struct Common.ReadRecordDataReturnValue",
               "name": "result",
               "type": "tuple"
             }
@@ -2287,9 +2989,26 @@
                   "type": "tuple"
                 },
                 {
-                  "internalType": "uint8",
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "value",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isMember",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "isAdmin",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct Common.Slot",
                   "name": "slot",
-                  "type": "uint8"
+                  "type": "tuple"
                 },
                 {
                   "components": [
@@ -2596,7 +3315,7 @@
       ]
     },
     "Points": {
-      "address": "0x3E900B33381d24CcF0187fF891818Fe418d414C3",
+      "address": "0x76685868B6c270d081450c488372E04F6db11494",
       "abi": [
         {
           "inputs": [
@@ -2810,7 +3529,7 @@
       ]
     },
     "Providers": {
-      "address": "0xc767Ec1E62f48EAe72161ef62F826f9Bc031914B",
+      "address": "0x5082d03870CC648156820BD0b2CDb2b31C6b6433",
       "abi": [
         {
           "inputs": [
@@ -3676,7 +4395,7 @@
       ]
     },
     "SafeFactory": {
-      "address": "0x7Ca7293Ce89284684Fff30F1FA76f4FFcCDeD142",
+      "address": "0x09472cBF305BF8323cb2E8DF79C942E76aeB38cd",
       "abi": [
         {
           "inputs": [
@@ -5098,630 +5817,6 @@
         {
           "stateMutability": "payable",
           "type": "receive"
-        }
-      ]
-    },
-    "BaseAsset": {
-      "address": "0x476ED9B38aB286f6ce5DD70830067e645c754094",
-      "abi": [
-        {
-          "inputs": [],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "allowance",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "needed",
-              "type": "uint256"
-            }
-          ],
-          "name": "ERC20InsufficientAllowance",
-          "type": "error"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "sender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "balance",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "needed",
-              "type": "uint256"
-            }
-          ],
-          "name": "ERC20InsufficientBalance",
-          "type": "error"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "approver",
-              "type": "address"
-            }
-          ],
-          "name": "ERC20InvalidApprover",
-          "type": "error"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "receiver",
-              "type": "address"
-            }
-          ],
-          "name": "ERC20InvalidReceiver",
-          "type": "error"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "sender",
-              "type": "address"
-            }
-          ],
-          "name": "ERC20InvalidSender",
-          "type": "error"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
-          ],
-          "name": "ERC20InvalidSpender",
-          "type": "error"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Approval",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "Transfer",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
-          ],
-          "name": "allowance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "account",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "decimals",
-          "outputs": [
-            {
-              "internalType": "uint8",
-              "name": "",
-              "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "name",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "symbol",
-          "outputs": [
-            {
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalSupply",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "transfer",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "from",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "value",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferFrom",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
-    "Faucet": {
-      "address": "0xAD173f3C202D44e97CEf325063d0a755406F97d2",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract IRoleBase",
-              "name": "_roleManager",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IERC20",
-              "name": "_collateralToken",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IERC20",
-              "name": "_baseToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_baseTokenAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_colTokenAmount",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "errorMsg",
-              "type": "string"
-            }
-          ],
-          "name": "ErrorOccurred",
-          "type": "error"
-        },
-        {
-          "inputs": [],
-          "name": "baseToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "baseTokenAmount",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "claimTestTokens",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "collateralToken",
-          "outputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "collateralTokenAmount",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "tos",
-              "type": "address[]"
-            }
-          ],
-          "name": "mintBatch",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "roleManager",
-          "outputs": [
-            {
-              "internalType": "contract IRoleBase",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "to",
-              "type": "address"
-            }
-          ],
-          "name": "sendTokens",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "newAmt",
-              "type": "uint256"
-            }
-          ],
-          "name": "setBaseAmount",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "newToken",
-              "type": "address"
-            }
-          ],
-          "name": "setBaseToken",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "newAmt",
-              "type": "uint256"
-            }
-          ],
-          "name": "setCollateralAmount",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20",
-              "name": "newToken",
-              "type": "address"
-            }
-          ],
-          "name": "setCollateralToken",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newManager",
-              "type": "address"
-            }
-          ],
-          "name": "setRoleManager",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "testers",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "testersMap",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "lastColDispensed",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "lastBaseDispensed",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bool",
-              "name": "isWhitelisted",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         }
       ]
     }

@@ -26,13 +26,15 @@ export declare namespace Common {
     contributor: BigNumberish;
     creator: BigNumberish;
     referrals: BigNumberish;
+    user: AddressLike;
   };
 
   export type PointStructOutput = [
     contributor: bigint,
     creator: bigint,
-    referrals: bigint
-  ] & { contributor: bigint; creator: bigint; referrals: bigint };
+    referrals: bigint,
+    user: string
+  ] & { contributor: bigint; creator: bigint; referrals: bigint; user: string };
 }
 
 export interface IPointInterface extends Interface {

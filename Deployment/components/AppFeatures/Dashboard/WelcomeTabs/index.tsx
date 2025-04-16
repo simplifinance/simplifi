@@ -10,7 +10,7 @@ import RewardAndPoints from "./RewardAndPoints";
 export const TabsContent = ({title, description, value, content, footer}: TabContentProps) => {
     return(
         <Content value={value}>
-            <Card>
+            <Card >
                 <CardHeader>
                     <CardTitle className="dark:text-orange-300">{title}</CardTitle>
                     <CardDescription>{description}</CardDescription>
@@ -27,7 +27,7 @@ export function WelcomeTabs() {
     <Tabs defaultValue="dashboard" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="rewards">{'Rewards & Points'}</TabsTrigger>
+            <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
         </TabsList>
 
@@ -39,7 +39,7 @@ export function WelcomeTabs() {
             value="dashboard"
         />
         <TabsContent 
-            title={"Points & Rewards"}
+            title={"My Rewards"}
             description={""}
             content={ <RewardAndPoints /> }
             footer={""}

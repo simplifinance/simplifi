@@ -44,8 +44,3 @@ export default function CollateralMultiplier({inputProp: collateral, handleChang
         </div>
     );
 }
-
-export type CollacteralProp = {
-    value: number;
-    open: boolean;
-}

@@ -1,4 +1,4 @@
-import type { CommonParam, TrxResult } from "@/interfaces";
+import type { Config, TrxResult } from "@/interfaces";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { faucetAbi } from "@/apis/utils/abis";
@@ -7,10 +7,10 @@ import { errorMessage } from "../formatError";
 
 /**
  * @dev Users claim test tokens
- * @param args : Arguments of type CommonParams. See interfaces.ts
+ * @param args : Arguments of type Configs. See interfaces.ts
  * @returns : Transaction result
  */
-export default async function claimTestTokens(args: CommonParam ) {
+export default async function claimTestTokens(args: Config ) {
   const { config, callback, account } = args;
   let returnValue : TrxResult = 'reverted';  
   await simulateContract(config, {

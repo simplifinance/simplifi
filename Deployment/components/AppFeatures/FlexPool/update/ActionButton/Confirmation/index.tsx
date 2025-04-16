@@ -19,7 +19,7 @@ export const Confirmation :
         ({sendTransaction, back, toggleDrawer, openDrawer, displayMessage}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
-    const { setmessage, closeDisplayForm } = useAppStorage();
+    const { setmessage, closeDisplayForm, message, } = useAppStorage();
     const handleCloseDrawer = () => {
         toggleDrawer(0);
         setmessage('');
@@ -60,7 +60,8 @@ export const Confirmation :
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </button>
-                <h1 className='pb-6 text-md'>{ loading? "Processing Transaction ..." : displayMessage || '' }</h1>
+                <h1 className='pb-6 text-md'>{ message }</h1>
+                {/* <h1 className='pb-6 text-md'>{ loading? "Processing Transaction ..." : displayMessage || '' }</h1> */}
                 <ButtonTemplate 
                     buttonAContent="Cancel"
                     buttonBContent={

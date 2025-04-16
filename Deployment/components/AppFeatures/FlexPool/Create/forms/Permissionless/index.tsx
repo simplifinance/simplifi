@@ -114,7 +114,7 @@ export const Permissionless = () => {
                     },
                     {
                         title: 'Collateral Asset',
-                        value: collateralAsset,
+                        value: collateralAsset.value,
                         affix: '',
                     },
                     {

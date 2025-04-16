@@ -9,7 +9,6 @@ import { zeroAddress } from "viem";
 import Grid from "@mui/material/Grid";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { CustomButton } from "@/components/utilities/CustomButton";
-import Quorum from "../userInputsComponents/Quorum";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
 import Interest from "../userInputsComponents/CollateralAsset";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
@@ -21,7 +20,7 @@ export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
     const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
-    const [interest, setInterest] = React.useState<InputProp>({value: '1', open: false});
+    const [collateralAsset, setCollateralAsset] = React.useState<InputProp>({value: '1', open: false});
     const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
@@ -72,8 +71,8 @@ export const Permissioned = () => {
             case 'CCR':
                 setCollateralCoverage(inputProp);
                 break;
-            case 'Interest':
-                setInterest(inputProp);
+            case 'CollateralAsset':
+                setCollateralAsset(inputProp);
                 break;
             case 'UnitLiquidity':
                 setUnitLiquidity(inputProp);
@@ -102,10 +101,10 @@ export const Permissioned = () => {
                                 id:"Duration",
                                 element: (<Duration isLargeScreen={isLargeScreen} inputProp={duration} handleChange={onChange}/>),
                             },
-                            // {
-                            //     id: "Interest",
-                            //     element: (<Interest isLargeScreen={isLargeScreen} inputProp={interest} handleChange={onChange}/>),
-                            // },
+                            {
+                                id: "CollateralAsset",
+                                element: (<Interest isLargeScreen={isLargeScreen} inputProp={collateralAsset} handleChange={onChange}/>),
+                            },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
                                 element: (<CollateralMultiplier isLargeScreen={isLargeScreen} inputProp={ccr} handleChange={onChange}/>),
@@ -150,11 +149,12 @@ export const Permissioned = () => {
                         value: duration.value,
                         affix: `${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
                     },
-                    // {
-                    //     title: 'Int. Rate',
-                    //     value: toBN(interest.value).div(100).toString(),
-                    //     affix: `%`
-                    // },
+                    {
+                        title: 'Collateral Asset',
+                        value: collateralAsset.value,
+                        // value: toBN(collateralAsset.value).div(100).toString(),
+                        affix: `%`
+                    },
                     {
                         title: 'Collateral Index',
                         value: toBN(ccr.value).div(100).toString(),

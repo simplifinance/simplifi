@@ -81,9 +81,9 @@ describe("Permissioned: CreatePool test", function () {
 
         const prof_1 = (await flexpool.getProfile(unit, signer1Addr)).profile;
         expect(prof_1.id).to.be.equal(signer1Addr);
-        expect(members[0].id).to.be.equal(signer1Addr);
-        expect(members[1].id).to.be.equal(signer2Addr);
-        expect(members[2].id).to.be.equal(signer3Addr);
+        expect(members[0].profile.id).to.be.equal(signer1Addr);
+        expect(members[1].profile.id).to.be.equal(signer2Addr);
+        expect(members[2].profile.id).to.be.equal(signer3Addr);
         expect(id).to.be.equal(signer1Addr);
 
         expect(isAdmin).to.be.true;

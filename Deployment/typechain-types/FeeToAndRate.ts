@@ -142,19 +142,6 @@ export declare namespace Common {
     status: bigint;
   };
 
-  export type ReadDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
-  };
-
   export type InterestStruct = {
     fullInterest: BigNumberish;
     intPerSec: BigNumberish;
@@ -192,18 +179,44 @@ export declare namespace Common {
 
   export type ContributorReturnValueStruct = {
     profile: Common.ContributorStruct;
-    slot: BigNumberish;
+    slot: Common.SlotStruct;
     providers: Common.ProviderStruct[];
   };
 
   export type ContributorReturnValueStructOutput = [
     profile: Common.ContributorStructOutput,
-    slot: bigint,
+    slot: Common.SlotStructOutput,
     providers: Common.ProviderStructOutput[]
   ] & {
     profile: Common.ContributorStructOutput;
-    slot: bigint;
+    slot: Common.SlotStructOutput;
     providers: Common.ProviderStructOutput[];
+  };
+
+  export type ReadPoolDataReturnValueStruct = {
+    pool: Common.PoolStruct;
+    cData: Common.ContributorReturnValueStruct[];
+  };
+
+  export type ReadPoolDataReturnValueStructOutput = [
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorReturnValueStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorReturnValueStructOutput[];
+  };
+
+  export type ReadRecordDataReturnValueStruct = {
+    pool: Common.PoolStruct;
+    cData: Common.ContributorStruct[];
+  };
+
+  export type ReadRecordDataReturnValueStructOutput = [
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorStructOutput[];
   };
 }
 
@@ -516,13 +529,13 @@ export interface FeeToAndRate extends BaseContract {
 
   getPoolData: TypedContractMethod<
     [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
   getPoolRecord: TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadRecordDataReturnValueStructOutput],
     "view"
   >;
 
@@ -630,14 +643,14 @@ export interface FeeToAndRate extends BaseContract {
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
     [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getPoolRecord"
   ): TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadRecordDataReturnValueStructOutput],
     "view"
   >;
   getFunction(

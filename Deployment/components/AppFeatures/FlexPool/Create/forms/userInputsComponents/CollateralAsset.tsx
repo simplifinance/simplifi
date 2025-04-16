@@ -14,7 +14,7 @@ export default function CollateralAsset({inputProp: interest, handleChange} : In
     return (
         <div className='relative'>
             <button
-                onClick={() => handleChange({value: interest.value, open: !interest.open}, 'Interest')}
+                onClick={() => handleChange({value: interest.value, open: !interest.open}, 'CollateralAsset')}
                 className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
             >
                  <span className='absolute -top-6 left-0 text-orange-300'>
@@ -30,7 +30,7 @@ export default function CollateralAsset({inputProp: interest, handleChange} : In
                     {
                         rates().map((value) => (
                             <button 
-                                onClick={() => handleChange({value: value.toString(), open: false}, 'Interest')}
+                                onClick={() => handleChange({value: value.toString(), open: false}, 'CollateralAsset')}
                                 key={value}
                                 value={value}
                                 className='bg-green1 p-2 size- rounded-full text-[10px] hover:bg-gray1'
@@ -45,7 +45,3 @@ export default function CollateralAsset({inputProp: interest, handleChange} : In
     );
 }
 
-export type InterestProp = {
-    value: number;
-    open: boolean;
-}

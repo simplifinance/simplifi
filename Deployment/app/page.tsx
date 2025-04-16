@@ -51,26 +51,6 @@ export default function SimplifiApp() {
     refetch();
   };
 
-  // const renderDashboardChildren = () => {
-  //   return(
-  //     CHILDREN.map(({element, path, children}) => (
-  //       <Route path={path} element={element}>{children && children}</Route>
-  //     ))
-  //   );
-  // }
-  
-  // // Configure a router provider 
-  // const router = createBrowserRouter(
-  //   createRoutesFromElements(
-  //     <Route 
-  //       path={'/'} 
-  //       element={ <AppFeatures /> } 
-  //     >
-  //       { renderDashboardChildren() }
-  //     </Route>
-  //   )
-  // );
-
   /**
    * React UseEffect. Watches changes to the 'isConnected' variable.
    * If user is not connected, they're restricted access to the app functionalities. 

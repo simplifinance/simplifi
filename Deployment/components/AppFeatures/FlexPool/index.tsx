@@ -1,8 +1,6 @@
 import React from 'react';
-import { CustomNode } from '@/interfaces';
 import Tooltip from '@mui/material/Tooltip';
 import { CustomButton } from '@/components/utilities/CustomButton';
-import createFlexpool from './Create';
 import { flexStart, flexSpread } from '@/constants';
 import USDBalances from './USDBalances';
 import { PastEpoches } from './PoolWrapper/PastEpoches';

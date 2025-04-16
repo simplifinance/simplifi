@@ -1,6 +1,6 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { BigNumberish, ethers } from "ethers";
+// import { BigNumberish, ethers } from "ethers";
 import { Common } from "./typechain-types/Contributor";
 
 export type Path = 'Yield' | 'Dao' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
@@ -24,8 +24,84 @@ export type Profile = Common.ContributorReturnValueStruct;
 export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
-// export type SimpliFC = () => CustomNode;
 export type RenderType = 'Back' | 'Current' | '';
+export type Pool = Common.PoolStruct; 
+export type Contributor = Common.ContributorReturnValueStruct;
+export type SentQuota = 'Sent' | 'Not Sent';
+export type FormattedProviders = FormattedProvider[];
+
+interface DateAndSec {
+  inSec: number;
+  inDate: string;
+}
+
+interface BigNumberAndEther {
+  inBN: BigNumber;
+  inEther: string;
+}
+
+export interface FormattedSlot {
+  value: number;
+  isMember: boolean;
+  isAdmin: boolean;
+}
+
+export interface FormattedPoolData {
+  pool: {
+    big: { 
+      unit: {big: bigint, inEther: string}; 
+      currentPool: {big:bigint, inEther: string};
+      unitId: {big: bigint, str: string}; 
+      recordId: {big: bigint, str: string};
+    };
+    low: { 
+      maxQuorum: number; 
+      allGh: number;
+      userCount: number;
+      duration: {inSec: number; inHour: number};
+      colCoverage: number;
+      selector : number;
+    };
+    addrs: { 
+      admin: Address; 
+      colAsset: Address;
+      lastPaid: Address; 
+      safe: Address
+    };
+    router: string;
+    stage: {toNum: number, inStr: string};
+    poolFilled: boolean;
+    allGetFinance: boolean;
+    isPermissionless: boolean;
+    expectedPoolAmount: bigint;
+  };
+  cData: FormattedCData[];
+}
+
+export interface FormattedCData {
+  profile: FormattedContributor;
+  slot: FormattedSlot;
+  providers: FormattedProviders;
+}
+
+export interface FormattedContributor {
+  paybackTime: DateAndSec;
+  turnStartTime: DateAndSec;
+  getFinanceTime: DateAndSec;
+  loan: BigNumberAndEther;
+  id: Address;
+  sentQuota: SentQuota;
+  colBals: string;
+}
+
+export interface FormattedProvider {
+  account: Address;
+  accruals: { fullInterest: string, intPerSec: string };
+  amount: string;
+  earnStartDate: DateAndSec;
+  rate: string;
+  slot: number;
+}
 
 export interface TrxState {
   status?: TrxResult;
@@ -33,17 +109,9 @@ export interface TrxState {
 }
 
 export interface ReadDataReturnValue {
-  pool: LiquidityPool;
-  cData: Readonly<Common.ContributorStruct[]>;
-}
-
-export interface LiquidityPool {
-  low: Common.LowStruct;
-  big: Common.BigStruct;
-  addrs: Common.AddressesStruct;
-  status: BigNumberish;
-  router: BigNumberish;
-  stage: BigNumberish;
+  data: Common.ReadPoolDataReturnValueStruct;
+  // pool: Pool;
+  // cData: Readonly<Common.ContributorStruct[]>;
 }
 
 export interface CreatePermissionedPoolParams extends Config{
@@ -84,58 +152,6 @@ export interface ScreenUserResult{
   isAdmin: boolean;
   userData: Profile;
 }
-
-// export interface FormattedData {
-//   paybackTimeInDateFormat: string;
-//   paybackTimeInSec: number;
-//   turnStartTimeInDateFormat: string;
-//   turnStartTimeInSec: number;
-//   durOfChoiceInSec: number;
-//   colBalsInEther: string;
-//   loanInEther: string;
-//   interestPaidInEther: string;
-//   idLowerCase: string;
-//   idToString: string;
-//   loanInBN: BigNumber;
-//   sentQuota: boolean;
-// }
-
-// export interface FormattedPoolContentProps {
-//   unit: BigNumberish;
-//   unit_bigint: bigint;
-//   recordId: bigint;
-//   // pair: string;
-//   quorumToNumber: number;
-//   userCountToNumber: number;
-//   allGetBool: boolean;
-//   allGhToNumber: number;
-//   unitIdToNumber: number;
-//   unitIdBigint: bigint;
-//   stageToNumber: number;
-//   expectedPoolAmtBigint: bigint;
-//   unitInEther: string;
-//   intPercentString: string;
-//   durationToNumber: number;
-//   poolFilled: boolean;
-//   isPermissionless: boolean;
-//   selectorToNumber: number;
-//   colCoverageInString: string;
-//   fullowerestInEther: string;
-//   intPerSecInEther: string;
-//   currentPoolInEther: string;
-//   adminLowerCase: string;
-//   assetLowerCase: string;
-//   admin: ethers.AddressLike;
-//   asset: ethers.AddressLike;
-//   isAdmin: boolean;
-//   isMember: boolean;
-//   cDataFormatted: FormattedData[];
-//   intPerSec: BigNumberish;
-//   lastPaid: Address;
-//   formattedSafe: Address;
-//   unitInBN: BigNumber;
-//   currentPoolInBN: BigNumber;
-// }
 
 export interface AmountToApproveParam {
   txnType: ButtonText;
@@ -199,9 +215,8 @@ export interface CommonToolArg {
 }
 
 export interface ProviderProps {
-  userData: Profile;
-  index: number;
-  isAdmin: boolean;
+  data: FormattedCData;
+  // index: number;
 }
 
 export interface CustomNode {
@@ -231,3 +246,20 @@ export interface TransferFromParam extends Config {
 export interface ProvideLiquidityParam extends CommonParam {
   rate: number;
 }
+
+export interface RekeyParam {
+  colCoverage: number;
+  contributors?: Address[];
+  durationInHours: number;
+  allGH: number;
+}
+
+export interface BalancesProps {
+  formattedSafe: Address;
+  isPermissionless: boolean;
+  param: RekeyParam;
+  isCancelledPool: boolean;
+  handleCloseDrawer: VoidFunc;
+  collateralAsset: Address;
+}
+

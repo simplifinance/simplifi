@@ -2,10 +2,11 @@ import { Button } from "@/components/ui/button";
 import { flexCenter, flexSpread } from "@/constants";
 import { Container } from "@mui/material";
 import Link from "next/link";
-import { useNavigate } from "react-router-dom";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export default function AiAssist() {
-    const navigate = useNavigate();
+    const { setActivepath } = useAppStorage();
+
     return (
         <div className={`${flexCenter} w-full`}>
             <Container maxWidth="lg">
@@ -13,7 +14,7 @@ export default function AiAssist() {
                     <div className={`w-full absolute ${flexSpread} top-0 left-2 text-center font-bold space-y-4 p-8`}>
                         <h3 className="text-lg md:text-xl text-green1/80 dark:text-white1">This section is currently in development. Please check back later.</h3>
                         <div className={`${flexCenter} gap-4`}>
-                            <Button onClick={() => navigate(-1)}>Back</Button>
+                            <Button onClick={() => setActivepath('Flexpool')}>Back</Button>
                             <Button className={`${flexSpread}`}>
                                 <Link href={"https://simplifinance.gitbook.io/docs"} >
                                     learn more

@@ -12,22 +12,22 @@ import CreateFlexpool from "./FlexPool/Create";
 
 
 export default function AppFeatures({currentPath}:{currentPath: Path}) {
-    return(
-        <Layout>
-            <MotionDivWrap className={`minHeight md:bg-white1 md:dark:bg-gray1 md:rounded-2xl md:border border-green1/30 md:dark:border-gray1 relative flex justify-center items-center`}>
-                {
-                    appChildren.filter(({path}) => path === currentPath)
-                    .map(({location, element}) => (
-                        <React.Fragment key={location}>
-                            {
-                                element
-                            }
-                        </React.Fragment>
-                    ))
-                }
-            </MotionDivWrap>
-        </Layout>
-    );
+  return(
+    <Layout>
+      <MotionDivWrap className={`minHeight md:bg-white1 md:dark:bg-gray1 md:rounded-2xl md:border border-green1/30 md:dark:border-gray1 relative flex justify-center items-center`}>
+        {
+          appChildren.filter(({path}) => path === currentPath)
+          .map(({location, element}) => (
+            <React.Fragment key={location}>
+              {
+                element
+              }
+            </React.Fragment>
+          ))
+        }
+      </MotionDivWrap>
+    </Layout>
+  );
 }
 
 export const appChildren : CustomNode[] = Array.from([

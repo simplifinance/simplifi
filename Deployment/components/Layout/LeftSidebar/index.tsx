@@ -4,7 +4,7 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import { routeEnum } from "@/constants";
 import { Path } from "@/interfaces";
 
-export default function Sidebar() {
+export default function LeftSidebar() {
   const { showSidebar,} = useAppStorage();
 
   const DRAWER_CONTENT : {
