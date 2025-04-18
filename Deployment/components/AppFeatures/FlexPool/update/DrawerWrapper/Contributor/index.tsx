@@ -112,6 +112,7 @@ export const Contributor = ({ data }: ProviderProps) => {
                                             <AddressWrapper
                                                 account={provider.account.toString()}
                                                 size={4}
+                                                display={true}
                                             />
                                         </li>
                                         <li>

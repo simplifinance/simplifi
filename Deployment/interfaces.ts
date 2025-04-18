@@ -3,15 +3,14 @@ import BigNumber from "bignumber.js";
 // import { BigNumberish, ethers } from "ethers";
 import { Common } from "./typechain-types/Contributor";
 
-export type Path = 'Yield' | 'Dao' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
+export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
 export type ViemClient = import('viem').Client;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";
 export type Str = string;
 export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
-export type ActiveLink = 'Home' | 'Invest' | 'Dao' | 'Liquidity' | 'SpeedDoc' | '';
-export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address';
+export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest';
 export type ButtonText = 'ADD LIQUIDITY' | 'GET FINANCE' | 'PAYBACK' | 'LIQUIDATE' | 'WAIT' | 'NOT ALLOWED' | 'APPROVE' | 'CREATE' | 'ENDED' | 'REMOVE';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
@@ -108,10 +107,15 @@ export interface TrxState {
   message: string;
 }
 
-export interface ReadDataReturnValue {
-  data: Common.ReadPoolDataReturnValueStruct;
-  // pool: Pool;
-  // cData: Readonly<Common.ContributorStruct[]>;
+export interface CData {
+  profile: Common.ContributorStruct;
+  slot: Common.SlotStruct;
+  providers: Readonly<Common.ProviderStruct[]>;
+}
+
+export interface ReadDataReturnValue  {
+  pool: Common.PoolStruct;
+  cData: Readonly<CData[]>;
 }
 
 export interface CreatePermissionedPoolParams extends Config{
@@ -177,15 +181,15 @@ export interface DrawerState {
   value: boolean;
 }
 
-export interface InputProp {
-  value: string;
-  open: boolean;
-}
+// export interface InputProp {
+//   value: string;
+//   // open: boolean;
+// }
 
 export interface InputCategoryProp {
-  inputProp: InputProp;
-  isLargeScreen: boolean;
-  handleChange: (value: InputProp, tag: InputSelector) => void
+  selected: string;
+  // isLargeScreen: boolean;
+  handleChange: (value: string, tag: InputSelector) => void
 }
 
 export interface ButtonObj {

@@ -141,16 +141,16 @@ describe("Permissioned: Go as intended", function () {
       expect(pay_2.pool.pool.big.currentPool).to.be.equal(ZERO);
 
       // Checking that the slot for the just-concluded epoch is empty
-      const _p = await flexpool.getPoolData(pay_2.pool.pool.big.unitId);
-      expect(_p.pool.low.allGh).to.be.eq(ZERO);
-      expect(_p.pool.low.colCoverage).to.be.eq(ZERO);
-      expect(_p.pool.low.duration).to.be.eq(ZERO);
-      expect(_p.pool.big.unit).to.be.eq(ZERO);
-      expect(_p.pool.big.unitId).to.be.eq(ZERO);
-      expect(_p.pool.big.currentPool).to.be.eq(ZERO);
+      const _p = await flexpool.getPoolData(create.pool.pool.big.unitId);
+      expect(pay_2.pool.pool.low.allGh).to.be.eq(ZERO);
+      expect(pay_2.pool.pool.low.colCoverage).to.be.eq(ZERO);
+      expect(pay_2.pool.pool.low.duration).to.be.eq(ZERO);
+      expect(pay_2.pool.pool.big.unit).to.be.eq(ZERO);
+      expect(pay_2.pool.pool.big.unitId).to.be.eq(ZERO);
+      expect(pay_2.pool.pool.big.currentPool).to.be.eq(ZERO);
 
       // Checking record
-      const recordEpoches = await flexpool.getPastEpoches();
+      const recordEpoches = (await flexpool.getFactoryData()).recordEpoches;
       expect(recordEpoches).to.be.eq(1n);
       const record = await flexpool.getPoolRecord(create.pool.pool.big.recordId);
       expect(record.pool.big.unit).to.be.eq(gf_2.pool.pool.big.unit);

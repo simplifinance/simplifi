@@ -46,8 +46,10 @@ const Layout = ({children} : {children: React.ReactNode}) => {
               <Navbar />
               <LeftSidebar />
               <ScrollButton windowIsDefined={windowIsDefined} />
-              <main className='space-y-6 relative pt-6 md:pr-[22px]'>
-                {children}
+              <main className='relative py-4 pr-4'>
+                <div className="p-4 bg-white dark:bg-gray1 border-t border-t-green1/30 dark:border-gray1 md:rounded-xl">
+                  {children}
+                </div>
               </main>
               <RightSideBar />
             </div>

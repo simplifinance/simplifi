@@ -79,7 +79,7 @@ describe("Permissioned: Reverts", function () {
       /**
        * This is an indication that a pool was removed.
        */
-      expect((await flexpool.getPoolData(create.pool.pool.big.unit)).pool.low.maxQuorum).to.be.equal(signers.length);
+      expect((await flexpool.getPoolData(create.pool.pool.big.unitId)).pool.low.maxQuorum).to.be.equal(signers.length);
       
       await withdraw({
         asset: baseAsset,

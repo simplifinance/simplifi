@@ -205,19 +205,6 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorReturnValueStructOutput[];
   };
-
-  export type ReadRecordDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadRecordDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
-  };
 }
 
 export interface PoolInterface extends Interface {
@@ -232,8 +219,6 @@ export interface PoolInterface extends Interface {
       | "enquireLiquidation"
       | "getCollateralQuote"
       | "getCurrentDebt"
-      | "getEpoches"
-      | "getPastEpoches"
       | "getPoolData"
       | "getPoolRecord"
       | "getProfile"
@@ -283,14 +268,6 @@ export interface PoolInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getCurrentDebt",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEpoches",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPastEpoches",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolData",
@@ -364,11 +341,6 @@ export interface PoolInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentDebt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getPastEpoches",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -506,19 +478,15 @@ export interface Pool extends BaseContract {
 
   getCurrentDebt: TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
 
-  getEpoches: TypedContractMethod<[], [bigint], "view">;
-
-  getPastEpoches: TypedContractMethod<[], [bigint], "view">;
-
   getPoolData: TypedContractMethod<
-    [unit: BigNumberish],
+    [unitId: BigNumberish],
     [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
   getPoolRecord: TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadRecordDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
@@ -606,15 +574,9 @@ export interface Pool extends BaseContract {
     nameOrSignature: "getCurrentDebt"
   ): TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getPastEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
-    [unit: BigNumberish],
+    [unitId: BigNumberish],
     [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
@@ -622,7 +584,7 @@ export interface Pool extends BaseContract {
     nameOrSignature: "getPoolRecord"
   ): TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadRecordDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(

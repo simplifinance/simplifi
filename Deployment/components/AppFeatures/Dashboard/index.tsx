@@ -1,97 +1,103 @@
-import React from 'react'
+import React from "react";
+import Box from "@mui/material/Box";
+import Image from 'next/image';
+import SwipeableViews from 'react-swipeable-views';
+import { autoPlay } from 'react-swipeable-views-utils'
+import { flexCenter, flexSpread, } from '@/constants';
+// import OnboardWrapperDiv from "./OnboardWrapper";
+import { Button } from "@/components/ui/button";
+import { useAccount, useConnect } from "wagmi";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { 
-  permissionedIcon,
-  permissionlessIcon,
-  tvlIcon,
-  collateralIcon,
-  networkIcon,
-  proposalIcon 
-} from '@/components/assets';
-import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
-import { flexSpread, } from '@/constants';
-import { formatEther } from 'viem';
-import { toBN } from '@/utilities';
-import { getContractData } from '@/apis/utils/getContractData';
-import { useAccount } from 'wagmi';
-// import { WelcomeTabs } from './WelcomeTabs';
-// import Link from 'next/link';
-// import { Button } from '@/components/ui/button';
-import SwipeableInfo from '@/components/screens/OnboardScreen/SwipeableInfo';
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious
+} from "@/components/ui/carousel";
+import { Card, CardContent, CardFooter,CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import OnboardWrapperDiv from "@/components/utilities/OnboardWrapper";
 
 export default function Dashboard() {
-  const { analytics: { totalPermissioned, totalPermissionless, tvlInUsd, tvlInXFI }, symbol, currentEpoches, recordEpoches, } = useAppStorage();
-  const tvlInXfi = toBN(formatEther(tvlInXFI)).decimalPlaces(3);
-  const tvlInUSD = formatEther(tvlInUsd);
-  const { chainId, isConnected } = useAccount();
-  const { currency, network } = getContractData(chainId || 4157);
+  const AutoSwipeableViews = autoPlay(SwipeableViews);
+  const { isConnected, } = useAccount();
+  const { setActivepath } = useAppStorage();
 
-  const dashboardInfo = [
-    {
-      title: `Tvl - Base currency`,
-      value: `${tvlInUSD} ${symbol}`,
-      icon: tvlIcon
-    },
-    {
-      title: `Tvl - Collateral`,
-      value: `${tvlInXfi} ${isConnected? currency : 'USD'}`,
-      icon: tvlIcon
-    },
-    {
-      title: 'Collateral',
-      value: `${isConnected? currency : 'Not Connected'}`,
-      icon: collateralIcon
-    },
-    {
-      title: 'Network',
-      value: `${isConnected? network : 'Not Connected'}`,
-      icon: networkIcon
-    },
-    {
-      title: 'Proposals',
-      value: 'Coming soon...',
-      icon: proposalIcon
-      
-    },
-    {
-      title: 'Permissionless',
-      value: totalPermissionless?.toString(),
-      icon: permissionlessIcon
-    },
-    {
-      title: 'Permissioned',
-      value: totalPermissioned?.toString(),
-      icon: permissionedIcon
-    },
-  ];
+  const { connectModalOpen, openConnectModal } = useConnectModal();
+  const handleNavigate = () => setActivepath("AiAssist");
+
+  // Try route user to flexpool dashboard if they're connected otherwise, connect their wallet first and reroute them
+  const handleGetStarted = async() => {
+    if(isConnected) setActivepath("Flexpool");
+    else {
+      if(!connectModalOpen) openConnectModal?.();
+    }
+  }
 
   return(
-    <div className='grid grid-cols-1 md:grid-cols-2 md:gap-4'>
-      <div className='minHeight p-4 space-y-4 w-full'>
-        <SwipeableInfo />
-        <div className='p-4 bg-green1 rounded-xl space-y-2'>
-          <h1 className='text-lg text-orange-300 md:text-3xl font-bold'>Statistics</h1>
-          <div className={`p-4 bg-green1 rounded-xl space-y-2 md:font-semibold text-orange-100 `}>
-            <div className={`${flexSpread}`}>
-              <h3>Active</h3>
-              <h3 className=''>{currentEpoches.toString()}</h3>
-            </div>
-            <div className={`${flexSpread}`}>
-              <h3>Past</h3>
-              <h3>{recordEpoches.toString()}</h3>
-            </div>
-            <div>
-              {
-                dashboardInfo.map(({title, value}, i) => (
-                  <div key={i} className={`${flexSpread}`}>
-                    <h3>{ title }</h3>
-                    <h3>{ value }</h3>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
+    <div className="bg-white1 shadow-sm shadow-green1/60 dark:bg-green1 border border-gray1/50 md:border-none p-4 md:p-8 rounded-xl">
+      <OnboardWrapperDiv overrideClassName="shadow-m">
+          <AutoSwipeableViews >
+            {
+              swipeableContent.map(({imageComponent, title, description}, i) => (
+                  <Box className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>
+                    {imageComponent}
+                    <Box className={`text-md text-green1/80 space-y-2 text-center`}>
+                      <p className='text-xl md:text-2xl font-bold dark:text-orange-300'>{title}</p>
+                      <p className='text-md md:text-lg text-center dark:text-orange-100'>{ description }</p>
+                    </Box>
+                  </Box>
+              ))
+            }
+          </AutoSwipeableViews>
+        <div className={`${flexSpread} gap-4`}>
+          <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
+          <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
         </div>
-      </div>
+      </OnboardWrapperDiv>
     </div>
-  )
+  );
 }
+
+const swipeableContent = [
+  {
+    title: "Simplicity And Flexibility",
+    description: "Experience the power of flexible finance, while earning in multiple ways",
+    imageComponent: <Image src="/blockchain.svg" alt="Decentralization" height={150} width={150}/>,
+  },
+  {
+    title: "Peer-Funding",
+    description: "Enjoy the super benefits of lending and borrowing assets, through a decentralized p2p structure, with near-zero interest",
+    imageComponent: <Image src="/Group2.svg" alt="Peer-Funding" height={200} width={200}/>,
+  },
+  {
+    title: "Collateral Maximization",
+    description: "Maximize your collateral leveraging our aggregrated yield strategies",
+    imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
+  }
+];
+
+
+
+// {
+//   <OnboardWrapperDiv overrideClassName="shadow-m">
+//       <AutoSwipeableViews >
+//         {
+//           swipeableContent.map(({imageComponent, title, description}, i) => (
+//               <Box className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>
+//                 {imageComponent}
+//                 <Box className={`text-md text-green1/80 space-y-2 text-center`}>
+//                   <p className='text-xl md:text-2xl font-bold dark:text-orange-300'>{title}</p>
+//                   <p className='text-md md:text-lg text-center dark:text-orange-100'>{ description }</p>
+//                 </Box>
+//               </Box>
+//           ))
+//         }
+//       </AutoSwipeableViews>
+//     <div className={`${flexSpread} gap-4`}>
+//       <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
+//       <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
+//     </div>
+//   </OnboardWrapperDiv>
+// }

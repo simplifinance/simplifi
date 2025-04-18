@@ -168,13 +168,4 @@ abstract contract Pool is Contributor {
        return debt;
     }
 
-    /**@dev Return Current epoches */
-    function getEpoches() public view returns(uint96) {
-        return _getEpoches();
-    }
-
-    /**@dev Return Past epoches */
-    function getPastEpoches() public view returns(uint96) {
-        return _getPastEpoches();
-    }
 }

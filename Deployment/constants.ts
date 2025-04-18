@@ -1,5 +1,5 @@
 import { TransactionReceipt, zeroAddress } from 'viem';
-import { Address, Analytics, FormattedContributor, Pool, Path, Profile, FormattedCData } from './interfaces';
+import { Address, Analytics, Pool, Path, Profile, FormattedCData } from './interfaces';
 import BigNumber from 'bignumber.js';
 
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
@@ -92,7 +92,6 @@ export const routeEnum : Record<string, Path> = {
   DASHBOARD: 'Dashboard',
   FLEXPOOL: 'Flexpool',
   YIELD: 'Yield',
-  DAO: 'Dao',
   CREATE: 'CreateFlexpool',
   FAQ: 'Faq',
   AIASSIST: 'AiAssist'

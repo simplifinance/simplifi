@@ -492,47 +492,125 @@ export const getPoolRecordAbi = [
           {
             "components": [
               {
-                "internalType": "uint32",
-                "name": "paybackTime",
-                "type": "uint32"
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "paybackTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "turnStartTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "getFinanceTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "loan",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "colBals",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "id",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "sentQuota",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct Common.Contributor",
+                "name": "profile",
+                "type": "tuple"
               },
               {
-                "internalType": "uint32",
-                "name": "turnStartTime",
-                "type": "uint32"
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "value",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isMember",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isAdmin",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct Common.Slot",
+                "name": "slot",
+                "type": "tuple"
               },
               {
-                "internalType": "uint32",
-                "name": "getFinanceTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "loan",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "colBals",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address",
-                "name": "id",
-                "type": "address"
-              },
-              {
-                "internalType": "bool",
-                "name": "sentQuota",
-                "type": "bool"
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "slot",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "rate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "earnStartDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "uint256",
+                        "name": "fullInterest",
+                        "type": "uint256"
+                      },
+                      {
+                        "internalType": "uint256",
+                        "name": "intPerSec",
+                        "type": "uint256"
+                      }
+                    ],
+                    "internalType": "struct Common.Interest",
+                    "name": "accruals",
+                    "type": "tuple"
+                  }
+                ],
+                "internalType": "struct Common.Provider[]",
+                "name": "providers",
+                "type": "tuple[]"
               }
             ],
-            "internalType": "struct Common.Contributor[]",
+            "internalType": "struct Common.ContributorReturnValue[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct Common.ReadDataReturnValue",
+        "internalType": "struct Common.ReadPoolDataReturnValue",
         "name": "result",
         "type": "tuple"
       }
@@ -546,9 +624,9 @@ export const getPoolDataAbi = [
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "unit",
-        "type": "uint256"
+        "internalType": "uint96",
+        "name": "unitId",
+        "type": "uint96"
       }
     ],
     "name": "getPoolData",
@@ -671,47 +749,125 @@ export const getPoolDataAbi = [
           {
             "components": [
               {
-                "internalType": "uint32",
-                "name": "paybackTime",
-                "type": "uint32"
+                "components": [
+                  {
+                    "internalType": "uint32",
+                    "name": "paybackTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "turnStartTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint32",
+                    "name": "getFinanceTime",
+                    "type": "uint32"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "loan",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "colBals",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "id",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "sentQuota",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct Common.Contributor",
+                "name": "profile",
+                "type": "tuple"
               },
               {
-                "internalType": "uint32",
-                "name": "turnStartTime",
-                "type": "uint32"
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "value",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isMember",
+                    "type": "bool"
+                  },
+                  {
+                    "internalType": "bool",
+                    "name": "isAdmin",
+                    "type": "bool"
+                  }
+                ],
+                "internalType": "struct Common.Slot",
+                "name": "slot",
+                "type": "tuple"
               },
               {
-                "internalType": "uint32",
-                "name": "getFinanceTime",
-                "type": "uint32"
-              },
-              {
-                "internalType": "uint256",
-                "name": "loan",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "colBals",
-                "type": "uint256"
-              },
-              {
-                "internalType": "address",
-                "name": "id",
-                "type": "address"
-              },
-              {
-                "internalType": "bool",
-                "name": "sentQuota",
-                "type": "bool"
+                "components": [
+                  {
+                    "internalType": "uint256",
+                    "name": "slot",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "amount",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "rate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "earnStartDate",
+                    "type": "uint256"
+                  },
+                  {
+                    "internalType": "address",
+                    "name": "account",
+                    "type": "address"
+                  },
+                  {
+                    "components": [
+                      {
+                        "internalType": "uint256",
+                        "name": "fullInterest",
+                        "type": "uint256"
+                      },
+                      {
+                        "internalType": "uint256",
+                        "name": "intPerSec",
+                        "type": "uint256"
+                      }
+                    ],
+                    "internalType": "struct Common.Interest",
+                    "name": "accruals",
+                    "type": "tuple"
+                  }
+                ],
+                "internalType": "struct Common.Provider[]",
+                "name": "providers",
+                "type": "tuple[]"
               }
             ],
-            "internalType": "struct Common.Contributor[]",
+            "internalType": "struct Common.ContributorReturnValue[]",
             "name": "cData",
             "type": "tuple[]"
           }
         ],
-        "internalType": "struct Common.ReadDataReturnValue",
+        "internalType": "struct Common.ReadPoolDataReturnValue",
         "name": "result",
         "type": "tuple"
       }
@@ -1258,3 +1414,35 @@ export const getUserDataAbi = [
   },
 ] as const;
 
+export const getSupportedAssetsAbi = [
+  {
+    "inputs": [],
+    "name": "getSupportedAssets",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "id",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "symbol",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct SupportedAssetManager.SupportedAsset[]",
+        "name": "_assets",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+] as const;

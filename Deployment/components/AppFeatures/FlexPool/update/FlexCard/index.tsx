@@ -30,13 +30,12 @@ const filterUser = (
 }
 
 export const FlexCard = (props: ReadDataReturnValue) => {
-    const [inputModalOn, setInputModal] = React.useState<boolean>(false);
+    // const [inputModalOn, setInputModal] = React.useState<boolean>(false);
     const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
 
-    const { data } = props;
     const[buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'ADD LIQUIDITY', disable: false});
     const account = formatAddr(useAccount().address);
     const config = useConfig();
@@ -45,7 +44,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
 
-    const formattedPoolData = formatPoolData(data);
+    const formattedPoolData = formatPoolData(props);
     const {
         cData,
         pool: {
@@ -215,7 +214,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 cData={cData}
             />
             {
-                (!confirmationDrawerOn && !inputModalOn) && 
+                (!confirmationDrawerOn ) && 
                     <InfoDisplay 
                         data={formattedPoolData}
                         popUpDrawer={infoDrawer}

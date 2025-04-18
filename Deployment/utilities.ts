@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { Address, AmountToApproveParam, FormattedCData, FormattedContributor, FormattedPoolData, FormattedProvider, FormattedProviders, FormattedSlot, HandleTransactionParam, } from "@/interfaces";
+import { Address, AmountToApproveParam, ReadDataReturnValue, FormattedCData, FormattedContributor, FormattedPoolData, FormattedProvider, FormattedProviders, FormattedSlot, HandleTransactionParam, } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -189,7 +189,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
  * @param pool : Pool data
  * @returns : Formatted data
 */
-export const formatPoolData = (pool: Common.ReadPoolDataReturnValueStruct): FormattedPoolData => {
+export const formatPoolData = (pool: ReadDataReturnValue): FormattedPoolData => {
   const {
     pool: {
       big: { unit, currentPool, unitId, recordId},

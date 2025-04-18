@@ -1,6 +1,6 @@
 // import { Contract, ContractTransactionResponse } from "ethers";
 import { expect } from "chai";
-import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
+import { Common } from "../typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { Common as CMon } from "../typechain-types/contracts/peripherals/Contributor";
 import type { 
     Address, 
@@ -54,7 +54,8 @@ import type {
       testAsset: x.asset
     }) 
     await x.factory.connect(x.signer).createPool( users, x.unitLiquidity, x.quorum, x.durationInHours, x.colCoverage, isPermissionless, x.collateralToken);
-    const pool = await x.factory.getPoolData(x.unitLiquidity);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -99,8 +100,8 @@ import type {
       isPermissionless,
       x.collateralToken
     );
-    // const unitId = await x.factory.getEpoches();
-    const pool = await x.factory.getPoolData(x.unitLiquidity);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -136,8 +137,8 @@ import type {
       testAsset: x.collateral
     });
     await x.factory.connect(signer).getFinance(x.unit);
-    // const unitId = await x.factory.getEpoches();
-    const pool = await x.factory.getPoolData(x.unit);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -181,9 +182,9 @@ import type {
       spender: factoryAddr,
       testAsset: x.asset
     });
-    // const unitId = await x.factory.getEpoches();
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
     await x.factory.connect(signer).payback(x.unit);
-    const pool = await x.factory.getPoolData(x.unit);
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -229,7 +230,8 @@ import type {
       testAsset: x.asset
     });
     await x.factory.connect(signer).liquidate(x.unit);
-    const pool = await x.factory.getPoolData(x.unit);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -316,7 +318,8 @@ import type {
     const baseBalAfter = await asset.balanceOf(spender);
     const colBalAfter = await collateralToken.balanceOf(spender);
 
-    const pool = await factory.getPoolData(unit);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await factory.getPoolData(unitId);
     const base = await asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -378,7 +381,8 @@ import type {
       const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
       profiles.push(profile);
     }
-    const pool = await x.factory.getPoolData(x.unit);
+    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+    const pool = await x.factory.getPoolData(unitId);
     const base = await x.testAsset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };

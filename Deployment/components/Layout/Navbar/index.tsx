@@ -9,7 +9,7 @@ import { ModeToggler } from '@/components/utilities/ModeToggler';
 export default function Navbar() {
   const { showSidebar, toggleSidebar } = useAppStorage();
   return(
-    <nav className={`${flexSpread} dark:bg-green1 md:border-b  border-b-green1/30 dark:border-b-white1/20 p-4 z-50 bg-white1`}>
+    <nav className={`${flexSpread} relativ dark:bg-green1 md:border-b  border-b-green1/30 dark:border-b-white1/20 p-4 z-50 bg-white1`}>
       <div className='hidden w-full md:flex justify-between items-center'>
         <Link href="/" passHref>
           <img 
@@ -19,7 +19,7 @@ export default function Navbar() {
             height={100}
           />
         </Link>
-        <div className='hidden md:block bg-green1 md:min-w-[420px] dark:bg-white1 px-3 py-2 rounded-xl text-white1 dark:text-green1 font-extrabold'>
+        <div className='hidden md:block absolute left-[20%] bg-green1 border border-green1/30 min-w-[500px] text-white1 dark:bg-white1 px-3 py-2 rounded-xl dark:text-green1 font-bold'>
           <Typed 
             strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
             className='text-md'

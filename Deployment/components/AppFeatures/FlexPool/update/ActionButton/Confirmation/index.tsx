@@ -3,10 +3,11 @@ import Stack from "@mui/material/Stack";
 import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
-import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 import { formatError, } from "@/apis/update/formatError";
 import Message from "../../DrawerWrapper/Message";
 import { VoidFunc } from "@/interfaces";
+import { Button } from "@/components/ui/button";
+import { flexSpread } from "@/constants";
 
 export const Confirmation : 
     React.FC<{
@@ -62,17 +63,11 @@ export const Confirmation :
                 </button>
                 <h1 className='pb-6 text-md'>{ message }</h1>
                 {/* <h1 className='pb-6 text-md'>{ loading? "Processing Transaction ..." : displayMessage || '' }</h1> */}
-                <ButtonTemplate 
-                    buttonAContent="Cancel"
-                    buttonBContent={
-                        loading? <Spinner color={"white"} /> : "Proceed"
-                    }
-                    buttonAFunc={handleCloseDrawer}
-                    buttonBFunc={handleSendTransaction}
-                    disableButtonA={loading}
-                    disableButtonB={loading}
-                    overrideClassName=""
-                />
+                
+                <div className={`${flexSpread}`}>
+                    <Button disabled={loading} onClick={handleCloseDrawer}>Cancel</Button>
+                    <Button disabled={loading} onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
+                </div>
                 <Message />
             </Stack>
         </Drawer>

@@ -2,21 +2,22 @@ import * as React from 'react';
 import { InputCategoryProp } from '@/interfaces';
 import { Input } from '../../Input';
 
-export default function UnitLiquidity({selected, handleChange,} : InputCategoryProp) {    
+export default function Interest({selected, handleChange} : InputCategoryProp) {    
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        handleChange(e.target.value, 'UnitLiquidity');
+        handleChange(e.target.value, 'Interest');
     } 
     return (
         <Input 
-            id="UnitLiquidity"
+            id="Interest"
             onChange={onChange}
             required
-            toolTipTitle="Liquidity amount per contributor (In base asset e.g cUSD)"
+            toolTipTitle="Provider's interest rate"
             type='number'
             inputValue={selected}
-            label='Unit Liquidity'
-            placeholder="Unit Liquidity"
+            label='Interest'
+            placeholder="Interest rate"
         />
-    ); 
+    );
 }
+

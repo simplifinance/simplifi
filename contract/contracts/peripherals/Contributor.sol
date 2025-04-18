@@ -255,6 +255,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
             unchecked {
                 pool.big.currentPool = pool.big.unit * pool.low.maxQuorum;
             }
+            _setPool(pool.big.unitId, pool);
         }
         uint attestedInitialBal = IERC20(baseAsset).balanceOf(pool.addrs.safe);
         _checkAndWithdrawAllowance(IERC20(baseAsset), payer, pool.addrs.safe, debt);
@@ -272,26 +273,32 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
      * associated with the current pool will return empty pool but may not return empty contributors.
      */
-    function getPoolRecord(uint96 recordId) public view returns(Common.ReadRecordDataReturnValue memory result) {
-        result.cData = contributors[recordId];
-        result.pool = _getPastPool(recordId);
+    function getPoolRecord(uint96 recordId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+        result = _getPoolData(_getPastPool(recordId));
         return result;
     }
 
     /**
      * @dev Return past pools using unitId. 
-     * @notice The correct unitId must be parsed. 
-     * @param unit: UnitId 
-     */
-    function getPoolData(uint unit) public view returns(Common.ReadPoolDataReturnValue memory result) {
-        Common.Contributor[] memory targets = contributors[_getPool(unit).big.recordId];
+     * @notice For every unit contribution, the unit Id is unique to another and does not change
+     * @param unitId: UnitId 
+    */
+    function getPoolData(uint96 unitId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+        result = _getPoolData(_getPoolWithUnitId(unitId));
+        return result;
+    }
+
+    function _getPoolData(Common.Pool memory pool) internal view returns(Common.ReadPoolDataReturnValue memory result) {
+        result.pool = pool;
+        Common.Contributor[] memory targets = contributors[result.pool.big.recordId];
         Common.ContributorReturnValue[] memory data = new Common.ContributorReturnValue[](targets.length);
-        for(uint i = 0; i < targets.length; i++) {
-            address target = targets[i].id;
-            data[i] = _getContributor(target, unit);
+        if(result.pool.big.unit > 0) {
+            for(uint i = 0; i < targets.length; i++) {
+                address target = targets[i].id;
+                data[i] = _getContributor(target, result.pool.big.unit);
+            }
+            result.cData = data;
         }
-        result.cData = data;
-        result.pool = _getPool(unit);
         return result;
     }
 

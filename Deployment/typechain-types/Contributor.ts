@@ -205,19 +205,6 @@ export declare namespace Common {
     pool: Common.PoolStructOutput;
     cData: Common.ContributorReturnValueStructOutput[];
   };
-
-  export type ReadRecordDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadRecordDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
-  };
 }
 
 export interface ContributorInterface extends Interface {
@@ -466,14 +453,14 @@ export interface Contributor extends BaseContract {
   >;
 
   getPoolData: TypedContractMethod<
-    [unit: BigNumberish],
+    [unitId: BigNumberish],
     [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
   getPoolRecord: TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadRecordDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
@@ -553,7 +540,7 @@ export interface Contributor extends BaseContract {
   getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
-    [unit: BigNumberish],
+    [unitId: BigNumberish],
     [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
@@ -561,7 +548,7 @@ export interface Contributor extends BaseContract {
     nameOrSignature: "getPoolRecord"
   ): TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadRecordDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(

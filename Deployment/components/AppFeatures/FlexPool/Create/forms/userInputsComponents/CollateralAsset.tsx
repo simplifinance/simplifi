@@ -1,46 +1,29 @@
 import * as React from 'react';
-import { Chevron } from '@/components/utilities/Icons';
-import { flexSpread } from '@/constants';
-import Collapse from '@mui/material/Collapse';
-import Tooltip from '@mui/material/Tooltip';
-import { InputCategoryProp } from '@/interfaces';
-import { toBN } from '@/utilities';
+import { Address, InputCategoryProp } from '@/interfaces';
+import { useAccount, useReadContract } from 'wagmi';
+import getReadFunctions from '../../../update/DrawerWrapper/readContractConfig';
+import SelectComponent from '@/components/AppFeatures/Dashboard/WelcomeTabs/SelectComponent';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 
-const rates = () => {
-    return [...Array(1000).keys()];
-}
+export default function CollateralAsset({handleChange} : InputCategoryProp) {    
+    const { chainId } = useAccount();
+    const { getSupportedAssetConfig } = getReadFunctions({chainId});
+    const { data, isLoading, isError } = useReadContract({...getSupportedAssetConfig()});
+    const callback = (arg: Address) => handleChange(arg.toString(), 'CollateralAsset');
 
-export default function CollateralAsset({inputProp: interest, handleChange} : InputCategoryProp) {    
     return (
-        <div className='relative'>
-            <button
-                onClick={() => handleChange({value: interest.value, open: !interest.open}, 'CollateralAsset')}
-                className={`relative w-full ${flexSpread} rounded-lg p-3 bg-green1 text-orange-200`}
-            >
-                 <span className='absolute -top-6 left-0 text-orange-300'>
-                    <Tooltip title="Rate of interest to charge on loan for the specified duration" >
-                        <h1>Interest</h1>
-                    </Tooltip>
-                </span>
-                { interest.value === '0'? 'Zero rate' : `${toBN(interest.value).div(100).toString()}%`}
-                <Chevron open={interest.open} />
-            </button>
-            <Collapse in={interest.open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] left-0 z-50  flex justify-center items-center'} style={{width: '100%'}}>
-                <div className='w-full place-items-center p-4 max-h-[250px] overflow-auto '>
-                    {
-                        rates().map((value) => (
-                            <button 
-                                onClick={() => handleChange({value: value.toString(), open: false}, 'CollateralAsset')}
-                                key={value}
-                                value={value}
-                                className='bg-green1 p-2 size- rounded-full text-[10px] hover:bg-gray1'
-                            >
-                                {value}
-                            </button>
-                        ))
-                    }
-                </div>
-            </Collapse>
+        <div>
+            { (isLoading || isError && !data) && <Label className='text-green1/90 dark:text-white1 font-black'>Collateral asset</Label>}
+            { isLoading && !data && <Button  variant={'outline'} className='w-full p-4 rounded-lg text-center bg-green1/90 bg-white1 text-green1/90 cursor-not-allowed hover:bg-white1'>{"Loading asset ..."}</Button>}
+            { isError && !data && <Button variant={'outline'} className='w-full p-4 rounded-lg text-center bg-white1 text-green1/50 cursor-not-allowed hover:bg-white1'>{'No connection found'}</Button>}
+            { data && <SelectComponent 
+                            callback={callback}
+                            data={data}
+                            label=''
+                            placeholder='Select collateral asset'
+                        />
+            }
         </div>
     );
 }

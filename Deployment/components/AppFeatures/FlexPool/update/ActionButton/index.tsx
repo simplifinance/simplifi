@@ -1,12 +1,9 @@
 import React from "react";
 import { Address, AmountToApproveParam, ButtonObj, TransactionCallback, TrxState, } from "@/interfaces";
 import { handleTransact } from "@/utilities";
-// import BigNumber from "bignumber.js";
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
-// import { PreferredDurationInput } from "./PreferredDurationInput";
 import { Confirmation } from "./Confirmation";
 import { CustomButton } from "@/components/utilities/CustomButton";
-// import { Common } from "@/typechain-types/FlexpoolFactory";
 
 export const ActionButton = (props: RenderActionsProps) => {
     // const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
@@ -78,17 +75,6 @@ export const ActionButton = (props: RenderActionsProps) => {
             >
                 {buttonObj.value}
             </CustomButton>
-            {/* <PreferredDurationInput 
-                {
-                    ...{
-                        handleModalClose,
-                        modalOpen: inputModalOn,
-                        onChange,
-                        useEpochDuration,
-                        preferredDuration
-                    }
-                }
-            /> */}
             <Confirmation
                 openDrawer={confirmationDrawerOn}
                 toggleDrawer={(arg: number) => setDrawerState(arg)}
@@ -101,15 +87,10 @@ export const ActionButton = (props: RenderActionsProps) => {
 }
 
 export interface RenderActionsProps {
-    // slot: Common.SlotStruct;
-    // profile: Common.ContributorStruct;
-    // pool : Pool;
     buttonObj: ButtonObj;
     safe: Address;
     otherParam: AmountToApproveParam;
-    // inputModalOn: boolean;
     confirmationDrawerOn: number;
     setDrawerState: (arg: number) => void
-    // setInputModal: (arg: boolean) => void
 }
 

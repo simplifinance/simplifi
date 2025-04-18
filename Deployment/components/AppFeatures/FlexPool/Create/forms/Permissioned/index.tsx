@@ -1,30 +1,30 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
 // import { Input } from "../../Input";
-import type { Address, InputProp, InputSelector } from '@/interfaces';
+import type { Address, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr, toBN } from "@/utilities";
 import { useAccount } from "wagmi";
 import { zeroAddress } from "viem";
-import Grid from "@mui/material/Grid";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { CustomButton } from "@/components/utilities/CustomButton";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
-import Interest from "../userInputsComponents/CollateralAsset";
+import CollateralAsset from "../userInputsComponents/CollateralAsset";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { useMediaQuery } from "@mui/material";
+import { Button } from "@/components/ui/button";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
-    const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
-    const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
-    const [collateralAsset, setCollateralAsset] = React.useState<InputProp>({value: '1', open: false});
-    const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
+    const [duration, setDuration] = React.useState<string>('1');
+    const [ccr, setCollateralCoverage] = React.useState<string>('100');
+    const [collateralAsset, setCollateralAsset] = React.useState<string>('NA');
+    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
-    const isLargeScreen = useMediaQuery('(min-width:768px)');
+    // const isLargeScreen = useMediaQuery('(min-width:768px)');
     const { setmessage } = useAppStorage();
     const account = formatAddr(useAccount().address);
     const toggleDrawer = (arg:number) => setDrawerState(arg);
@@ -63,7 +63,7 @@ export const Permissioned = () => {
      * @param e : Input event value
      * @param tag : Type of operation to perform on the incoming input value
      */
-    const onChange = (inputProp: InputProp, tag: InputSelector) => {
+    const onChange = (inputProp: string, tag: InputSelector) => {
         switch (tag) {
             case 'Duration':
                 setDuration(inputProp);
@@ -84,8 +84,8 @@ export const Permissioned = () => {
     }
 
     return(
-        <Stack className="space-y-4 mt-8">
-            <Grid container xs={'auto'} spacing={4}>
+        <div className="space-y-4 mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8">
                 {
                     (
                         [
@@ -95,38 +95,37 @@ export const Permissioned = () => {
                             },
                             {
                                 id: "Unit Liquidity",
-                                element: (<UnitLiquidity isLargeScreen={isLargeScreen} inputProp={unitLiquidity} handleChange={onChange}/>),
+                                element: (<UnitLiquidity selected={unitLiquidity} handleChange={onChange}/>),
                             },
                             {
                                 id:"Duration",
-                                element: (<Duration isLargeScreen={isLargeScreen} inputProp={duration} handleChange={onChange}/>),
-                            },
-                            {
-                                id: "CollateralAsset",
-                                element: (<Interest isLargeScreen={isLargeScreen} inputProp={collateralAsset} handleChange={onChange}/>),
+                                element: (<Duration selected={duration} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                element: (<CollateralMultiplier isLargeScreen={isLargeScreen} inputProp={ccr} handleChange={onChange}/>),
+                                element: (<CollateralMultiplier selected={ccr} handleChange={onChange}/>),
+                            },
+                            {
+                                id: "CollateralAsset",
+                                element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
                         ] as const
                     ).map(({ id, element }) => (
-                        <Grid item key={id} xs={12} md={6} >
+                        <div key={id}>
                             { element }
-                        </Grid>
+                        </div>
                     ))
                 }
 
-            </Grid>
-            <Stack className="place-items-center">
-                <CustomButton
-                    overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
-                    disabled={false}
-                    handleButtonClick={() => setDrawerState(1)}
+            </div>
+            <div>
+                <Button
+                    className="w-full bg-green1/90 border border-white1/30 text-white1 hover:bg-white1 hover:text-green1/90 p-6"
+                    onClick={() => setDrawerState(1)}
                 >
                     Submit
-                </CustomButton>
-            </Stack>
+                </Button>
+            </div>
             <ReviewInput
                 toggleDrawer={toggleDrawer}
                 popUpDrawer={openDrawer}
@@ -141,27 +140,27 @@ export const Permissioned = () => {
                     },
                     {
                         title: 'Unit Liquidity',
-                        value: unitLiquidity.value,
+                        value: unitLiquidity,
                         affix: ' $',
                     },
                     {
                         title: 'Duration',
-                        value: duration.value,
-                        affix: `${duration.value === '0' || duration.value === '1'? 'hr' : 'hrs'}`,
+                        value: duration,
+                        affix: `${duration === '0' || duration === '1'? 'hr' : 'hrs'}`,
                     },
                     {
                         title: 'Collateral Asset',
-                        value: collateralAsset.value,
-                        // value: toBN(collateralAsset.value).div(100).toString(),
+                        value: collateralAsset,
+                        // value: toBN(collateralAsset).div(100).toString(),
                         affix: `%`
                     },
                     {
                         title: 'Collateral Index',
-                        value: toBN(ccr.value).div(100).toString(),
+                        value: toBN(ccr).div(100).toString(),
                         affix: ''
                     },
                 ]}
             />
-        </Stack>
+        </div>
     );
 }

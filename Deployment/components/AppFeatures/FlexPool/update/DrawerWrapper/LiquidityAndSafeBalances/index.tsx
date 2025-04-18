@@ -1,4 +1,3 @@
-import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 import { flexSpread, } from "@/constants";
 import { formatAddr, handleTransact, toBN } from "@/utilities";
 import { Stack } from "@mui/material";
@@ -12,6 +11,7 @@ import withdrawLoan from "@/apis/update/collateralToken/withdrawCollateral";
 import { Spinner } from "@/components/utilities/Spinner";
 import Message from "../Message";
 import { formatError } from "@/apis/update/formatError";
+import { Button } from "@/components/ui/button";
 
 export default function LiquidityAndSafeBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, collateralAsset, param } : BalancesProps) {
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -114,7 +114,7 @@ export default function LiquidityAndSafeBalances({isCancelledPool, handleCloseDr
     return(
         <Stack className="bg-gray1 p-4 space-y-4 rounded-lg text-orange-400 font-noraml text-sm">
             <div className={`${flexSpread}`}>
-                <h1>Bank Balances</h1>
+                <h1>Safe Balances</h1>
                 {
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(balances || 0n)).decimalPlaces(2).toString()} ${symbol || ''}`}</h1>
                 }
@@ -125,15 +125,10 @@ export default function LiquidityAndSafeBalances({isCancelledPool, handleCloseDr
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(quota || 0n)).decimalPlaces(2).toString()} ${symbol || ''}`}</h1>
                 }
             </div>
-            <ButtonTemplate
-                buttonAContent={loading? <Spinner color="#fed7aa" /> : 'CashOut'}
-                buttonBContent={loading? <Spinner color="#fed7aa" /> : 'Rekey'}
-                disableButtonA={disableButton}
-                disableButtonB={disableButton}
-                overrideClassName="text-orange-200"
-                buttonAFunc={cashout}
-                buttonBFunc={rekey}
-            />
+            <div className={`${flexSpread}`}>
+                <Button onClick={cashout} disabled={disableButton}>{loading? <Spinner color="#fed7aa" /> : 'CashOut'}</Button>
+                <Button onClick={rekey} disabled={disableButton}>{loading? <Spinner color="#fed7aa" /> : 'Rekey'}</Button>
+            </div>
             <Message />
         </Stack>
     );

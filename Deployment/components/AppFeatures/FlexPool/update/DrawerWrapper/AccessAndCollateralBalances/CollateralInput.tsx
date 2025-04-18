@@ -3,7 +3,8 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import { VoidFunc } from "@/interfaces";
 import { PopUp } from "../../../Create/forms/modals/PopUp";
-import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
+import { Button } from "@/components/ui/button";
+import { flexSpread } from "@/constants";
 
 export const CollateralInput : 
     React.FC<PreferredDurationInputProp> = 
@@ -25,15 +26,10 @@ export const CollateralInput :
                             className="bg-green1 rounded-[26px] p-3 text-xs text-white1/50"
                         />
                     </Stack>
-                    <ButtonTemplate
-                        buttonAContent={'Cancel'}
-                        buttonBContent={'Submit'}
-                        disableButtonA={false}
-                        disableButtonB={false}
-                        overrideClassName="text-orange-200"
-                        buttonAFunc={handleModalClose}
-                        buttonBFunc={handleSubmit}
-                    />
+                     <div className={`${flexSpread}`}>
+                        <Button onClick={handleModalClose} >Cancel</Button>
+                        <Button onClick={handleSubmit} >Submit</Button>
+                    </div>
                 </Stack>
             </Container>
         </PopUp>

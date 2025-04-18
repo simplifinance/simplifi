@@ -18,6 +18,7 @@ export default function SimplifiApp() {
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [message, setMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
+  const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [activePath, setActivePath] = React.useState<Path>('Dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
     
@@ -45,7 +46,19 @@ export default function SimplifiApp() {
   const togglePopUp = (arg: number) => setPopUp(arg);
   const setmessage = (arg: string) => setMessage(arg);
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
-  const setActivepath = (arg:Path) => setActivePath(arg);
+  const setActivepath = (newPath: Path) => {  // ['Dashboard', 'Flexpool', 'AiAssist' ]
+    if(newPath === '') {
+      if(prevPaths.length > 0) {
+        newPath = prevPaths[prevPaths.length - 1];
+        console.log("NewPath: ", newPath); 
+        setPreviousPath((prev) => prev.filter((_, index) => index < (prevPaths.length - 1)));
+      } else newPath = 'Dashboard';
+    } else {
+      setPreviousPath((prev) => [...prev, activePath]);
+    }
+    if(newPath !== activePath) setActivePath(newPath);
+  };
+  
   const setstorage = (arg: TrxState) => {
     if(arg.message) setMessage(arg.message);
     refetch();

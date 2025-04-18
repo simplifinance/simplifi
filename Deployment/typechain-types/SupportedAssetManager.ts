@@ -20,6 +20,20 @@ import type {
   TypedContractMethod,
 } from "../../common";
 
+export declare namespace SupportedAssetManager {
+  export type SupportedAssetStruct = {
+    id: AddressLike;
+    name: string;
+    symbol: string;
+  };
+
+  export type SupportedAssetStructOutput = [
+    id: string,
+    name: string,
+    symbol: string
+  ] & { id: string; name: string; symbol: string };
+}
+
 export interface SupportedAssetManagerInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -139,7 +153,11 @@ export interface SupportedAssetManager extends BaseContract {
 
   getDefaultSupportedCollateralAsset: TypedContractMethod<[], [string], "view">;
 
-  getSupportedAssets: TypedContractMethod<[], [string[]], "view">;
+  getSupportedAssets: TypedContractMethod<
+    [],
+    [SupportedAssetManager.SupportedAssetStructOutput[]],
+    "view"
+  >;
 
   isSupportedAsset: TypedContractMethod<
     [_asset: AddressLike],
@@ -178,7 +196,11 @@ export interface SupportedAssetManager extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getSupportedAssets"
-  ): TypedContractMethod<[], [string[]], "view">;
+  ): TypedContractMethod<
+    [],
+    [SupportedAssetManager.SupportedAssetStructOutput[]],
+    "view"
+  >;
   getFunction(
     nameOrSignature: "isSupportedAsset"
   ): TypedContractMethod<[_asset: AddressLike], [boolean], "view">;
