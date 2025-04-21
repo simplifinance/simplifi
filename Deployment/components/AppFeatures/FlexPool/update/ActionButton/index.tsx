@@ -1,96 +1,29 @@
 import React from "react";
-import { Address, AmountToApproveParam, ButtonObj, TransactionCallback, TrxState, } from "@/interfaces";
-import { handleTransact } from "@/utilities";
-import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
+import { ActionsButtonProps } from "@/interfaces";
 import { Confirmation } from "./Confirmation";
-import { CustomButton } from "@/components/utilities/CustomButton";
+import { Button } from "@/components/ui/button";
 
-export const ActionButton = (props: RenderActionsProps) => {
-    // const [preferredDuration, setPreferredDuration] = React.useState<string>('0');
-    const { 
-        buttonObj,
-        safe,
-        // pool,
-        otherParam, 
-        // inputModalOn,
-        confirmationDrawerOn,
-        // setInputModal,
-        setDrawerState, } = props;
-
+export const ActionButton = (props: ActionsButtonProps) => {
+    const { buttonObj, confirmationDrawerOn, transactionArgs, back, setDrawerState, } = props;
     const openDrawer = () => setDrawerState(1);
-    const { setstorage, } = useAppStorage();
-    // const handleModalClose = () => {
-    //     setInputModal(false);
-    //     openDrawer();
-    // }
-
-    const closeConfirmationPopUp = () => setDrawerState(0);
-    // const useEpochDuration = () => {
-    //     setInputModal(false);
-    //     openDrawer();
-    // };
-
-    const handleClick = () => {
-        openDrawer();
-        // if(buttonObj.value === 'GET FINANCE') {
-        //     if(durationToNumber > 1){
-        //         setInputModal(true);
-        //     } else {
-        //         openDrawer();
-        //     }
-        // } else {
-        //     openDrawer();
-        // }
-    }
-
-    // const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     e.preventDefault();
-    //     const value = e.currentTarget.value;
-    //     setPreferredDuration(value === ''? '0' : value);
-    // }
-
-    const callback : TransactionCallback = (arg: TrxState) => {
-        if(arg.status === 'success' && confirmationDrawerOn) {
-            closeConfirmationPopUp();
-        }
-        setstorage(arg);
-    }
-
-    const sendTransaction = async() => {
-        await handleTransact(
-            {
-                callback,
-                otherParam,
-                safe
-            }
-        ); 
-    }
-
+    const handleClick = () => openDrawer();
+    
     return(
         <React.Fragment>
-            <CustomButton
+            <Button
+                variant={'outline'}
                 disabled={buttonObj.disable}
-                handleButtonClick={handleClick}
-                overrideClassName="bg-gray1 text-orange-300 rounded-full"
+                onClick={handleClick}
+                className=" bg-green1/90 text-orange-200"
             >
-                {buttonObj.value}
-            </CustomButton>
+                { buttonObj.value }
+            </Button>
             <Confirmation
                 openDrawer={confirmationDrawerOn}
                 toggleDrawer={(arg: number) => setDrawerState(arg)}
-                displayMessage={buttonObj.displayMessage}
-                sendTransaction={sendTransaction}
-            
+                transactionArgs={transactionArgs}
+                back={back}           
             />
         </React.Fragment>
     );
 }
-
-export interface RenderActionsProps {
-    buttonObj: ButtonObj;
-    safe: Address;
-    otherParam: AmountToApproveParam;
-    confirmationDrawerOn: number;
-    setDrawerState: (arg: number) => void
-}
-

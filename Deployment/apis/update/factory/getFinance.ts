@@ -14,6 +14,7 @@ export default async function getFinance(args: CommonParam ) {
   const { unit, config, callback, account } = args;
   const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'success'; 
+  callback?.({message: "Requesting to getFinance"});
   await simulateContract(config, {
     address,
     account,
@@ -22,11 +23,10 @@ export default async function getFinance(args: CommonParam ) {
     args: [unit],
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
-    callback?.({message: "Creating get-Finance request..."});
-        returnValue = await waitForConfirmation({config, hash, callback: callback!});
+        returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Get finance successful"});
       }).catch((error: any) => {
         returnValue = 'reverted';
-        callback?.({message: errorMessage(error)});
+        callback?.({errorMessage: errorMessage(error)});
       });
   
     return returnValue;

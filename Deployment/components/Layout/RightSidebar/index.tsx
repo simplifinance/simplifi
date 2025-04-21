@@ -12,7 +12,7 @@ export default function RightSideBar() {
     return(
         <div className="main2 py-4">
             {
-                activePath === "Flexpool"? 
+                (activePath === "Flexpool" || activePath === 'CreateFlexpool')? 
                 <Providers />
                     :
                 <div className='minHeight p-4 bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 md:rounded-xl space-y-4'>
@@ -25,7 +25,7 @@ export default function RightSideBar() {
                             </svg>
                         </Button>
                     </div>
-                    <div className='p-4 bg-green1 rounded-xl text-sm space-y-2'>
+                    <div className='p-4 bg-green1 rounded-xl text-sm text-white1 space-y-2'>
                         <h3 className='text-xl font-semibold text-orange-300 flex justify-start items-center gap-4'>
                             <span>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-5">

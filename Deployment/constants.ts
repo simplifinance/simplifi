@@ -5,17 +5,19 @@ import BigNumber from 'bignumber.js';
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
 export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }
 export enum Router { PERMISSIONLESS, PERMISSIONED }
-export const initialZoom = '0%';
-export const defaultAnimationSteps = ['50%', '100%'];
-export const confirmationBlocks = 3; // 3 blocks
+
+// 3 block confirmation
+export const confirmationBlocks = 3; 
+
 export const flexCenter = "flex justify-center items-center";
 export const flexStart = "flex justify-start items-center";
 export const flexEnd = "flex justify-end items-center";
 export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
+
 export const analytics : Analytics = {
-  tvlInXFI: 0n,
-  tvlInUsd: 0n,
+  tvlCollateral: 0n,
+  tvlBase: 0n,
   totalPermissioned: 0n,
   totalPermissionless: 0n
 }
@@ -105,3 +107,4 @@ export const supportedChainIds = [44787, 4157,];
 export const currencies = ['CELO', 'XFI'] as const;
 export const networks = ['ALFAJORES', 'CROSSFI'] as const;
 export const pairs = ['CUSD/CELO', 'USDT/XFI'] as const;
+// 0x4045FD2c1ce56Fe5C50c6F631EC5df8e6bcc4b00

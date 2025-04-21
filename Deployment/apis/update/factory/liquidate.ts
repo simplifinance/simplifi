@@ -14,6 +14,7 @@ export default async function liquidate(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'reverted'; 
+  callback?.({message: "Requesting to liquidate"});
   await simulateContract(config, {
     address,
     account,
@@ -22,9 +23,8 @@ export default async function liquidate(args: CommonParam) {
     args: [unit]
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
-    callback?.({message: "Sending liquidation request..."});
-    returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+    returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Liquidation successful'});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
     
   return returnValue;
 }

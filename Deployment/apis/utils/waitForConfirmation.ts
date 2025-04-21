@@ -8,16 +8,15 @@ import { waitForTransactionReceipt } from "wagmi/actions";
  * @returns Transaction status
  */
 export const waitForConfirmation = async(arg: WaitForTransactionParam) => {
-    const { config, hash, callback } = arg;
+    const { config, hash, callback, message} = arg;
     const wait = await waitForTransactionReceipt(config, { hash, confirmations: confirmationBlocks})
-    callback?.({
-        message: `${wait?.status.toString().toUpperCase()} : Hash ${wait?.transactionHash.substring(0, 6)}... ${wait.transactionHash.substring(28, wait?.transactionHash.length)}`, 
-    });
+    callback?.({message: message});
     return wait.status;
 }
 
 interface WaitForTransactionParam {
     config: WagmiConfig, 
     hash: Address, 
+    message: string;
     callback?: TransactionCallback
 }

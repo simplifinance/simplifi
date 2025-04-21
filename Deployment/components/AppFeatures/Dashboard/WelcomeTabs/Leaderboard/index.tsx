@@ -16,34 +16,22 @@ export default function Leaderboard() {
     return(
         <div>
             {/* Header */}
-            <Grid container xs={"auto"} >
-                <Grid item container xs={12} spacing={2} className="text-sm">
-                    <Grid item xs={4} ><div>Ids</div></Grid>
-                    <Grid item xs={4} ><div >Creator</div></Grid>
-                    <Grid item xs={4} ><div className="text-end">Contributor</div></Grid>
-                </Grid>
-                {
-                    data?.map(({contributor, creator, referrals, user}) => (
-                        <Grid item container xs={12}>
-                            <Grid item xs={4} >
-                                <div>
-                                    <AddressWrapper account={user} size={3} display={false} />
-                                </div>
-                            </Grid>
-                            <Grid item xs={4} >
-                                <div>
-                                    { creator.toString() }
-                                </div>
-                            </Grid>
-                            <Grid item xs={4} >
-                                <div>
-                                    { contributor.toString() }
-                                </div>
-                            </Grid>
-                        </Grid>
-                    ))
-                }
-            </Grid>
+            <div className="grid grid-cols-3 w-full max-w-sm text-sm p-4 bg-green1/90 text-white1 font-bold rounded-lg">
+                <h3>Ids</h3>
+                <h3>As creator</h3>
+                <h3 className="text-end">As contributor</h3>
+            </div>
+            {
+                data?.map(({contributor, creator, user}) => (
+                    <div className="grid grid-cols-3 w-full max-w-sm text-sm p-4 text-white1 font-bold rounded-lg">
+                        <div>
+                            <AddressWrapper account={user} size={3} display={false} />
+                        </div>
+                        <h3>{ creator.toString() }</h3>
+                        <h3>{ contributor.toString() }</h3>                        
+                    </div>
+                ))
+            }
         </div>
     )
 }

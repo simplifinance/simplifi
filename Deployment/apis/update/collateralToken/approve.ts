@@ -13,6 +13,7 @@ import { getContractData } from "@/apis/utils/getContractData";
 export default async function approve(args: ApproveParam) {
   const { callback, config, account, amountToApprove, contractAddress } = args;
   const { factory } = getContractData(config.state.chainId);
+  callback?.({message: "Request to approve spend limit"});
   await getAllowance({
     owner: account,
     account,
@@ -28,10 +29,9 @@ export default async function approve(args: ApproveParam) {
         args: [factory, amountToApprove]
       })
       .then(async({request}) => {
-        callback?.({message: "Approving spending limit"});
         const hash = await writeContract(config, request );
-        await waitForConfirmation({config, hash, callback: callback!});
-      }).catch((error: any) => callback?.({message: errorMessage(error)}));       
+        await waitForConfirmation({config, hash, callback: callback!, message: "Approval to spend completed"});
+      }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));       
     }
-  }).catch((error: any) => callback?.({message: errorMessage(error)})); 
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)})); 
 }

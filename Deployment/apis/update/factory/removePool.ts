@@ -15,6 +15,7 @@ export default async function removePool(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'reverted'; 
+  callback?.({message: "Requesting to cancel a Flexpool"});
   await simulateContract(config, {
     address,
     account,
@@ -23,9 +24,8 @@ export default async function removePool(args: CommonParam) {
     args: [unit]
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
-    callback?.({message: `Removing Flexpool at ${formatEther(unit)}`});
-    returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+    returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Cancellation completed!'});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
         
   return returnValue;
 }

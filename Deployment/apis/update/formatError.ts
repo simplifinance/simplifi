@@ -4,28 +4,9 @@
  * @returns : object containing formatted error
 */
 function defaultErrors(arg: DefaultErrorArgs) {
-    const { duration, epochId, maxEpochDuration, durationInSec, amount } = arg;
+    const { duration, amount } = arg;
 
     return [
-        {
-            key: 'Col coverage is too low',
-            value: () => `Amount sent as collateral was rejected! Reason: Too low`
-        },
-        {
-            key: 'Invalid duration',
-            value: () => {
-                let returnError = '';
-                if(durationInSec) {
-                    const dayInSec = 86400;
-                    const minDurInSec = 3600;
-                    const maxDurInSec = 30 * dayInSec;
-                    if(durationInSec > maxDurInSec) returnError = `${duration} given as duration exceeds max of 30days/720hrs or epoch's set at ${maxEpochDuration}`;
-                    else if(durationInSec < minDurInSec) returnError = 'Duration given is less than minimum of 1hr';
-                    else returnError = 'Duration given is invalid'; 
-                }
-                return returnError;
-            }
-        },
         {
             key: 'Insufficient allowance',
             value: () => `Amount given as spending cap was rejected! Reason: Too low`
@@ -39,20 +20,12 @@ function defaultErrors(arg: DefaultErrorArgs) {
             value: () => `Transfer operation was not successful`
         },
         {
-            key: 'Admin spotted twice',
-            value: () => `An operator cannot operate more than one position in a pool`
-        },
-        {
             key: 'Amount exist',
             value: () => `Liquidity amount of ${amount} cannot exist twice in a permissionless flexpool. Consider operating it in a permissioned setting or wait until the quorum for the existing amount is completed`
         },
         {
             key: 'Adding User to strategy failed',
             value: () => 'Adding User to strategy failed'
-        },
-        {
-            key: 'Epoch Id has not begin',
-            value: () => `Epoch ${epochId} is invalid`
         },
         {
             key: 'Add Liquidity not ready',
@@ -64,7 +37,7 @@ function defaultErrors(arg: DefaultErrorArgs) {
         },
         {
             key: 'Not a member',
-            value: () => `You're not a member in flexpool id ${epochId}`
+            value: () => `You're not a contributor of this pool`
         },
         {
             key: 'Not permitted',
@@ -76,14 +49,14 @@ function defaultErrors(arg: DefaultErrorArgs) {
         },
         {
             key: 'Pool not complete',
-            value: () => 'This pool is yet to achieve the required participants yet'
+            value: () => 'This pool is yet to achieve the required contributor'
         },
         {
             key: 'Turn time has not passed',
             value: () => 'Cannot override expected user because the grace period has not lapse'
         },
         {
-            key: 'Insufficient Collateral in XFI',
+            key: 'Insufficient Collateral',
             value: () => `Collateral too low. Please set a higher value`
         },
         {
@@ -99,32 +72,12 @@ function defaultErrors(arg: DefaultErrorArgs) {
             value: () => 'No defaulter yet'
         },
         {
-            key: 'FactoryLib - Pub: Cannot cancel',
+            key: 'Pub: Cannot cancel',
             value: () => 'Cannot cancel pool at this time'
         },
         {
-            key: 'FactoryLib - Priv: Cannot cancel',
+            key: 'Priv: Cannot cancel',
             value: () => 'Cannot cancel pool at this time'
-        },
-        {
-            key: 'FactoryLib: Only admin',
-            value: () => 'Only admin/operator is permitted'
-        },
-        {
-            key: 'Withdrawal failed',
-            value: () => 'Withdrawal failed'
-        },
-        {
-            key: 'Insufficient XFI',
-            value: () => 'XFI not enough'
-        },
-        {
-            key: 'Utils: FullDur or DurOfChoice oerflow',
-            value: () => 'Invalid duration given'
-        },
-        {
-            key: 'FuncHandler: No Permission detected',
-            value: () => 'No Permission detected'
         },
         {
             key: 'Trxn failed with HTTP request failed',
@@ -160,11 +113,9 @@ export const errorMessage = (error: any) => {
 }
 
 interface DefaultErrorArgs {
-    durationInSec?: number;
     amount?: string;
-    epochId?: string;
+    unit?: string;
     duration?: string;
-    maxEpochDuration?: string;
 }
 
 export interface FormatErrorArgs extends DefaultErrorArgs {

@@ -14,6 +14,7 @@ import { errorMessage } from "../formatError";
 export default async function borrow(args: BorrowParam ) {
   const { config, callback, account, providersSlots, unit  } = args;
   let returnValue : TrxResult = 'reverted';  
+  callback?.({message: `Requesting external loan from providers`});
   await simulateContract(config, {
     address: getContractData(config.state.chainId).providers,
     account,
@@ -21,10 +22,9 @@ export default async function borrow(args: BorrowParam ) {
     functionName: 'borrow',
     args: [providersSlots, unit],
   }).then(async({request}) => {
-    callback?.({message: `Creating finance requests with providers`});
       const hash = await writeContract(config, request );
-      returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Succesfully borrowed to contribute'});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
         
   return returnValue;
 }

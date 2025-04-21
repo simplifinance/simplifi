@@ -20,6 +20,7 @@ export const configureCeloPublicClient = () => {
  * @dev Send an 'amount' of cUSD to 'to'
  * @param to : Recipient
  * @param amount : Amount to send
+ * @param callback : Callback function
  * @returns Transaction receipt
 */
 export default async function sendCUSD(to: Address, amount: bigint, callback: TransactionCallback) {
@@ -39,9 +40,9 @@ export default async function sendCUSD(to: Address, amount: bigint, callback: Tr
     args: [to, amount],
   });
 
-  let receipt = await configureCeloPublicClient().waitForTransactionReceipt({
+  await configureCeloPublicClient().waitForTransactionReceipt({
     hash: tx,
+  }).then((receipt) => {
+    callback({message: `Transaction ${receipt.status}`});
   });
-  callback({message: "Transaction completed"});
-  return receipt;
 }

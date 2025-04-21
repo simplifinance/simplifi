@@ -13,12 +13,12 @@ export default function Participants({addToList, participants, handleDelete} : {
     const [address, setAddress] = React.useState<string>('');
     const [open, setOpen] = React.useState<boolean>(false);
     
-    const { setstorage } = useAppStorage();
+    const { setmessage } = useAppStorage();
     const addUp = () => {
         if(address !== '' && address !== zeroAddress){
             addToList(address);
         } else {
-            setstorage({message: 'Address is invalid'});
+            setmessage('Address is invalid');
         }
     }
 
@@ -41,12 +41,12 @@ export default function Participants({addToList, participants, handleDelete} : {
                 />
                 <div className={`${flexSpread} gap-1.5 absolute -top-6 right-0`}>
                     {
-                        !participants.includes(formatAddr(address)) && <Button variant={'outline'} disabled={address === ''} onClick={addUp} className="bg-transparent border border-green1/70">Add</Button>
+                        !participants.includes(formatAddr(address)) && <Button variant={'outline'} disabled={address === ''} onClick={addUp} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none">Add</Button>
                     }
-                    <Button variant={'outline'} onClick={() => setOpen(!open)} className="bg-transparent border border-green1/70">{open? 'Close' : 'View'}</Button>
+                    <Button variant={'outline'} onClick={() => setOpen(!open)} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none">{open? 'Close' : 'View'}</Button>
                 </div>
             </div>
-            <Collapse in={open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[44px] z-50 border border-gray1 rounded-b-[12px] flex justify-center items-center'} style={{width: '100%'}}>
+            <Collapse in={open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[100%] z-50 border border-gray1 rounded-b-[12px] flex justify-center items-center'} style={{width: '100%'}}>
                 <div className='w-full place-items-center p-4 max-h-[250px] overflow-auto '>
                     {
                         participants?.map((address, i) => (

@@ -32,7 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       args: [],
       log: true,
     });
-    console.log(`Escape contract deployed to: ${baseAsset.address}`);
+    console.log(`BaseAsset contract deployed to: ${baseAsset.address}`);
 
     const escape = await deploy("Escape", {
       from: deployer,
@@ -90,7 +90,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [roleManager.address, collateralToken.address, baseAsset.address, baseAmount, collacteralAmount],
     log: true,
   });
-  console.log(`Escape contract deployed to: ${faucet.address}`);
+  console.log(`Faucet contract deployed to: ${faucet.address}`);
 
   /**
    * Deploy AssetManager
@@ -100,7 +100,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [roleManager.address],
     log: true,
   });
-  console.log(`Point contract deployed to: ${reward.address}`);
+  console.log(`Points contract deployed to: ${reward.address}`);
   
   /**
    * Deploy SafeFactory
@@ -118,8 +118,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const supportedAssetManager = await deploy("SupportedAssetManager", {
     from: deployer,
     args: [
-      roleManager.address,
       collateralToken.address,
+      roleManager.address,
     ],
     log: true,
   });

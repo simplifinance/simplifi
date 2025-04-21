@@ -6,7 +6,6 @@ import { Loading, NotFound } from "./Nulls";
 import { FlexCard } from "../update/FlexCard";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { toBN } from "@/utilities";
-// import { FuncTag } from "@/constants";
 
 const CurrentPool = (props: { index: number, unitId: bigint, totalPool: number}) => {
     const { index, unitId, totalPool } = props;
@@ -24,7 +23,7 @@ const CurrentPool = (props: { index: number, unitId: bigint, totalPool: number})
     }
     if(data?.cData.length > 0){
       return(
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Grid item xs={12} sm={6} md={4} >
           <motion.button
             initial={{opacity: 0}}
             animate={{opacity: [0, 1]}}

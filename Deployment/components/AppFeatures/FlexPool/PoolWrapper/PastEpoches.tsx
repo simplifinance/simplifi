@@ -14,9 +14,11 @@ const PastPools = (props: { index: number, recordId: bigint, totalPool: number})
   if(!data) {
     return ( <NotFound />);
   }
+  // 
+  // 0x4045FD2c1ce56Fe5C50c6F631EC5df8e6bcc4b00
   if(data?.cData.length > 0) {
     return(
-      <Grid item xs={12} sm={6} md={4} lg={3}>
+      <Grid item xs={12} sm={6} md={4} >
         <motion.button
           initial={{opacity: 0}}
           animate={{opacity: [0, 1]}}

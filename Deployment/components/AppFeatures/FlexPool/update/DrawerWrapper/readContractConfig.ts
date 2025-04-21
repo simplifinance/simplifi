@@ -19,8 +19,8 @@ import { Address } from "@/interfaces";
 
 export default function getReadFunctions({chainId} : {chainId: number | undefined,}) {
     if(!chainId) chainId = 4157;
-    const {factory, token, points, providers, ...rest}= getContractData(chainId);
-
+    const {factory, token, points, providers, supportAssetManager, ...rest }= getContractData(chainId);
+    // console.log("Manager", supportAssetManager);
     const readSafeDataConfig = ({safe}: {safe: Address}) => {
         const contractConfig = {
             address: safe,
@@ -41,9 +41,9 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
     
-    const readAllowanceConfig = ({owner, spender}: {owner: Address, spender: Address}) => {
+    const readAllowanceConfig = ({owner, spender, asset}: {owner: Address, spender: Address, asset?: Address}) => {
         const contractConfig = {
-            address: token,
+            address: asset || token,
             abi: allowanceAbi,
             functionName: 'allowance',
             args: [owner, spender],
@@ -60,9 +60,9 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
 
-    const readBalanceConfig = ({account}: {account: Address}) => {
+    const readBalanceConfig = ({account, contractAddress}: {account: Address, contractAddress: Address}) => {
         const contractConfig = {
-            address: token,
+            address: contractAddress,
             abi: balanceOfAbi,
             functionName: 'balanceOf',
             args: [account],
@@ -123,7 +123,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getSupportedAssetConfig = () => {
         const contractConfig = {
-            address: providers,
+            address: supportAssetManager,
             abi: getSupportedAssetsAbi,
             functionName: 'getSupportedAssets',
         } as const;
@@ -151,7 +151,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getProfileConfig = (unit: bigint, user: Address) => {
         const contractConfig = {
-            address: points,
+            address: factory,
             abi: getProfileAbi,
             functionName: 'getProfile',
             args: [unit, user]

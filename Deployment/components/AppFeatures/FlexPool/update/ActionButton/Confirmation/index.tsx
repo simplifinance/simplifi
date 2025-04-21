@@ -1,75 +1,76 @@
 import React from "react";
-import Stack from "@mui/material/Stack";
 import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
 import { formatError, } from "@/apis/update/formatError";
-import Message from "../../DrawerWrapper/Message";
-import { VoidFunc } from "@/interfaces";
+import Message from "../../../../../utilities/Message";
+import { ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { flexSpread } from "@/constants";
+import { useTheme } from "next-themes";
+import { handleTransact } from "@/utilities";
 
 export const Confirmation : 
     React.FC<{
-        sendTransaction: () => Promise<void>;
-        displayMessage?: string;
+        transactionArgs: HandleTransactionParam
         toggleDrawer: (arg: number) => void
         openDrawer: number,
         back?: VoidFunc
     }> = 
-        ({sendTransaction, back, toggleDrawer, openDrawer, displayMessage}) => 
+        ({transactionArgs, back, toggleDrawer, openDrawer}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
-    const { setmessage, closeDisplayForm, message, } = useAppStorage();
-    const handleCloseDrawer = () => {
-        toggleDrawer(0);
-        setmessage('');
-    };
+    const { setmessage, setError, setActivepath } = useAppStorage();
 
-    const callback_after = (errored: boolean, error?: any) => {
-        // !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
-        errored && setmessage(formatError({error, }));
+    const handleCloseDrawer = () => {
+        setmessage('');
+        setError('');
+        toggleDrawer(0);
+    };
+    
+    const callback : TransactionCallback = (arg) => {
+        if(arg.message) setmessage(arg.message);
+        if(arg.errorMessage) setError(arg.errorMessage);
+        // if(arg.status === 'success') handleCloseDrawer();
+    }
+    const isDark = useTheme().theme === 'dark';
+    const callback_after = (errored: boolean, txnType: ButtonText, error?: any) => {
+        errored && setError(formatError({error}));
         setLoading(false);
         setTimeout(() => {
             handleCloseDrawer();
-            closeDisplayForm();
+            back?.();
+            if(txnType === 'Create') setActivepath('Flexpool');
+            // closeDisplayForm();
         }, 10000);
         clearTimeout(10000);
     }
 
     const handleSendTransaction = async() => {
+        transactionArgs.commonParam.callback = callback;
         setLoading(true);
-        await sendTransaction()
-        .then(() => {
-           callback_after(false);
-           back?.();
-        })
-        .catch((error: any) => {
-            callback_after(true, formatError({error, }));
-        });
+        await handleTransact(transactionArgs)
+        .then(({error, errored}) => callback_after(errored, transactionArgs.txnType, error))
     }
 
     return (
         <Drawer 
             openDrawer={openDrawer} 
             setDrawerState={toggleDrawer}
-            styles={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%"}}
+            styles={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%", background: isDark? '#121212' : '#F9F4F4'}}
         >
-            <Stack className="p-4 space-y-4 text-orange-200 text-center">
-                <button onClick={handleCloseDrawer} className="w-[fit-content] active:ring-1 bg-green1 rounded-full active:ring1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
-                <h1 className='pb-6 text-md'>{ message }</h1>
-                {/* <h1 className='pb-6 text-md'>{ loading? "Processing Transaction ..." : displayMessage || '' }</h1> */}
-                
+            <div className="p-4 space-y-6 text-green1/90 dark:text-orange-300 text-center">
                 <div className={`${flexSpread}`}>
-                    <Button disabled={loading} onClick={handleCloseDrawer}>Cancel</Button>
-                    <Button disabled={loading} onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
+                    <h3 className='text-lg text-left w-2/4 font-bold'>{ loading? "Transaction in progress..." : 'Confirm send transaction' }</h3>
+                    <Button onClick={handleCloseDrawer} className="w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 dark:text-green1/90">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                        </svg>
+                    </Button>
                 </div>
                 <Message />
-            </Stack>
+                <Button disabled={loading} className="w-full max-w-sm" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
+            </div>
         </Drawer>
     );
 }

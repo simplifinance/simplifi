@@ -3,7 +3,7 @@
 import React from "react";
 import Notification from "@/components/utilities/Notification";
 import { analytics } from "@/constants";
-import { Path, TrxState, } from "@/interfaces";
+import { Path, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import { useAccount, useReadContracts,} from "wagmi";
 import NotConnectedPopUp from "@/components/utilities/NotConnectedPopUp";
@@ -16,9 +16,11 @@ export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [openPopUp, setPopUp] = React.useState<number>(0);
   const [showSidebar, setShowSidebar] = React.useState(false);
-  const [message, setMessage] = React.useState<string>('');
+  const [messages, setMessage] = React.useState<string[]>([]);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
+  const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
   const [activePath, setActivePath] = React.useState<Path>('Dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
     
@@ -38,15 +40,23 @@ export default function SimplifiApp() {
       refetchOnReconnect: 'always', 
     }
   });
-  
+
+  const toggleProviders = (arg: bigint) => {
+    // const found = providersIds.filter((id) => id === arg).at(0);
+    if(providersIds.length > 0) {
+      providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
+    }
+  }
+  const setError = (arg:string) => setErrorMessage(arg);
   const closeDisplayForm = () => setDisplayForm(false);
   const openDisplayForm = () => setDisplayForm(true);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
   const togglePopUp = (arg: number) => setPopUp(arg);
-  const setmessage = (arg: string) => setMessage(arg);
+  const setmessage = (arg: string) => arg === ''? setMessage([]): setMessage((prev) => [...prev, arg]);
+
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
-  const setActivepath = (newPath: Path) => {  // ['Dashboard', 'Flexpool', 'AiAssist' ]
+  const setActivepath = (newPath: Path) => {
     if(newPath === '') {
       if(prevPaths.length > 0) {
         newPath = prevPaths[prevPaths.length - 1];
@@ -59,10 +69,6 @@ export default function SimplifiApp() {
     if(newPath !== activePath) setActivePath(newPath);
   };
   
-  const setstorage = (arg: TrxState) => {
-    if(arg.message) setMessage(arg.message);
-    refetch();
-  };
 
   /**
    * React UseEffect. Watches changes to the 'isConnected' variable.
@@ -91,11 +97,13 @@ export default function SimplifiApp() {
           recordEpoches: data?.[1].result?.recordEpoches || 0n, 
           analytics: data?.[1].result?.analytics || analytics,
           symbol: data?.[0].result || 'USD',
-          setstorage,
+          toggleProviders,
           displayForm,
           closeDisplayForm,
           openDisplayForm,
-          message,
+          messages,
+          errorMessage,
+          setError,
           exitOnboardScreen,
           toggleSidebar,
           showSidebar,
@@ -107,12 +115,13 @@ export default function SimplifiApp() {
           setActivepath,
           togglePopUp,
           toggleDisplayOnboardUser,
+          providersIds
         }
       }
     >
       <AppFeatures currentPath={activePath} />
       <NotConnectedPopUp toggleDrawer={togglePopUp} openDrawer={openPopUp} />
-      <Notification message={message} resetMessage={() => setmessage('')} />
+      <Notification message={messages[messages.length - 1] || ''} resetMessage={() => setmessage('')} />
     </StorageContextProvider>
   );
 }

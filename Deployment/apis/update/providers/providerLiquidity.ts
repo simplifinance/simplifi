@@ -5,6 +5,8 @@ import { provideLiquidityAbi, } from "@/apis/utils/abis";
 import { formatEther } from "viem";
 import { errorMessage } from "../formatError";
 import { getContractData } from "@/apis/utils/getContractData";
+import getAllowance from "../cUSD/getAllowanceInCUSD";
+import approveToSpendCUSD from "../cUSD/approveToSpendCUSD";
 
 /**
  * @dev Send provide liqidity request
@@ -13,18 +15,20 @@ import { getContractData } from "@/apis/utils/getContractData";
 */
 export default async function provideLiquidity(args: ProvideLiquidityParam) {
   const { config, callback, account, unit, rate } = args;
-  let returnValue : TrxResult = 'reverted';  
+  let returnValue : TrxResult = 'reverted';
+  const providerContract = getContractData(config.state.chainId).providers;
+  await approveToSpendCUSD(providerContract, unit, callback);
+  callback?.({message: `Requesting to provide liquidity in amount ${formatEther(unit || 0n)}`});
   await simulateContract(config, {
-    address: getContractData(config.state.chainId).providers,
+    address: providerContract,
     account,
     abi: provideLiquidityAbi,
     functionName: 'provideLiquidity',
     args: [rate]
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
-      callback?.({message: `Providing liquidity in amount ${formatEther(unit || 0n)}`});
-      returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Successfully provided liquidity"});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
         
   return returnValue;
 }

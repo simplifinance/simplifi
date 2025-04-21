@@ -1,5 +1,19 @@
 import { ethers } from "ethers";
-import { Address, AmountToApproveParam, ReadDataReturnValue, FormattedCData, FormattedContributor, FormattedPoolData, FormattedProvider, FormattedProviders, FormattedSlot, HandleTransactionParam, } from "@/interfaces";
+import type { 
+  Address, 
+  ReadDataReturnValue, 
+  FormattedCData, 
+  FormattedContributor, 
+  FormattedPoolData, 
+  FormattedProvider, 
+  FormattedProviders,
+  FormattedSlot, 
+  HandleTransactionParam, 
+  ButtonText, 
+  WagmiConfig, 
+  TransactionCallback,
+  SendTransactionResult, 
+} from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -15,172 +29,234 @@ import assert from "assert";
 import { getContractData } from "./apis/utils/getContractData";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { Router, Stage, StageStr, supportedChainIds } from "./constants";
-import approveToSpendCUSD, { getAllowanceInCUSD } from "./apis/update/cUSD/approveToSpendCUSD";
+import { Router, StageStr, supportedChainIds } from "./constants";
+import approveToSpendCUSD from "./apis/update/cUSD/approveToSpendCUSD";
 import withdrawLoanInCUSD from "./apis/update/cUSD/withdrawLoanInCUSD";
 import { formatEther } from "viem";
-
-export type Operation = 'Open' | 'Closed';
+import getAllowanceInCUSD from "./apis/update/cUSD/getAllowanceInCUSD";
+import borrow from "./apis/update/providers/borrow";
+import claimTestTokens from "./apis/update/faucet/claimTestTokens";
+import provideLiquidity from "./apis/update/providers/providerLiquidity";
+import removeLiquidity from "./apis/update/providers/removeLiquidity";
+import registerToEarnPoints from "./apis/update/points/registerToEarnPoints";
+import withdrawCollateral from "./apis/update/collateralToken/withdrawCollateral";
 
 /**
- * Converts value of 'value' of type string to 'ether' representation.
- * @param value : Value to convert.
- * @returns Formatted value.
+ * @dev Check if the current chain is supported
+ * @param chainId : Chain Id from the current network
+ * @returns : boolean value
  */
-export const formatValue = (value: string | undefined): string => {
-  if(value === "undefined" || value === undefined) {
-    return '0';
-  } 
-  return ethers.formatEther(value);
-}
-
 export const isSuportedChain = (chainId: number) => {
   return supportedChainIds.includes(chainId);
 }
 
+/**
+ * @dev Converts an undefined string object to a default string value
+ * @param arg : string or undefined;
+ * @returns string
+*/
 export const str = (arg: string | undefined) => String(arg);
+
+/**
+ * @dev Converts an undefined number object to a default string value
+ * @param arg : string or undefined;
+ * @returns number
+*/
 export const num = (arg: number | undefined) => Number(arg);
 
+/**
+ * Converts value of their string representation.
+ * @param value : Value to convert.
+ * @returns Formatted value.
+ */
+export const formatValue = (arg: string | number | ethers.BigNumberish | bigint | undefined) => toBN(formatEther(toBigInt(arg))).decimalPlaces(2).toString()
+
+/**
+ * @dev Formats an undefined address type object to a defined one
+ * @param arg : string or undefined;
+ * @returns Address
+*/
 export const formatAddr = (x: string | (Address | undefined)) : Address => {
   if(!x || x === "") return `0x${'0'.repeat(40)}`;
   return `0x${x.substring(2, 42)}`;
 };
 
+/**
+ * @dev Converts an argument to a bigInt value
+ * @param arg : Argument to convert;
+ * @returns BigInt
+*/
 export const toBigInt = (x: string | number | ethers.BigNumberish | bigint | undefined) : bigint => {
   if(!x) return 0n;
   return ethers.toBigInt(x);
 } 
 
+/**
+ * @dev Converts an argument to a Big Number value
+ * @param arg : Argument to convert;
+ * @returns BigNumber
+*/
 export const toBN = (x: string | number ) => {
   return new BigNumber(x);
 }
 
+/**
+ * @dev Converts onchain timestamp to a date object
+ * @param arg : onchain time in seconds;
+ * @returns Date string object
+*/
 export function getTimeFromEpoch(onchainUnixTime: number) {
   var date = new Date(onchainUnixTime * 1000);
   return (onchainUnixTime === 0? 'Not Set' : `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-US")}`);
 }
 
-export const commonStyle = (props?: {}) => {
-  return {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    boxShadow: 24,
-    p: 2,
-    ...props
-  };
-} 
-
 /**
- * Filter and calculate amount to approve
- * Note: If trxnType is 'PAY', we provide for 60 minutes contingency between now and 
- * transaction time. This is to avoid the trx being reverted. User should not worry as 
- * what the contract takes is the exact debt to date.
- * @param param 
- * @returns 
-*/
-export const getAmountToApprove = async(param: AmountToApproveParam) => {
-  const { txnType, unit, avgIntPerSec, account, config, contractAddress } = param;
+ * @dev Check which transaction needs approval first, and approve.
+ * @param txnType : Incoming transaction type
+ * @param unit : place holder for unit contribution or amount to approve
+ * @param account : Current user or connected account
+ * @param config : Wagmi config. Can be extracted from useConfig hook from wagmi library
+ * @param callback : A callback function
+ * @param collateralAsset : Collateral asset contract
+ */
+export const checkAndApprove = async(
+  txnType: ButtonText,
+  unit: bigint,
+  account: Address,
+  config: WagmiConfig,
+  callback: TransactionCallback,
+  collateralAsset?: Address
+) => {
+  let { factory, providers, } = getContractData(config.state.chainId);
   let amtToApprove : bigint = 0n;
   let owner = account;
-  let spender = getContractData(config.state.chainId).factory;
+  let spender = factory;
   let previousAllowance : bigint = 0n;
 
   switch (txnType) {
-    case 'PAYBACK':
-      assert(avgIntPerSec !== undefined, "Utilities: Average interest per second not provided");
-      amtToApprove = await getCurrentDebt({config, unit}) + avgIntPerSec;
-      previousAllowance = await getAllowanceInCUSD();
+    case 'Create':
+      amtToApprove = unit;
+      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
       break;
-    case 'LIQUIDATE':
-      assert(avgIntPerSec !== undefined, "Utilities: Average interest per second not provided");
-      amtToApprove = await getCurrentDebt({config, unit}) + avgIntPerSec;
-      previousAllowance = await getAllowanceInCUSD();
+    case 'Payback':
+      amtToApprove = await getCurrentDebt({config, unit});
+      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
       break;
-    case 'GET FINANCE':
+    case 'Liquidate':
+      amtToApprove = await getCurrentDebt({config, unit});
+      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
+      break;
+    case 'GetFinance':
       const collateral = await getCollateralQuote({config, unit});
       amtToApprove = collateral[0];
-      previousAllowance = await getAllowance({config, account, owner, spender, contractAddress});
+      previousAllowance = await getAllowance({config, account, owner, spender: factory, contractAddress: collateralAsset, callback});
+      break;
+    case 'ProvideLiquidity':
+      amtToApprove = unit;
+      previousAllowance = (await getAllowanceInCUSD(account, providers)).allowance;
+      spender = providers;
+      break;
+    case 'Contribute':
+      amtToApprove = unit;
+      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
+      spender = providers;
       break;
     default:
-      amtToApprove = unit;
-      previousAllowance = await getAllowanceInCUSD();
       break;
     }
-    if(previousAllowance > amtToApprove) {
-      amtToApprove = 0n;
+    if(previousAllowance < amtToApprove) {
+      txnType !== 'GetFinance'? await approveToSpendCUSD(spender, amtToApprove, callback) : await approve({account, config, callback, amountToApprove: amtToApprove, contractAddress: collateralAsset});
     }
-  return amtToApprove;
 }
 
+/**
+ * @dev Utility to run state changing transactions on the blockchain.
+ * Arguments are spread in the `param` arg to avoid overloading the function
+ * @param param : Contains the different function parameters
+ */
 export const handleTransact = async(param: HandleTransactionParam) => {
-  const { callback, safe, collateralAsset, router, createPermissionedPoolParam, createPermissionlessPoolParam, otherParam} = param;
-  const amountToApprove = await getAmountToApprove(otherParam);
-  const { account, config, unit, txnType } = otherParam;
-  if(amountToApprove > 0n) {
+  const { 
+    safe, 
+    rate,
+    txnType,
+    router, 
+    providersSlots,
+    createPermissionedPoolParam, 
+    createPermissionlessPoolParam,
+    commonParam, 
+  } = param;
+  let result : SendTransactionResult = { errored:false, error: {} };
+  const {contractAddress, unit, config, account, callback} = commonParam;
+  try {
+    await checkAndApprove(txnType, unit, account, config, callback!, contractAddress);
     switch (txnType) {
-      case 'CREATE':
-        await approveToSpendCUSD(amountToApprove);
+      case 'Contribute':
+        await addToPool({account, config, unit, callback, contractAddress});
         break;
-      case 'ADD LIQUIDITY':
-        await approveToSpendCUSD(amountToApprove);
+      case 'GetFinance':
+        assert(safe !== undefined, "Safe address is undefined");
+        assert(callback !== undefined, "Callback is undefined");
+        const get = await getFinance({account, config, unit, callback, contractAddress});
+        if(get === 'success') await withdrawLoanInCUSD(safe, callback);
         break;
-      case 'PAYBACK':
-        await approveToSpendCUSD(amountToApprove);
+      case 'Payback':
+        assert(safe !== undefined, "Bank address is undefined");
+        await payback({account, config, unit, callback, contractAddress}); 
         break;
-      case 'LIQUIDATE':
-        await approveToSpendCUSD(amountToApprove);
+      case 'Remove':
+        await removePool({account, config, unit, callback, contractAddress}); 
         break;
-      case 'GET FINANCE':
-        assert(collateralAsset !== undefined, "CollateralAsset parameter undefined");
-        await approve({account, config, callback, amountToApprove: amountToApprove, contractAddress: collateralAsset});
+      case 'Liquidate':
+        await liquidate({account, config, unit, callback,contractAddress});
+        break;
+      case 'Borrow':
+        assert(providersSlots !== undefined, "Safe address is undefined");
+        await borrow({account, config, unit, callback, contractAddress, providersSlots});
+        break;
+      case 'Get Tokens':
+        await claimTestTokens({account, config, callback, contractAddress});
+        break;
+      case 'ProvideLiquidity':
+        assert(rate !== undefined, "Safe address is undefined");
+        await provideLiquidity({account, config, callback, contractAddress, rate, unit});
+        break;
+      case 'Withdraw Collateral':
+        assert(safe !== undefined, "Safe address is undefined");
+        await withdrawCollateral({account, config, callback, contractAddress, safe});
+        break;
+      case 'Cashout':
+        assert(safe !== undefined, "Safe address is undefined");
+        assert(callback !== undefined, "Safe address is undefined");
+        await withdrawLoanInCUSD(safe, callback);
+        break;
+      case 'RemoveLiquidity':
+        await removeLiquidity({account, config, callback, contractAddress, unit });
+        break;
+      case 'SignUp':
+        await registerToEarnPoints({account, config, callback, contractAddress, unit });
+        break;
+      case 'Create':
+        assert(router, "Utilities: Router was not provider");
+        switch (router) {
+          case 'Permissioned':
+            assert(createPermissionedPoolParam, "Utilities: createPermissionedPoolParam: Param not found");
+            await createPermissioned(createPermissionedPoolParam, commonParam);
+            break;
+          case 'Permissionless':
+            assert(createPermissionlessPoolParam, "Utilities: createPermissionless parameters not found");
+            await createPermissionless(createPermissionlessPoolParam, commonParam)
+            break;
+          default:
+            break;
+        }
         break;
       default:
         break;
     }
+  } catch (error) {
+    result = {errored: true, error};
   }
- 
-  switch (txnType) {
-    case 'ADD LIQUIDITY':
-      await addToPool({account, config, unit, callback});
-      break;
-    case 'GET FINANCE':
-      assert(safe !== undefined, "Safe address is undefined");
-      const get = await getFinance({account, config, unit, callback});
-      if(get === 'success') await withdrawLoanInCUSD(safe, callback);
-      break;
-    case 'PAYBACK':
-      assert(safe !== undefined, "Bank address is undefined");
-      await payback({account, config, unit, callback});
-      // if(pay === 'success') { 
-      //   await withdrawCollateral({account, config, bank, callback});
-      // }  
-      break;
-    case 'REMOVE':
-      await removePool({account, config, unit}); 
-      break;
-    case 'LIQUIDATE':
-      await liquidate({account, config, unit, callback});
-      break;
-    case 'CREATE':
-      assert(router, "Utilities: Router was not provider");
-      switch (router) {
-        case 'Permissioned':
-          assert(createPermissionedPoolParam, "Utilities: createPermissionedPoolParam: Param not found");
-          await createPermissioned(createPermissionedPoolParam);
-          break;
-        case 'Permissionless':
-          assert(createPermissionlessPoolParam, "Utilities: createPermissionless parameters not found");
-          await createPermissionless(createPermissionlessPoolParam)
-          break;
-        default:
-          break;
-      }
-      break;
-    default:
-      break;
-  }
+  return result;
 }
 
 /**
@@ -327,7 +403,7 @@ const formatSlot = ({ isAdmin, isMember, value }: Common.SlotStruct) : Formatted
  * @param arg : Data of type Common.ProviderStruct[]. See @/typechain-types
  * @returns  Formatted data of type  FormattedProviders. See @/interface.ts
 */
-export const formatProviders = (providers: Common.ProviderStruct[]): FormattedProviders => {
+export const formatProviders = (providers: Readonly<Common.ProviderStruct[]>): FormattedProviders => {
   let formattedProviders : FormattedProviders = [];
   if(providers && providers.length > 0) {
     providers.forEach((provider) => {

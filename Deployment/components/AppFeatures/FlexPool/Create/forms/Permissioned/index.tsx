@@ -84,8 +84,8 @@ export const Permissioned = () => {
     }
 
     return(
-        <div className="space-y-4 mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8">
+        <div className="space-y-8 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {
                     (
                         [
@@ -120,7 +120,7 @@ export const Permissioned = () => {
             </div>
             <div>
                 <Button
-                    className="w-full bg-green1/90 border border-white1/30 text-white1 hover:bg-white1 hover:text-green1/90 p-6"
+                    className="bg-green1/90 text-orange-300 w-full p-6 hover:text-white1"
                     onClick={() => setDrawerState(1)}
                 >
                     Submit
@@ -151,8 +151,7 @@ export const Permissioned = () => {
                     {
                         title: 'Collateral Asset',
                         value: collateralAsset,
-                        // value: toBN(collateralAsset).div(100).toString(),
-                        affix: `%`
+                        affix: ''
                     },
                     {
                         title: 'Collateral Index',

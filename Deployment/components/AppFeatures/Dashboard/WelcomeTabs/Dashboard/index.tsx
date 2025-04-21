@@ -43,7 +43,7 @@ export default function Dashboard() {
 
     return(
         <div className="space-y-4 overflow-auto">
-            <div className="bg-green1 dark:bg-gray1/50 text-white1/80 p-4 rounded-[16px] space-y-4">
+            <div className="bg-green1  text-white1/80 p-4 rounded-[16px] space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Create a Flexpool</h3>
                 <p>Create a customized Flexpool with liquidity to receive <span>SIMPL Points</span>, and possibly be eligible to receive airdrops from future partner projects</p>
                 <Button onClick={handleCreateFlexpool} disabled={!isConnected} className={`${flexSpread} border border-white1/50`}>

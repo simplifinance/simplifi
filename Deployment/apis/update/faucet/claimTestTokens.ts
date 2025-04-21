@@ -13,6 +13,7 @@ import { errorMessage } from "../formatError";
 export default async function claimTestTokens(args: Config ) {
   const { config, callback, account } = args;
   let returnValue : TrxResult = 'reverted';  
+  callback?.({message: `Requesting test tokens`});
   await simulateContract(config, {
     address: getContractData(config.state.chainId).providers,
     account,
@@ -20,10 +21,9 @@ export default async function claimTestTokens(args: Config ) {
     functionName: 'claimTestTokens',
     args: [],
   }).then(async({request}) => {
-    callback?.({message: `Requesting for test tokens`});
       const hash = await writeContract(config, request );
-      returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Test tokens sent!'});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
         
   return returnValue;
 }

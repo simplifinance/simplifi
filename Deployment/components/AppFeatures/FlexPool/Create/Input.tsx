@@ -31,9 +31,9 @@ export const Input = (props: InputProps) => {
                         required
                         id={id}
                         onChange={onChange}
-                        className={`bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none ${overrideClassName}`}
+                        className={`bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none focus:ring-1 ${overrideClassName}`}
                     />
-                    { inputValue && <Button variant={'outline'} className="bg-white1 border border-green1/70 text-green1/50 cursor-not-allowed">{inputValue}</Button>}
+                    { inputValue && <Button variant={'outline'} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none cursor-not-allowed">{inputValue}</Button>}
                 </div>
             </div>
         </div>

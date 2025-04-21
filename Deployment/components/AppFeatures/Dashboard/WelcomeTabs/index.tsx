@@ -11,16 +11,16 @@ import SelectComponent from "./SelectComponent";
 
 export const TabsContent = ({title, description, value, content, footer}: TabContentProps) => {
     return(
-        <Content value={value} className="space-y-2">
+        <Content value={value} className="space-y-3 pt-1">
             { value === 'rewards' && <SelectComponent /> }
-            <Card >
-                <CardHeader>
-                    <CardTitle className="dark:text-orange-300">{title}</CardTitle>
-                    <CardDescription>{description}</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">{content}</CardContent>
-                <CardFooter>{footer}</CardFooter>
-            </Card>
+            <div className="bg-transparent">
+                <header>
+                    <h3 className="dark:text-orange-300">{title}</h3>
+                    <p>{description}</p>
+                </header>
+                <div className="space-y-2">{content}</div>
+                <footer>{footer}</footer>
+            </div>
         </Content>
     )
 }
@@ -35,21 +35,21 @@ export function WelcomeTabs() {
             </TabsList>
             
             <TabsContent 
-                title={"Dashboard"}
+                // title={"Dashboard"}
                 description={""}
                 content={ <Dashboard /> }
                 footer={""}
                 value="dashboard"
             />
             <TabsContent 
-                title={"My Rewards"}
+                // title={"My Rewards"}
                 description={""}
                 content={ <RewardAndPoints /> }
                 footer={""}
                 value="rewards"
             />
             <TabsContent 
-                title={"Leaderboard"}
+                // title={"Leaderboard"}
                 description={""}
                 content={ <Leaderboard /> }
                 footer={""}
@@ -60,7 +60,7 @@ export function WelcomeTabs() {
 }
 
 export interface TabContentProps {
-    title: string;
+    title?: string;
     description: string;
     content: React.ReactNode;
     footer: React.ReactNode;

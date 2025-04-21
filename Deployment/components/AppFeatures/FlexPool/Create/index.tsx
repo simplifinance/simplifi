@@ -27,7 +27,7 @@ export default function CreateFlexpool() {
 
   return (
     <div>
-      <div className={`${flexSpread} pb-4 border-b-4 border-b-green1/90`}>
+      <div className={`${flexSpread} pb-4 border-b-4 border-b-green1/90 dark:border-b-2`}>
         <div className={`md:hidden w-[fit-content] ${flexStart}`}>
           <Button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${!disablebutton? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${!disablebutton && 'hover:shadow-sm hover:shadow-orange-200'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
@@ -41,18 +41,18 @@ export default function CreateFlexpool() {
           </Button>
         </div>
         <div className={`hidden md:flex items-center gap-2 w-[fit-content] text-xs uppercase`}>
-          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`bg-orangec border border-green1/70`}>
+          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`bg-green1/90 text-orange-300`}>
             Permissionless
           </Button>
-          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`bg-orangec border border-green1/70`}>
+          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`bg-green1/90 text-orange-300`}>
             Permissioned
           </Button>
         </div>
-        <Button variant={'outline'} onClick={() => setActivepath('')} className="border border-green1/70 text-green1/70 dark:text-white1">
+        <Button variant={'ghost'} onClick={() => setActivepath('')} className="bg-green1/90 text-orange-300">
           Back
         </Button>
       </div>
-      <div className="p-4 border rounded-b-xl">{ renderForm() }</div>
+      <div className="p-4 border dark:border-none rounded-b-xl">{ renderForm() }</div>
     </div>
   );
 }
