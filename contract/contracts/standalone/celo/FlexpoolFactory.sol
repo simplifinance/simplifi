@@ -205,7 +205,6 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        _setPool(pool.big.unitId, pool);
         _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
 
@@ -230,7 +229,6 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        _setPool(pool.big.unitId, pool);
         _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
         return true;

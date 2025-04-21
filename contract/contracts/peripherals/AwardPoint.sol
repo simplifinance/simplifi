@@ -37,7 +37,7 @@ abstract contract AwardPoint is Price {
 
     ///@dev Award points for users
     function _awardPoint(address target, uint8 asMember, uint8 asAdmin, bool deduct) internal {
-        (bool done, Common.Point memory point) = (false, Common.Point(asMember, asAdmin, 0));
+        (bool done, Common.Point memory point) = (false, Common.Point(asMember, asAdmin, 0, target));
         done = deduct? IPoint(pointFactory).deductPoint(target, point) : IPoint(pointFactory).setPoint(target, point);
         if(!done) 'Point award failed'._throw();
     }

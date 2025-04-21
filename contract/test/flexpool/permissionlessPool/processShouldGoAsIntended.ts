@@ -149,7 +149,7 @@ describe("Permissionless: Go as intended", function () {
       expect(_p.pool.big.currentPool).to.be.eq(ZERO);
 
       // Checking record
-      const recordEpoches = await flexpool.getPastEpoches();
+      const recordEpoches = (await flexpool.getFactoryData()).currentEpoches;
       expect(recordEpoches).to.be.eq(1n);
       const record = await flexpool.getPoolRecord(create.pool.pool.big.recordId);
       expect(record.pool.big.unit).to.be.eq(gf_2.pool.pool.big.unit);

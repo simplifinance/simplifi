@@ -16,8 +16,9 @@ import assert from "assert";
 export default async function withdrawCollateral(args: TransferFromParam) {
   const { callback, config, account: spender, safe: owner, contractAddress} = args;
   assert(contractAddress);
-  const allowance = await getAllowance({config, account: spender, spender, owner, contractAddress });
-  if(new BigNumber(allowance.toString()).gt(0)) {
+  const allowance = await getAllowance({config, account: spender, spender, owner, contractAddress, callback});
+  callback?.({message: `Request to withdraw collateral amount $${formatEther(allowance)}`});
+  if(allowance >  0n) {
     await simulateContract(config, {
       address: contractAddress!,
       account: spender,
@@ -26,12 +27,10 @@ export default async function withdrawCollateral(args: TransferFromParam) {
       args: [owner, spender, allowance]
     })
     .then(async({request}) => {
-      callback?.({message: `Approving and withdrawal $${formatEther(allowance)} loan to wallet...`});
       const hash = await writeContract(config, request );
-      await waitForConfirmation({config, hash, callback: callback!});
-    }).catch((error: any) => callback?.({message: errorMessage(error)}));
-            
+      await waitForConfirmation({config, hash, callback, message: "Collateral withdrawal successful" });
+    }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
   } else {
-    callback?.({message: `${allowance} allowance found`});
+    callback?.({errorMessage: `No allowance found`});
   }
 }

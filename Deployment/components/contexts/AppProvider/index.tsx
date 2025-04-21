@@ -76,8 +76,8 @@ const config = getDefaultConfig({
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
   appUrl: 'https://testnet.simplifinance.xyz',
-  chains: [ blaze, celoAlfajores ],
-  
+  chains: [ celoAlfajores, blaze ],
+  ssr: true
 });
 
 // Light theme configuration for RainbowKit wallet set up

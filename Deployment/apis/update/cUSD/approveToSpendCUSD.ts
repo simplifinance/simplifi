@@ -1,9 +1,11 @@
 import StableTokenABI from "@/apis/utils/cusd.json";
 import { celoAddresses, mockReceipt } from "@/constants";
-import { Address } from "@/interfaces";
-import { publicClients, walletClients } from "../../viemClient";
+import { Address, TransactionCallback } from "@/interfaces";
 import { TransactionReceipt } from "viem";
-import { getContractData } from "@/apis/utils/getContractData";
+import { createWalletClient, custom, } from "viem";
+import { celoAlfajores } from "viem/chains";
+import { configureCeloPublicClient } from "./sendCUSD";
+import getAllowanceInCUSD from "./getAllowanceInCUSD";
 
 /**
  * @dev Get the cUSD contract addreses from the different chains
@@ -18,65 +20,37 @@ export const getCUSD = (chainId: number) : Address => {
  * @dev Approve spender to spend amount of `amount` of cUSD from the owner's account 
  * @param spender : Spender address
  * @param amount : Amount to approve
+ * @param callback : Callback function if any
 */
-export const getAllowanceInCUSD = async() => {
+export default async function approveToSpendCUSD(spender: Address, amount: bigint, callback?: TransactionCallback) {
   const contractAddress = celoAddresses['44787'];
-  let walletClient = walletClients[0];
-  let [address] = await walletClient.getAddresses();
-  const publicClient = publicClients[0];
-  const spender = getContractData(44787).factory;
-  let allowance : bigint = 0n;
-  try {
-    allowance = await publicClient.readContract({
-      address: contractAddress,
-      abi: StableTokenABI.abi,
-      functionName: "allowance",
-      account: address,
-      args: [address, spender],
-    }) as bigint;
-  } catch (error: any) {
-    const errorMessage = error?.message || error?.data?.message || error;
-    console.log("Error: ", errorMessage);
-  }
-
-  return allowance;
-}
-
-/**
- * @dev Approve spender to spend amount of `amount` of cUSD from the owner's account 
- * @param spender : Spender address
- * @param amount : Amount to approve
-*/
-export default async function approveToSpendCUSD(amount: bigint) {
-  const contractAddress = celoAddresses['44787'];
-  let walletClient = walletClients[0];
-  let [address] = await walletClient.getAddresses();
-  const publicClient = publicClients[0];
-  const spender = getContractData(44787).factory;
+  let walletClient = createWalletClient({
+    transport: custom(window.ethereum),
+    chain: celoAlfajores,
+  });
+  let [currentUser] = await walletClient.getAddresses();
   let receipt : TransactionReceipt = mockReceipt;
+  callback?.({message: 'Create approval transaction'});
   try {
-    const allowance = await publicClient.readContract({
-      address: contractAddress,
-      abi: StableTokenABI.abi,
-      functionName: "allowance",
-      account: address,
-      args: [address, spender],
-    }) as bigint;
+    const { allowance }= await getAllowanceInCUSD(currentUser, spender);
     if(allowance < amount) {
       const tx = await walletClient.writeContract({
         address: contractAddress,
         abi: StableTokenABI.abi,
         functionName: "approve",
-        account: address,
+        account: currentUser,
         args: [spender, amount],
       });
-      receipt = await publicClient.waitForTransactionReceipt({
+      await configureCeloPublicClient().waitForTransactionReceipt({
         hash: tx,
+      }).then((receipt) => {
+        callback?.({message: 'Approval transaction completed'});
+        console.log("receipt", receipt);
       });
     }    
   } catch (error: any) {
     const errorMessage = error?.message || error?.data?.message || error;
-    console.log("Error: ", errorMessage);
+    callback?.({errorMessage});
   }
 
   return receipt;

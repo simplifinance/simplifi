@@ -16,6 +16,7 @@ export default async function addToPool(args: CommonParam) : Promise<TrxResult> 
   const { unit, config, callback, account } = args;
   const address = getContractData(config.state.chainId).factory;
   let returnValue : TrxResult = 'reverted';
+  callback?.({message: `Request to add contributor to Flexpool. Amount: ${formatEther(unit)}`});
   await simulateContract(config, {
     address,
     account,
@@ -23,11 +24,10 @@ export default async function addToPool(args: CommonParam) : Promise<TrxResult> 
     functionName: "contribute",
     args: [unit]
   }).then(async({request}) => {
-    callback?.({message: `Adding user ${getEllipsisTxt(account)} to pool at ${formatEther(unit)}`});
     const hash = await writeContract(config, request );
-    returnValue = await waitForConfirmation({config, hash, callback})
+    returnValue = await waitForConfirmation({config, hash, callback, message: 'Successfully contributed!'})
   }).catch((error: any) => {
-    callback?.({message: errorMessage(error)});
+    callback?.({errorMessage: errorMessage(error)});
   });
 
   return returnValue;

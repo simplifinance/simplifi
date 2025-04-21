@@ -56,6 +56,7 @@ interface Common {
         uint contributor;
         uint creator;
         uint referrals;
+        address user;
     }
 
     struct Interest {
@@ -132,7 +133,12 @@ interface Common {
         bool isAdmin;
     }
 
-    struct ReadDataReturnValue {
+    struct ReadPoolDataReturnValue {
+        Pool pool;
+        ContributorReturnValue[] cData;
+    }
+
+    struct ReadRecordDataReturnValue {
         Pool pool;
         Contributor[] cData;
     }
@@ -165,7 +171,7 @@ interface Common {
 
     struct ContributorReturnValue {
         Contributor profile;
-        uint8 slot;
+        Slot slot;
         Common.Provider[] providers;
     }
 

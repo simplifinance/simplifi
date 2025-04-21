@@ -83,7 +83,7 @@ abstract contract Pool is Contributor {
                 if(users[0] == users[i]) 'Creator spotted twice'._throw();
                 data = _initializeContributor(pool, unit, users[i], false, true, false);
             }
-            _setContributor(data.profile, pool.big.recordId, data.slot, false);
+            _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         }
         _pool = pool;
     }
@@ -113,11 +113,7 @@ abstract contract Pool is Contributor {
             _onlyNonContributor(user, unit);
             data = _initializeContributor(pool, unit, user, false, true, true);
         }
-        _setContributor(data.profile, pool.big.recordId, data.slot, false);
-        // console.log("current pool", pool.big.currentPool);
-        // console.log("Unit", pool.big.unit);
-        // console.log("UserCOunt", pool.low.userCount);
-        // console.log("Maxquorum", pool.low.maxQuorum);
+        _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         if(_isPoolFilled(pool, pool.router == Common.Router.PERMISSIONED)) {
             _setTurnStartTime(address(0), unit, _now());
             pool.stage = Common.Stage.GET;
@@ -172,13 +168,4 @@ abstract contract Pool is Contributor {
        return debt;
     }
 
-    /**@dev Return Current epoches */
-    function getEpoches() public view returns(uint96) {
-        return _getEpoches();
-    }
-
-    /**@dev Return Past epoches */
-    function getPastEpoches() public view returns(uint96) {
-        return _getPastEpoches();
-    }
 }

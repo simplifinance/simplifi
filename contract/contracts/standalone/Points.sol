@@ -39,15 +39,16 @@ contract Points is IPoint, OnlyRoleBase {
 
     /**
      * @dev Register user to earn points
-     * @notice Users automatically earn 5 points for signing up
+     * @notice Users automatically earn free 5 points for signing up
      */
     function registerToEarnPoints() public {
-        Initializer memory init = initializer[_msgSender()];
+        address sender = _msgSender();
+        Initializer memory init = initializer[sender];
         if(init.isRegistered) 'User is registered'._throw();
         init.isRegistered = true;
         init.location = points.length;
-        initializer[_msgSender()] = init;
-        points.push( Common.Point(0, 0, 5));
+        initializer[sender] = init;
+        points.push( Common.Point(0, 0, 5, sender));
         
     } 
 
@@ -59,10 +60,12 @@ contract Points is IPoint, OnlyRoleBase {
     function setPoint(address user, Common.Point memory _point) external onlyRoleBearer returns(bool) {
         Initializer memory init = initializer[user];
         if(init.isRegistered) {
+            Common.Point memory point = points[init.location];
+            assert(point.user == _point.user);
             unchecked {
-                if(_point.contributor > 0) points[init.location].contributor += _point.contributor;
-                if(_point.creator > 0) points[init.location].creator += _point.creator;
-                if(_point.referrals > 0) points[init.location].referrals += _point.referrals;
+                if(_point.contributor > 0) points[init.location].contributor = point.contributor + _point.contributor;
+                if(_point.creator > 0) points[init.location].creator = point.creator + _point.creator;
+                if(_point.referrals > 0) points[init.location].referrals = point.referrals + _point.referrals;
             }
         }
         return true;
@@ -76,11 +79,12 @@ contract Points is IPoint, OnlyRoleBase {
     function deductPoint(address user, Common.Point memory _point) external onlyRoleBearer returns(bool) {
         Initializer memory init = initializer[user];
         if(init.isRegistered) {
-            Common.Point memory _p = points[init.location];
+            Common.Point memory point = points[init.location];
+            assert(point.user == _point.user);
             unchecked {
-                if(_point.contributor > 0 && _p.contributor > _point.contributor) points[init.location].contributor -= _p.contributor;
-                if(_point.creator > 0 && _p.creator > _point.creator) points[init.location].creator -= _p.creator;
-                if(_point.referrals > 0 && _p.referrals > _point.referrals) points[init.location].referrals -= _p.referrals;
+                if(_point.contributor > 0 && point.contributor > _point.contributor) points[init.location].contributor =  point.contributor - _point.contributor;
+                if(_point.creator > 0 && point.creator > _point.creator) points[init.location].creator = point.creator - _point.creator;
+                if(_point.referrals > 0 && point.referrals > _point.referrals) points[init.location].referrals = point.referrals - _point.referrals;
             }
         }
         return true;

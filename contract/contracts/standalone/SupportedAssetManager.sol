@@ -4,13 +4,20 @@ pragma solidity 0.8.24;
 
 import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ISupportedAsset } from "../apis/ISupportedAsset.sol"; 
+import { IERC20 } from "../apis/IERC20.sol"; 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   using ErrorLib for *;
 
+  struct SupportedAsset {
+    address id;
+    string name;
+    string symbol;
+  }
+
   // Supported assets
-  address[] private assets;
+  SupportedAsset[] private assets;
 
   /**
    * @dev Mapping assets address to bool i.e Assets must be contract account
@@ -60,7 +67,11 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
     
     if(!listed[_asset]){
       listed[_asset] = true;
-      assets.push(_asset);
+      assets.push(SupportedAsset(
+        _asset, 
+        IERC20(_asset).name(), 
+        IERC20(_asset).symbol()
+      ));
     }
     if(!_isAssetSupported(_asset)){
       supportedAssets[_asset] = true;
@@ -95,14 +106,14 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   /**
    * @dev Returns a list of supported assets
    */
-  function getSupportedAssets() public view returns(address[] memory _assets) {
+  function getSupportedAssets() public view returns(SupportedAsset[] memory _assets) {
     _assets = assets;
     return _assets;
   }
 
   /// @dev Returns the default supported asset
   function getDefaultSupportedCollateralAsset() external view returns(address _default) {
-    _default = assets[0];
+    _default = assets[0].id;
     assert(_default != address(0));
     return _default;
   }

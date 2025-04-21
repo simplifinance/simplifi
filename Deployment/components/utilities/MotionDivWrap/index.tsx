@@ -12,7 +12,7 @@ export const MotionDivWrap = (props: MotionDivWrapProps) => {
   return (
     <motion.div
       initial={{ zoom: "0%",}} 
-      animate={{ zoom: ["10%", "40%", "70%", "100%"], }}
+      animate={{ zoom: ["35%", "70%", "100%"], }}
       className={className}
       style={style}
     >

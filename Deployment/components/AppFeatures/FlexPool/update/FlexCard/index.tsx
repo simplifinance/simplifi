@@ -1,14 +1,22 @@
 import React from "react";
-import type { ButtonObj, Address, AmountToApproveParam, FormattedData, ReadDataReturnValue, } from "@/interfaces";
-import { formatAddr, formatPoolContent } from "@/utilities";
-import { formattedMockData, FuncTag } from "@/constants";
+import type { 
+    ButtonObj, 
+    Address, 
+    ReadDataReturnValue, 
+    FormattedCData, 
+    HandleTransactionParam, 
+    CommonParam, 
+} from "@/interfaces";
+import { formatAddr, formatPoolData } from "@/utilities";
+import { flexSpread, formattedMockData, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { ActionButton } from "../ActionButton";
-import { InfoDisplay, Providers } from '../DrawerWrapper';
+import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
-import { CustomButton } from "@/components/utilities/CustomButton";
 import { getContractData } from "@/apis/utils/getContractData";
+import BigNumber from "bignumber.js";
+import { Button } from "@/components/ui/button";
 
 /**
  * Filter the data list for current user
@@ -17,11 +25,11 @@ import { getContractData } from "@/apis/utils/getContractData";
  * @returns Object: <{isMember: boolean, data: FormattedData}>
  */
 const filterUser = (
-    cData: FormattedData[], 
+    cData: FormattedCData[], 
     currentUser: Address
-) : FormattedData => {
-    let result : FormattedData = formattedMockData;
-    const filtered = cData.filter(({idLowerCase}) => idLowerCase === currentUser.toString().toLowerCase());
+) : FormattedCData => {
+    let result : FormattedCData = formattedMockData;
+    const filtered = cData.filter(({ profile }) => profile.id.toLowerCase() === currentUser.toString().toLowerCase() );
     if(filtered?.length > 0) {
         result = filtered[0];
     }
@@ -29,13 +37,12 @@ const filterUser = (
 }
 
 export const FlexCard = (props: ReadDataReturnValue) => {
-    const [inputModalOn, setInputModal] = React.useState<boolean>(false);
     const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
 
-    const[buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'ADD LIQUIDITY', disable: false});
+    const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'Contribute', disable: false});
     const account = formatAddr(useAccount().address);
     const config = useConfig();
     const { pair } = getContractData(config.state.chainId || 4157);
@@ -43,109 +50,89 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
 
-    const formattedPool = formatPoolContent(props, true, account);
+    const formattedPoolData = formatPoolData(props);
     const {
-        // pair,
-        unit,
-        currentPoolInBN,
-        unitInBN,
-        cDataFormatted, 
-        stageToNumber, 
-        isPermissionless,
-        unitIdToNumber,
-        // unitId_bigint,
-        quorumToNumber,
-        // formatted_bank,
-        intPercentString,
-        unitInEther,
-        intPerSec,
-        lastPaid,
-        isMember,
-        isAdmin,
-        // duration_toNumber,
-        userCountToNumber,
-    } = formattedPool;
+        cData,
+        pool: {
+            big: { unit, unitId, currentPool },
+            low: { userCount, maxQuorum, },
+            addrs: { colAsset, safe },
+            stage,
+            isPermissionless,
+        }
+    } = formattedPoolData;
 
-    const { paybackTimeInSec, loanInBN, sentQuota } = filterUser(cDataFormatted, account);
-    const otherParam: AmountToApproveParam = {
-        config,
-        account,
-        // epochId: epochId_bigint,
-        intPerSec,
-        lastPaid,
+    const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
+    const commonParam : CommonParam = { config, account, unit: unit.big, contractAddress: colAsset,}
+    const transactionArgs: HandleTransactionParam = {
         txnType: buttonObj.value,
-        unit: BigInt(unit.toString())
+        commonParam,
+        safe
     };
 
-    const msg_AddLiq = `Request to add liquidity to epoch ${unitIdToNumber}`;
-    const msg_getFin = `Getting finance from epoch ${unitIdToNumber}`;
-    const msg_Pay = `Paying back loan at epoch ${unitIdToNumber}`
-    const msg_Liq = `Setting liquidation at epoch ${unitIdToNumber}`;
-    const msg_Remv = `Request to remove Flexpool at epoch ${unitIdToNumber}`;
-
     React.useEffect(() => {
-        switch (stageToNumber) {
-            case FuncTag.JOIN:
+        switch (stage.toNum) {
+            case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
-                        if(userCountToNumber === 1) {
-                            setButtonObj({value: 'REMOVE', disable: false, displayMessage: msg_Remv});
+                        if(userCount === 1) {
+                            setButtonObj({value: 'Remove', disable: false});
                         } else {
-                            setButtonObj({value: 'WAIT', disable: true});
+                            setButtonObj({value: 'Wait', disable: true});
                         }
                     } else {
                         if(isMember && sentQuota){
-                            setButtonObj({value: 'WAIT', disable: true});
+                            setButtonObj({value: 'Wait', disable: true});
                         } else {
-                            setButtonObj({value: 'ADD LIQUIDITY', disable: false, displayMessage: msg_AddLiq});
+                            setButtonObj({value: 'Contribute', disable: false});
                         }
                     }
                 } else {
                     if(isAdmin) {
-                        if(currentPoolInBN.eq(unitInBN)){
-                            setButtonObj({value: 'REMOVE', disable: false, displayMessage: msg_Remv});
+                        if(currentPool.big === unit.big){
+                            setButtonObj({value: 'Remove', disable: false});
                         } else {
-                            setButtonObj({value: 'WAIT', disable: true});
+                            setButtonObj({value: 'Wait', disable: true});
                         }
                     } else if(isMember && !sentQuota){
-                        setButtonObj({value: 'ADD LIQUIDITY', disable: false, displayMessage: msg_AddLiq});
+                        setButtonObj({value: 'Contribute', disable: false});
                     } else if(isMember && sentQuota){
-                        setButtonObj({value: 'WAIT', disable: true});
+                        setButtonObj({value: 'Wait', disable: true});
                     } else {
-                        setButtonObj({value: 'NOT ALLOWED', disable: true});
+                        setButtonObj({value: 'Not Allowed', disable: true});
                     }
                 }
                 break;
     
-            case FuncTag.GET:
+            case Stage.GET:
                 if(isMember) {
-                    setButtonObj({value: 'GET FINANCE', disable: false, displayMessage: msg_getFin});
-                } else setButtonObj({ value: 'NOT ALLOWED', disable: true});
+                    setButtonObj({value: 'GetFinance', disable: false});
+                } else setButtonObj({ value: 'Not Allowed', disable: true});
                 break;
             
-            case FuncTag.PAYBACK:
+            case Stage.PAYBACK:
                 if(isMember){
-                    if(loanInBN.gt(0)) setButtonObj({value : 'PAYBACK', disable: false, displayMessage: msg_Pay});
-                    else setButtonObj({ value: 'NOT ALLOWED', disable: true});
+                    if(loan.inBN.gt(BigNumber(0))) setButtonObj({value : 'Payback', disable: false});
+                    else setButtonObj({ value: 'Not Allowed', disable: true});
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTimeInSec) setButtonObj({ value: 'LIQUIDATE', disable: false, displayMessage: msg_Liq});
-                    else setButtonObj({ value: 'NOT ALLOWED', disable: true});
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) setButtonObj({ value: 'Liquidate', disable: false});
+                    else setButtonObj({ value: 'Not Allowed', disable: true});
                 }
                 break;
             default:
-                setButtonObj({ value: 'ENDED', disable: true});
+                setButtonObj({ value: 'Ended', disable: true});
                 break;
         }    
-    }, [stageToNumber]);
+    }, [stage.toNum]);
 
     return(
         <React.Fragment>
-            <div className={`relative ${stageToNumber === FuncTag.ENDED || stageToNumber === FuncTag.CANCELED ? 'bg-gray1/70' : 'bg-green1'} shadow-lg space-y-4 shadow-green1 p-4 rounded-[26px] text-orange-200 text-[14px]`}>
+            <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
                 <div className="flex gap-2 items-center ">
-                    <button onClick={() => showPermissionDetail(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</button>
+                    <Button onClick={() => showPermissionDetail(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">{renderIcon(isPermissionless)}</Button>
                     <div className="relative ">
-                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCountToNumber}</h3>
-                        <button onClick={() => showProviderDetails(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">
+                        <h3 className="absolute -top-2 left-0 text-orange-200 text-[10px]">{userCount}</h3>
+                        <Button onClick={() => showProviderDetails(1)} className="bg-gray1 p-3 rounded-full hover:shadow-md hover:shadow-orange-200 focus:shadow-md focus:shadow-orange-200">
                             { 
                                 isPermissionless?
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 text-orange-300">
@@ -157,60 +144,44 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                                     </svg>
                             
                             }
-                        </button>
+                        </Button>
                     </div>
                 </div>
-                <div className="text-orangec font-medium">
-                    <span className="flex items-center gap-2">
+                <div className="text-xs font-bold dark:text-orange-300">
+                    <span className={`${flexSpread}`}>
                         <h1>{'Unit Id:'}</h1>
-                        <h1>{unitIdToNumber}</h1>
+                        <h1>{unitId.str}</h1>
                     </span>
-                    <div className="flex items-center gap-2">
-                        <h3>{'Rate:'}</h3>
-                        <h3>{`${intPercentString}%`}</h3>
-                    </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`${flexSpread}`}>
                         <h3>{'Stage:'}</h3>
-                        <h3>{FuncTag[stageToNumber]}</h3>
+                        <h3>{stage.inStr}</h3>
                     </div>
-                    <div className="flex items-center gap-2">
-                        <h3>{'Quorum:'}</h3>
-                        <h3>{quorumToNumber}</h3>
+                    <div className={`${flexSpread}`}>
+                        <h3>{'maxQuorum:'}</h3>
+                        <h3>{maxQuorum}</h3>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className={`${flexSpread}`}>
                         <h3 className="">{'Pair:'}</h3>
                         <h3 className="">{pair}</h3>
                     </div>
-                    <h2 className="absolute right-0 top-[1px] text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-[26px] rounded-bl-[26px]">
-                        {`$${unitInEther}`}
+                    <h2 className="absolute right-0 top-[1px] text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-lg rounded-bl-lg w-fit">
+                        {`$${unit.inEther}`}
                     </h2>
                 </div>
-                <div className="w-full flex flex-col justify-between items-center">
-                    <div className="w-full flex flex-col justify-between items-center space-y-2">
-                        <CustomButton
-                            disabled={false}
-                            handleButtonClick={() => setShowInfo(1)}
-                            overrideClassName="bg-green1 border border-gray1 rounded-full text-white1/30"
-                        >
-                            More Info
-                        </CustomButton>
-                        <ActionButton
-                            {
-                                ...{
-                                    sentQuota,
-                                    loanInBN,
-                                    paybackTimeInSec,
-                                    otherParam,
-                                    buttonObj,
-                                    ...formattedPool,
-                                    inputModalOn,
-                                    confirmationDrawerOn,
-                                    setDrawerState: (arg:number) => setDrawerState(arg),
-                                    setInputModal: (arg:boolean) => setInputModal(arg)
-                                }
-                            }
-                        />
-                    </div>
+                <div className="flex flex-col gap-2">
+                    <Button
+                        variant={'outline'}
+                        onClick={() => setShowInfo(1)}
+                        className="bg-green1/90 text-white1/30"
+                    >
+                        Info
+                    </Button>
+                    <ActionButton
+                        buttonObj={buttonObj}
+                        transactionArgs={transactionArgs}
+                        setDrawerState={(arg:number) => setDrawerState(arg)}
+                        confirmationDrawerOn={confirmationDrawerOn}
+                    />
                 </div>
             </div>
             <PermissionPopUp
@@ -224,34 +195,24 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
                 }
             </PermissionPopUp>
-            <Providers
+            <Contributors
                 isAdmin={isAdmin}
                 popUpDrawer={providerDrawer}
                 toggleDrawer={showProviderDetails}
-                cDataFormatted={cDataFormatted} 
+                cData={cData}
             />
             {
-                (!confirmationDrawerOn && !inputModalOn) && 
+                (!confirmationDrawerOn ) && 
                     <InfoDisplay 
-                        formattedPool={formattedPool} 
+                        data={formattedPoolData}
                         popUpDrawer={infoDrawer}
                         toggleDrawer={(arg) => setShowInfo(arg)}
                         actions={
                             <ActionButton 
-                                {
-                                    ...{
-                                        sentQuota,
-                                        loanInBN,
-                                        paybackTimeInSec,
-                                        otherParam,
-                                        buttonObj,
-                                        ...formattedPool,
-                                        inputModalOn,
-                                        confirmationDrawerOn,
-                                        setDrawerState: (arg:number) => setDrawerState(arg),
-                                        setInputModal: (arg:boolean) => setInputModal(arg)
-                                    }
-                                }
+                                buttonObj={buttonObj}
+                                transactionArgs={transactionArgs}
+                                setDrawerState={(arg:number) => setDrawerState(arg)}
+                                confirmationDrawerOn={confirmationDrawerOn}
                             />
                         } 
                     />

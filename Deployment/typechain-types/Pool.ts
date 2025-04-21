@@ -142,19 +142,6 @@ export declare namespace Common {
     status: bigint;
   };
 
-  export type ReadDataReturnValueStruct = {
-    pool: Common.PoolStruct;
-    cData: Common.ContributorStruct[];
-  };
-
-  export type ReadDataReturnValueStructOutput = [
-    pool: Common.PoolStructOutput,
-    cData: Common.ContributorStructOutput[]
-  ] & {
-    pool: Common.PoolStructOutput;
-    cData: Common.ContributorStructOutput[];
-  };
-
   export type InterestStruct = {
     fullInterest: BigNumberish;
     intPerSec: BigNumberish;
@@ -192,18 +179,31 @@ export declare namespace Common {
 
   export type ContributorReturnValueStruct = {
     profile: Common.ContributorStruct;
-    slot: BigNumberish;
+    slot: Common.SlotStruct;
     providers: Common.ProviderStruct[];
   };
 
   export type ContributorReturnValueStructOutput = [
     profile: Common.ContributorStructOutput,
-    slot: bigint,
+    slot: Common.SlotStructOutput,
     providers: Common.ProviderStructOutput[]
   ] & {
     profile: Common.ContributorStructOutput;
-    slot: bigint;
+    slot: Common.SlotStructOutput;
     providers: Common.ProviderStructOutput[];
+  };
+
+  export type ReadPoolDataReturnValueStruct = {
+    pool: Common.PoolStruct;
+    cData: Common.ContributorReturnValueStruct[];
+  };
+
+  export type ReadPoolDataReturnValueStructOutput = [
+    pool: Common.PoolStructOutput,
+    cData: Common.ContributorReturnValueStructOutput[]
+  ] & {
+    pool: Common.PoolStructOutput;
+    cData: Common.ContributorReturnValueStructOutput[];
   };
 }
 
@@ -219,8 +219,6 @@ export interface PoolInterface extends Interface {
       | "enquireLiquidation"
       | "getCollateralQuote"
       | "getCurrentDebt"
-      | "getEpoches"
-      | "getPastEpoches"
       | "getPoolData"
       | "getPoolRecord"
       | "getProfile"
@@ -270,14 +268,6 @@ export interface PoolInterface extends Interface {
   encodeFunctionData(
     functionFragment: "getCurrentDebt",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getEpoches",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getPastEpoches",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getPoolData",
@@ -351,11 +341,6 @@ export interface PoolInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "getCurrentDebt",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getEpoches", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getPastEpoches",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -493,19 +478,15 @@ export interface Pool extends BaseContract {
 
   getCurrentDebt: TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
 
-  getEpoches: TypedContractMethod<[], [bigint], "view">;
-
-  getPastEpoches: TypedContractMethod<[], [bigint], "view">;
-
   getPoolData: TypedContractMethod<
-    [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [unitId: BigNumberish],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
   getPoolRecord: TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
 
@@ -593,23 +574,17 @@ export interface Pool extends BaseContract {
     nameOrSignature: "getCurrentDebt"
   ): TypedContractMethod<[unit: BigNumberish], [bigint], "view">;
   getFunction(
-    nameOrSignature: "getEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "getPastEpoches"
-  ): TypedContractMethod<[], [bigint], "view">;
-  getFunction(
     nameOrSignature: "getPoolData"
   ): TypedContractMethod<
-    [unit: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [unitId: BigNumberish],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getPoolRecord"
   ): TypedContractMethod<
     [recordId: BigNumberish],
-    [Common.ReadDataReturnValueStructOutput],
+    [Common.ReadPoolDataReturnValueStructOutput],
     "view"
   >;
   getFunction(

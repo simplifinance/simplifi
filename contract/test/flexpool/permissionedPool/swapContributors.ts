@@ -1,4 +1,4 @@
-import { deployContracts, retrieveSafeContract } from "../../deployments";
+import { deployContracts, } from "../../deployments";
 import { loadFixture, time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";

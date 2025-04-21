@@ -1,39 +1,49 @@
 import React from "react";
 import { Button } from "@/components/ui/button"
-import { useAccount } from "wagmi";
+import { useAccount, useConfig } from "wagmi";
 import { flexSpread, } from "@/constants";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import createFlexpool from "@/components/AppFeatures/FlexPool/Create";
-import flexpool from "@/components/AppFeatures/FlexPool";
+// import createFlexpool from "@/components/AppFeatures/FlexPool/Create";
+// import flexpool from "@/components/AppFeatures/FlexPool";
+import { Confirmation } from "@/components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
+import claimTestTokens from "@/apis/update/faucet/claimTestTokens";
+import { formatAddr } from "@/utilities";
+import { TransactionCallback } from "@/interfaces";
 
 export default function Dashboard() {
-    const { isConnected, } = useAccount();
-    const { addNode } = useAppStorage();
+    const [ drawerOpen, setDrawer ] = React.useState<number>(0);
+
+    const { isConnected, address } = useAccount();
+    const config = useConfig();
+    const { setActivepath, setmessage } = useAppStorage();
     const { connectModalOpen, openConnectModal } = useConnectModal();
 
+    const toggleDrawer = (arg:number) => setDrawer(arg);
+    const callback : TransactionCallback = (arg) => setmessage(arg.message);
+
     // Connect user or route to flexpool
-    const handleConnectButton = async() => {
-        isConnected? addNode({type: 'Current', item: createFlexpool()}) : openConnectModal?.();
+    const handleConnectButton = () => {
+        isConnected? setActivepath('CreateFlexpool') : openConnectModal?.();
     }
 
     // Route user to create pool section
-    const handleCreateFlexpool = async() => {
-        isConnected && addNode({type: 'Current', item: createFlexpool()});
+    const handleCreateFlexpool = () => {
+        isConnected && setActivepath('CreateFlexpool');
     }
 
     // Route user to Flexpool
-    const handleRouteToFlexpool = () => isConnected? addNode({type: 'Current', item: flexpool()}) : alert('Please connect wallet');
+    const handleRouteToFlexpool = () => isConnected? setActivepath('Flexpool') : alert('Please connect wallet');
 
     // Get test tokens
-    const handleGetTestToken = () => {
-        if(!isConnected) return null;
-        // Mint test Tokens
+    const handleGetTestToken = async() => {
+        if(!isConnected) return;
+        await claimTestTokens({account: formatAddr(address), config, callback});
     }
 
     return(
         <div className="space-y-4 overflow-auto">
-            <div className="bg-green1 dark:bg-gray1/50 text-white1/80 p-4 rounded-[16px] space-y-4">
+            <div className="bg-green1  text-white1/80 p-4 rounded-[16px] space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Create a Flexpool</h3>
                 <p>Create a customized Flexpool with liquidity to receive <span>SIMPL Points</span>, and possibly be eligible to receive airdrops from future partner projects</p>
                 <Button onClick={handleCreateFlexpool} disabled={!isConnected} className={`${flexSpread} border border-white1/50`}>
@@ -65,9 +75,16 @@ export default function Dashboard() {
             </div>
             <div className="bg-green1 p-4 rounded-[16px] text-white1/80 space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Get test tokens</h3>
-                <p>Access our customized faucet to get test SIMPL, cUSD and xUSD to perform actions on testnet</p>
-                <Button onClick={handleGetTestToken} disabled={!isConnected} className="border border-white1/50">Get test tokens</Button>
+                <p>Access our customized faucet to get test testT tokens to perform actions on testnet</p>
+                <Button onClick={() => setDrawer(1)} disabled={!isConnected} className="border border-white1/50">Get test tokens</Button>
             </div>
+            <Confirmation 
+                openDrawer={drawerOpen}
+                sendTransaction={handleGetTestToken}
+                toggleDrawer={toggleDrawer}
+                back={handleCreateFlexpool}
+                // displayMessage={}
+            />
         </div>
     )
 }

@@ -13,6 +13,7 @@ import { errorMessage } from "../formatError";
 export default async function registerToEarnPoints(args: CommonParam) {
   const { config, callback, account } = args;
   let returnValue : TrxResult = 'reverted';  
+  callback?.({message: `Request to sign to earn reward`});
   await simulateContract(config, {
     address: getContractData(config.state.chainId).providers,
     account,
@@ -20,10 +21,9 @@ export default async function registerToEarnPoints(args: CommonParam) {
     functionName: 'registerToEarnPoints',
     args: [],
   }).then(async({request}) => {
-    callback?.({message: `Registering`});
       const hash = await writeContract(config, request );
-      returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Sign up successful'});
+  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
   
   return returnValue;
 }

@@ -17,6 +17,7 @@ import type {
   Attorney as Attn
 } from "../typechain-types";
 import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
+import { Common as CMon, } from "../typechain-types/contracts/peripherals/Contributor";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -132,9 +133,9 @@ export interface Contributor {
 }
 
 export interface FactoryTxReturn {
-  pool: Common.ReadDataReturnValueStructOutput;
+  pool: CMon.ReadPoolDataReturnValueStructOutput;
   balances?: Balances;
-  profile: Common.ContributorStructOutput;
+  profile: CMon.ContributorStructOutput;
   slot: Common.SlotStructOutput;
 }
 

@@ -1,31 +1,28 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-// import { Input } from "../../Input";
-import type { InputProp, InputSelector } from '@/interfaces';
+import type { InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Grid from "@mui/material/Grid";
 import { CustomButton } from "@/components/utilities/CustomButton";
-// import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Quorum from "../userInputsComponents/Quorum";
 import Duration from "../userInputsComponents/Duration";
 import CollateralAsset from "../userInputsComponents/CollateralAsset";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
-import { useMediaQuery } from "@mui/material";
 import { toBN } from "@/utilities";
+import { Button } from "@/components/ui/button";
 
 export const Permissionless = () => {
     const [popUpDrawer, setDrawerState] = React.useState<number>(0);
-    const [quorum, setQuorum] = React.useState<InputProp>({value: '2', open: false});
-    const [duration, setDuration] = React.useState<InputProp>({value: '1', open: false});
-    const [ccr, setCollateralCoverage] = React.useState<InputProp>({value: '100', open: false});
-    const [collateralAsset, setCollateralAsset] = React.useState<InputProp>({value: '1', open: false});
-    const [unitLiquidity, setUnitLiquidity] = React.useState<InputProp>({value: '1', open: false});
+    const [quorum, setQuorum] = React.useState<string>('2');
+    const [duration, setDuration] = React.useState<string>('1');
+    const [ccr, setCollateralCoverage] = React.useState<string>('120');
+    const [collateralAsset, setCollateralAsset] = React.useState<string>('NA');
+    const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
 
     const toggleDrawer = (arg: number) => setDrawerState(arg);
-    const isLargeScreen = useMediaQuery('(min-width:768px)');
     
-    const onChange = (value: InputProp, tag: InputSelector) => {
+    const onChange = (value: string, tag: InputSelector) => {
         switch (tag) {
             case 'Quorum':
                 setQuorum(value);
@@ -49,48 +46,47 @@ export const Permissionless = () => {
     }
 
     return(
-        <Stack className="space-y-4 mt-8">
-            <Grid container xs={'auto'} spacing={4}>
+        <Stack className="space-y-8 mt-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {
                     (
                         [
                             {
                                 id: 'Quorum',
-                                element: (<Quorum isLargeScreen={isLargeScreen} inputProp={quorum} handleChange={onChange}/>),
+                                element: (<Quorum selected={quorum} handleChange={onChange}/>),
                             },
                             {
                                 id: "Unit Liquidity",
-                                element: (<UnitLiquidity isLargeScreen={isLargeScreen} inputProp={unitLiquidity} handleChange={onChange}/>),
+                                element: (<UnitLiquidity selected={unitLiquidity} handleChange={onChange}/>),
                             },
                             {
                                 id:"Duration",
-                                element: (<Duration isLargeScreen={isLargeScreen} inputProp={duration} handleChange={onChange}/>),
-                            },
-                            {
-                                id: "Collateral asset",
-                                element: (<CollateralAsset isLargeScreen={isLargeScreen} inputProp={collateralAsset} handleChange={onChange}/>),
+                                element: (<Duration selected={duration} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                element: (<CollateralMultiplier isLargeScreen={isLargeScreen} inputProp={ccr} handleChange={onChange}/>),
+                                element: (<CollateralMultiplier selected={ccr} handleChange={onChange}/>),
+                            },
+                            {
+                                id: "Collateral asset",
+                                element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
                         ] as const
                     ).map(({ id, element }, i) => (
-                        <Grid item key={id} xs={12} md={6}>
+                        <div key={id} >
                            { element }
-                        </Grid>
+                        </div>
                     ))
                 }
-            </Grid>
-            <Stack className="place-items-center">
-                <CustomButton
-                    overrideClassName="bg-orange-200 text-green1 font-bold py-4 rounded-[26px] "
-                    disabled={false}
-                    handleButtonClick={() => toggleDrawer(1)}
+            </div>
+            <div>
+                <Button
+                    className="bg-green1/90 text-orange-300 w-full p-6 hover:text-white1"
+                    onClick={() => toggleDrawer(1)}
                 >
                     Submit
-                </CustomButton>
-            </Stack>
+                </Button>
+            </div>
             <ReviewInput 
                 toggleDrawer={toggleDrawer}
                 popUpDrawer={popUpDrawer}
@@ -99,18 +95,18 @@ export const Permissionless = () => {
                 values={[
                     {
                         title: 'Quorum',
-                        value: quorum.value,
+                        value: quorum,
                         affix: ''
                     },
                     {
                         title: 'Unit Liquidity',
-                        value: unitLiquidity.value,
+                        value: unitLiquidity,
                         affix: ' $'
                     },
                     {
                         title: 'Duration',
-                        value: duration.value,
-                        affix: `${duration.value === '0' || duration.value === '1'? ' hr' : ' hrs'}`,
+                        value: duration,
+                        affix: `${duration === '0' || duration === '1'? ' hr' : ' hrs'}`,
                     },
                     {
                         title: 'Collateral Asset',
@@ -119,7 +115,7 @@ export const Permissionless = () => {
                     },
                     {
                         title: 'Collateral Index',
-                        value: toBN(ccr.value).div(100).toString(),
+                        value: toBN(ccr).div(100).toString(),
                         affix: ''
                     },
                 ]}

@@ -11,15 +11,16 @@ import {
     allowanceAbi,
     symbolAbi,
     balanceOfAbi,
-    getCollateralQuoteAbi
+    getCollateralQuoteAbi,
+    getSupportedAssetsAbi
 } from "@/apis/utils/abis";
 import { getContractData } from "@/apis/utils/getContractData";
 import { Address } from "@/interfaces";
 
 export default function getReadFunctions({chainId} : {chainId: number | undefined,}) {
     if(!chainId) chainId = 4157;
-    const {factory, token, points, providers, ...rest}= getContractData(chainId);
-
+    const {factory, token, points, providers, supportAssetManager, ...rest }= getContractData(chainId);
+    // console.log("Manager", supportAssetManager);
     const readSafeDataConfig = ({safe}: {safe: Address}) => {
         const contractConfig = {
             address: safe,
@@ -40,9 +41,9 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
     
-    const readAllowanceConfig = ({owner, spender}: {owner: Address, spender: Address}) => {
+    const readAllowanceConfig = ({owner, spender, asset}: {owner: Address, spender: Address, asset?: Address}) => {
         const contractConfig = {
-            address: token,
+            address: asset || token,
             abi: allowanceAbi,
             functionName: 'allowance',
             args: [owner, spender],
@@ -59,9 +60,9 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
 
-    const readBalanceConfig = ({account}: {account: Address}) => {
+    const readBalanceConfig = ({account, contractAddress}: {account: Address, contractAddress: Address}) => {
         const contractConfig = {
-            address: token,
+            address: contractAddress,
             abi: balanceOfAbi,
             functionName: 'balanceOf',
             args: [account],
@@ -69,12 +70,12 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
     
-    const readPoolConfig = ({unit} : {unit: bigint}) => {
+    const readPoolConfig = ({unitId} : {unitId: bigint}) => {
         const contractConfig = {
             address: factory,
             abi: getPoolDataAbi,
             functionName: "getPoolData",
-            args: [unit]
+            args: [unitId]
         } as const;
         return contractConfig;
     }
@@ -83,7 +84,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         const contractConfig = {
             address: factory,
             abi: getPoolRecordAbi,
-            functionName: "getRecord",
+            functionName: "getPoolRecord",
             args: [recordId]
         } as const;
         return contractConfig;
@@ -120,6 +121,15 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
         return contractConfig;
     }
 
+    const getSupportedAssetConfig = () => {
+        const contractConfig = {
+            address: supportAssetManager,
+            abi: getSupportedAssetsAbi,
+            functionName: 'getSupportedAssets',
+        } as const;
+        return contractConfig;
+    }
+
     const getPointsConfig = () => {
         const contractConfig = {
             address: points,
@@ -141,7 +151,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getProfileConfig = (unit: bigint, user: Address) => {
         const contractConfig = {
-            address: points,
+            address: factory,
             abi: getProfileAbi,
             functionName: 'getProfile',
             args: [unit, user]
@@ -150,6 +160,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     }
 
     return {
+        getSupportedAssetConfig,
         collateralQuoteConfig,
         getFactoryDataConfig,
         readAllowanceConfig,

@@ -14,7 +14,7 @@ const AddressWrapper = (props: AddressProps ) => {
   const Copy = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className={`w-${copyIconSize || '6'} h-${copyIconSize || '6'} text-white cursor-pointer`}
+      className={`w-${copyIconSize || '6'} h-${copyIconSize || '6'} text-white cursor-pointer text-orange-300`}
       viewBox="0 0 24 24"
       strokeWidth="3"
       stroke="orange"
@@ -37,8 +37,8 @@ const AddressWrapper = (props: AddressProps ) => {
 
   return (
     <div className={`flex justify-center items-center gap-1 ${overrideClassName}`}>
-      <span ><Blockie account={wrapToText(account)} size={size} /></span> 
-      <a href={`https://xfiscan.com/address/${account}`} rel="noreferrer" target="_blank">{size ? getEllipsisTxt(wrapToText(account || zeroAddress), size) : account}</a>
+      <span ><Blockie account={wrapToText(account || zeroAddress)} size={size} /></span> 
+      <a href={`https://xfiscan.com/address/${account}`} rel="noreferrer" target="_blank">{size ? getEllipsisTxt(wrapToText(account || zeroAddress), size) : account || zeroAddress}</a>
       <span className="" >{(isClicked ? display && <Check /> : props?.display && <Copy />)}</span>
     </div>
   );
@@ -66,7 +66,7 @@ const Check = () => (
 
 interface AddressProps {
   account?: string;
-  display?: boolean;
+  display: boolean;
   size?: number;
   copyIconSize?: string;
   overrideClassName?: string;

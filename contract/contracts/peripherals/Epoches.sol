@@ -51,7 +51,11 @@ abstract contract Epoches is PastEpoches {
         _unitId = indexes[unit];
     }
 
-    // Return record Id of a pool
+    
+    /**
+     * @dev Return record Id in a pool with unit contribution
+     * @param unit : Unit contribution
+    */
     function _getRecordId(uint unit) internal view returns(uint96 _recordId) {
         _recordId = _getPool(unit).big.recordId;
     }
@@ -64,8 +68,20 @@ abstract contract Epoches is PastEpoches {
         recordId = _generateRecordId();
     }
 
+    /**
+     * @dev Fetch current pool with unit contribution
+     * @param unit : Unit contribution
+     */
     function _getPool(uint unit) internal view returns(Common.Pool memory result) {
-        result = pools[_getUnitId(unit)];
+        result = _getPoolWithUnitId(_getUnitId(unit));
+    }
+
+    /**
+     * @dev Fetch Current pool with unitId
+     * @param unitId : Unit Id
+     */
+    function _getPoolWithUnitId(uint96 unitId) internal view returns(Common.Pool memory result){
+        result = pools[unitId];
     }
 
     // Return past pool counter

@@ -8,6 +8,8 @@ import points_celo from "@/deployments/alfajores/Points.json";
 import points_xfi from "@/deployments/alfajores/Points.json";
 import faucet_celo from "@/deployments/alfajores/Faucet.json";
 import faucet_xfi from "@/deployments/alfajores/Faucet.json";
+import assetManager_celo from "@/deployments/alfajores/SupportedAssetManager.json";
+import assetManager_xfi from "@/deployments/alfajores/SupportedAssetManager.json";
 import { Address } from "@/interfaces";
 import { currencies, networks, pairs, supportedChainIds } from "@/constants";
 import { isSuportedChain } from "@/utilities";
@@ -18,6 +20,7 @@ const providers = [providers_celo.address, providers_xfi.address] as const as Ad
 const points = [points_celo.address, points_xfi.address] as const as Address[];
 const faucets = [faucet_celo.address, faucet_xfi.address] as const as Address[];
 const factories = [factory_celo.address, factory_xfi.address] as const as Address[];
+const assetManagers = [assetManager_celo.address, assetManager_xfi.address] as const as Address[];
 
 export const formatAddr = (x: string | (Address | undefined)) : Address => {
     if(!x || x === "") return zeroAddress as Address;
@@ -40,5 +43,6 @@ export const getContractData = (chainId: number) => {
         currency: currencies[index],
         network: networks[index],
         pair: pairs[index],
+        supportAssetManager: assetManagers[index],
     };
 }

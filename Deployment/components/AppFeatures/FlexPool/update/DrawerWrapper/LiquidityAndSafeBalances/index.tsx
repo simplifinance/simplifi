@@ -1,157 +1,98 @@
-import ButtonTemplate from "@/components/screens/OnboardScreen/ButtonTemplate";
 import { flexSpread, } from "@/constants";
-import { formatAddr, handleTransact, toBN } from "@/utilities";
+import { formatAddr, formatValue } from "@/utilities";
 import { Stack } from "@mui/material";
 import React from "react";
-import { formatEther, parseEther } from "viem";
+import { parseEther } from "viem";
 import { useAccount, useReadContracts, useConfig } from "wagmi";
 import getReadFunctions from "../readContractConfig";
-import { Address, AmountToApproveParam, CreatePermissionedPoolParams, CreatePermissionlessPoolParams, TrxState, VoidFunc } from "@/interfaces";
+import { BalancesProps, CommonParam, HandleTransactionParam, } from "@/interfaces";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import withdrawLoan from "@/apis/update/collateralToken/withdrawCollateral";
 import { Spinner } from "@/components/utilities/Spinner";
-import Message from "../Message";
-import { formatError } from "@/apis/update/formatError";
+import { Button } from "@/components/ui/button";
+import { Confirmation } from "../../ActionButton/Confirmation";
 
-export default function LiquidityAndBankBalances({isCancelledPool, handleCloseDrawer, formattedSafe, isPermissionless, collateralAsset, param } : BalancesProps) {
-    const [loading, setLoading] = React.useState<boolean>(false);
+export default function LiquidityAndSafeBalances({safe, isPermissionless, collateralAsset, param } : BalancesProps) {
+    const [drawerOpen, setDrawerState] = React.useState<number>(0);
+    const [transactionArgs, setTransactionArgs] = React.useState<HandleTransactionParam | null>(null);
     
     const { address, chainId } = useAccount();
     const config = useConfig();
-    const currentUser = formatAddr(address);
-    const { setmessage, setstorage, symbol } = useAppStorage();
+    const account = formatAddr(address);
+    const { symbol } = useAppStorage();
+    const toggleDrawer = (arg: number) => setDrawerState(arg);
     const { readBalanceConfig, readAllowanceConfig } = getReadFunctions({chainId});
-    const callback_after = (errored: boolean, error?: any) => {
-        !errored? setmessage('Trxn Completed') : setmessage(formatError({error, }));
-        setLoading(false);
-        setTimeout(() => {
-            setmessage('');
-            handleCloseDrawer();
-        }, 10000);
-        clearTimeout(10000);
-    }
 
-    const callback = (arg:TrxState) => {
-        setstorage(arg);
-        if(arg.status === 'success') handleCloseDrawer();
-    }
-    
-    const { data, isPending } = useReadContracts({
+    const { data, isPending, isError } = useReadContracts({
         contracts: [
-            { ...readBalanceConfig({account: formattedSafe})},
-            { ...readAllowanceConfig({owner: formattedSafe, spender: currentUser})}
+            { ...readBalanceConfig({account: safe, contractAddress: collateralAsset})},
+            { ...readAllowanceConfig({owner: safe, spender: account})}
         ],
         allowFailure: true,
         query: {refetchInterval: 5000}
     });
     
+    const loading = isPending || isError;  
     const quota = data?.[1].result;
     const balances = data?.[0].result;
     const disableButton = loading || !quota || quota.toString() === '0';
 
-    const cashout = async() => {
-        if(!quota) return null;
-        setLoading(true);
-        await withdrawLoan({
-            config,
-            account: currentUser,
-            safe: formattedSafe,
-            callback,
-        }).then(() => callback_after(false))
-        .catch((error) => callback_after(true, error))
-    }
-
-    const rekey = async() => {
-        const unitLiquidity = toBN(formatEther(quota || 0n)).decimalPlaces(0, 1).toNumber();
+    const handleClick = (isCashout: boolean) => {
+        const unitLiquidity = formatValue(quota);
         const unitLiquidity_ = parseEther(unitLiquidity.toString());
         const {colCoverage, contributors, allGH, durationInHours, } = param;
+        const commonParam : CommonParam = { account, config, unit: unitLiquidity_, contractAddress: collateralAsset };
+        let args: HandleTransactionParam = {
+            commonParam,
+            txnType: isCashout? 'Cashout' : 'Create',
+            safe,
+            router: isPermissionless? 'Permissionless' : 'Permissioned'
+        };
+        if(!isCashout) {
+            if(isPermissionless) {
+                args.createPermissionlessPoolParam = {
+                    ...commonParam,
+                    colCoverage,
+                    contributors: contributors!,
+                    durationInHours,
+                    quorum: allGH,
+                };
+            } else {
+                args.createPermissionedPoolParam = {
+                    ...commonParam,
+                    colCoverage,
+                    contributors: contributors!,
+                    durationInHours,
+                }
 
-        if(unitLiquidity === 0 || isCancelledPool) {
-            alert(`${isCancelledPool? 'This Pool cannot be rekeyed.' : 'Invalid balances.'} Please create a new FlexPool`);
-            return null;
+            }
         }
-        setLoading(true);
-        const createPermissionedPoolParam : CreatePermissionedPoolParams = {
-            account: currentUser,
-            colCoverage,
-            config,
-            contributors: contributors!,
-            durationInHours,
-            collateralAsset,
-            unitLiquidity: unitLiquidity_,
-            callback
-        }
-
-        const createPermissionlessPoolParam : CreatePermissionlessPoolParams = {
-            account: currentUser,
-            colCoverage,
-            config,
-            collateralAsset,
-            contributors: contributors!,
-            durationInHours,
-            quorum: allGH,
-            unitLiquidity: unitLiquidity_,
-            callback
-        }
-
-        const otherParam : AmountToApproveParam = {
-            account: currentUser,
-            config,
-            txnType: 'CREATE',
-            unit: quota!,
-            contractAddress: asset
-        }
-        await handleTransact({
-            callback,
-            otherParam,
-            createPermissionedPoolParam,
-            createPermissionlessPoolParam,
-            router: isPermissionless? 'Permissionless' : 'Permissioned',
-        }).then(() => callback_after(false))
-        .catch((error) => callback_after(true, error));
+        setTransactionArgs(args);
+        toggleDrawer(1);
     }
 
     return(
         <Stack className="bg-gray1 p-4 space-y-4 rounded-lg text-orange-400 font-noraml text-sm">
             <div className={`${flexSpread}`}>
-                <h1>Bank Balances</h1>
+                <h1>Safe Balances</h1>
                 {
-                    isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(balances || 0n)).decimalPlaces(2).toString()} ${symbol || ''}`}</h1>
+                    isPending || isError? <Spinner color="#fed7aa" /> : <h1>{`${formatValue(balances)} ${symbol || ''}`}</h1>
                 }
             </div>
             <div className={`${flexSpread}`}>
                 <h1>Withdrawables</h1>
                 {
-                    isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(quota || 0n)).decimalPlaces(2).toString()} ${symbol || ''}`}</h1>
+                    isPending || isError? <Spinner color="#fed7aa" /> : <h1>{formatValue(quota)}</h1>
                 }
             </div>
-            <ButtonTemplate
-                buttonAContent={loading? <Spinner color="#fed7aa" /> : 'CashOut'}
-                buttonBContent={loading? <Spinner color="#fed7aa" /> : 'Rekey'}
-                disableButtonA={disableButton}
-                disableButtonB={disableButton}
-                overrideClassName="text-orange-200"
-                buttonAFunc={cashout}
-                buttonBFunc={rekey}
+            <div className={`${flexSpread}`}>
+                <Button onClick={() => handleClick(true)} disabled={disableButton}>{loading? <Spinner color="#fed7aa" /> : 'CashOut'}</Button>
+                <Button onClick={() => handleClick(false)} disabled={disableButton}>{loading? <Spinner color="#fed7aa" /> : 'Rekey'}</Button>
+            </div>
+            <Confirmation 
+                openDrawer={drawerOpen}
+                toggleDrawer={toggleDrawer}
+                transactionArgs={transactionArgs!}
             />
-            <Message />
         </Stack>
     );
-}
-
-export interface RekeyParam {
-    colCoverage: number;
-    contributors?: Address[];
-    durationInHours: number;
-    intRate: number;
-    allGH: number;
-}
-
-interface BalancesProps {
-    formattedSafe: Address;
-    isPermissionless: boolean;
-    param: RekeyParam;
-    isCancelledPool: boolean;
-    handleCloseDrawer: VoidFunc;
-    collateralAsset: Address;
 }

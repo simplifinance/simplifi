@@ -5,7 +5,7 @@ const alchemy_url_crossfi_mainnet = process.env.NEXT_PUBLIC_ALCHEMY_CROSSFI_MAIN
 const alchemy_websocket_url_crossfi_testnet = process.env.NEXT_PUBLIC_ALCHEMY_WEBSOCKET_TESTNET as string;
 const alchemy_websocket_url_crossfi_mainnet = process.env.NEXT_PUBLIC_ALCHEMY_WEBSOCKET_MAINNET as string;
 
-export const supportedChains : Record<string, Chain> = {
+export const supportedChains = {
   celoAlfajores,
   celo,
   blaze: {

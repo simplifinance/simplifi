@@ -12,7 +12,8 @@ import { getContractData } from "@/apis/utils/getContractData";
 */
 export default async function removeLiquidity(args: CommonParam) {
   const { config, callback, account, } = args;
-  let returnValue : TrxResult = 'reverted';  
+  let returnValue : TrxResult = 'success';  
+  callback?.({message: `Requesting to remove liquidity`});
   await simulateContract(config, {
     address: getContractData(config.state.chainId).providers,
     account,
@@ -20,10 +21,12 @@ export default async function removeLiquidity(args: CommonParam) {
     functionName: 'removeLiquidity',
     args: [],
   }).then(async({request}) => {
-    callback?.({message: `Removing liquidity`});
       const hash = await writeContract(config, request );
-      returnValue = await waitForConfirmation({config, hash, callback: callback!});
-  }).catch((error: any) => callback?.({message: errorMessage(error)}));
+      returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Liquidity successfully removed!"});
+  }).catch((error: any) => {
+    returnValue = 'reverted';
+    callback?.({errorMessage: errorMessage(error)});
+  });
         
   return returnValue;
 }
