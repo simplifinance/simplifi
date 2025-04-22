@@ -8,7 +8,6 @@ import { Chevron } from "@/components/utilities/Icons";
 import { useAccount, useConfig } from "wagmi";
 import { formatAddr, toBigInt, toBN } from "@/utilities";
 import { parseEther } from "viem";
-import { Spinner } from "@/components/utilities/Spinner";
 import Drawer from "../../../update/ActionButton/Confirmation/Drawer";
 import { Button } from "@/components/ui/button";
 import { Confirmation } from "../../../update/ActionButton/Confirmation";
@@ -17,19 +16,18 @@ import { flexSpread } from "@/constants";
 export const ReviewInput = (props: ReviewInputProps) => {
     const [openCollapse, setCollapseState] = React.useState<boolean>(false);
     const [confirmationOpen, setConfirmationPopUpState] = React.useState<number>(0);
-    const [loading, setLoading] = React.useState<boolean>(false);
 
     const { popUpDrawer, values, participants, type, formType, toggleDrawer: closeReview } = props;
     const account = formatAddr(useAccount().address);
     const config = useConfig();
-    const unitLiquidity = toBigInt(values[1].value);
+    const unitLiquidity = toBN(values[1].value).times('1e18').toString();
     const colCoverage = toBN(values[4].value).times(100).toNumber();
     const collateralAsset = values[3].value as Address;
     const durationInHours = toBN(values[2].value).toNumber();
-    
+    // console.log("UnitLiquidity: ", unitLiquidity);
     const toggleDrawer = (arg:number) => setConfirmationPopUpState(arg);
     const transactionArgs : HandleTransactionParam = {
-        commonParam: {account, config, unit: parseEther(unitLiquidity.toString()), contractAddress: collateralAsset},
+        commonParam: {account, config, unit: BigInt(unitLiquidity), contractAddress: collateralAsset},
         createPermissionedPoolParam: {
             colCoverage,
             contributors: participants!,
@@ -52,13 +50,13 @@ export const ReviewInput = (props: ReviewInputProps) => {
             styles={{borderLeft: '1px solid rgb(249 244 244 / 0.3)', display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', height: "100%"}}
         >
             <Box className="p-4 space-y-6 gap-4 overflow-hidden">
-                <Button variant={'outline'} onClick={() => closeReview(0)}>
+                <Button variant={'outline'} onClick={() => closeReview(0)} className="dark:text-orange-200">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-16 ">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                     </svg>
                 </Button>
-                <h1 className="text-lg text-white1 font-bold">Please review inputs</h1>
-                <div className="space-y-3 bg-white1 p-4 rounded-lg text-green1/90 font-semibold">
+                <h1 className="text-lg text-white1 font-bold dark:text-orange-200">Please review inputs</h1>
+                <div className="space-y-3 bg-white1 dark:bg-gray1 p-4 rounded-lg text-green1/90 dark:text-orange-100 font-semibold">
                     {
                         values.map((item) => {
                             return (
@@ -104,12 +102,10 @@ export const ReviewInput = (props: ReviewInputProps) => {
                 <Button
                     variant={'outline'}
                     disabled={confirmationOpen === 1}                                                           
-                    className={`w-full`}
+                    className={`w-full  dark:text-orange-200`}
                     onClick={() => toggleDrawer(1)}
                 >
-                    {
-                        loading? <Spinner color={"#F87C00"} /> : 'SendTransaction'
-                    }
+                   SendTransaction
                 </Button>
                 <Confirmation 
                     openDrawer={confirmationOpen}

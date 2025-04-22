@@ -11,15 +11,13 @@ export default function CollateralAsset({handleChange} : InputCategoryProp) {
     const { getSupportedAssetConfig } = getReadFunctions({chainId});
     const { data, isLoading, isError } = useReadContract({...getSupportedAssetConfig()});
     const callback = (arg: Address) => {
-        // console.log("Collateral asset", arg)
         handleChange(arg.toString(), 'CollateralAsset');
     };
-    // console.log("Data", data)
     return (
         <div>
-            { (isLoading || isError && !data) && <Label className='text-green1/90 dark:text-white1 font-black'>Collateral asset</Label>}
-            { isLoading && !data && <Button  variant={'outline'} className='w-full p-4 bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none cursor-not-allowed'>{"Loading asset ..."}</Button>}
-            { isError && !data && <Button variant={'outline'} className='w-full p-4 bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none'>{'No connection found'}</Button>}
+            { (isLoading || isError && !data) && <Label className='font-black text-green1/90 dark:text-orange-200 pb-2'>Collateral asset</Label>}
+            { isLoading && !data && <Button  variant={'outline'} className='w-full bg-white1 dark:bg-gray1 border border-green1/30 dark:border-white1/30 dark:text-orange-200 focus:ring-0 cursor-not-allowed'>{"Loading asset ..."}</Button>}
+            { isError && !data && <Button variant={'outline'} className='w-full bg-white1 dark:bg-gray1 border border-green1/30 dark:border-white1/30 dark:text-orange-200 focus:ring-0 cursor-not-allowed'>{'No connection found'}</Button>}
             { data && <SelectComponent 
                             callback={callback}
                             data={data}

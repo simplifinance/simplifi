@@ -1,5 +1,5 @@
 import { TransactionReceipt, zeroAddress } from 'viem';
-import { Address, Analytics, Pool, Path, Profile, FormattedCData } from './interfaces';
+import { Address, Analytics, Pool, Path, Profile, FormattedCData, ProviderResult } from './interfaces';
 import BigNumber from 'bignumber.js';
 
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
@@ -42,6 +42,17 @@ export const profileMock : Profile = {
     slot: '0'
   }]
 };
+
+export const mockProvider : ProviderResult = {
+  account: zeroAddress,
+  accruals: {fullInterest: 0n, intPerSec: 0n},
+  amount: 14000000000000000n,
+  earnStartDate: 0n,
+  rate: 15n,
+  slot: 0n
+}
+
+export const mockProviders : ProviderResult[] = [1, 2, 3].map(() => mockProvider);
 
 export const poolMock : Pool = {
   big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },

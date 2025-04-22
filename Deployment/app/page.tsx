@@ -43,9 +43,7 @@ export default function SimplifiApp() {
 
   const toggleProviders = (arg: bigint) => {
     // const found = providersIds.filter((id) => id === arg).at(0);
-    if(providersIds.length > 0) {
-      providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
-    }
+    providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
   }
   const setError = (arg:string) => setErrorMessage(arg);
   const closeDisplayForm = () => setDisplayForm(false);
@@ -112,6 +110,7 @@ export default function SimplifiApp() {
           openPopUp,
           displayOnboardUser,
           activePath,
+          prevPaths,
           setActivepath,
           togglePopUp,
           toggleDisplayOnboardUser,

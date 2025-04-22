@@ -23,7 +23,7 @@ export const Input = (props: InputProps) => {
     return(
         <div className="flex w-full max-w-sm items-center space-x-2">
             <div className="grid w-full max-w-sm items-center gap-1.5">
-                { label && <Tooltip title={toolTipTitle}><Label className="text-green1/90 dark:text-white1 font-black">{label}</Label></Tooltip>}
+                { label && <Tooltip title={toolTipTitle}><Label className="text-green1/90 dark:text-orange-200 font-black">{label}</Label></Tooltip>}
                 <div className={`${flexSpread} gap-2`}>
                     <InputComponent 
                         type={type}
@@ -31,9 +31,9 @@ export const Input = (props: InputProps) => {
                         required
                         id={id}
                         onChange={onChange}
-                        className={`bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none focus:ring-1 ${overrideClassName}`}
+                        className={`bg-white1 dark:bg-gray1 border border-green1/30 dark:border-white1/30 dark:text-orange-200 focus:ring-0 ${overrideClassName}`}
                     />
-                    { inputValue && <Button variant={'outline'} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none cursor-not-allowed">{inputValue}</Button>}
+                    { inputValue && <Button variant={'outline'} className="dark:bg-gray1 border border-green1/30 dark:border-white1/30 dark:text-orange-200 cursor-not-allowed">{inputValue}</Button>}
                 </div>
             </div>
         </div>

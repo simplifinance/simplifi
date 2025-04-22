@@ -120,7 +120,8 @@ export const Permissioned = () => {
             </div>
             <div>
                 <Button
-                    className="bg-green1/90 text-orange-300 w-full p-6 hover:text-white1"
+                    variant={'outline'}
+                    className="w-full bg-green1/90 text-orange-300 p-6"
                     onClick={() => setDrawerState(1)}
                 >
                     Submit

@@ -62,14 +62,14 @@ export const Confirmation :
             <div className="p-4 space-y-6 text-green1/90 dark:text-orange-300 text-center">
                 <div className={`${flexSpread}`}>
                     <h3 className='text-lg text-left w-2/4 font-bold'>{ loading? "Transaction in progress..." : 'Confirm send transaction' }</h3>
-                    <Button onClick={handleCloseDrawer} className="w-fit">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 dark:text-green1/90">
+                    <Button variant={'outline'} onClick={handleCloseDrawer} className="w-fit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 dark:text-orange-200">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
                         </svg>
                     </Button>
                 </div>
                 <Message />
-                <Button disabled={loading} className="w-full max-w-sm" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
+                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
             </div>
         </Drawer>
     );

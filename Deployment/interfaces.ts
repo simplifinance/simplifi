@@ -29,6 +29,15 @@ export type Contributor = Common.ContributorReturnValueStruct;
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
 export type Analytics = Cmon.AnalyticsStruct
+export type GetColumnArgs = {
+  currentUser: Address;
+  providerSlots: bigint[];
+  onCheckboxClicked: (slot: bigint, amount: bigint) => void;
+  // removeLiquidityComponent: (arg: Address) => React.ReactNode;
+}
+export type ToMutable<T> = {
+  -readonly [P in keyof T]: T[P];
+}
 
 interface DateAndSec {
   inSec: number;
@@ -256,4 +265,18 @@ export interface ActionsButtonProps {
 export interface SendTransactionResult {
   errored: boolean;
   error: any;
+}
+
+export type InterestStruct = {
+  fullInterest: bigint;
+  intPerSec: bigint;
+}
+
+export type ProviderResult = {
+  slot: bigint;
+  amount: bigint;
+  rate: bigint;
+  earnStartDate: bigint;
+  account: Address;
+  accruals: InterestStruct;
 }

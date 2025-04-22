@@ -19,7 +19,7 @@ export default function RemoveLiquidity() {
 
     return(
         <div>
-            <Button onClick={() => setOpenDrawer(1)} variant={'outline'}>Remove</Button>
+            <Button onClick={() => setOpenDrawer(1)} className="text-orange-200" variant={'outline'}>X</Button>
             <Confirmation 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}

@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import { routeEnum } from '@/constants';
 import { Path } from '@/interfaces';
 
-export const Collapsible = ({ path, title, icon, disabled }: CollapsibleProps) => {
+export const SidebarContent = ({ path, title, icon, disabled }: CollapsibleProps) => {
   const { toggleSidebar, togglePopUp, activePath, setActivepath } = useAppStorage();
   const { isConnected } = useAccount()
   const isActivePath = activePath === path;

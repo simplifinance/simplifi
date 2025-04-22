@@ -1,17 +1,17 @@
 import React from "react";
-import { Collapsible } from '@/components/utilities/Collapsible';
+import { SidebarContent } from '@/components/utilities/SidebarContent';
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { routeEnum } from "@/constants";
 import { Path } from "@/interfaces";
 import OnchainStatistics from "@/components/AppFeatures/Dashboard/OnchainStatistics";
+import { Button } from "@/components/ui/button";
 
 const LeftSideBarContent = () => {
-  {/* <div className="w-full md:rounded-xl min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar"> */}
   return(
     <React.Fragment>
       {
         leftSideBarContent.map(({disabled, path, icon, title, displayChevron }) => (
-          <Collapsible 
+          <SidebarContent 
             key={title}
               {
                 ...{
@@ -31,10 +31,19 @@ const LeftSideBarContent = () => {
 }
 
 export default function LeftSidebar() {
-  const { showSidebar, activePath } = useAppStorage();
+  const emptyPath : Path = '';
+  const { showSidebar, activePath, prevPaths, setActivepath } = useAppStorage();
   return(
     <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[16px]`}>
-      <div className="w-full md:rounded-xl min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar">
+      <div className="w-full relative md:rounded-xl min-h-[fit-content] bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 animateSidebar">
+          {
+            prevPaths.length > 0 && 
+              <Button variant={'ghost'} onClick={() => setActivepath(emptyPath)} className="absolute top-0 right-0">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={3.5} stroke="currentColor" className="size-6 dark:text-orange-200">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+              </Button>
+          }
         { activePath === 'Dashboard'? <OnchainStatistics /> : <LeftSideBarContent /> }
       </div>
     </aside>

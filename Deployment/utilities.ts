@@ -69,7 +69,13 @@ export const num = (arg: number | undefined) => Number(arg);
  * @param value : Value to convert.
  * @returns Formatted value.
  */
-export const formatValue = (arg: string | number | ethers.BigNumberish | bigint | undefined) => toBN(formatEther(toBigInt(arg))).decimalPlaces(2).toString()
+export const formatValue = (arg: string | number | ethers.BigNumberish | bigint | undefined) => {
+  const valueInBigNumber = toBN(formatEther(toBigInt(arg))).decimalPlaces(2)
+  return {
+    toStr: valueInBigNumber.toString(),
+    toNum: valueInBigNumber.toNumber()
+  }
+}
 
 /**
  * @dev Formats an undefined address type object to a defined one

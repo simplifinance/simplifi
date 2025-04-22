@@ -23,6 +23,7 @@ export interface DataContextProps {
     symbol: string;
     toggleProviders: (arg: bigint) => void;
     providersIds: bigint[];
+    prevPaths: Path[];
     errorMessage: string;
     setError: (arg: string) => void;
     

@@ -40,7 +40,7 @@ export default function SelectComponent({data, label, placeholder,  callback} : 
     
     return(
         <div className="relative z-50 w-full max-w-sm border border-green1/30 rounded-lg ">
-            <Button onClick={toggleShow} className={`w-full ${flexSpread}  gap-4 bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none p-2`}>
+            <Button onClick={toggleShow} className={`w-full ${flexSpread}  gap-4 bg-white1 dark:bg-gray1 border border-green1/30 dark:border-white1/30 dark:text-orange-200 focus:ring-0`}>
                 <h3>{(selected && selected !== '')? selected : (placeholder || "Select phase")}</h3>
                 <Chevron open={showDropDown} />
             </Button>
