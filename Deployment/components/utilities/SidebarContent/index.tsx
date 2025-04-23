@@ -41,7 +41,7 @@ export const SidebarContent = ({ path, title, icon, disabled }: CollapsibleProps
             <h1 className='text-xs text-green1 dark:text-white1'>{ title }</h1>
           </button>
         </div>
-        <button disabled={false} onClick={handleClick} className={`hidden w-full rounded-xl md:flex gap-3 p-[10px] text-lg font-semibold border border-green1/40 ${isActivePath? 'font-bold bg-gray1 dark:bg-white1 text-white1 dark:text-green1' : 'border border-gray1/50 dark:border-green1/20 text-green1 dark:text-white1 hover:bg-green1 hover:text-white1'}`}>
+        <button disabled={false} onClick={handleClick} className={`hidden w-full rounded-xl md:flex gap-3 p-[10px] text-lg font-semibold border border-green1/40 ${isActivePath? 'font-bold bg-gray1 dark:bg-green1/90 text-white1 dark:text-orange-300' : 'border border-gray1/50 dark:border-green1/20 text-green1 dark:text-white1 hover:bg-green1 hover:text-white1'}`}>
           <span className='p-3 border border-green1/50 dark:border-none rounded-full bg-orangec'>{ icon }</span>
           <h1 className={` p-1 `}>{ title }</h1>
         </button>

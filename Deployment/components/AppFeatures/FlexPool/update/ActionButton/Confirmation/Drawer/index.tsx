@@ -2,7 +2,9 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import { Drawer as MuiDrawer, } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
-import type { ToggleDrawer } from '@/interfaces';
+import type { ToggleDrawer, VoidFunc } from '@/interfaces';
+import { useTheme } from 'next-themes';
+import DrawerHeader from '@/components/utilities/DrawerHeader';
 
 const toggleDrawer : ToggleDrawer =
     (value: number, setState: (value: number) => void) =>
@@ -18,8 +20,9 @@ const toggleDrawer : ToggleDrawer =
     setState(value );
 };
 
-export default function Drawer({ openDrawer, styles, setDrawerState, children } : { openDrawer: number, styles: React.CSSProperties | undefined, setDrawerState: (arg: number) => void, children: React.ReactNode}) {
+export default function Drawer({ openDrawer, styles, setDrawerState, title, onClickAction, children } : DrawerProps) {
     const isLargeScreen = useMediaQuery('(min-width:768px)');
+    const isDark = useTheme().theme === 'dark';
     const entry = openDrawer === 0? false : true;
     return (
         <MuiDrawer
@@ -27,15 +30,24 @@ export default function Drawer({ openDrawer, styles, setDrawerState, children } 
             open={entry}
             onClose={() => toggleDrawer(0, setDrawerState)}
         >
-            <Box
-                style={{ width: isLargeScreen? 400 : 'auto', padding: '16px', background: '#121212', ...styles}}
+            <div
+                style={{ width: isLargeScreen? 400 : 'auto', ...styles}}
                 role="presentation"
                 onClick={() => toggleDrawer(0, setDrawerState)}
                 onKeyDown={() => toggleDrawer(0, setDrawerState)}
-                // style={styles}
+                className='h-full p-4 space-y-2 bg-white1 dark:bg-green1 border-l'
             >
+                <DrawerHeader title={title} onClickAction={onClickAction} />
                 { children }
-            </Box>
+            </div>
         </MuiDrawer>    
     );
+}
+
+export interface DrawerProps { 
+    openDrawer: number;
+    styles?: React.CSSProperties;
+    setDrawerState: (arg: number) => void, children: React.ReactNode;
+    onClickAction: VoidFunc;
+    title: string;
 }

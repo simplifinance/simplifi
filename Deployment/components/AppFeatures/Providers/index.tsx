@@ -1,45 +1,38 @@
 import { Button } from "@/components/ui/button";
-import { flexSpread, mockProviders } from "@/constants";
+import { flexSpread } from "@/constants";
 import Link from "next/link";
 import React from "react";
-import getReadFunctions from "../FlexPool/update/DrawerWrapper/readContractConfig";
-import { useAccount, useConfig, useReadContract } from "wagmi";
-import { Loading, NotFound } from "../FlexPool/PoolWrapper/Nulls";
-import { motion } from "framer-motion";
+import { useAccount, useConfig } from "wagmi";
 import { formatAddr, formatValue, toBigInt, toBN } from "@/utilities";
-import { parseEther, zeroAddress } from "viem";
+import { zeroAddress } from "viem";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import Checkbox from "@mui/material/Checkbox";
 import { Input } from "../FlexPool/Create/Input";
 import { Confirmation } from "../FlexPool/update/ActionButton/Confirmation";
 import AddLiquidity from "./AddLiquidity";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 import RemoveLiquidity from "./RemoveLiquidity";
-import { GetColumnArgs, HandleTransactionParam, ProviderResult } from "@/interfaces";
-import { DataTable } from "./DataTable";
+import { GetColumnArgs, HandleTransactionParam, } from "@/interfaces";
+import DataTable from "./DataTable";
 
 export default function Providers() {
     let totalLiquidity = React.useRef({value: 0n});
     const [ unitLiquidity, setUnitLiquidity ] = React.useState<string>('0');
     const [ openDrawer, setOpenDrawer ] = React.useState<number>(0);
-    // const [ openDrawer2, setOpenDrawer2 ] = React.useState<number>(0);
     const [ addLiquidity, setAddLiquidity ] = React.useState<boolean>(false);
 
-    const { address, chainId } = useAccount();
+    const { address } = useAccount();
     const account = formatAddr(address);
     const config = useConfig();
     const unit = toBigInt(toBN(unitLiquidity).times('1e18').toString());
-    const { getProvidersConfig } = getReadFunctions({chainId});
-    const { data } = useReadContract({...getProvidersConfig()});
-    const mutableData : ProviderResult[] = [...data || mockProviders];
-    const { toggleProviders, providersIds, } = useAppStorage();
+    // const { getProvidersConfig } = getReadFunctions({chainId});
+    // const { data } = useReadContract({...getProvidersConfig()});
+    // const mutableData : ProviderResult[] = [...data || mockProviders];
+    const { toggleProviders, providersIds, providers } = useAppStorage();
     const hasSelectedProvider = providersIds.length > 0;
     const handleClickProvider = (slot: bigint, amount: bigint) => {
         totalLiquidity.current.value += amount;
-        console.log("IsRun")
         toggleProviders(slot);
     };
-    // console.log("providersIds", providersIds)
 
     const getColumnsArg : GetColumnArgs = {
         currentUser: account,
@@ -47,7 +40,6 @@ export default function Providers() {
         onCheckboxClicked: handleClickProvider
     };
     const toggleDrawer = (arg: number) => setOpenDrawer(arg);
-    // const toggleDrawer2 = (arg: number) => setOpenDrawer2(arg);
     const transactionArgs : HandleTransactionParam = {
         commonParam: {account, config, contractAddress: zeroAddress, unit},
         txnType: 'Borrow',
@@ -56,7 +48,8 @@ export default function Providers() {
 
     const onChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        setUnitLiquidity(e.target.value);
+        const value = e.target.value;
+        setUnitLiquidity(value === ''? '0' : value);
     }
 
     return(
@@ -67,7 +60,7 @@ export default function Providers() {
                         <AddLiquidity back={() => setAddLiquidity(false)} /> 
                             :
                         <MotionDivWrap className={`space-y-4`}>
-                            <h1 className='text-lg text-green1/80 dark:text-white1 font-bold'>{"Don't have enough to contribute? You can request finance from providers with competitive and low interest rate"}</h1>
+                            <h1 className='text-lg text-green1/80 dark:text-orange-300 font-bold'>{"Don't have enough to contribute? You can request finance from providers with competitive and low interest rate"}</h1>
                             <div className={`${flexSpread}`}>
                                 <Button variant={'outline'} className={`${flexSpread} w-full dark:bg-green1/90 `}>
                                     <Link href={'https://simplifinance.gitbook.io/docs'}>Learn more</Link>
@@ -111,7 +104,7 @@ export default function Providers() {
                     <h3 className="font-bold">Pick your providers</h3>
                     <RemoveLiquidity />
                 </div>
-                <DataTable data={mutableData} getColumnArgs={getColumnsArg}/>
+                <DataTable getColumnArgs={getColumnsArg}/>
             </div>
             <Confirmation 
                 openDrawer={openDrawer}

@@ -2,15 +2,15 @@
 
 import React from "react";
 import Notification from "@/components/utilities/Notification";
-import { analytics } from "@/constants";
-import { Path, } from "@/interfaces";
+import { analytics, appData, mockAssets, mockPoints, mockProviders } from "@/interfaces";
+import type { AppState, Path, Point, ProviderResult, SupportedAsset, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import { useAccount, useReadContracts,} from "wagmi";
 import NotConnectedPopUp from "@/components/utilities/NotConnectedPopUp";
 import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 import AppFeatures from "@/components/AppFeatures";
 import { useChainModal } from "@rainbow-me/rainbowkit";
-import { isSuportedChain } from "@/utilities";
+import { isSuportedChain } from "@/apis/utils/getContractData";
 
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
@@ -23,23 +23,46 @@ export default function SimplifiApp() {
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
   const [activePath, setActivePath] = React.useState<Path>('Dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
+  const [appState, setAppState] = React.useState<AppState>(appData);
     
   const { isConnected, address, connector, isDisconnected, chainId } = useAccount();
   const { openChainModal, chainModalOpen } = useChainModal();
-  const { getFactoryDataConfig, readSymbolConfig } = getReadFunctions({chainId});
+  const { getFactoryDataConfig, readSymbolConfig, getPointsConfig, getProvidersConfig, getSupportedAssetConfig, } = getReadFunctions({chainId});
   
   // Read contract data from the blockchain
-  const { data, refetch } = useReadContracts({
+  const { refetch } = useReadContracts({
     contracts: [
-      {...readSymbolConfig()},
-      {...getFactoryDataConfig()}
+      readSymbolConfig(),
+      getFactoryDataConfig(),
+      getPointsConfig(),
+      getProvidersConfig(),
+      getSupportedAssetConfig(),
     ],
     allowFailure: true,
     query: {
-      refetchInterval: 4000, 
+      refetchInterval: (data_) => {
+        data_.fetch()
+        .then((newData) => {
+          const symbol = newData[0]?.result || appState[0];
+          const factoryData = newData[1]?.result || appState[1];
+          const points : Point[] = [...newData?.[2]?.result || mockPoints];
+          const supportedAssets : SupportedAsset[] = [...newData?.[4]?.result || mockAssets];
+          const providers : ProviderResult[] = [...newData?.[3]?.result || mockProviders];
+          setAppState([symbol, factoryData, points, providers, supportedAssets]);
+        })
+        return 5000
+      }, 
       refetchOnReconnect: 'always', 
+      refetchOnMount: 'always',
+      refetchIntervalInBackground: true,
+      retry: true,
     }
   });
+
+  // // We convert blockchain's readonly data to mutable object
+  // const points : Point[] = [...data?.[2]?.result || mockPoints];
+  // const supportedAssets : SupportedAsset[] = [...data?.[4]?.result || mockAssets];
+  // const providers : ProviderResult[] = [...data?.[3]?.result || mockProviders];
 
   const toggleProviders = (arg: bigint) => {
     // const found = providersIds.filter((id) => id === arg).at(0);
@@ -91,10 +114,13 @@ export default function SimplifiApp() {
     <StorageContextProvider 
       value={
         {
-          currentEpoches: data?.[1].result?.currentEpoches || 0n,
-          recordEpoches: data?.[1].result?.recordEpoches || 0n, 
-          analytics: data?.[1].result?.analytics || analytics,
-          symbol: data?.[0].result || 'USD',
+          symbol: appState[0],
+          currentEpoches: appState[1].currentEpoches,
+          recordEpoches: appState[1].recordEpoches || 0n, 
+          analytics: appState[1].analytics,
+          points: appState[2],
+          providers: appState[3],
+          supportedAssets: appState[4],
           toggleProviders,
           displayForm,
           closeDisplayForm,
@@ -124,3 +150,4 @@ export default function SimplifiApp() {
     </StorageContextProvider>
   );
 }
+

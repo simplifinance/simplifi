@@ -17,8 +17,8 @@ export default async function provideLiquidity(args: ProvideLiquidityParam) {
   const { config, callback, account, unit, rate } = args;
   let returnValue : TrxResult = 'reverted';
   const providerContract = getContractData(config.state.chainId).providers;
-  await approveToSpendCUSD(providerContract, unit, callback);
-  callback?.({message: `Requesting to provide liquidity in amount ${formatEther(unit || 0n)}`});
+  // await approveToSpendCUSD(providerContract, unit, callback);
+  callback?.({message: `Requesting to provide liquidity in amount ${formatEther(unit || 0n)} USD`});
   await simulateContract(config, {
     address: providerContract,
     account,

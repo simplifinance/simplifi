@@ -137,10 +137,12 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         uint amount
     ) 
         internal 
-        returns(Common.Provider[] memory provs)
+        returns(Common.Provider[] memory result)
     {
         uint amountLeft = amount;
-        for(uint i = 0; i < providersSlots.length; i++) {
+        uint providersSize = providersSlots.length;
+        Common.Provider[] memory _providers = new Common.Provider[](providersSize);
+        for(uint i = 0; i < providersSize; i++) {
             uint slot = providersSlots[i];
             if(slot >= providers.length) 'Invalid slot detected'._throw();
             Common.Provider memory prov = providers[slot];
@@ -156,10 +158,11 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
 
             uint snapshotBal = providers[slot].amount;
             prov.amount -= snapshotBal; // Record actual amount the provider lends to the borrower
-            provs[i] = prov;
+            _providers[i] = prov;
             if(amountLeft == 0) break;
         }
         if(amountLeft > 0) 'Loan exceed aggregate providers bal'._throw();
+        result = _providers;
     }
 
     // ReadOnly function. Return provider's information. 

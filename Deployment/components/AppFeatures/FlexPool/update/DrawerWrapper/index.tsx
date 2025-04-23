@@ -6,10 +6,11 @@ import { Address, RekeyParam, FormattedCData, FormattedPoolData, } from "@/inter
 import Drawer from "../ActionButton/Confirmation/Drawer";
 import { formatAddr, } from "@/utilities";
 import LiquidityAndStrategyBalances from "./LiquidityAndSafeBalances";
-import AccessAndCollateralBalances from "./CollateralBalances";
+// import AccessAndCollateralBalances from "./CollateralBalances";
 import CollateralQuote from "./CollateralQuote";
 import { zeroAddress } from "viem";
 import { Button } from "@/components/ui/button";
+import DrawerHeader from "@/components/utilities/DrawerHeader";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
@@ -33,7 +34,6 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
         });
         return addrs;
     }
-    // console.log("Collateral coverage: ", colCoverage);
     const rekeyParam : RekeyParam = {
         colCoverage: colCoverage,
         durationInHours: Number(duration.toString()),
@@ -42,17 +42,16 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
     }
 
     return(
-        <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.2)',}} >
-            <div className={`space-y-4`}>
-                <div className={`${flexSpread} gap-6`}>
-                    <Button onClick={() => toggleDrawer(0)} className="w-2/4">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </Button>
-                    { actions }
-                </div>
-                <ul className={`bg-gray1 p-4 rounded-lg border border-white1/20 text-orange-400 font-normal text-sm`}>
+        <Drawer
+            title="Pool Information"
+            onClickAction={() => toggleDrawer(0)}
+            openDrawer={popUpDrawer} 
+            setDrawerState={toggleDrawer} 
+            styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.2)',}} 
+        >
+            <div className={`space-y-4 md:space-y-4`}>
+                { actions }
+                <ul className={`bg-white1 dark:bg-gray1 p-4 rounded-lg text-orange-200 font-normal text-sm`}>
                     <li className={`${flexSpread}`}>
                         <h3 className="">Asset</h3>
                         <AddressWrapper 
@@ -89,7 +88,7 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
                 />
-                <AccessAndCollateralBalances collateralAsset={collateralAsset} safe={safe}/>
+                {/* <AccessAndCollateralBalances collateralAsset={collateralAsset} safe={safe}/> */}
 
                 <ul className={`${BOXSTYLING} text-xs`}>
                     <li className={`w-full ${flexSpread}`}>
@@ -130,27 +129,26 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
     );
 }
 
-export const Contributors: React.FC<ContributorsProp> = ({popUpDrawer, isAdmin, toggleDrawer, cData}) => {
+export const Contributors: React.FC<ContributorsProp> = ({popUpDrawer, toggleDrawer, cData}) => {
     return(
-        <Drawer openDrawer={popUpDrawer} setDrawerState={toggleDrawer} styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.3)', height: "100%"}} >
-            <div className="p-0 flex justify-between items-center text-lg md:text-xl font-bold">
-                <h3>Providers</h3>
-                <button onClick={() => toggleDrawer(0)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6 lg:size-8 active:ring-1 text-orangec hover:text-orangec/70 rounded-lg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-                    </svg>
-                </button>
+        <Drawer 
+            title="Contributors"
+            openDrawer={popUpDrawer} 
+            setDrawerState={toggleDrawer} 
+            onClickAction={() => toggleDrawer(0)}
+        >
+            <div className=" bg-white1 dark:bg-gray1 space-y-4 rounded-lg">
+                <div>
+                    {
+                        cData?.map((data, i) => (
+                            <Contributor
+                                data={data}
+                                key={i} 
+                            />
+                        ))
+                    }
+                </div>
             </div>
-            <React.Fragment>
-                {
-                    cData?.map((data, i) => (
-                        <Contributor
-                            data={data}
-                            key={i} 
-                        />
-                    ))
-                }
-            </React.Fragment>
         </Drawer>
     );
 }

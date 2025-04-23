@@ -39,10 +39,10 @@ export default function CreateFlexpool() {
           </Button>
         </div>
         <div className={`hidden md:flex items-center gap-2 w-[fit-content] text-xs uppercase`}>
-          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`bg-green1/90 text-orange-300`}>
+          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`dark:bg-green1/90 dark:text-orange-300`}>
             Permissionless
           </Button>
-          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`bg-green1/90 text-orange-300`}>
+          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`dark:bg-green1/90 dark:text-orange-300`}>
             Permissioned
           </Button>
         </div>

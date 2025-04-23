@@ -38,6 +38,7 @@ import {
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper"
 import { formatAddr, formatValue, toBigInt, toBN } from "@/utilities"
 import { GetColumnArgs, ProviderResult } from "@/interfaces"
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage"
 
 const getColumns = ({currentUser, providerSlots, onCheckboxClicked } : GetColumnArgs) => {
     const columns: ColumnDef<ProviderResult>[] = [
@@ -115,56 +116,57 @@ const getColumns = ({currentUser, providerSlots, onCheckboxClicked } : GetColumn
           return <div className="text-right font-medium">{formatted}</div>
         },
       },
-      {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          const account = row.getValue('account') as string;
-          const disabled = account.toLowerCase() !== currentUser.toLowerCase();
-          const slot = toBigInt(row.getValue("slot")?.toString());
-          const amount = toBigInt(row.getValue("amount")?.toString());
+      // {
+      //   id: "actions",
+      //   enableHiding: false,
+      //   cell: ({ row }) => {
+      //     const account = row.getValue('account') as string;
+      //     const disabled = account.toLowerCase() !== currentUser.toLowerCase();
+      //     const slot = toBigInt(row.getValue("slot")?.toString());
+      //     const amount = toBigInt(row.getValue("amount")?.toString());
     
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="p-2">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem
-                        disabled={disabled}
-                        onClick={() => onCheckboxClicked(slot, amount)}
-                    >
-                        unSelect
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        disabled={disabled}
-                        onClick={() => onCheckboxClicked(slot, amount)}
-                    >
-                        Select
-                    </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )
-        },
-      },
+      //     return (
+      //       <DropdownMenu>
+      //         <DropdownMenuTrigger asChild>
+      //           <Button variant="ghost" className="h-8 w-8 p-0">
+      //             <span className="sr-only">Open menu</span>
+      //             <MoreHorizontal />
+      //           </Button>
+      //         </DropdownMenuTrigger>
+      //         <DropdownMenuContent align="end" className="p-2">
+      //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+      //               <DropdownMenuItem
+      //                   disabled={disabled}
+      //                   onClick={() => onCheckboxClicked(slot, amount)}
+      //               >
+      //                   unSelect
+      //               </DropdownMenuItem>
+      //               <DropdownMenuItem
+      //                   disabled={disabled}
+      //                   onClick={() => onCheckboxClicked(slot, amount)}
+      //               >
+      //                   Select
+      //               </DropdownMenuItem>
+      //         </DropdownMenuContent>
+      //       </DropdownMenu>
+      //     )
+      //   },
+      // },
     ];
     return columns;
     
 }
 
-export function DataTable({data, getColumnArgs} : DataTableProps) {
+export default function DataTable({getColumnArgs} : DataTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
+    const { providers } = useAppStorage();
 
     const columns = getColumns(getColumnArgs);
     const table = useReactTable({
-        data,
+        data: providers,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -242,9 +244,18 @@ export function DataTable({data, getColumnArgs} : DataTableProps) {
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
+                                onClick={() => {
+                                  const slot = toBigInt(row.getValue('slot')?.toString());
+                                  const amount = toBigInt(row.getValue('amount')?.toString());
+                                  getColumnArgs.onCheckboxClicked(slot, amount);
+                                }}
+                                className="cursor-pointer"
                             >
                                 {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
+                                    <TableCell 
+                                      key={cell.id}
+                                    
+                                    >
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext()
@@ -295,6 +306,6 @@ export function DataTable({data, getColumnArgs} : DataTableProps) {
 }
 
 type DataTableProps = {
-    data: ProviderResult[];
+    // data: ProviderResult[];
     getColumnArgs: GetColumnArgs;
 }

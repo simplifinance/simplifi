@@ -82,7 +82,7 @@ export const Permissionless = () => {
             <div>
                 <Button
                     variant={'outline'}
-                    className="w-full bg-green1/90 text-orange-300 p-6"
+                    className="w-full bg-white2/80 dark:bg-green1/90 border border-green1/30 dark:border-white1/30 text-green1/90 dark:text-orange-200 p-6 hover:bg-green1/70"
                     onClick={() => toggleDrawer(1)}
                 >
                     Submit

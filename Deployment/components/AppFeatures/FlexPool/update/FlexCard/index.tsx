@@ -1,14 +1,15 @@
 import React from "react";
-import type { 
-    ButtonObj, 
-    Address, 
-    ReadDataReturnValue, 
-    FormattedCData, 
-    HandleTransactionParam, 
-    CommonParam, 
+import { 
+    type ButtonObj, 
+    type Address, 
+    type ReadDataReturnValue, 
+    type FormattedCData, 
+    type HandleTransactionParam, 
+    type CommonParam,
+    formattedMockData, 
 } from "@/interfaces";
 import { formatAddr, formatPoolData } from "@/utilities";
-import { flexSpread, formattedMockData, Stage } from "@/constants";
+import { flexCenter, flexSpread, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Contributors } from '../DrawerWrapper';
@@ -41,8 +42,8 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
-
     const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'Contribute', disable: false});
+
     const account = formatAddr(useAccount().address);
     const config = useConfig();
     const { pair } = getContractData(config.state.chainId || 4157);
@@ -128,17 +129,17 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     return(
         <React.Fragment>
             <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
-                <div className="flex justify-between items-center">
-                    <h2 className="text-lg lg:text-2xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-lg rounded-bl-lg w-fit">
+                <div className="relative flex justify-between items-center">
+                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-lg rounded-bl-lg w-fit">
                         {`$${unit.inEther}`}
                     </h2>
-                    <div className="flex justify-between items-center gap-1 ">
-                        <div>
-                            <span onClick={() => showPermissionDetail(1)} className="bg-transparent text-sm">{renderIcon(isPermissionless)}</span>
-                        </div>
-                        <div className="relative ">
-                            <h3 className=" text-orange-200 text-[10px]">{userCount}</h3>
-                            <span onClick={() => showProviderDetails(1)} className="bg-transparent hover:bg-transparent">
+                    <div className="flex justify-between items-center gap-2 ">
+                        <button className={`${flexCenter} w-fit rounded-full p-2 shadow-sm shadow-orange-300`} onClick={() => showPermissionDetail(1)} >
+                            <span className="bg-transparent text-sm">{renderIcon(isPermissionless)}</span>
+                        </button>
+                        <div className="relative size-8 rounded-full p-2 shadow-sm shadow-orange-300">
+                            <h3 className="absolute top-0 right-0 text-orange-200 text-[10px]">{userCount}</h3>
+                            <button onClick={() => showProviderDetails(1)} className="bg-transparent hover:bg-transparent">
                                 { 
                                     isPermissionless?
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
@@ -150,28 +151,27 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                                         </svg>
                                 
                                 }
-                            </span>
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div className="text-xs font-bold dark:text-orange-300">
+                <div className="text-xs font-bold dark:text-orange-200 pt-8">
                     <span className={`${flexSpread}`}>
                         <h1>{'Unit Id:'}</h1>
-                        <h1>{unitId.str}</h1>
+                        <h1 className="lowercase">{unitId.str}</h1>
                     </span>
                     <div className={`${flexSpread}`}>
                         <h3>{'Stage:'}</h3>
-                        <h3>{stage.inStr}</h3>
+                        <h3 className="lowercase">{stage.inStr}</h3>
                     </div>
                     <div className={`${flexSpread}`}>
                         <h3>{'maxQuorum:'}</h3>
-                        <h3>{maxQuorum}</h3>
+                        <h3 className="lowercase">{maxQuorum}</h3>
                     </div>
                     <div className={`${flexSpread}`}>
                         <h3 className="">{'Pair:'}</h3>
-                        <h3 className="">{pair}</h3>
+                        <h3 className="lowercase">{pair}</h3>
                     </div>
-                  
                 </div>
                 <div className="flex flex-col gap-2">
                     <Button

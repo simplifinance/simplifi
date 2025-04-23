@@ -14,7 +14,7 @@ import { errorMessage } from "../formatError";
 export default async function removePool(args: CommonParam) {
   const { config, callback, account, unit } = args;
   const address = getContractData(config.state.chainId).factory;
-  let returnValue : TrxResult = 'reverted'; 
+  let returnValue : TrxResult = 'success'; 
   callback?.({message: "Requesting to cancel a Flexpool"});
   await simulateContract(config, {
     address,
@@ -25,7 +25,10 @@ export default async function removePool(args: CommonParam) {
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
     returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Cancellation completed!'});
-  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
+  }).catch((error: any) => {
+    returnValue = 'reverted';
+    callback?.({errorMessage: errorMessage(error)});
+  });
         
   return returnValue;
 }

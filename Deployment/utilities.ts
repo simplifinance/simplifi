@@ -9,10 +9,8 @@ import type {
   FormattedProviders,
   FormattedSlot, 
   HandleTransactionParam, 
-  ButtonText, 
-  WagmiConfig, 
-  TransactionCallback,
-  SendTransactionResult, 
+  SendTransactionResult,
+  CheckAndApproveParam, 
 } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
@@ -29,7 +27,7 @@ import assert from "assert";
 import { getContractData } from "./apis/utils/getContractData";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { Router, StageStr, supportedChainIds } from "./constants";
+import { Router, StageStr } from "./constants";
 import approveToSpendCUSD from "./apis/update/cUSD/approveToSpendCUSD";
 import withdrawLoanInCUSD from "./apis/update/cUSD/withdrawLoanInCUSD";
 import { formatEther } from "viem";
@@ -40,15 +38,6 @@ import provideLiquidity from "./apis/update/providers/providerLiquidity";
 import removeLiquidity from "./apis/update/providers/removeLiquidity";
 import registerToEarnPoints from "./apis/update/points/registerToEarnPoints";
 import withdrawCollateral from "./apis/update/collateralToken/withdrawCollateral";
-
-/**
- * @dev Check if the current chain is supported
- * @param chainId : Chain Id from the current network
- * @returns : boolean value
- */
-export const isSuportedChain = (chainId: number) => {
-  return supportedChainIds.includes(chainId);
-}
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -70,7 +59,7 @@ export const num = (arg: number | undefined) => Number(arg);
  * @returns Formatted value.
  */
 export const formatValue = (arg: string | number | ethers.BigNumberish | bigint | undefined) => {
-  const valueInBigNumber = toBN(formatEther(toBigInt(arg))).decimalPlaces(2)
+  const valueInBigNumber = toBN(formatEther(toBigInt(arg))).decimalPlaces(4)
   return {
     toStr: valueInBigNumber.toString(),
     toNum: valueInBigNumber.toNumber()
@@ -125,14 +114,7 @@ export function getTimeFromEpoch(onchainUnixTime: number) {
  * @param callback : A callback function
  * @param collateralAsset : Collateral asset contract
  */
-export const checkAndApprove = async(
-  txnType: ButtonText,
-  unit: bigint,
-  account: Address,
-  config: WagmiConfig,
-  callback: TransactionCallback,
-  collateralAsset?: Address
-) => {
+export const checkAndApprove = async({account, callback, config, txnType, contractAddress, unit} : CheckAndApproveParam) => {
   let { factory, providers, } = getContractData(config.state.chainId);
   let amtToApprove : bigint = 0n;
   let owner = account;
@@ -142,36 +124,43 @@ export const checkAndApprove = async(
   switch (txnType) {
     case 'Create':
       amtToApprove = unit;
-      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
+      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: unit})).allowance;
       break;
     case 'Payback':
       amtToApprove = await getCurrentDebt({config, unit});
-      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
+      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
       break;
     case 'Liquidate':
       amtToApprove = await getCurrentDebt({config, unit});
-      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
+      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
       break;
     case 'GetFinance':
       const collateral = await getCollateralQuote({config, unit});
+      // console.log("ColQiote", collateral[0]);
       amtToApprove = collateral[0];
-      previousAllowance = await getAllowance({config, account, owner, spender: factory, contractAddress: collateralAsset, callback});
+      assert(contractAddress !== undefined, "Collateral asset not provided");
+      previousAllowance = await getAllowance({config, account, owner, spender, contractAddress, callback});
       break;
     case 'ProvideLiquidity':
       amtToApprove = unit;
-      previousAllowance = (await getAllowanceInCUSD(account, providers)).allowance;
       spender = providers;
+      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
       break;
     case 'Contribute':
       amtToApprove = unit;
-      previousAllowance = (await getAllowanceInCUSD(account, factory)).allowance;
-      spender = providers;
+      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
       break;
     default:
       break;
     }
+
+    // console.log("contractAddress", contractAddress)
     if(previousAllowance < amtToApprove) {
-      txnType !== 'GetFinance'? await approveToSpendCUSD(spender, amtToApprove, callback) : await approve({account, config, callback, amountToApprove: amtToApprove, contractAddress: collateralAsset});
+      if(txnType === 'GetFinance'){
+        await approve({account, config, callback, amountToApprove: amtToApprove, contractAddress});
+      } else {
+        await approveToSpendCUSD({ account,  amount: amtToApprove, config, spender, callback,});
+      }
     }
 }
 
@@ -192,54 +181,62 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     commonParam, 
   } = param;
   let result : SendTransactionResult = { errored:false, error: {} };
-  const {contractAddress, unit, config, account, callback} = commonParam;
+  const {unit, ...rest} = commonParam;
+  const { providers } = getContractData(rest.config.state.chainId);
   try {
-    await checkAndApprove(txnType, unit, account, config, callback!, contractAddress);
+    await checkAndApprove({txnType, unit, ...rest});
     switch (txnType) {
       case 'Contribute':
-        await addToPool({account, config, unit, callback, contractAddress});
+        await addToPool({unit, ...rest});
         break;
       case 'GetFinance':
-        assert(safe !== undefined, "Safe address is undefined");
-        assert(callback !== undefined, "Callback is undefined");
-        const get = await getFinance({account, config, unit, callback, contractAddress});
-        if(get === 'success') await withdrawLoanInCUSD(safe, callback);
+        assert(safe !== undefined, "Safe address not provided");
+        assert(rest.callback !== undefined, "Callback function is undefined");
+        const get = await getFinance({unit, ...rest});
+        if(get === 'success') await withdrawLoanInCUSD({owner: safe, ...rest});
         break;
       case 'Payback':
-        assert(safe !== undefined, "Bank address is undefined");
-        await payback({account, config, unit, callback, contractAddress}); 
+        assert(safe !== undefined, "Safe contract not provided");
+        const pay = await payback({unit, ...rest}); 
+        if(pay === 'success') await withdrawCollateral({...rest, safe});
         break;
       case 'Remove':
-        await removePool({account, config, unit, callback, contractAddress}); 
+        assert(safe !== undefined, "Safe contract not provided");
+        const removedPool = await removePool({unit, ...rest}); 
+        if(removedPool === 'success') await withdrawLoanInCUSD({owner: safe, ...rest});
         break;
       case 'Liquidate':
-        await liquidate({account, config, unit, callback,contractAddress});
+        assert(safe !== undefined, "Safe contract not provided");
+        const liquidated = await liquidate({unit, ...rest});
+        if(liquidated === 'success') await withdrawCollateral({...rest, safe});
         break;
       case 'Borrow':
         assert(providersSlots !== undefined, "Safe address is undefined");
-        await borrow({account, config, unit, callback, contractAddress, providersSlots});
+        // console.log("providersSlots", providersSlots)
+        await borrow({unit, ...rest, providersSlots});
         break;
       case 'Get Tokens':
-        await claimTestTokens({account, config, callback, contractAddress});
+        await claimTestTokens({...rest});
         break;
       case 'ProvideLiquidity':
         assert(rate !== undefined, "Safe address is undefined");
-        await provideLiquidity({account, config, callback, contractAddress, rate, unit});
+        await provideLiquidity({...rest, rate, unit});
         break;
       case 'Withdraw Collateral':
         assert(safe !== undefined, "Safe address is undefined");
-        await withdrawCollateral({account, config, callback, contractAddress, safe});
+        await withdrawCollateral({...rest, safe});
         break;
       case 'Cashout':
         assert(safe !== undefined, "Safe address is undefined");
-        assert(callback !== undefined, "Safe address is undefined");
-        await withdrawLoanInCUSD(safe, callback);
+        assert(rest.callback !== undefined, "Safe address is undefined");
+        await withdrawLoanInCUSD({owner: safe, ...rest});
         break;
       case 'RemoveLiquidity':
-        await removeLiquidity({account, config, callback, contractAddress, unit });
+        const removed = await removeLiquidity({...rest, unit });
+        if(removed === 'success') await withdrawLoanInCUSD({owner: providers, ...rest});
         break;
       case 'SignUp':
-        await registerToEarnPoints({account, config, callback, contractAddress, unit });
+        await registerToEarnPoints({...rest, unit });
         break;
       case 'Create':
         assert(router, "Utilities: Router was not provider");
