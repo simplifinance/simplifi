@@ -16,7 +16,7 @@ import type {
   TokenDistributor as Tkd,
   Attorney as Attn
 } from "../typechain-types";
-import { Common } from "../typechain-types/contracts/implementation/celo/FlexpoolFactory";
+import { Common } from "../typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { Common as CMon, } from "../typechain-types/contracts/peripherals/Contributor";
 
 export type BigNumber = ethers.BigNumberish
@@ -193,6 +193,26 @@ export interface GetPaidParam {
   signerAddrs: Addresses;
   strategies: Addresses;
   trusteeAddr: Address;
+}
+
+export interface ProvideLiquidityArg extends RemoveLiquidityArg {
+  contractAddr: Address;
+  rate: number;
+  deployer: Signer;
+  amount: bigint;
+  asset: BaseAsset;
+}
+
+export interface BorrowArg extends RemoveLiquidityArg {
+  amount: bigint;
+  providersSlots: bigint[];
+  flexpool: FlexpoolFactory;
+}
+
+export type RemoveLiquidityArg = {
+  contract: Providers;
+  signer: Signer;
+  signerAddr: Address;
 }
 
 export type FlexpoolFactory = Flex & {

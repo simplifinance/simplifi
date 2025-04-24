@@ -19,10 +19,10 @@ import type {
   Faucet
 } from "./types";
 
-import { FEE, MAKER_RATE, QUORUM, TrxnType, UNIT_LIQUIDITY } from "./utilities";
+import { FEE, MAKER_RATE, QUORUM, UNIT_LIQUIDITY } from "./utilities";
 import { expect } from "chai";
 import { zeroAddress } from "viem";
-import { executeTransaction, proposeTransaction, signTransaction } from "./utils";
+// import { executeTransaction, proposeTransaction, signTransaction } from "./utils";
 
 /**
  * Deploys and return an instance of the Escape contract.
@@ -231,9 +231,9 @@ export async function deployContracts(getSigners_: () => Signers) {
   const feeToAddr = await feeTo.getAddress() as Address;
   const alc1Addr = await alc1.getAddress() as Address;
   const alc2Addr = await alc2.getAddress() as Address;
-  const signer2Addr = await signer2.getAddress();
+  const signer2Addr = await signer2.getAddress() as Address
   const signers = [deployerAddr, extraAddr, signer3Addr, signer1Addr] as Address[];
-  const INITIAL_MINT : bigint = 200000000000000000000000n;
+  // const INITIAL_MINT = parseEther('200000');
 
   const roleManager = await deployRoleManager(deployer);
   const roleManagerAddr = await roleManager.getAddress() as Address;
@@ -280,15 +280,15 @@ export async function deployContracts(getSigners_: () => Signers) {
   await distributor.connect(deployer).setToken(collateralAssetAddr);
   await attorney.connect(deployer).setToken(collateralAssetAddr);
 
-  const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
-  await signTransaction({signer: signer3, contract: distributor, requestId: request.id});
-  await executeTransaction({contract: distributor, reqId: request.id, signer: extra});
+  // const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
+  // await signTransaction({signer: signer3, contract: distributor, requestId: request.id});
+  // await executeTransaction({contract: distributor, reqId: request.id, signer: extra});
 
   expect(isListed).to.be.true;
   expect(isSupported).to.be.true;
 
   return {
-    INITIAL_MINT,
+    // INITIAL_MINT,
     flexpool,
     flexpoolAddr,
     pointsAddr,

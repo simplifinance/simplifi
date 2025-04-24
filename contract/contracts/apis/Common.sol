@@ -25,7 +25,7 @@ interface Common {
 
     enum Branch { CURRENT, RECORD }
 
-    enum Router { PERMISSIONLESS, PERMISSIONED }
+    enum Router { NONE, PERMISSIONLESS, PERMISSIONED }
 
     struct Pool {
         Low low;

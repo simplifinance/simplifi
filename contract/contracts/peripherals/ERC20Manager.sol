@@ -66,11 +66,11 @@ abstract contract ERC20Manager is SafeGetter {
      * @param value : Value to compare allowance to
     */
     function _checkAndWithdrawAllowance(IERC20 asset, address owner, address beneficiary, uint value) internal returns(uint allowance) {
-        allowance = _validateAllowance(asset, owner, value);
-        assert(beneficiary != address(0));
-        assert(address(asset) != address(0));
+        address _owner = owner == _msgSender()? owner : _msgSender();
+        allowance = _validateAllowance(asset, _owner, value);
+        assert(address(asset) != address(0) && beneficiary != address(0));
         if(allowance > 0){
-            if(!IERC20(asset).transferFrom(owner, beneficiary, allowance)) 'TrxFer failed'._throw();
+            if(!IERC20(asset).transferFrom(_owner, beneficiary, allowance)) 'TrxFer failed'._throw();
         }
     }
 

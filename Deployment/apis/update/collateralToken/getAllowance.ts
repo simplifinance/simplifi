@@ -9,7 +9,7 @@ import assert from "assert";
 */
 export default async function getAllowance(args: GetAllowanceParam) {
   const { owner, spender, account, config, contractAddress } = args;
-  assert(contractAddress == undefined);
+  assert(contractAddress !== undefined, "Collateral contract not provided");
   return await readContract(config, {
     address: contractAddress!,
     abi: allowanceAbi,

@@ -81,7 +81,7 @@ export default function LiquidityAndSafeBalances({safe, isPermissionless, collat
             <div className={`${flexSpread}`}>
                 <h1>Withdrawables</h1>
                 {
-                    isPending || isError? <Spinner color="#fed7aa" /> : <h1>{formatValue(quota)}</h1>
+                    isPending || isError? <Spinner color="#fed7aa" /> : <h1>{formatValue(quota).toStr}</h1>
                 }
             </div>
             <div className={`${flexSpread}`}>

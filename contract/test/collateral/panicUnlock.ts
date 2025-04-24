@@ -3,6 +3,7 @@ import { deployContracts } from "../deployments";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
+import { parseEther } from "viem";
 
 describe("Collateral asset", function () {
   async function deployContractsFixcture() {
@@ -14,7 +15,7 @@ describe("Collateral asset", function () {
   describe("When users lost access to their token, provided they had previously set up a lock, they can retrieve the locked token via the attorney contract", function () {
      it("Panic unlock throught the token Attorney assuming the user lost access to their private keys", async () => {
       const { collateralAsset, attorney, signers: { signer1: escapeToAddr, deployer, deployerAddr,}, } = await loadFixture(deployContractsFixcture);
-      const lockedAmt = 100000000000000000000000n;
+      const lockedAmt = parseEther('100000');
       await collateralAsset.connect(deployer).lockToken(escapeToAddr, lockedAmt);
       const balsOfEscapeB4UnLocked = await collateralAsset.accountBalances(escapeToAddr);
       const balOfEscapeB4Unlocked = await collateralAsset.balanceOf(escapeToAddr);

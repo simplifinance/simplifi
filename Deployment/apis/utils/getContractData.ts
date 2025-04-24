@@ -10,9 +10,9 @@ import faucet_celo from "@/deployments/alfajores/Faucet.json";
 import faucet_xfi from "@/deployments/alfajores/Faucet.json";
 import assetManager_celo from "@/deployments/alfajores/SupportedAssetManager.json";
 import assetManager_xfi from "@/deployments/alfajores/SupportedAssetManager.json";
+import distributor from "@/deployments/alfajores/TokenDistributor.json";
 import { Address } from "@/interfaces";
-import { currencies, networks, pairs, supportedChainIds } from "@/constants";
-import { isSuportedChain } from "@/utilities";
+import { currencies, networks, pairs } from "@/constants";
 import { zeroAddress } from "viem";
 
 const collaterals = [colToken_celo.address, colToken_xfi.address] as const as Address[];
@@ -21,6 +21,16 @@ const points = [points_celo.address, points_xfi.address] as const as Address[];
 const faucets = [faucet_celo.address, faucet_xfi.address] as const as Address[];
 const factories = [factory_celo.address, factory_xfi.address] as const as Address[];
 const assetManagers = [assetManager_celo.address, assetManager_xfi.address] as const as Address[];
+
+const supportedChainIds = [44787, 4157];
+/**
+ * @dev Check if the current chain is supported
+ * @param chainId : Chain Id from the current network
+ * @returns : boolean value
+ */
+export const isSuportedChain = (chainId: number) => {
+    return supportedChainIds.includes(chainId);
+}
 
 export const formatAddr = (x: string | (Address | undefined)) : Address => {
     if(!x || x === "") return zeroAddress as Address;
@@ -44,5 +54,7 @@ export const getContractData = (chainId: number) => {
         network: networks[index],
         pair: pairs[index],
         supportAssetManager: assetManagers[index],
+        colToken: colToken_celo,
+        distributor
     };
 }

@@ -4,18 +4,9 @@ import Image from 'next/image';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils'
 import { flexCenter, flexSpread, } from '@/constants';
-// import OnboardWrapperDiv from "./OnboardWrapper";
 import { Button } from "@/components/ui/button";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount, } from "wagmi";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious
-} from "@/components/ui/carousel";
-import { Card, CardContent, CardFooter,CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import OnboardWrapperDiv from "@/components/utilities/OnboardWrapper";
 
@@ -77,27 +68,3 @@ const swipeableContent = [
     imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
   }
 ];
-
-
-
-// {
-//   <OnboardWrapperDiv overrideClassName="shadow-m">
-//       <AutoSwipeableViews >
-//         {
-//           swipeableContent.map(({imageComponent, title, description}, i) => (
-//               <Box className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>
-//                 {imageComponent}
-//                 <Box className={`text-md text-green1/80 space-y-2 text-center`}>
-//                   <p className='text-xl md:text-2xl font-bold dark:text-orange-300'>{title}</p>
-//                   <p className='text-md md:text-lg text-center dark:text-orange-100'>{ description }</p>
-//                 </Box>
-//               </Box>
-//           ))
-//         }
-//       </AutoSwipeableViews>
-//     <div className={`${flexSpread} gap-4`}>
-//       <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
-//       <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
-//     </div>
-//   </OnboardWrapperDiv>
-// }

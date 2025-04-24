@@ -15,7 +15,7 @@ export default async function claimTestTokens(args: Config ) {
   let returnValue : TrxResult = 'reverted';  
   callback?.({message: `Requesting test tokens`});
   await simulateContract(config, {
-    address: getContractData(config.state.chainId).providers,
+    address: getContractData(config.state.chainId).faucets,
     account,
     abi: faucetAbi,
     functionName: 'claimTestTokens',
@@ -23,7 +23,10 @@ export default async function claimTestTokens(args: Config ) {
   }).then(async({request}) => {
       const hash = await writeContract(config, request );
       returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Test tokens sent!'});
-  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
+  }).catch((error: any) => {
+    console.log("Error", error?.message || error?.data?.message)
+    callback?.({errorMessage: errorMessage(error)});
+  });
         
   return returnValue;
 }

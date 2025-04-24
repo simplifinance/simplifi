@@ -1,8 +1,9 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-// import { BigNumberish, ethers } from "ethers";
 import { Common } from "./typechain-types/Contributor";
 import { Common as Cmon } from "./typechain-types/FlexpoolFactory";
+import { TransactionReceipt, zeroAddress } from "viem";
+import { getContractData } from "./apis/utils/getContractData";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -29,6 +30,14 @@ export type Contributor = Common.ContributorReturnValueStruct;
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
 export type Analytics = Cmon.AnalyticsStruct
+export type DataTableProps = {
+  currentUser: Address;
+  providerSlots: bigint[];
+  onCheckboxClicked: (slot: bigint, amount: bigint, isClicked: boolean) => void;
+}
+export type ToMutable<T> = {
+  -readonly [P in keyof T]: T[P];
+}
 
 interface DateAndSec {
   inSec: number;
@@ -257,3 +266,167 @@ export interface SendTransactionResult {
   errored: boolean;
   error: any;
 }
+
+export type InterestStruct = {
+  fullInterest: bigint;
+  intPerSec: bigint;
+}
+
+export type ProviderResult = {
+  slot: bigint;
+  amount: bigint;
+  rate: bigint;
+  earnStartDate: bigint;
+  account: Address;
+  accruals: InterestStruct;
+}
+
+export interface CheckAndApproveParam extends Config {
+  txnType: ButtonText,
+  unit: bigint,
+}
+
+export type Point = {
+  contributor: bigint;
+  creator: bigint;
+  referrals: bigint;
+  user: Address;
+}
+
+export type SupportedAsset = {
+  id: Address;
+  name: string;
+  symbol: string;
+}
+
+export const analytics : Analytics = {
+  tvlCollateral: 0n,
+  tvlBase: 0n,
+  totalPermissioned: 0n,
+  totalPermissionless: 0n
+}
+
+export type FactoryData = {
+  analytics: {
+      tvlCollateral: bigint;
+      tvlBase: bigint;
+      totalPermissioned: bigint;
+      totalPermissionless: bigint;
+  };
+  makerRate: number;
+  currentEpoches: bigint;
+  recordEpoches: bigint;
+}
+
+export type AppState = [string, FactoryData, Point[], ProviderResult[], SupportedAsset[]];
+
+
+// MOCK DATA
+
+export const mockFactoryData : FactoryData = {
+  analytics: {
+    tvlCollateral: 0n,
+    tvlBase: 0n,
+    totalPermissioned: 0n,
+    totalPermissionless: 0n
+  },
+  makerRate: 0,
+  currentEpoches: 0n,
+  recordEpoches: 0n
+}
+
+export const profileMock : Profile = {
+  profile: {
+    paybackTime: '0',
+    turnStartTime: '0',
+    getFinanceTime: '0',
+    loan: '0',
+    colBals: '0',
+    id: '0',
+    sentQuota: false
+  },
+  slot: {isAdmin: false, isMember: false, value: '0'},
+  providers: [{
+    account: zeroAddress,
+    accruals: {intPerSec: '0', fullInterest: '0'},
+    earnStartDate: '0',
+    amount: '0',
+    rate: '0',
+    slot: '0'
+  }]
+};
+
+const mockProvider : ProviderResult = {
+  account: zeroAddress,
+  accruals: {fullInterest: 0n, intPerSec: 0n},
+  amount: 14000000000000000n,
+  earnStartDate: 0n,
+  rate: 15n,
+  slot: 0n
+}
+
+const mockPoint : Point = {
+  contributor: 2n,
+  creator: 5n,
+  referrals: 0n,
+  user: zeroAddress
+}
+
+const mockAsset : SupportedAsset = {
+  id: getContractData(44787).token,
+  name: "Simplfinance Token",
+  symbol: "TSFT"
+}
+
+export const mockProviders : ProviderResult[] = [1, 2, 3].map(() => mockProvider);
+export const mockPoints : Point[] = [1, 2, 3].map(() => mockPoint);
+export const mockAssets : SupportedAsset[] = [1].map(() => mockAsset);
+export const appData : AppState = ['USD', mockFactoryData, mockPoints, mockProviders, mockAssets];
+
+export const poolMock : Pool = {
+  big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },
+  stage: 0n,
+  low: {
+    maxQuorum: 0n,
+    selector: 0n,
+    colCoverage: 0n,
+    duration: 0n,
+    allGh: 0n,
+    userCount: 0n
+  },
+  addrs: { lastPaid: zeroAddress, admin: zeroAddress, colAsset: zeroAddress, safe: zeroAddress, },
+  router: 'PERMISSIONLESS',
+  status: 0n
+}
+
+export const formattedMockData : FormattedCData = {
+  profile: {
+    paybackTime: { inDate: '0', inSec: 0},
+    getFinanceTime: { inDate: '0', inSec: 0},
+    turnStartTime: { inDate: '0', inSec: 0},
+    colBals: '0',
+    loan: {inBN: BigNumber(0), inEther: '0'},
+    id: zeroAddress,
+    sentQuota: 'Not Sent'
+  },
+  providers: [],
+  slot: {value: 0, isAdmin: false, isMember: false}
+}
+
+export const mockReceipt : TransactionReceipt = {
+  blockHash: "" as Address,
+  blockNumber: 0n,
+  contractAddress: undefined,
+  cumulativeGasUsed: 0n,
+  effectiveGasPrice: 0n,
+  from: "" as Address,
+  gasUsed: 0n,
+  logs: [],
+  logsBloom: "" as Address,
+  status: "success",
+  to: null,
+  transactionHash: "" as Address,
+  transactionIndex: 0,
+  type: "legacy"
+};
+

@@ -6,11 +6,10 @@ import { Address } from "@/interfaces";
 import Collapse from "@mui/material/Collapse";
 import { flexSpread } from "@/constants";
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
-import { Button } from "@/components/ui/button";
 import { formatAddr } from "@/utilities";
 
 export default function Participants({addToList, participants, handleDelete} : {participants: Address[], addToList: (arg: string) => void, handleDelete: (arg: number) => void} ) {
-    const [address, setAddress] = React.useState<string>('');
+    const [address, setAddress] = React.useState<string>(zeroAddress);
     const [open, setOpen] = React.useState<boolean>(false);
     
     const { setmessage } = useAppStorage();
@@ -41,9 +40,9 @@ export default function Participants({addToList, participants, handleDelete} : {
                 />
                 <div className={`${flexSpread} gap-1.5 absolute -top-6 right-0`}>
                     {
-                        !participants.includes(formatAddr(address)) && <Button variant={'outline'} disabled={address === ''} onClick={addUp} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none">Add</Button>
+                        (address !== zeroAddress && !participants.includes(formatAddr(address))) && <button disabled={address === ''} onClick={addUp} className="bg-white1 dark:bg-transparent text-green1/90 dark:text-orange-200 border border-green1/70 dark:border-white1/30 text-xs font-semibold p-2 rounded-md">Add</button>
                     }
-                    <Button variant={'outline'} onClick={() => setOpen(!open)} className="bg-white1 text-green1/90 border border-r-8 border-b-8 border-green1/90 dark:border-none">{open? 'Close' : 'View'}</Button>
+                    <button onClick={() => setOpen(!open)} className="bg-white1 dark:bg-transparent text-green1/90 dark:text-orange-200 border border-green1/70 dark:border-white1/30 text-xs font-semibold p-2 rounded-md">{open? 'Close' : 'View'}</button>
                 </div>
             </div>
             <Collapse in={open} timeout="auto" unmountOnExit className={'bg-green1 absolute top-[100%] z-50 border border-gray1 rounded-b-[12px] flex justify-center items-center'} style={{width: '100%'}}>

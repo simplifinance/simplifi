@@ -1,37 +1,228 @@
-import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
-import { formatAddr } from "@/utilities";
-import React from "react";
-import { useAccount, useReadContract } from "wagmi";
-import Grid from "@mui/material/Grid";
-import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
+"use client"
+
+import * as React from "react"
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table"
+import { ArrowUpDown, ChevronDown } from "lucide-react"
+
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper"
+import { formatAddr } from "@/utilities"
+import { Point } from "@/interfaces"
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage"
+import { useAccount } from "wagmi"
+
+const getColumns = () => {
+    const columns: ColumnDef<Point>[] = [
+      {
+        accessorKey: "user",
+        header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Users
+              <ArrowUpDown />
+            </Button>
+          )
+        },
+        cell: ({ row }) => (
+            <div className="place-items-center">
+                <AddressWrapper 
+                    account={formatAddr(row.getValue("user")?.toString())}
+                    display={false}
+                    size={3}
+                />
+            </div>
+        )
+      },
+      {
+        accessorKey: "creator",
+        header: "Creator",
+        cell: ({ row }) => (
+            <div className="font-bold text-white1 text-center">{row.getValue("creator")?.toString()}</div>
+        ),
+      },
+      {
+        accessorKey: "contributor",
+        header: () => <div className="text-center">Contributor</div>,
+        cell: ({ row }) => (<div className="text-center font-medium">{row.getValue("contributor")?.toString()}</div>),
+      },
+      {
+        accessorKey: "referrals",
+        header: () => <div className="text-center">Referrals</div>,
+        cell: ({ row }) => (
+            <div className="text-center font-medium">{row.getValue("referrals")?.toString()}</div>
+        ),
+      }
+    ];
+    return columns;
+    
+}
 
 export default function Leaderboard() {
-    const { chainId, address } = useAccount();
-    const { getPointsConfig } = getReadFunctions({chainId})
-    const { data, } = useReadContract({
-        ...getPointsConfig(),
-        query: {refetchInterval: 5000},
-    });
+    const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+    const [rowSelection, setRowSelection] = React.useState({});
+    const { points } = useAppStorage();
+    const currentUser = formatAddr(useAccount().address);
 
-    return(
-        <div>
-            {/* Header */}
-            <div className="grid grid-cols-3 w-full max-w-sm text-sm p-4 bg-green1/90 text-white1 font-bold rounded-lg">
-                <h3>Ids</h3>
-                <h3>As creator</h3>
-                <h3 className="text-end">As contributor</h3>
+    const columns = getColumns();
+    const table = useReactTable({
+        data: points,
+        columns,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnVisibilityChange: setColumnVisibility,
+        onRowSelectionChange: setRowSelection,
+        state: { sorting, columnFilters, columnVisibility, rowSelection, },
+    })
+
+    return (
+        <div className="w-full">
+            <div className="flex items-center py-4">
+                <Input
+                    placeholder="Filter by user..."
+                    value={(table.getColumn("user")?.getFilterValue() as string) ?? ""}
+                    onChange={(event) =>
+                        table.getColumn("slot")?.setFilterValue(event.target.value)
+                    }
+                    className="w-[80%] max-w-xs"
+                />
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="ml-auto">
+                            Columns <ChevronDown />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        {
+                            table
+                                .getAllColumns()
+                                .filter((column) => column.getCanHide())
+                                .map((column) => {
+                                    return (
+                                        <DropdownMenuCheckboxItem
+                                            key={column.id}
+                                            className="capitalize"
+                                            checked={column.getIsVisible()}
+                                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                                        >
+                                            {column.id}
+                                        </DropdownMenuCheckboxItem>
+                                    )
+                                }
+                            )
+                        }
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
-            {
-                data?.map(({contributor, creator, user}) => (
-                    <div className="grid grid-cols-3 w-full max-w-sm text-sm p-4 text-white1 font-bold rounded-lg">
-                        <div>
-                            <AddressWrapper account={user} size={3} display={false} />
-                        </div>
-                        <h3>{ creator.toString() }</h3>
-                        <h3>{ contributor.toString() }</h3>                        
-                    </div>
-                ))
-            }
+            <div className="rounded-md border">
+                <Table>
+                    <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                return (
+                                    <TableHead key={header.id}>
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    </TableHead>
+                                )
+                                })}
+                            </TableRow>
+                        ))}
+                    </TableHeader>
+                    <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                            <TableRow
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                                className={`${formatAddr(row.getValue('user')?.toString()) === currentUser && 'bg-gray1'}`}
+                            >
+                                {row.getVisibleCells().map((cell) => (
+                                    <TableCell key={cell.id} className="text-center ">
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                    </TableCell>
+                                ))}
+                            </TableRow>
+                            ))
+                        ) : (
+                        <TableRow>
+                            <TableCell
+                                colSpan={columns.length}
+                                className="h-24 text-center"
+                            >
+                                No results.
+                            </TableCell>
+                        </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </div>
+            <div className="flex items-center justify-end space-x-2 py-4">
+                <div className="flex-1 text-sm text-muted-foreground">
+                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                    {table.getFilteredRowModel().rows.length} row(s) selected.
+                </div>
+                <div className="space-x-2">
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                >
+                    Previous
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                >
+                    Next
+                </Button>
+                </div>
+            </div>
         </div>
     )
 }

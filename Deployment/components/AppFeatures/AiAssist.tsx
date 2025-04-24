@@ -5,12 +5,9 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import Image from "next/image";
 
 export default function AiAssist() {
-    const { setActivepath } = useAppStorage();
-
     return (
         <div className={`p-4 relative space-y-4`}>
             <div className={`absolute top-4 left-4 ${flexStart} gap-4`}>
-                <Button onClick={() => setActivepath('')}>Back</Button>
                 <Button className={`${flexSpread}`}>
                     <Link href={"https://simplifinance.gitbook.io/docs"} >
                         learn more

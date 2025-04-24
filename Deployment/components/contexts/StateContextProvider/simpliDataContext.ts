@@ -1,4 +1,4 @@
-import { Analytics, Path, TrxState, VoidFunc } from "@/interfaces";
+import { Address, Analytics, Path, Point, ProviderResult, SupportedAsset, TrxState, VoidFunc } from "@/interfaces";
 import { Common } from "@/typechain-types/FlexpoolFactory";
 
 export interface DataContextProps {
@@ -23,7 +23,10 @@ export interface DataContextProps {
     symbol: string;
     toggleProviders: (arg: bigint) => void;
     providersIds: bigint[];
+    prevPaths: Path[];
     errorMessage: string;
     setError: (arg: string) => void;
-    
+    points: Point[];
+    providers: ProviderResult[];
+    supportedAssets: SupportedAsset[];
 }

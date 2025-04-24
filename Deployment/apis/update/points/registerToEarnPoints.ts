@@ -15,7 +15,7 @@ export default async function registerToEarnPoints(args: CommonParam) {
   let returnValue : TrxResult = 'reverted';  
   callback?.({message: `Request to sign to earn reward`});
   await simulateContract(config, {
-    address: getContractData(config.state.chainId).providers,
+    address: getContractData(config.state.chainId).points,
     account,
     abi: registerToEarnPointAbi,
     functionName: 'registerToEarnPoints',

@@ -2,10 +2,6 @@
 
 import { WagmiProvider } from "wagmi";
 import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
-// import { GetSiweMessageOptions, RainbowKitSiweNextAuthProvider } from "@rainbow-me/rainbowkit-siwe-next-auth";
-// import { SessionProvider } from "next-auth/react";
-// import { Session } from "next-auth";
-// import { UserRejectedRequestError } from "viem";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 import { Chain } from "viem";
@@ -96,7 +92,7 @@ export default function AppProvider({children} : {children: React.ReactNode}) {
   return(
     <WagmiProvider config={config}>
       <QueryClientProvider client={new QueryClient()}>
-        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={blaze.id} showRecentTransactions={true}>
+        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={celoAlfajores.id} showRecentTransactions={true}>
           { children }
         </RainbowKitProvider>
       </QueryClientProvider>
@@ -104,21 +100,3 @@ export default function AppProvider({children} : {children: React.ReactNode}) {
   );
 }
 
-// export default function AppProvider({session, children} : {session: Session, children: ReactNode}) {
-//   return(
-//     <WagmiProvider config={config}>
-//       {/* <SessionProvider refetchInterval={0} session={session}> */}
-//         <QueryClientProvider client={new QueryClient()}>
-//           <RainbowKitSiweNextAuthProvider getSiweMessageOptions={getSiweMessageOptions}>
-//             <RainbowKitProvider modalSize="compact" theme={theme} initialChain={blaze.id} showRecentTransactions={true}>
-//               { children }
-//             </RainbowKitProvider>
-//           </RainbowKitSiweNextAuthProvider>
-//         </QueryClientProvider>
-//       {/* </SessionProvider> */}
-//     </WagmiProvider>
-//   );
-// }
-// const getSiweMessageOptions : GetSiweMessageOptions = () => ({
-//   statement: "Confirm that you want to sign in to Simplifi"
-// })

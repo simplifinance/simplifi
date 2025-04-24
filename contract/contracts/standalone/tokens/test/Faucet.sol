@@ -132,7 +132,7 @@ contract Faucet is OnlyRoleBase {
      */
     function setBaseToken(IERC20 newToken) public onlyRoleBearer returns(bool) {
         if(newToken == baseToken || address(newToken) == address(0)) "New Token is the existing or zero"._throw();
-        collateralToken = newToken;
+        baseToken = newToken;
         return true;
     }
 

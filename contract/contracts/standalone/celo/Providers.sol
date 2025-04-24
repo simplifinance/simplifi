@@ -119,7 +119,9 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
         Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount); 
-        if(!IFactory(flexpoolFactory).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
+        address spender = address(flexpoolFactory);
+        _setApprovalFor(baseAsset, spender, amount);
+        if(!IFactory(spender).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
 
         emit Borrowed(provs, _msgSender());
         return true;
@@ -137,10 +139,12 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         uint amount
     ) 
         internal 
-        returns(Common.Provider[] memory provs)
+        returns(Common.Provider[] memory result)
     {
         uint amountLeft = amount;
-        for(uint i = 0; i < providersSlots.length; i++) {
+        uint providersSize = providersSlots.length;
+        Common.Provider[] memory _providers = new Common.Provider[](providersSize);
+        for(uint i = 0; i < providersSize; i++) {
             uint slot = providersSlots[i];
             if(slot >= providers.length) 'Invalid slot detected'._throw();
             Common.Provider memory prov = providers[slot];
@@ -156,10 +160,11 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
 
             uint snapshotBal = providers[slot].amount;
             prov.amount -= snapshotBal; // Record actual amount the provider lends to the borrower
-            provs[i] = prov;
+            _providers[i] = prov;
             if(amountLeft == 0) break;
         }
         if(amountLeft > 0) 'Loan exceed aggregate providers bal'._throw();
+        result = _providers;
     }
 
     // ReadOnly function. Return provider's information. 

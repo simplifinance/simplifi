@@ -2,16 +2,14 @@ import React from "react";
 import { Permissioned } from "./forms/Permissioned";
 import { Permissionless } from "./forms/Permissionless";
 import { flexSpread, flexStart } from "@/constants";
-import type { PoolType, } from "@/interfaces";
-import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import type { Router, } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 
 export default function CreateFlexpool() {
-  const [formType, setFormType] = React.useState<PoolType>('Permissionless');
+  const [formType, setFormType] = React.useState<Router>('Permissionless');
 
   const disablebutton = formType === 'Permissionless';
-  const handleSwitch = (arg: PoolType) => setFormType(arg);
-  const { setActivepath } = useAppStorage();
+  const handleSwitch = (arg: Router) => setFormType(arg);
 
   const renderForm = () => {
     let element : React.JSX.Element;
@@ -41,16 +39,13 @@ export default function CreateFlexpool() {
           </Button>
         </div>
         <div className={`hidden md:flex items-center gap-2 w-[fit-content] text-xs uppercase`}>
-          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`bg-green1/90 text-orange-300`}>
+          <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`dark:bg-green1/90 dark:text-orange-300`}>
             Permissionless
           </Button>
-          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`bg-green1/90 text-orange-300`}>
+          <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`dark:bg-green1/90 dark:text-orange-300`}>
             Permissioned
           </Button>
         </div>
-        <Button variant={'ghost'} onClick={() => setActivepath('')} className="bg-green1/90 text-orange-300">
-          Back
-        </Button>
       </div>
       <div className="p-4 border dark:border-none rounded-b-xl">{ renderForm() }</div>
     </div>

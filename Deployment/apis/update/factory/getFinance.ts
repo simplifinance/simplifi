@@ -26,6 +26,7 @@ export default async function getFinance(args: CommonParam ) {
         returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Get finance successful"});
       }).catch((error: any) => {
         returnValue = 'reverted';
+        console.log("Errorr", error?.message || error?.data?.message)
         callback?.({errorMessage: errorMessage(error)});
       });
   
