@@ -25,7 +25,7 @@ export default function SimplifiApp() {
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
   const [appState, setAppState] = React.useState<AppState>(appData);
     
-  const { isConnected, address, connector, isDisconnected, chainId } = useAccount();
+  const { isConnected, chainId } = useAccount();
   const { openChainModal, chainModalOpen } = useChainModal();
   const { getFactoryDataConfig, readSymbolConfig, getPointsConfig, getProvidersConfig, getSupportedAssetConfig, } = getReadFunctions({chainId});
   
@@ -59,13 +59,7 @@ export default function SimplifiApp() {
     }
   });
 
-  // // We convert blockchain's readonly data to mutable object
-  // const points : Point[] = [...data?.[2]?.result || mockPoints];
-  // const supportedAssets : SupportedAsset[] = [...data?.[4]?.result || mockAssets];
-  // const providers : ProviderResult[] = [...data?.[3]?.result || mockProviders];
-
   const toggleProviders = (arg: bigint) => {
-    // const found = providersIds.filter((id) => id === arg).at(0);
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
   }
   const setError = (arg:string) => setErrorMessage(arg);
@@ -104,11 +98,11 @@ export default function SimplifiApp() {
       }, 6000);
       clearTimeout(6000);
     } else {
-      if(!isSuportedChain(chainId!) && !chainModalOpen) openChainModal?.(); 
       refetch();
+      if(!isSuportedChain(chainId!) && !chainModalOpen) openChainModal?.(); 
     }
 
-  }, [isConnected, address, connector, isDisconnected, openPopUp]);
+  }, [isConnected, openPopUp]);
  
   return (
     <StorageContextProvider 

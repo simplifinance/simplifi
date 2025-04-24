@@ -71,10 +71,25 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     ) public whenNotPaused returns(bool) {
         Common.Pool memory pool = _createPool(users, _msgSender(), unit, maxQuorum, durationInHours, colCoverage, isPermissionless? Common.Router.PERMISSIONLESS : Common.Router.PERMISSIONED, colAsset);
         _awardPoint(users[0], 0, 5, false);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, isPermissionless);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, isPermissionless, true);
         emit Common.PoolCreated(pool);
       
         return true;
+    }
+
+    /**
+     * @dev launch a default permissionless pool
+     * @param user : Target user
+     * @param unit : Unit contribution
+     * @param initialPool : An Initialized pool. Can be an empty pool
+     */
+    function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
+        address[] memory users = new address[](1);
+        users[0] = user;
+        IERC20 defaultColAsset = IERC20(ISupportedAsset(assetManager).getDefaultSupportedCollateralAsset());
+        initialPool = _createPool(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset);
+        _awardPoint(users[0], 0, 5, false);
+        emit Common.PoolCreated(initialPool);
     }
 
     /**
@@ -88,6 +103,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * - durationInHrs is set to 72 hours by default.
      * - colCoverage is set to 120 by default.
      * Only accounts with the roleBearer are allowed i.e Ex. Providers contract
+     * If an user is contributing via the provider, we ensure the privacy of permissioned group is preserved.
      */
     function contributeThroughProvider(
         Common.Provider[] memory providers, 
@@ -96,20 +112,16 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     ) external onlyRoleBearer whenNotPaused returns(bool)
     {
         Common.Pool memory pool;
-        if(isPoolAvailable(unit)){
+        if(!isPoolAvailable(unit)){
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool.big.unitId, pool);
             emit Common.NewContributorAdded(pool);
         } else {
-            address[] memory users;
-            IERC20 defaultColAsset = IERC20(ISupportedAsset(assetManager).getDefaultSupportedCollateralAsset());
-            pool = _createPool(users, borrower, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset);
-            _awardPoint(users[0], 0, 5, false);
-            emit Common.PoolCreated(pool);
+            pool = _launchDefault(borrower, unit);
         }
         _setProviders(providers, borrower, pool.big.recordId);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, true);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, pool.big.currentPool == unit);
 
         return true;
     }
@@ -122,7 +134,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         Common.Pool memory pool = _getPool(unit);
         pool = _joinAPool(unit, _msgSender(), pool);
         _setPool(pool.big.unitId, pool);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, pool.router == Common.Router.PERMISSIONLESS);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, pool.router == Common.Router.PERMISSIONLESS, false);
         emit Common.NewContributorAdded(pool);
 
         return true;
@@ -187,7 +199,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
             pool.low.allGh += 1;
         }
         pool.addrs.lastPaid = profile.id;
-        _recordAnalytics(pool.big.currentPool, collateral, Common.Stage.GET, pool.router == Common.Router.PERMISSIONLESS);
+        _recordAnalytics(pool.big.currentPool, collateral, Common.Stage.GET, pool.router == Common.Router.PERMISSIONLESS, false);
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
         if(!ISafe(pool.addrs.safe).getFinance(profile.id, baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(makerRate)), collateral, pool.big.recordId)) 'Safe call failed'._throw();
         (pool, profile) = _completeGetFinance(pool, collateral, profile);
@@ -205,7 +217,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
+        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS, false);
         emit Common.Payback(pool);
 
         return true;
@@ -229,7 +241,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS);
+        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS, false);
         emit Common.Payback(pool);
         return true;
     }
@@ -252,7 +264,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         _awardPoint(creator, 0, 5, true);
         pool.stage = Common.Stage.CANCELED;
         _shufflePool(pool);
-        _recordAnalytics(pool.big.unit, 0, Common.Stage.CANCELED, isPermissionLess);
+        _recordAnalytics(pool.big.unit, 0, Common.Stage.CANCELED, isPermissionLess, true);
         if(!ISafe(pool.addrs.safe).cancel(creator, baseAsset, pool.big.unit, pool.big.recordId)) 'Safe call failed'._throw();
 
         emit Common.Cancellation(unit);
@@ -275,12 +287,12 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @param flag : For determining the type of operation to perform.
      * @param isPermissionless : Whether the pool is permissioned or permissionless 
      */
-    function _recordAnalytics(uint baseValue, uint collateral, Common.Stage flag, bool isPermissionless) internal {
+    function _recordAnalytics(uint baseValue, uint collateral, Common.Stage flag, bool isPermissionless, bool isNewOrCancelled) internal {
         Analytics memory alt = analytics;
         unchecked { 
             if(flag == Common.Stage.JOIN) {
                 alt.tvlBase += baseValue;
-                isPermissionless? alt.totalPermissionless += 1 : alt.totalPermissioned += 1;
+                if(isNewOrCancelled) isPermissionless? alt.totalPermissionless += 1 : alt.totalPermissioned += 1;
             } else if(flag == Common.Stage.GET) {
                 if(alt.tvlBase >= baseValue) alt.tvlBase -= baseValue;
                 alt.tvlCollateral += collateral;
@@ -288,7 +300,13 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
                 if(alt.tvlCollateral >= collateral) alt.tvlCollateral -= collateral;
                 alt.tvlBase += baseValue;
             } else {
-                // otherwise, it will be canceled pool
+                if(isNewOrCancelled) {
+                    if(isPermissionless) {
+                        if(alt.totalPermissionless > 0) alt.totalPermissionless -= 1;
+                    } else {
+                        if(alt.totalPermissioned > 0) alt.totalPermissioned -= 1;
+                    }
+                }
                 if(alt.tvlBase >= baseValue) alt.tvlBase -= baseValue;
             }
         }

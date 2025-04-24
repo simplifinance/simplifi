@@ -3,6 +3,7 @@ import { deployContracts } from "../deployments";
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
+import { parseEther } from "viem";
 
 describe("Collateral asset", function () {
   async function deployContractsFixcture() {
@@ -10,8 +11,8 @@ describe("Collateral asset", function () {
   }
 
   describe("Balance minted", function () {
-    it("Check the total amount minted to initial token receiver is correct.", async () => {
-      const { signers: { deployerAddr }, collateralAsset, INITIAL_MINT, distributorAddr} = await loadFixture(deployContractsFixcture);
+    it("Check that the total amount minted to initial token receiver is correct.", async () => {
+      const { signers: { deployerAddr }, collateralAsset, distributorAddr} = await loadFixture(deployContractsFixcture);
       const bals = await collateralAsset.accountBalances(distributorAddr); 
       const totalSupply = await collateralAsset.totalSupply()
       const deployerBal = await collateralAsset.balanceOf(deployerAddr);
@@ -19,9 +20,9 @@ describe("Collateral asset", function () {
       const totalBalOfDistributor = bals.locked.value + bals.spendable;
       expect(bn(totalBalOfDistributor).gt(bn(bals.spendable))).to.be.true;
       expect(balOfDistributor).to.be.equal(bals.spendable);
-      expect(deployerBal).to.be.equal(INITIAL_MINT)
-      expect(bals.spendable).to.be.equal(totalSupply - (INITIAL_MINT + bals.locked.value));
-      expect(bals.locked.value).to.be.equal(totalSupply - (bals.spendable + INITIAL_MINT));
+      expect(deployerBal).to.be.equal(parseEther('200000000'));
+      expect(bals.spendable).to.be.equal(totalSupply - (bals.locked.value + deployerBal));
+      expect(bals.locked.value).to.be.equal(totalSupply - (bals.spendable + deployerBal));
     });
   });
 });

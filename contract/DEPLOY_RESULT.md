@@ -483,3 +483,37 @@ Factory deployed to: 0x16f0512caA28DA6a890589819Fb70815DFd1206E
 deploying "Providers" (tx: 0x66ad775a3bb5b069dc4c04767fcff0873f961e98f2410b89a6292e038e28686e)...: deployed at 0x74C073D9d460458f2703cc27e6eD39fe3270a602 with 1387006 gas
 Providers deployed to: 0x74C073D9d460458f2703cc27e6eD39fe3270a602
 Done in 292.84s.
+
+24/4
+C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-alfa
+yarn run v1.22.22
+$ hardhat deploy --network alfajores --export deployments/contracts.json
+Nothing to compile
+No need to generate any newer typings.
+reusing "RoleManager" at 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+RoleManager deployed to: 0x79dF2FCc7DfDdc0C85Cc1f82B1f631b4b9D994B0
+reusing "BaseAsset" at 0x476ED9B38aB286f6ce5DD70830067e645c754094
+BaseAsset contract deployed to: 0x476ED9B38aB286f6ce5DD70830067e645c754094
+reusing "Escape" at 0x3AE3825D0562c05bA88f12cC3B69c3c70A845452
+Escape contract deployed to: 0x3AE3825D0562c05bA88f12cC3B69c3c70A845452
+reusing "Reserve" at 0x21Aac90ac21Fa49dba988efe52a5fB1BC90D19f0
+Reserve contract deployed to: 0x21Aac90ac21Fa49dba988efe52a5fB1BC90D19f0
+reusing "TokenDistributor" at 0x0281a9DB774C6D1d57065faE4E53E92832309bB4
+TokenDistributor deployed to: 0x0281a9DB774C6D1d57065faE4E53E92832309bB4
+reusing "Attorney" at 0xCDeB864acD240D8C1961c7dF9079D361BEE5707C
+Attorney contract deployed to: 0xCDeB864acD240D8C1961c7dF9079D361BEE5707C
+reusing "SimpliToken" at 0x962289B0F4f0Aa00d84D7a55DAFC68F28C54fAC0
+SimpliToken deployed to: 0x962289B0F4f0Aa00d84D7a55DAFC68F28C54fAC0
+deploying "Faucet" (tx: 0xb71ad3e599c6cd6173ed1b2a49bdcba70bf5d2f3e41610c8aa08a54a532b9071)...: deployed at 0xEd8E71619bae50624Db76a986e0A7E4821F17ef2 with 819370 gas
+Faucet contract deployed to: 0xEd8E71619bae50624Db76a986e0A7E4821F17ef2
+deploying "Points" (tx: 0xa13cdade9febe50b3cb8ec3a7ce5e4c0480c34dca450e0253010a093a55015c0)...: deployed at 0x5aD28E7E90DAfB40468FCa3F19B4771e33C795B5 with 698350 gas
+Points contract deployed to: 0x5aD28E7E90DAfB40468FCa3F19B4771e33C795B5
+deploying "SafeFactory" (tx: 0x42c58fba0be64caeaaa51dd80e54e7548d8e80596672be71c7795ff8ee613b62)...: deployed at 0x52Efc8EDcceC2282e0B9bf68586e2Daad6021Be7 with 1605163 gas
+SafeFactory deployed to: 0x52Efc8EDcceC2282e0B9bf68586e2Daad6021Be7
+reusing "SupportedAssetManager" at 0xa00E598D0c6c2Ab62E74B1282c9Efd9d2010F47A
+SupportedAssetManager deployed to: 0xa00E598D0c6c2Ab62E74B1282c9Efd9d2010F47A
+deploying "FlexpoolFactory" (tx: 0x88cd1e4a3a2b9c21a5425b424974e370ba26d9849714c8c2ff6f091dcfe9b46b)...: deployed at 0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511 with 5445267 gas
+Factory deployed to: 0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511
+deploying "Providers" (tx: 0x6abdaa5b5f31ef76565c99ca6a92a8caeb101a9ce96faf5b0897adb3c57d2008)...: deployed at 0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a with 1402338 gas
+Providers deployed to: 0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a
+Done in 116.75s

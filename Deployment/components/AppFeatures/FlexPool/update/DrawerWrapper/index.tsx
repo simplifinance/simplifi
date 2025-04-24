@@ -47,7 +47,6 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
             onClickAction={() => toggleDrawer(0)}
             openDrawer={popUpDrawer} 
             setDrawerState={toggleDrawer} 
-            styles={{ display: 'flex', flexDirection: 'column', justifyItems: 'center', gap: '16px', color: '#fed7aa', borderLeft: '1px solid rgb(249 244 244 / 0.2)',}} 
         >
             <div className={`space-y-4 md:space-y-4`}>
                 { actions }
@@ -137,7 +136,7 @@ export const Contributors: React.FC<ContributorsProp> = ({popUpDrawer, toggleDra
             setDrawerState={toggleDrawer} 
             onClickAction={() => toggleDrawer(0)}
         >
-            <div className=" bg-white1 dark:bg-gray1 space-y-4 rounded-lg">
+            <div className=" bg-white1/60 dark:bg-green1/90 border p-4 space-y-4 rounded-lg">
                 <div>
                     {
                         cData?.map((data, i) => (

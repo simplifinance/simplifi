@@ -47,7 +47,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
             setDrawerState={toggleDrawer} 
             onClickAction={() => closeReview(0)}
         >
-            <div className="bg-white1 dark:bg-gray1 space-y-3 p-4 rounded-b-lg text-green1/90 dark:text-orange-200 font-semibold">
+            <div className="bg-white1/50 dark:bg-green1/60 space-y-3 p-4 rounded-lg text-green1/90 dark:text-orange-200 font-semibold border">
                 {
                     values.map((item) => {
                         return (

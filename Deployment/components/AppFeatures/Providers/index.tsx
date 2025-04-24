@@ -11,7 +11,7 @@ import { Confirmation } from "../FlexPool/update/ActionButton/Confirmation";
 import AddLiquidity from "./AddLiquidity";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 import RemoveLiquidity from "./RemoveLiquidity";
-import { GetColumnArgs, HandleTransactionParam, } from "@/interfaces";
+import { DataTableProps, HandleTransactionParam, } from "@/interfaces";
 import DataTable from "./DataTable";
 
 export default function Providers() {
@@ -24,20 +24,17 @@ export default function Providers() {
     const account = formatAddr(address);
     const config = useConfig();
     const unit = toBigInt(toBN(unitLiquidity).times('1e18').toString());
-    // const { getProvidersConfig } = getReadFunctions({chainId});
-    // const { data } = useReadContract({...getProvidersConfig()});
-    // const mutableData : ProviderResult[] = [...data || mockProviders];
-    const { toggleProviders, providersIds, providers } = useAppStorage();
+    const { toggleProviders, providersIds, } = useAppStorage();
     const hasSelectedProvider = providersIds.length > 0;
-    const handleClickProvider = (slot: bigint, amount: bigint) => {
-        totalLiquidity.current.value += amount;
-        toggleProviders(slot);
-    };
+    const handleClickProvider = (slot: bigint, amount: bigint, isSelected: boolean) => {
+        const liquidity = totalLiquidity.current.value;
+        if(isSelected){
+            totalLiquidity.current.value = liquidity + amount;
 
-    const getColumnsArg : GetColumnArgs = {
-        currentUser: account,
-        providerSlots: providersIds,
-        onCheckboxClicked: handleClickProvider
+        }else {
+            if(liquidity > amount) totalLiquidity.current.value = liquidity - amount;
+        }
+        toggleProviders(slot);
     };
     const toggleDrawer = (arg: number) => setOpenDrawer(arg);
     const transactionArgs : HandleTransactionParam = {
@@ -104,7 +101,11 @@ export default function Providers() {
                     <h3 className="font-bold">Pick your providers</h3>
                     <RemoveLiquidity />
                 </div>
-                <DataTable getColumnArgs={getColumnsArg}/>
+                <DataTable 
+                    currentUser={account}
+                    providerSlots={providersIds}
+                    onCheckboxClicked={handleClickProvider}
+                />
             </div>
             <Confirmation 
                 openDrawer={openDrawer}
@@ -115,62 +116,3 @@ export default function Providers() {
         </div>
     )
 }
-
-
-// { (isPending || isLoading) && <Loading /> }
-// {
-//     (!data || data?.length === 0 || isError)  &&
-//         <NotFound 
-//             errorMessage="No Provider"
-//             position="relative"
-//             textColor="dark:text-orange-300"
-//         />
-// }
-// const renderProviders = () => {
-//     if(!data || data?.length === 0 || isError) {
-//         return ( 
-//             <NotFound 
-//                 errorMessage="No Provider"
-//                 position="relative"
-//                 textColor="dark:text-orange-300"
-//             />
-//         );
-//     }
-//     return(
-//         <div className="w-full max-w-sm">
-//             <div className="grid grid-cols-5 max-w-sm bg-green1/90 p-1 rounded-lg">
-//                 <div className="bg-gray1 p-2 rounded-lg text-center">Select</div>
-//                 <div className="bg-gray1 p-2 rounded-lg text-center">Slot ID</div>
-//                 <div className="bg-gray1 p-2 rounded-lg">Liquidity</div>
-//                 <div className="bg-gray1 p-2 rounded-lg">Rate</div>
-//                 <div className="bg-gray1 p-2 rounded-lg">Actions</div>
-//             </div>
-//             <div>
-//             {/* <RemoveLiquidity  /> */}
-                
-//                 {
-//                     data && data.map(({slot, account, amount, rate}, index) => (
-//                         <motion.div
-//                             onClick={() => handleClickProvider({slot, amount})}
-//                             initial={{opacity: 0}}
-//                             animate={{opacity: [0, 1]}}
-//                             transition={{duration: '0.5', delay: index/data.length}}
-//                             className={` w-full rounded-md cursor-pointer grid grid-cols-3 max-w-sm ${providersIds.includes(slot) && 'bg-gray1'}`} 
-//                         >
-//                             <div className="place-items-center">
-//                                 <Checkbox 
-//                                     checked={providersIds.includes(slot)}
-//                                 />
-//                             </div>
-//                             <div className="text-center">{slot.toString()}</div>
-//                             <div className="text-center">{formatValue(amount)}</div>
-//                             <div className="text-center">{toBN(rate.toString()).div(100).toString()}</div>
-//                             <div>{ account === formatAddr(address) && <RemoveLiquidity  />}</div>
-//                         </motion.div>
-//                     ))
-//                 }
-                
-//             </div>
-//         </div>
-//     );
-// }

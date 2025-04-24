@@ -750,7 +750,7 @@
       ]
     },
     "Faucet": {
-      "address": "0x1DD9a1535AfE5FB5A9FdbD12ce741aE82475BC37",
+      "address": "0xEd8E71619bae50624Db76a986e0A7E4821F17ef2",
       "abi": [
         {
           "inputs": [
@@ -1056,7 +1056,7 @@
       ]
     },
     "FlexpoolFactory": {
-      "address": "0x16f0512caA28DA6a890589819Fb70815DFd1206E",
+      "address": "0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511",
       "abi": [
         {
           "inputs": [
@@ -3367,7 +3367,7 @@
       ]
     },
     "Points": {
-      "address": "0x803C0997623CF5bcb033cD03bA4B3E662aa843ed",
+      "address": "0x5aD28E7E90DAfB40468FCa3F19B4771e33C795B5",
       "abi": [
         {
           "inputs": [
@@ -3601,7 +3601,7 @@
       ]
     },
     "Providers": {
-      "address": "0x74C073D9d460458f2703cc27e6eD39fe3270a602",
+      "address": "0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a",
       "abi": [
         {
           "inputs": [
@@ -4467,7 +4467,7 @@
       ]
     },
     "SafeFactory": {
-      "address": "0xB868518D5E0dC52A74301e24763312840B2CdB2d",
+      "address": "0x52Efc8EDcceC2282e0B9bf68586e2Daad6021Be7",
       "abi": [
         {
           "inputs": [

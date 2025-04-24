@@ -119,7 +119,9 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
         Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount); 
-        if(!IFactory(flexpoolFactory).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
+        address spender = address(flexpoolFactory);
+        _setApprovalFor(baseAsset, spender, amount);
+        if(!IFactory(spender).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
 
         emit Borrowed(provs, _msgSender());
         return true;

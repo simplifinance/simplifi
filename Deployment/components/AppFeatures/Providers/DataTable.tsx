@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,9 +21,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -36,11 +33,11 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper"
-import { formatAddr, formatValue, toBigInt, toBN } from "@/utilities"
-import { GetColumnArgs, ProviderResult } from "@/interfaces"
+import { formatValue, toBigInt, toBN } from "@/utilities"
+import { DataTableProps, ProviderResult } from "@/interfaces"
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage"
 
-const getColumns = ({currentUser, providerSlots, onCheckboxClicked } : GetColumnArgs) => {
+const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
     const columns: ColumnDef<ProviderResult>[] = [
       {
         id: "select",
@@ -56,7 +53,7 @@ const getColumns = ({currentUser, providerSlots, onCheckboxClicked } : GetColumn
         ),
         cell: ({ row }) => (
           <Checkbox
-            checked={providerSlots.includes(toBigInt(row.getValue('slot') ||'0'))}
+            checked={providerSlots.includes(toBigInt(row.getValue('slot')?.toString()))}
             // checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
@@ -116,55 +113,19 @@ const getColumns = ({currentUser, providerSlots, onCheckboxClicked } : GetColumn
           return <div className="text-right font-medium">{formatted}</div>
         },
       },
-      // {
-      //   id: "actions",
-      //   enableHiding: false,
-      //   cell: ({ row }) => {
-      //     const account = row.getValue('account') as string;
-      //     const disabled = account.toLowerCase() !== currentUser.toLowerCase();
-      //     const slot = toBigInt(row.getValue("slot")?.toString());
-      //     const amount = toBigInt(row.getValue("amount")?.toString());
-    
-      //     return (
-      //       <DropdownMenu>
-      //         <DropdownMenuTrigger asChild>
-      //           <Button variant="ghost" className="h-8 w-8 p-0">
-      //             <span className="sr-only">Open menu</span>
-      //             <MoreHorizontal />
-      //           </Button>
-      //         </DropdownMenuTrigger>
-      //         <DropdownMenuContent align="end" className="p-2">
-      //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-      //               <DropdownMenuItem
-      //                   disabled={disabled}
-      //                   onClick={() => onCheckboxClicked(slot, amount)}
-      //               >
-      //                   unSelect
-      //               </DropdownMenuItem>
-      //               <DropdownMenuItem
-      //                   disabled={disabled}
-      //                   onClick={() => onCheckboxClicked(slot, amount)}
-      //               >
-      //                   Select
-      //               </DropdownMenuItem>
-      //         </DropdownMenuContent>
-      //       </DropdownMenu>
-      //     )
-      //   },
-      // },
     ];
     return columns;
     
 }
 
-export default function DataTable({getColumnArgs} : DataTableProps) {
+export default function DataTable({providerSlots, onCheckboxClicked} : DataTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
     const { providers } = useAppStorage();
 
-    const columns = getColumns(getColumnArgs);
+    const columns = getColumns({providerSlots});
     const table = useReactTable({
         data: providers,
         columns,
@@ -247,9 +208,9 @@ export default function DataTable({getColumnArgs} : DataTableProps) {
                                 onClick={() => {
                                   const slot = toBigInt(row.getValue('slot')?.toString());
                                   const amount = toBigInt(row.getValue('amount')?.toString());
-                                  getColumnArgs.onCheckboxClicked(slot, amount);
+                                  onCheckboxClicked(slot, amount, row.getIsSelected());
                                 }}
-                                className="cursor-pointer"
+                                className={`${row.getIsSelected()? 'bg-gray1 bg-opacity-60' : ''} cursor-pointer checked:bg-red-300`}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell 
@@ -303,9 +264,4 @@ export default function DataTable({getColumnArgs} : DataTableProps) {
             </div>
         </div>
     )
-}
-
-type DataTableProps = {
-    // data: ProviderResult[];
-    getColumnArgs: GetColumnArgs;
 }

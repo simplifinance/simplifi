@@ -6,7 +6,6 @@ import { formatError, } from "@/apis/update/formatError";
 import Message from "../../../../../utilities/Message";
 import { ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
-import { flexSpread } from "@/constants";
 import { useTheme } from "next-themes";
 import { handleTransact } from "@/utilities";
 
@@ -42,9 +41,8 @@ export const Confirmation :
             handleCloseDrawer();
             back?.();
             if(txnType === 'Create') setActivepath('Flexpool');
-            // closeDisplayForm();
-        }, 10000);
-        clearTimeout(10000);
+        }, 6000);
+        clearTimeout(6000);
     }
 
     const handleSendTransaction = async() => {
@@ -62,7 +60,7 @@ export const Confirmation :
             onClickAction={handleCloseDrawer}
             styles={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%", background: isDark? '#121212' : '#F9F4F4'}}
         >
-            <div className="minHeight bg-white1 dark:bg-green1/90 p-4 space-y-4 text-green1/90 dark:text-orange-300 text-center">
+            <div className="bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
                 <Message />
                 <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
             </div>

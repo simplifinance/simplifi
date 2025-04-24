@@ -35,7 +35,7 @@ export default function Drawer({ openDrawer, styles, setDrawerState, title, onCl
                 role="presentation"
                 onClick={() => toggleDrawer(0, setDrawerState)}
                 onKeyDown={() => toggleDrawer(0, setDrawerState)}
-                className='h-full p-4 space-y-2 bg-white1 dark:bg-green1 border-l'
+                className='h-screen overflow-auto p-4 space-y-2 bg-white1 dark:bg-green1 border-l'
             >
                 <DrawerHeader title={title} onClickAction={onClickAction} />
                 { children }

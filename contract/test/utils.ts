@@ -21,7 +21,10 @@ import type {
     Balances,
     SimpliToken,
     TransferParam,
-    TokenDistributor, } from "./types";
+    TokenDistributor,
+    ProvideLiquidityArg,
+    RemoveLiquidityArg,
+    BorrowArg, } from "./types";
   
   import { bn, formatAddr, TrxnType } from "./utilities";
   
@@ -432,5 +435,56 @@ export async function executeTransaction(
   await contract.connect(signer).executeTransaction(reqId);
   const request = await contract.getTransactionRequest(reqId);
   return request; 
+}
+
+/**
+ * @dev Utility to call provideLiquidity on the provides contract
+ * @param args : Required Aarguments
+ * @returns Object showing signer's profile and its size
+ */
+export async function provideLiquidity(args: ProvideLiquidityArg) {
+  const { asset, signer, contract, rate, contractAddr, deployer, signerAddr, amount } = args;
+  await transferAsset({amount, asset, recipients: [signerAddr], sender: deployer});
+  await approve({owner: signer, amount, spender: contractAddr, testAsset: asset});
+  await contract.connect(signer).provideLiquidity(rate);
+  const profile = await contract.getProviders();
+  return {
+    size: profile.length,
+    profile: profile.filter((item) => item.account.toLocaleLowerCase() === signerAddr.toString().toLocaleLowerCase())?.[0]
+  }
+}
+
+/**
+ * @dev Utility to call removeLiquidity on the provides contract
+ * @param args : Required Aarguments
+ * @returns Object showing signer's profile and its size
+ */
+export async function removeLiquidity(args: RemoveLiquidityArg) {
+  const { signer, contract, signerAddr, } = args;
+  await contract.connect(signer).removeLiquidity();
+  const profile = await contract.getProviders();
+  return {
+    size: profile.length,
+    profile: profile.filter((item) => item.account.toLocaleLowerCase() === signerAddr.toString().toLocaleLowerCase())?.[0]
+  }
+}
+
+/**
+ * @dev Utility to call removeLiquidity on the provides contract
+ * @param args : Required Aarguments
+ * @returns Object showing signer's profile and its size
+ */
+export async function borrow(args: BorrowArg) {
+  const { signer, contract, signerAddr, providersSlots, amount, flexpool } = args;
+  await contract.connect(signer).borrow(providersSlots, amount);
+  const profile = await flexpool.getProfile(amount, signerAddr);
+  const unitId = (await flexpool.getFactoryData()).currentEpoches;
+  const pool = await flexpool.getPoolData(unitId);
+  return {
+    size: profile.length,
+    profile,
+    pool
+
+  }
 }
 

@@ -130,7 +130,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         <React.Fragment>
             <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
                 <div className="relative flex justify-between items-center">
-                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black text-orange-200 bg-gray1 border-r border-r-green1 rounded-tr-lg rounded-bl-lg w-fit">
+                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black text-orange-200 border-r border-r-green1 w-fit">
                         {`$${unit.inEther}`}
                     </h2>
                     <div className="flex justify-between items-center gap-2 ">

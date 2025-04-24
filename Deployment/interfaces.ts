@@ -1,11 +1,9 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-// import { BigNumberish, ethers } from "ethers";
 import { Common } from "./typechain-types/Contributor";
 import { Common as Cmon } from "./typechain-types/FlexpoolFactory";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
-import { CurrentEpoches } from "./components/AppFeatures/FlexPool/PoolWrapper/CurrentEpoches";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -32,11 +30,10 @@ export type Contributor = Common.ContributorReturnValueStruct;
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
 export type Analytics = Cmon.AnalyticsStruct
-export type GetColumnArgs = {
+export type DataTableProps = {
   currentUser: Address;
   providerSlots: bigint[];
-  onCheckboxClicked: (slot: bigint, amount: bigint) => void;
-  // removeLiquidityComponent: (arg: Address) => React.ReactNode;
+  onCheckboxClicked: (slot: bigint, amount: bigint, isClicked: boolean) => void;
 }
 export type ToMutable<T> = {
   -readonly [P in keyof T]: T[P];

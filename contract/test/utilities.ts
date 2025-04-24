@@ -1,13 +1,13 @@
 import { Address, Addresses, NullNoPromise, Signer, StrBigHex, } from "./types";
 import { ethers, Web3 } from "hardhat";
 import BigNumber from "bignumber.js";
-import { Hex } from "viem";
+import { Hex, parseEther } from "viem";
 import { expect } from "chai";
 
 export const locker = { LOCKED: "LOCKED", UNLOCKED: "UNLOCKED" };
 export enum FuncTag { JOIN, GET, PAYBACK, CANCELED, ENDED };
 export enum Status { AVAILABLE, TAKEN };
-export enum Router { PERMISSIONLESS, PERMISSIONED }
+export enum Router { NONE, PERMISSIONLESS, PERMISSIONED }
 export const bigintToStr = (x:bigint) => x.toString();
 export const toHex = (x: any) => Web3.utils.numberToHex(x);
 export const buildstring = (affx: string, start: string, times: number) => `${affx}${`${start}`.repeat(times)}`;
@@ -31,18 +31,17 @@ export const SYMBOL = "TBSD";
 export const NAME = "Test Base Asset";
 export const TOTALSUPPLY = buildstring('1', '0', 24);
 export const TOTAL_LOCKED = buildstring('7', '0', 26);
-export const TEN_THOUSAND_TOKEN = BigInt('10000000000000000000000');
-export const ONE_THOUSAND_TOKEN = BigInt('1000000000000000000000');
-export const ONE_HUNDRED_TOKEN = BigInt('100000000000000000000');
-export const ONE_TOKEN = BigInt('1000000000000000000');
+export const TEN_THOUSAND_TOKEN = parseEther('10000');
+export const ONE_THOUSAND_TOKEN = parseEther('1000');
+export const ONE_HUNDRED_TOKEN = parseEther('100');
+export const ONE_TOKEN = parseEther('1');
 export const INITIAL_ACCOUNT_BALANCE = ethers.parseEther("1.0");
-// export const CREATION_FEE = ethers.parseEther("0.02");
 export const VALUE_TO_SEND = ethers.parseEther("2.0");
-export const AMOUNT_SENT_TO_ACCOUNT_ONE = BigInt('300000000000000000000000'); //300,000 token
-export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = BigInt('100000000000000000000000'); // 100,000 token
-export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = BigInt('100000000000000000000000'); // 100,000 token
+export const AMOUNT_SENT_TO_ACCOUNT_ONE = parseEther('300000');
+export const AMOUNT_SENT_TO_EACH_ACCOUNT_FROM_ALC1 = parseEther('100000');
+export const AMOUNT_SENT_TO_STRATEGY_FROM_STRATEGY_OWNER = parseEther('100000');
 export const ZERO_ADDRESS = buildstring('0x', '0', 40);
-export const ZERO = BigInt('0');
+export const ZERO = parseEther('0');
 
 /**
  * Wraps `arg` into a big number

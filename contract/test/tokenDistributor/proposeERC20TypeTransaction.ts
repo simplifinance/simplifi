@@ -20,7 +20,7 @@ describe("Token distributor", function () {
       const { recipient, amount, executors, txType, status, delay, id} = await proposeTransaction({signer: signer1, recipient: alc1Addr as Address, amount: transferAmt, contract: distributor, delayInHrs: 0, trxType: TrxnType.ERC20});
       const quorum = await distributor.quorum();
       expect(quorum).to.be.eq(BigInt(QUORUM - 1));
-      expect(id).to.be.eq(2n); // This because we'd created a request immediately after deployment. See deploymemts.ts
+      expect(id).to.be.eq(1n);
       expect(delay).to.be.eq(ZERO);
       expect(amount).to.be.eq(transferAmt);
       expect(executors.length).to.be.eq(1n);

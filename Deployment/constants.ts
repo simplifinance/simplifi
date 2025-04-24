@@ -5,7 +5,7 @@ import { getContractData } from './apis/utils/getContractData';
 
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
 export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }
-export enum Router { PERMISSIONLESS, PERMISSIONED }
+export enum Router { NONE, PERMISSIONLESS, PERMISSIONED }
 
 // 3 block confirmation
 export const confirmationBlocks = 3; 
