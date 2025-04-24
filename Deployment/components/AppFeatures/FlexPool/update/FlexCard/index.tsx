@@ -124,7 +124,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 setButtonObj({ value: 'Ended', disable: true});
                 break;
         }    
-    }, [stage.toNum]);
+    }, [stage.toNum, currentPool.big, isAdmin, isMember, isPermissionless, loan.inBN, paybackTime.inSec, sentQuota, unit.big, userCount]);
 
     return(
         <React.Fragment>

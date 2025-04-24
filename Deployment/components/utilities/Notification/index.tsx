@@ -20,7 +20,7 @@ export default function Notification(props: NotificationProp) {
       setOpen(true);
       setPrevious(message);
     }
-  }, [message]);
+  }, [message, prev]);
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {

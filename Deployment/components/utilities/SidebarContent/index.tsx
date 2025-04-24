@@ -13,21 +13,21 @@ export const SidebarContent = ({ path, title, icon, disabled }: CollapsibleProps
   const handleClick = () => {
     let popUp = false;
     setActivepath(path);
-    // if(!isConnected) {
-    //   if(activePath === routeEnum.FLEXPOOL){
-    //     setActivepath(routeEnum.DASHBOARD);
-    //     popUp = true;
-    //   } else {
-    //     if(path === 'Faq' || path === 'Dashboard'){
-    //       setActivepath(path);
-    //     } else {
-    //       popUp = true;
-    //     }
-    //   }
-    //   popUp && togglePopUp(1);
-    // } else {
-    //   setActivepath(path);
-    // }
+    if(!isConnected) {
+      if(activePath === routeEnum.FLEXPOOL){
+        setActivepath(routeEnum.DASHBOARD);
+        popUp = true;
+      } else {
+        if(path === 'Faq' || path === 'Dashboard'){
+          setActivepath(path);
+        } else {
+          popUp = true;
+        }
+      }
+      popUp && togglePopUp(1);
+    } else {
+      setActivepath(path);
+    }
     setTimeout(() => toggleSidebar(false), 500);
     clearTimeout(500);
   }

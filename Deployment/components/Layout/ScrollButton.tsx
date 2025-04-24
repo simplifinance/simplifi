@@ -15,7 +15,7 @@ const ScrollButton = ({ windowIsDefined }: {windowIsDefined: boolean}) => {
   React.useEffect(() => {
     windowIsDefined && window.addEventListener("scroll", toggleVisible);
 
-  }, []);
+  }, [windowIsDefined]);
 
   const scrollToTop = () => {
     windowIsDefined &&
