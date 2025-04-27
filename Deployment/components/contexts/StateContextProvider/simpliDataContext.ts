@@ -1,15 +1,13 @@
-import { Address, Analytics, Path, Point, ProviderResult, SupportedAsset, TrxState, VoidFunc } from "@/interfaces";
-import { Common } from "@/typechain-types/FlexpoolFactory";
+import { Path, PointsReturnValue, ProviderResult, SupportedAsset, VoidFunc } from "@/interfaces";
+import { Common } from "@/typechain-types/contracts/standalone/celo/FlexpoolFactory";
 
 export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
     toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
     messages: string[];
-    openPopUp: number;
     setmessage: (arg: string) => void;
     toggleDisplayOnboardUser: VoidFunc;
-    togglePopUp: (arg: number) => void;
     displayOnboardUser: boolean;
     displayAppScreen: boolean;
     displayForm: boolean;
@@ -26,7 +24,7 @@ export interface DataContextProps {
     prevPaths: Path[];
     errorMessage: string;
     setError: (arg: string) => void;
-    points: Point[];
+    points: PointsReturnValue[];
     providers: ProviderResult[];
     supportedAssets: SupportedAsset[];
 }

@@ -1,48 +1,63 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import type { InputSelector } from '@/interfaces';
+import type { Address, HandleTransactionParam, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
-import Grid from "@mui/material/Grid";
-import { CustomButton } from "@/components/utilities/CustomButton";
 import Quorum from "../userInputsComponents/Quorum";
 import Duration from "../userInputsComponents/Duration";
 import CollateralAsset from "../userInputsComponents/CollateralAsset";
 import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
-import { toBN } from "@/utilities";
+import { formatAddr, toBN } from "@/utilities";
 import { Button } from "@/components/ui/button";
+import { zeroAddress } from "viem";
+import { useAccount, useConfig } from "wagmi";
+import { Confirmation } from "../../../update/ActionButton/Confirmation";
 
 export const Permissionless = () => {
-    const [popUpDrawer, setDrawerState] = React.useState<number>(0);
-    const [quorum, setQuorum] = React.useState<string>('2');
-    const [duration, setDuration] = React.useState<string>('1');
-    const [ccr, setCollateralCoverage] = React.useState<string>('120');
-    const [collateralAsset, setCollateralAsset] = React.useState<string>('NA');
+    const [openDrawer, setDrawerState] = React.useState<number>(0);
+    const [quorum, setQuorum] = React.useState<number>(2);
+    const [duration, setDuration] = React.useState<number>(1);
+    const [colCoverage, setCollateralCoverage] = React.useState<number>(120);
+    const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
 
+    const account = formatAddr(useAccount().address);
+    const config = useConfig();
     const toggleDrawer = (arg: number) => setDrawerState(arg);
     
-    const onChange = (value: string, tag: InputSelector) => {
+    const onChange = (inputProp: string, tag: InputSelector) => {
         switch (tag) {
             case 'Quorum':
-                setQuorum(value);
+                setQuorum(toBN(inputProp).toNumber());
                 break;
             case 'Duration':
-                setDuration(value);
+                setDuration(toBN(inputProp).toNumber());
                 break;
             case 'CCR':
-                setCollateralCoverage(value);
+                setCollateralCoverage(toBN(inputProp).times(100).toNumber());
                 break;
             case 'CollateralAsset':
-                setCollateralAsset(value);
+                setCollateralAsset(formatAddr(inputProp));
                 break;
             case 'UnitLiquidity':
-                setUnitLiquidity(value);
+                setUnitLiquidity(toBN(inputProp).times('1e18').toString());
                 break;
         
             default:
                 break;
         }
+    }
+
+    const transactionArgs : HandleTransactionParam = {
+        commonParam: {account, config, unit: BigInt(unitLiquidity), contractAddress: collateralAsset},
+        createPermissionlessPoolParam: {
+            colCoverage,
+            contributors: [account],
+            quorum,
+            durationInHours: duration,
+        },
+        txnType: 'Create',
+        router: 'Permissionless',
     }
 
     return(
@@ -65,14 +80,14 @@ export const Permissionless = () => {
                             },
                             {
                                 id: "Collateral multiplier (Ex. 1.5, 1.0, etc)",
-                                element: (<CollateralMultiplier selected={ccr} handleChange={onChange}/>),
+                                element: (<CollateralMultiplier selected={colCoverage} handleChange={onChange}/>),
                             },
                             {
                                 id: "Collateral asset",
                                 element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
                         ] as const
-                    ).map(({ id, element }, i) => (
+                    ).map(({ id, element }) => (
                         <div key={id} >
                            { element }
                         </div>
@@ -88,38 +103,43 @@ export const Permissionless = () => {
                     Submit
                 </Button>
             </div>
-            <ReviewInput 
+            <Confirmation 
+                openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                popUpDrawer={popUpDrawer}
-                type={'UnitLiquidity'}
-                formType={'Permissionless'}
-                values={[
-                    {
-                        title: 'Quorum',
-                        value: quorum,
-                        affix: ''
-                    },
-                    {
-                        title: 'Unit Liquidity',
-                        value: unitLiquidity,
-                        affix: ' $'
-                    },
-                    {
-                        title: 'Duration',
-                        value: duration,
-                        affix: `${duration === '0' || duration === '1'? ' hr' : ' hrs'}`,
-                    },
-                    {
-                        title: 'Collateral Asset',
-                        value: collateralAsset,
-                        affix: '',
-                    },
-                    {
-                        title: 'Collateral Index',
-                        value: toBN(ccr).div(100).toString(),
-                        affix: ''
-                    },
-                ]}
+                transactionArgs={transactionArgs}
+                displayMessage="Request to launch a public liquidity pool"
+                optionalDisplay={
+                    <ReviewInput 
+                        type={'UnitLiquidity'}
+                        values={[
+                            {
+                                title: 'Quorum',
+                                value: quorum,
+                                affix: ''
+                            },
+                            {
+                                title: 'Unit Liquidity',
+                                value: unitLiquidity,
+                                affix: ' $'
+                            },
+                            {
+                                title: 'Duration',
+                                value: duration,
+                                affix: `${duration < 2? ' hr' : ' hrs'}`,
+                            },
+                            {
+                                title: 'Collateral Asset',
+                                value: collateralAsset,
+                                affix: '',
+                            },
+                            {
+                                title: 'Collateral Index',
+                                value: toBN(colCoverage).div(100).toString(),
+                                affix: ''
+                            },
+                        ]}
+                    />
+                }
             />
         </Stack>
     );

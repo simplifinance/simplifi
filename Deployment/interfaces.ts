@@ -1,7 +1,7 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { Common } from "./typechain-types/Contributor";
-import { Common as Cmon } from "./typechain-types/FlexpoolFactory";
+import { Common } from "@/typechain-types/contracts/peripherals/Contributor";
+import { Common as Cmon } from "@/typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
 
@@ -184,8 +184,7 @@ export interface DrawerState {
 }
 
 export interface InputCategoryProp {
-  selected: string;
-  // isLargeScreen: boolean;
+  selected: string | number;
   handleChange: (value: string, tag: InputSelector) => void
 }
 
@@ -291,6 +290,12 @@ export type Point = {
   creator: bigint;
   referrals: bigint;
   user: Address;
+  phase: number;
+}
+
+export interface PointsReturnValue {
+  key: string;
+  value: Point[] | undefined;
 }
 
 export type SupportedAsset = {
@@ -308,17 +313,17 @@ export const analytics : Analytics = {
 
 export type FactoryData = {
   analytics: {
-      tvlCollateral: bigint;
-      tvlBase: bigint;
-      totalPermissioned: bigint;
-      totalPermissionless: bigint;
+    tvlCollateral: bigint;
+    tvlBase: bigint;
+    totalPermissioned: bigint;
+    totalPermissionless: bigint;
   };
   makerRate: number;
   currentEpoches: bigint;
   recordEpoches: bigint;
 }
 
-export type AppState = [string, FactoryData, Point[], ProviderResult[], SupportedAsset[]];
+export type AppState = [string, FactoryData, PointsReturnValue[], ProviderResult[], SupportedAsset[]];
 
 
 // MOCK DATA
@@ -365,11 +370,19 @@ const mockProvider : ProviderResult = {
   slot: 0n
 }
 
-const mockPoint : Point = {
+export const mockPoint : Point = {
   contributor: 2n,
   creator: 5n,
   referrals: 0n,
-  user: zeroAddress
+  user: zeroAddress,
+  phase: 0
+}
+export const emptyMockPoint : Point = {
+  contributor: 0n,
+  creator: 0n,
+  referrals: 0n,
+  user: zeroAddress,
+  phase: 0
 }
 
 const mockAsset : SupportedAsset = {
@@ -378,10 +391,29 @@ const mockAsset : SupportedAsset = {
   symbol: "TSFT"
 }
 
+export const phases = [
+    {
+        phase: 'beta',
+        active: true 
+    },
+    {
+        phase: 'alpha',
+        active: false
+    },
+    {
+        phase: 'mainnet',
+        active: false
+    },
+] as const;
 export const mockProviders : ProviderResult[] = [1, 2, 3].map(() => mockProvider);
-export const mockPoints : Point[] = [1, 2, 3].map(() => mockPoint);
+export const mockPointsReturnValue : PointsReturnValue[] = phases.map(({phase}) => {
+  return {
+    key: phase,
+    value: [1, 2, 3].map(() => mockPoint)
+  }
+});
 export const mockAssets : SupportedAsset[] = [1].map(() => mockAsset);
-export const appData : AppState = ['USD', mockFactoryData, mockPoints, mockProviders, mockAssets];
+export const appData : AppState = ['USD', mockFactoryData, mockPointsReturnValue, mockProviders, mockAssets];
 
 export const poolMock : Pool = {
   big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },

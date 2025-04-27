@@ -1,12 +1,12 @@
 import type { CommonParam, CreatePermissionlessPoolParams, TrxResult } from "@/interfaces";
 import { getContractData } from "../../utils/getContractData";
-import { simulateContract, writeContract } from "wagmi/actions";
+import { simulateContract, writeContract, } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { createPoolAbi } from "@/apis/utils/abis";
 import { errorMessage } from "../formatError";
 import assert from "assert";
 
-/**
+/**rite
  * @dev Create a new permissionless pool
  * @param args : Arguments of type CreatePermissionlessPoolParams. See interfaces.ts
  * @returns : Transaction result
@@ -28,7 +28,9 @@ export default async function createPermissionlessLiquidityPool(param: CreatePer
   }).then(async({request}) => {
       const hash = await writeContract(config, request );
       returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Flexpool creation successful"});
-    }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
+    }).catch((e) => {
+      callback?.({errorMessage: errorMessage(e)})
+    });
 
   return returnValue;
 }

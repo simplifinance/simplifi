@@ -21,6 +21,8 @@ interface Common {
         ENDED
     }
 
+    enum Phase { BETA, ALPHA, MAINNET }
+
     enum Status { AVAILABLE, TAKEN }
 
     enum Branch { CURRENT, RECORD }
@@ -57,6 +59,12 @@ interface Common {
         uint creator;
         uint referrals;
         address user;
+        Phase phase;
+    }
+
+    struct PointsReturnValue {
+        string key;
+        Point[] value;
     }
 
     struct Interest {

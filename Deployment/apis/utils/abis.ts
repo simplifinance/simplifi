@@ -1292,28 +1292,45 @@ export const getPointsAbi = [
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "contributor",
-            "type": "uint256"
+            "internalType": "string",
+            "name": "key",
+            "type": "string"
           },
           {
-            "internalType": "uint256",
-            "name": "creator",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "referrals",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "user",
-            "type": "address"
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "contributor",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "creator",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "referrals",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+              },
+              {
+                "internalType": "enum Common.Phase",
+                "name": "phase",
+                "type": "uint8"
+              }
+            ],
+            "internalType": "struct Common.Point[]",
+            "name": "value",
+            "type": "tuple[]"
           }
         ],
-        "internalType": "struct Common.Point[]",
-        "name": "_points",
+        "internalType": "struct Common.PointsReturnValue[]",
+        "name": "",
         "type": "tuple[]"
       }
     ],

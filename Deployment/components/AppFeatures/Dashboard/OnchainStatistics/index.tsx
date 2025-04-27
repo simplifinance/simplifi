@@ -41,11 +41,6 @@ export default function OnchainStatistics() {
       value: `${isConnected? network : 'Celo'}`,
       icon: networkIcon
     },
-    // {
-    //   title: 'Proposals',
-    //   value: 'Coming soon...',
-    //   icon: proposalIcon
-    // },
     {
       title: 'Permissionless',
       value: totalPermissionless?.toString(),

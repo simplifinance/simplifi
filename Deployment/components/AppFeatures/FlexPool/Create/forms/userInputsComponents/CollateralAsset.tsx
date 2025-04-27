@@ -6,7 +6,7 @@ import useAppStorage from '@/components/contexts/StateContextProvider/useAppStor
 
 export default function CollateralAsset({handleChange} : InputCategoryProp) {    
     const { supportedAssets } = useAppStorage();
-    const callback = (arg: Address) => {
+    const callback = (arg: Address | string) => {
         handleChange(arg.toString(), 'CollateralAsset');
     };
     return (

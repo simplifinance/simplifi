@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts", "components/utilities/SpinnerWheel.tsx", "components/Hero/index.tsx", "components/getEllipsisTxt.js", "config/index.tsx", "components/Layout/footer.js", "components/Layout/ScrollButton.tsx", "components/Layout/layout.js"],

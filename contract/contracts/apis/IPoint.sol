@@ -11,10 +11,20 @@ import { Common } from "./Common.sol";
 interface IPoint {
   struct Initializer {
     bool isRegistered;
-    uint location;
+    uint location; 
   }
 
-  function getPoint(address user) external view returns(Common.Point memory);
-  function setPoint(address user, Common.Point memory) external returns(bool);
-  function deductPoint(address user, Common.Point memory) external returns(bool);
+  function getPoint(address user, uint8 phase) external view returns(Common.Point memory);
+  function setPoint(
+    address user, 
+    uint8 contributor,
+    uint8 creator,
+    uint8 referrals
+  ) external returns(bool);
+  function deductPoint(
+    address user, 
+    uint8 contributor,
+    uint8 creator,
+    uint8 referrals
+  ) external returns(bool);
 }

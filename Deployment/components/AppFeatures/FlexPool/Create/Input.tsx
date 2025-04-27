@@ -12,7 +12,7 @@ interface InputProps {
     toolTipTitle?: string;
     label?: string;
     required: boolean;
-    inputValue?: string;
+    inputValue?: string | number;
     overrideClassName?: string;
     onChange: (arg: React.ChangeEvent<HTMLInputElement>) => void;
 }

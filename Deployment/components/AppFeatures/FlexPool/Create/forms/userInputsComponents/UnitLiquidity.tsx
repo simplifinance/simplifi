@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { InputCategoryProp } from '@/interfaces';
 import { Input } from '../../Input';
+import { formatEther } from 'viem';
+import { toBigInt } from '@/utilities';
 
 export default function UnitLiquidity({selected, handleChange,} : InputCategoryProp) {    
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -14,7 +16,7 @@ export default function UnitLiquidity({selected, handleChange,} : InputCategoryP
             required
             toolTipTitle="Liquidity amount per contributor (In base asset e.g cUSD)"
             type='number'
-            inputValue={selected}
+            inputValue={formatEther(toBigInt(selected)) || '0'}
             label='Unit Liquidity'
             placeholder="Unit Liquidity"
         />

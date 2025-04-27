@@ -3,7 +3,6 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import { flexStart } from "@/constants";
 import Checkbox from "@mui/material/Checkbox";
 import { MotionDivWrap } from "./MotionDivWrap";
-import { orange } from "@mui/material/colors";
 
 export default function Message() {
     const { messages, errorMessage } = useAppStorage();
@@ -26,7 +25,13 @@ export default function Message() {
                             ))
                         }
                         {
-                            errorMessage.length > 0 && <h1 className=' text-red-400'>{ errorMessage }</h1>
+                            isError && <MotionDivWrap className={`w-full ${flexStart} gap-2 text-red-400`}>
+                                <Checkbox 
+                                        checked
+                                        color="error"
+                                    />
+                                    <h1>{ errorMessage }</h1>
+                            </MotionDivWrap>
                         }
                     </MotionDivWrap>
             }

@@ -5,6 +5,7 @@ import Typed from 'react-typed';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ConnectWallet } from '@/components/utilities/ConnectWallet';
 import { ModeToggler } from '@/components/utilities/ModeToggler';
+import Image from 'next/image';
 
 export default function Navbar() {
   const { showSidebar, toggleSidebar } = useAppStorage();
@@ -12,9 +13,9 @@ export default function Navbar() {
     <nav className={`${flexSpread} relativ dark:bg-green1 md:border-b  border-b-green1/30 dark:border-b-white1/20 p-4 z-50 bg-white1`}>
       <div className='hidden w-full md:flex justify-between items-center'>
         <Link href="/" passHref>
-          <img 
+          <Image 
             src="/logoSimplifi.png"
-            alt="Simiplifi-logo"
+            alt="Projectlogo"
             width={100} 
             height={100}
           />

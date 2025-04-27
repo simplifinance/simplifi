@@ -37,21 +37,20 @@ abstract contract AwardPoint is Price {
 
     ///@dev Award points for users
     function _awardPoint(address target, uint8 asMember, uint8 asAdmin, bool deduct) internal {
-        (bool done, Common.Point memory point) = (false, Common.Point(asMember, asAdmin, 0, target));
-        done = deduct? IPoint(pointFactory).deductPoint(target, point) : IPoint(pointFactory).setPoint(target, point);
-        if(!done) 'Point award failed'._throw();
+        bool done = deduct? IPoint(pointFactory).deductPoint(target, asMember, asAdmin, 0) : IPoint(pointFactory).setPoint(target, asMember, asAdmin, 0);
+        if(!done) 'Reward failed'._throw();
     }
 
     /// @dev Activate reward
     function activateReward() public onlyRoleBearer returns(bool) {
-        if(awardPoint) 'Reward is active'._throw();
+        if(awardPoint) 'Is active'._throw();
         awardPoint = true;
         return true;
     }
 
     /// @dev Deactivate reward
     function deactivateReward() public onlyRoleBearer returns(bool) {
-        if(!awardPoint) 'Reward is inActive'._throw();
+        if(!awardPoint) 'Is inActive'._throw();
         awardPoint = false;
         return true;
     }
