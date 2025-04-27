@@ -1,7 +1,4 @@
-import { TransactionReceipt, zeroAddress } from 'viem';
-import { Address, Analytics, Pool, Path, Profile, FormattedCData, ProviderResult, Point, SupportedAsset } from './interfaces';
-import BigNumber from 'bignumber.js';
-import { getContractData } from './apis/utils/getContractData';
+import { Address, Path, } from './interfaces';
 
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
 export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }

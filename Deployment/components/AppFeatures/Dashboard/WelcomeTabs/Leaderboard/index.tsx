@@ -33,9 +33,10 @@ import {
 } from "@/components/ui/table"
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper"
 import { formatAddr } from "@/utilities"
-import { Point } from "@/interfaces"
-import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage"
+import { Address, Point } from "@/interfaces"
 import { useAccount } from "wagmi"
+import SelectComponent from "../SelectComponent";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 const getColumns = () => {
     const columns: ColumnDef<Point>[] = [
@@ -66,7 +67,7 @@ const getColumns = () => {
         accessorKey: "creator",
         header: "Creator",
         cell: ({ row }) => (
-            <div className="font-bold text-white1 text-center">{row.getValue("creator")?.toString()}</div>
+            <div className="font-medium text-center">{row.getValue("creator")?.toString()}</div>
         ),
       },
       {
@@ -87,16 +88,17 @@ const getColumns = () => {
 }
 
 export default function Leaderboard() {
+    const { points } = useAppStorage();
     const [sorting, setSorting] = React.useState<SortingState>([]);
+    const [displayedPoints, setPoints] = React.useState<Point[]>(points[0].value!);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = React.useState({});
-    const { points } = useAppStorage();
     const currentUser = formatAddr(useAccount().address);
 
     const columns = getColumns();
     const table = useReactTable({
-        data: points,
+        data: displayedPoints,
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
@@ -107,10 +109,18 @@ export default function Leaderboard() {
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
         state: { sorting, columnFilters, columnVisibility, rowSelection, },
-    })
+    });
+
+    const callback = (arg: Address | string) => {
+        setPoints(() => {
+            const filtered = points.filter(({key}) => key === arg);
+            return filtered[0].value!;
+        })
+    }
 
     return (
         <div className="w-full">
+            <SelectComponent callback={callback} />
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter by user..."
@@ -174,7 +184,7 @@ export default function Leaderboard() {
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className={`${formatAddr(row.getValue('user')?.toString()) === currentUser && 'bg-gray1'}`}
+                                className={`${formatAddr(row.getValue('user')?.toString()) === currentUser && 'bg-gray1/30'} hover:bg-none`}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="text-center ">

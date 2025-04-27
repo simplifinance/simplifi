@@ -10,7 +10,7 @@ const LeftSideBarContent = () => {
   return(
     <React.Fragment>
       {
-        leftSideBarContent.map(({disabled, path, icon, title, displayChevron }) => (
+        leftSideBarContent.map(({path, icon, title, displayChevron }) => (
           <SidebarContent 
             key={title}
               {
@@ -18,8 +18,7 @@ const LeftSideBarContent = () => {
                   path,
                   title,
                   icon, 
-                  displayChevron,
-                  disabled
+                  displayChevron
                 }
               }
             />
@@ -52,14 +51,12 @@ export default function LeftSidebar() {
 
 const leftSideBarContent : {
   title: string, 
-  disabled: boolean, 
   displayChevron: boolean, 
   path: Path, 
   icon: JSX.Element
 }[] = Array.from([
   {
     title: 'Dashboard',
-    disabled: false,
     path: routeEnum.DASHBOARD,
     displayChevron: false,
     icon: 
@@ -69,7 +66,6 @@ const leftSideBarContent : {
   },
   {
     title: 'Flexpool',
-    disabled: false,
     path: routeEnum.FLEXPOOL,
     displayChevron: false,
     icon: 
@@ -83,7 +79,6 @@ const leftSideBarContent : {
   },
   {
     title: 'Yield',
-    disabled: true,
     path: routeEnum.YIELD,
     displayChevron: false,
     icon: 
@@ -93,7 +88,6 @@ const leftSideBarContent : {
   },
   {
     title: 'AiAssist',
-    disabled: true,
     path: routeEnum.AIASSIST,
     displayChevron: false,
     icon: 
@@ -103,7 +97,6 @@ const leftSideBarContent : {
   },
   {
     title: 'Faq',
-    disabled: false,
     path: routeEnum.FAQ,
     displayChevron: false,
     icon: 

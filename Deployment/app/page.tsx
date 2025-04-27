@@ -2,19 +2,18 @@
 
 import React from "react";
 import Notification from "@/components/utilities/Notification";
-import { analytics, appData, mockAssets, mockPoints, mockProviders } from "@/interfaces";
-import type { AppState, Path, Point, ProviderResult, SupportedAsset, } from "@/interfaces";
+import { appData, emptyMockPoint, mockAssets, mockPoint, mockProviders, phases } from "@/interfaces";
+import type { AppState, Path, PointsReturnValue, ProviderResult, SupportedAsset, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import { useAccount, useReadContracts,} from "wagmi";
-import NotConnectedPopUp from "@/components/utilities/NotConnectedPopUp";
 import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 import AppFeatures from "@/components/AppFeatures";
 import { useChainModal } from "@rainbow-me/rainbowkit";
 import { isSuportedChain } from "@/apis/utils/getContractData";
 
 export default function SimplifiApp() {
+  const [isMounted, setMount] = React.useState<boolean>(false);
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
-  const [openPopUp, setPopUp] = React.useState<number>(0);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [messages, setMessage] = React.useState<string[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
@@ -45,12 +44,15 @@ export default function SimplifiApp() {
         .then((newData) => {
           const symbol = newData[0]?.result || appState[0];
           const factoryData = newData[1]?.result || appState[1];
-          const points : Point[] = [...newData?.[2]?.result || mockPoints];
+          const beta : PointsReturnValue = {key: newData?.[2]?.result?.[0]?.key || phases[0].phase, value: [...newData?.[2]?.result?.[0].value || [mockPoint]]}
+          const alpha : PointsReturnValue = {key: newData?.[2]?.result?.[1]?.key || phases[1].phase, value: [...newData?.[2]?.result?.[1].value || [emptyMockPoint]]}
+          const mainnet : PointsReturnValue = {key: newData?.[2]?.result?.[2]?.key || phases[2].phase, value: [...newData?.[2]?.result?.[2].value || [emptyMockPoint]]}
+          const points : PointsReturnValue[] = [beta, alpha, mainnet];
           const supportedAssets : SupportedAsset[] = [...newData?.[4]?.result || mockAssets];
           const providers : ProviderResult[] = [...newData?.[3]?.result || mockProviders];
           setAppState([symbol, factoryData, points, providers, supportedAssets]);
         })
-        return 5000
+        return 15000
       }, 
       refetchOnReconnect: 'always', 
       refetchOnMount: 'always',
@@ -67,7 +69,6 @@ export default function SimplifiApp() {
   const openDisplayForm = () => setDisplayForm(true);
   const toggleDisplayOnboardUser = () => setDisplayOnboardUser(!displayOnboardUser);
   const exitOnboardScreen = () => setDisplay(true);
-  const togglePopUp = (arg: number) => setPopUp(arg);
   const setmessage = (arg: string) => arg === ''? setMessage([]): setMessage((prev) => [...prev, arg]);
 
   const toggleSidebar = (arg: boolean) => setShowSidebar(arg);
@@ -83,6 +84,10 @@ export default function SimplifiApp() {
     }
     if(newPath !== activePath) setActivePath(newPath);
   };
+
+  React.useEffect(() => {
+    setMount(true);
+  }, []),
   
 
   /**
@@ -93,17 +98,18 @@ export default function SimplifiApp() {
    */
   React.useEffect(() => {
     if(!isConnected) {
-      openPopUp && setTimeout(() => {
-        setPopUp(0);
-      }, 6000);
-      clearTimeout(6000);
+      // openPopUp && setTimeout(() => {
+      //   setPopUp(0);
+      // }, 6000);
+      // clearTimeout(6000);
     } else {
       refetch();
       if(!isSuportedChain(chainId!) && !chainModalOpen) openChainModal?.(); 
     }
 
-  }, [isConnected, openPopUp]);
+  }, [isConnected, chainId, chainModalOpen, openChainModal]);
  
+  if(!isMounted) return null;
   return (
     <StorageContextProvider 
       value={
@@ -127,19 +133,16 @@ export default function SimplifiApp() {
           showSidebar,
           setmessage,
           displayAppScreen,
-          openPopUp,
           displayOnboardUser,
           activePath,
           prevPaths,
           setActivepath,
-          togglePopUp,
           toggleDisplayOnboardUser,
           providersIds
         }
       }
     >
       <AppFeatures currentPath={activePath} />
-      <NotConnectedPopUp toggleDrawer={togglePopUp} openDrawer={openPopUp} />
       <Notification message={messages[messages.length - 1] || ''} resetMessage={() => setmessage('')} />
     </StorageContextProvider>
   );

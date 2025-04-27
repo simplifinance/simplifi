@@ -20,7 +20,7 @@ import addToPool from "./apis/update/factory/addToPool";
 import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
-import { Common } from "./typechain-types/Contributor";
+import { Common } from "@/typechain-types/contracts/peripherals/Contributor";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
@@ -44,7 +44,7 @@ import withdrawCollateral from "./apis/update/collateralToken/withdrawCollateral
  * @param arg : string or undefined;
  * @returns string
 */
-export const str = (arg: string | undefined) => String(arg);
+export const str = (arg: string | undefined | number) => String(arg);
 
 /**
  * @dev Converts an undefined number object to a default string value

@@ -130,23 +130,23 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         <React.Fragment>
             <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
                 <div className="relative flex justify-between items-center">
-                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black text-orange-200 border-r border-r-green1 w-fit">
+                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black dark:text-orange-200 border-r border-r-green1 w-fit">
                         {`$${unit.inEther}`}
                     </h2>
                     <div className="flex justify-between items-center gap-2 ">
-                        <button className={`${flexCenter} w-fit rounded-full p-2 shadow-sm shadow-orange-300`} onClick={() => showPermissionDetail(1)} >
+                        <button className={`${flexCenter} w-fit rounded-full p-2 shadow-sm shadow-green1/90 dark:shadow-orange-300`} onClick={() => showPermissionDetail(1)} >
                             <span className="bg-transparent text-sm">{renderIcon(isPermissionless)}</span>
                         </button>
-                        <div className="relative size-8 rounded-full p-2 shadow-sm shadow-orange-300">
+                        <div className="relative size-8 rounded-full p-2 shadow-sm shadow-green1/90 dark:shadow-orange-300">
                             <h3 className="absolute top-0 right-0 text-orange-200 text-[10px]">{userCount}</h3>
                             <button onClick={() => showProviderDetails(1)} className="bg-transparent hover:bg-transparent">
                                 { 
                                     isPermissionless?
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 dark:text-orange-300">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                                         </svg> 
                                             : 
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-red-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 dark:text-red-300">
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                                         </svg>
                                 

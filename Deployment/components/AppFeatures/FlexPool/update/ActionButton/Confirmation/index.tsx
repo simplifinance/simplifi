@@ -15,9 +15,11 @@ export const Confirmation :
         toggleDrawer: (arg: number) => void
         openDrawer: number,
         back?: VoidFunc,
-        displayMessage?: string
+        optionalDisplay?: React.ReactNode,
+        displayMessage?: string,
+        actionButtonText?: string;
     }> = 
-        ({transactionArgs, back, toggleDrawer, openDrawer, displayMessage}) => 
+        ({transactionArgs, back, toggleDrawer, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
     const { setmessage, setError, setActivepath } = useAppStorage();
@@ -61,8 +63,9 @@ export const Confirmation :
             styles={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%", background: isDark? '#121212' : '#F9F4F4'}}
         >
             <div className="bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
+                { optionalDisplay && optionalDisplay }
                 <Message />
-                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : "Proceed"}</Button>
+                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || "Proceed"}</Button>
             </div>
         </Drawer>
     );

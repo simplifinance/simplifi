@@ -15,10 +15,10 @@ export default function Notification(props: NotificationProp) {
 
   React.useEffect(() => {
     if(message !== '' && message !== prev){
-      setOpen(true);
       setPrevious(message);
+      setOpen(true);
     }
-  }, [message]);
+  }, [message, prev]);
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {

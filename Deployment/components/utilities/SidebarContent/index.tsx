@@ -1,33 +1,14 @@
 import Box from '@mui/material/Box'
 import React from 'react'
 import useAppStorage from '../../contexts/StateContextProvider/useAppStorage';
-import { useAccount } from 'wagmi';
-import { routeEnum } from '@/constants';
 import { Path } from '@/interfaces';
 
-export const SidebarContent = ({ path, title, icon, disabled }: CollapsibleProps) => {
-  const { toggleSidebar, togglePopUp, activePath, setActivepath } = useAppStorage();
-  const { isConnected } = useAccount()
+export const SidebarContent = ({ path, title, icon }: CollapsibleProps) => {
+  const { toggleSidebar, activePath, setActivepath } = useAppStorage();
   const isActivePath = activePath === path;
   
   const handleClick = () => {
-    let popUp = false;
     setActivepath(path);
-    if(!isConnected) {
-      if(activePath === routeEnum.FLEXPOOL){
-        setActivepath(routeEnum.DASHBOARD);
-        popUp = true;
-      } else {
-        if(path === 'Faq' || path === 'Dashboard'){
-          setActivepath(path);
-        } else {
-          popUp = true;
-        }
-      }
-      popUp && togglePopUp(1);
-    } else {
-      setActivepath(path);
-    }
     setTimeout(() => toggleSidebar(false), 500);
     clearTimeout(500);
   }
@@ -54,5 +35,5 @@ interface CollapsibleProps {
   path: Path;
   title: string;
   icon: React.JSX.Element;
-  disabled: boolean;
+  // disabled: boolean;
 }

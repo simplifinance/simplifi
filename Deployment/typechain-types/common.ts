@@ -2,374 +2,130 @@
 /* tslint:disable */
 /* eslint-disable */
 import type {
-  BaseContract,
-  BigNumberish,
   FunctionFragment,
-  Interface,
+  Typed,
   EventFragment,
-  AddressLike,
-  ContractRunner,
-  ContractMethod,
-  Listener,
+  ContractTransaction,
+  ContractTransactionResponse,
+  DeferredTopicFilter,
+  EventLog,
+  TransactionRequest,
+  LogDescription,
 } from "ethers";
-import type {
-  TypedContractEvent,
-  TypedDeferredTopicFilter,
-  TypedEventLog,
-  TypedLogDescription,
-  TypedListener,
-} from "../../common";
 
-export declare namespace Common {
-  export type LowStruct = {
-    maxQuorum: BigNumberish;
-    selector: BigNumberish;
-    colCoverage: BigNumberish;
-    duration: BigNumberish;
-    allGh: BigNumberish;
-    userCount: BigNumberish;
-  };
+export interface TypedDeferredTopicFilter<_TCEvent extends TypedContractEvent>
+  extends DeferredTopicFilter {}
 
-  export type LowStructOutput = [
-    maxQuorum: bigint,
-    selector: bigint,
-    colCoverage: bigint,
-    duration: bigint,
-    allGh: bigint,
-    userCount: bigint
-  ] & {
-    maxQuorum: bigint;
-    selector: bigint;
-    colCoverage: bigint;
-    duration: bigint;
-    allGh: bigint;
-    userCount: bigint;
-  };
-
-  export type BigStruct = {
-    unit: BigNumberish;
-    currentPool: BigNumberish;
-    recordId: BigNumberish;
-    unitId: BigNumberish;
-  };
-
-  export type BigStructOutput = [
-    unit: bigint,
-    currentPool: bigint,
-    recordId: bigint,
-    unitId: bigint
-  ] & { unit: bigint; currentPool: bigint; recordId: bigint; unitId: bigint };
-
-  export type AddressesStruct = {
-    colAsset: AddressLike;
-    lastPaid: AddressLike;
-    safe: AddressLike;
-    admin: AddressLike;
-  };
-
-  export type AddressesStructOutput = [
-    colAsset: string,
-    lastPaid: string,
-    safe: string,
-    admin: string
-  ] & { colAsset: string; lastPaid: string; safe: string; admin: string };
-
-  export type PoolStruct = {
-    low: Common.LowStruct;
-    big: Common.BigStruct;
-    addrs: Common.AddressesStruct;
-    router: BigNumberish;
-    stage: BigNumberish;
-    status: BigNumberish;
-  };
-
-  export type PoolStructOutput = [
-    low: Common.LowStructOutput,
-    big: Common.BigStructOutput,
-    addrs: Common.AddressesStructOutput,
-    router: bigint,
-    stage: bigint,
-    status: bigint
-  ] & {
-    low: Common.LowStructOutput;
-    big: Common.BigStructOutput;
-    addrs: Common.AddressesStructOutput;
-    router: bigint;
-    stage: bigint;
-    status: bigint;
-  };
-}
-
-export interface CommonInterface extends Interface {
-  getEvent(
-    nameOrSignatureOrTopic:
-      | "Cancellation"
-      | "GetFinanced"
-      | "Liquidated"
-      | "NewContributorAdded"
-      | "Payback"
-      | "PoolCreated"
-      | "PoolEdited"
-  ): EventFragment;
-}
-
-export namespace CancellationEvent {
-  export type InputTuple = [unit: BigNumberish];
-  export type OutputTuple = [unit: bigint];
-  export interface OutputObject {
-    unit: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace GetFinancedEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace LiquidatedEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace NewContributorAddedEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PaybackEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PoolCreatedEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace PoolEditedEvent {
-  export type InputTuple = [arg0: Common.PoolStruct];
-  export type OutputTuple = [arg0: Common.PoolStructOutput];
-  export interface OutputObject {
-    arg0: Common.PoolStructOutput;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export interface Common extends BaseContract {
-  connect(runner?: ContractRunner | null): Common;
-  waitForDeployment(): Promise<this>;
-
-  interface: CommonInterface;
-
-  queryFilter<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-  queryFilter<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TypedEventLog<TCEvent>>>;
-
-  on<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  on<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-
-  once<TCEvent extends TypedContractEvent>(
-    event: TCEvent,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-  once<TCEvent extends TypedContractEvent>(
-    filter: TypedDeferredTopicFilter<TCEvent>,
-    listener: TypedListener<TCEvent>
-  ): Promise<this>;
-
-  listeners<TCEvent extends TypedContractEvent>(
-    event: TCEvent
-  ): Promise<Array<TypedListener<TCEvent>>>;
-  listeners(eventName?: string): Promise<Array<Listener>>;
-  removeAllListeners<TCEvent extends TypedContractEvent>(
-    event?: TCEvent
-  ): Promise<this>;
-
-  getFunction<T extends ContractMethod = ContractMethod>(
-    key: string | FunctionFragment
-  ): T;
-
-  getEvent(
-    key: "Cancellation"
-  ): TypedContractEvent<
-    CancellationEvent.InputTuple,
-    CancellationEvent.OutputTuple,
-    CancellationEvent.OutputObject
+export interface TypedContractEvent<
+  InputTuple extends Array<any> = any,
+  OutputTuple extends Array<any> = any,
+  OutputObject = any
+> {
+  (...args: Partial<InputTuple>): TypedDeferredTopicFilter<
+    TypedContractEvent<InputTuple, OutputTuple, OutputObject>
   >;
-  getEvent(
-    key: "GetFinanced"
-  ): TypedContractEvent<
-    GetFinancedEvent.InputTuple,
-    GetFinancedEvent.OutputTuple,
-    GetFinancedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Liquidated"
-  ): TypedContractEvent<
-    LiquidatedEvent.InputTuple,
-    LiquidatedEvent.OutputTuple,
-    LiquidatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "NewContributorAdded"
-  ): TypedContractEvent<
-    NewContributorAddedEvent.InputTuple,
-    NewContributorAddedEvent.OutputTuple,
-    NewContributorAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "Payback"
-  ): TypedContractEvent<
-    PaybackEvent.InputTuple,
-    PaybackEvent.OutputTuple,
-    PaybackEvent.OutputObject
-  >;
-  getEvent(
-    key: "PoolCreated"
-  ): TypedContractEvent<
-    PoolCreatedEvent.InputTuple,
-    PoolCreatedEvent.OutputTuple,
-    PoolCreatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "PoolEdited"
-  ): TypedContractEvent<
-    PoolEditedEvent.InputTuple,
-    PoolEditedEvent.OutputTuple,
-    PoolEditedEvent.OutputObject
-  >;
+  name: string;
+  fragment: EventFragment;
+  getFragment(...args: Partial<InputTuple>): EventFragment;
+}
 
-  filters: {
-    "Cancellation(uint256)": TypedContractEvent<
-      CancellationEvent.InputTuple,
-      CancellationEvent.OutputTuple,
-      CancellationEvent.OutputObject
-    >;
-    Cancellation: TypedContractEvent<
-      CancellationEvent.InputTuple,
-      CancellationEvent.OutputTuple,
-      CancellationEvent.OutputObject
-    >;
+type __TypechainAOutputTuple<T> = T extends TypedContractEvent<
+  infer _U,
+  infer W
+>
+  ? W
+  : never;
+type __TypechainOutputObject<T> = T extends TypedContractEvent<
+  infer _U,
+  infer _W,
+  infer V
+>
+  ? V
+  : never;
 
-    "GetFinanced(tuple)": TypedContractEvent<
-      GetFinancedEvent.InputTuple,
-      GetFinancedEvent.OutputTuple,
-      GetFinancedEvent.OutputObject
-    >;
-    GetFinanced: TypedContractEvent<
-      GetFinancedEvent.InputTuple,
-      GetFinancedEvent.OutputTuple,
-      GetFinancedEvent.OutputObject
-    >;
+export interface TypedEventLog<TCEvent extends TypedContractEvent>
+  extends Omit<EventLog, "args"> {
+  args: __TypechainAOutputTuple<TCEvent> & __TypechainOutputObject<TCEvent>;
+}
 
-    "Liquidated(tuple)": TypedContractEvent<
-      LiquidatedEvent.InputTuple,
-      LiquidatedEvent.OutputTuple,
-      LiquidatedEvent.OutputObject
-    >;
-    Liquidated: TypedContractEvent<
-      LiquidatedEvent.InputTuple,
-      LiquidatedEvent.OutputTuple,
-      LiquidatedEvent.OutputObject
-    >;
+export interface TypedLogDescription<TCEvent extends TypedContractEvent>
+  extends Omit<LogDescription, "args"> {
+  args: __TypechainAOutputTuple<TCEvent> & __TypechainOutputObject<TCEvent>;
+}
 
-    "NewContributorAdded(tuple)": TypedContractEvent<
-      NewContributorAddedEvent.InputTuple,
-      NewContributorAddedEvent.OutputTuple,
-      NewContributorAddedEvent.OutputObject
-    >;
-    NewContributorAdded: TypedContractEvent<
-      NewContributorAddedEvent.InputTuple,
-      NewContributorAddedEvent.OutputTuple,
-      NewContributorAddedEvent.OutputObject
-    >;
+export type TypedListener<TCEvent extends TypedContractEvent> = (
+  ...listenerArg: [
+    ...__TypechainAOutputTuple<TCEvent>,
+    TypedEventLog<TCEvent>,
+    ...undefined[]
+  ]
+) => void;
 
-    "Payback(tuple)": TypedContractEvent<
-      PaybackEvent.InputTuple,
-      PaybackEvent.OutputTuple,
-      PaybackEvent.OutputObject
-    >;
-    Payback: TypedContractEvent<
-      PaybackEvent.InputTuple,
-      PaybackEvent.OutputTuple,
-      PaybackEvent.OutputObject
-    >;
+export type MinEthersFactory<C, ARGS> = {
+  deploy(...a: ARGS[]): Promise<C>;
+};
 
-    "PoolCreated(tuple)": TypedContractEvent<
-      PoolCreatedEvent.InputTuple,
-      PoolCreatedEvent.OutputTuple,
-      PoolCreatedEvent.OutputObject
-    >;
-    PoolCreated: TypedContractEvent<
-      PoolCreatedEvent.InputTuple,
-      PoolCreatedEvent.OutputTuple,
-      PoolCreatedEvent.OutputObject
-    >;
+export type GetContractTypeFromFactory<F> = F extends MinEthersFactory<
+  infer C,
+  any
+>
+  ? C
+  : never;
+export type GetARGsTypeFromFactory<F> = F extends MinEthersFactory<any, any>
+  ? Parameters<F["deploy"]>
+  : never;
 
-    "PoolEdited(tuple)": TypedContractEvent<
-      PoolEditedEvent.InputTuple,
-      PoolEditedEvent.OutputTuple,
-      PoolEditedEvent.OutputObject
-    >;
-    PoolEdited: TypedContractEvent<
-      PoolEditedEvent.InputTuple,
-      PoolEditedEvent.OutputTuple,
-      PoolEditedEvent.OutputObject
-    >;
-  };
+export type StateMutability = "nonpayable" | "payable" | "view";
+
+export type BaseOverrides = Omit<TransactionRequest, "to" | "data">;
+export type NonPayableOverrides = Omit<
+  BaseOverrides,
+  "value" | "blockTag" | "enableCcipRead"
+>;
+export type PayableOverrides = Omit<
+  BaseOverrides,
+  "blockTag" | "enableCcipRead"
+>;
+export type ViewOverrides = Omit<TransactionRequest, "to" | "data">;
+export type Overrides<S extends StateMutability> = S extends "nonpayable"
+  ? NonPayableOverrides
+  : S extends "payable"
+  ? PayableOverrides
+  : ViewOverrides;
+
+export type PostfixOverrides<A extends Array<any>, S extends StateMutability> =
+  | A
+  | [...A, Overrides<S>];
+export type ContractMethodArgs<
+  A extends Array<any>,
+  S extends StateMutability
+> = PostfixOverrides<{ [I in keyof A]-?: A[I] | Typed }, S>;
+
+export type DefaultReturnType<R> = R extends Array<any> ? R[0] : R;
+
+// export interface ContractMethod<A extends Array<any> = Array<any>, R = any, D extends R | ContractTransactionResponse = R | ContractTransactionResponse> {
+export interface TypedContractMethod<
+  A extends Array<any> = Array<any>,
+  R = any,
+  S extends StateMutability = "payable"
+> {
+  (...args: ContractMethodArgs<A, S>): S extends "view"
+    ? Promise<DefaultReturnType<R>>
+    : Promise<ContractTransactionResponse>;
+
+  name: string;
+
+  fragment: FunctionFragment;
+
+  getFragment(...args: ContractMethodArgs<A, S>): FunctionFragment;
+
+  populateTransaction(
+    ...args: ContractMethodArgs<A, S>
+  ): Promise<ContractTransaction>;
+  staticCall(
+    ...args: ContractMethodArgs<A, "view">
+  ): Promise<DefaultReturnType<R>>;
+  send(...args: ContractMethodArgs<A, S>): Promise<ContractTransactionResponse>;
+  estimateGas(...args: ContractMethodArgs<A, S>): Promise<bigint>;
+  staticCallResult(...args: ContractMethodArgs<A, "view">): Promise<R>;
 }

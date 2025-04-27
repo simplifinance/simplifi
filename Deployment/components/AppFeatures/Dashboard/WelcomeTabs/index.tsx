@@ -4,14 +4,17 @@ import Leaderboard from "./Leaderboard";
 import RewardAndPoints from "./RewardAndPoints";
 import React from "react";
 import SelectComponent from "./SelectComponent";
+import { flexSpread } from "@/constants";
 
 export const TabsContent = ({title, description, value, content, footer}: TabContentProps) => {
     return(
         <Content value={value} className="space-y-3 pt-1">
-            { value === 'rewards' && <SelectComponent /> }
-            <div className="bg-transparent">
+            <div className="bg-transparent ">
                 <header>
-                    <h3 className="dark:text-orange-300">{title}</h3>
+                    <div className={`w-full ${flexSpread} max-w-sm `}>
+                        <h3 className="text-green1/90 dark:text-orange-200 font-bold w-2/4">{title}</h3>
+                        {/* { value === 'rewards' && <SelectComponent /> } */}
+                    </div>
                     <p>{description}</p>
                 </header>
                 <div className="space-y-2">{content}</div>
@@ -38,7 +41,7 @@ export function WelcomeTabs() {
                 value="dashboard"
             />
             <TabsContent 
-                // title={"My Rewards"}
+                title={"Points earned"}
                 description={""}
                 content={ <RewardAndPoints /> }
                 footer={""}

@@ -37,7 +37,7 @@ export const Contributor = ({ data }: ProviderProps) => {
                 <h3>{`Contributor. ${value + 1}`}</h3>
                 <Chevron open={open} />
             </Button>
-            <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-geen1/70 p-4 text-orange-200 max-h-[300px] overflow-auto'}>
+            <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-geen1/70 p-4 dark:text-orange-200 max-h-[300px] overflow-auto'}>
                 <ul className="w-full space-y-2 text-xs relative">
                     <li className={`${flexSpread} underline underline-offset-4`}>
                         <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
@@ -70,7 +70,7 @@ export const Contributor = ({ data }: ProviderProps) => {
                         <h3>{"Col-Bal"}</h3>
                         <h3>{`${parseEther(colBals)} ${currency}`}</h3>
                     </li>
-                    <Button variant={'outline'} onClick={toggleShowProviders} className={`w-full ${flexSpread} text-orange-300 text-xs hover:text-orange-300 focus:font-semibold`}>
+                    <Button variant={'outline'} onClick={toggleShowProviders} className={`w-full ${flexSpread} dark:text-orange-300 text-xs hover:text-orange-300 focus:font-semibold`}>
                         <h3>{(providers && providers.length > 0)? "External providers" : "No external fund providers"}</h3>
                         <Chevron open={showExternalProviders} />
                     </Button>

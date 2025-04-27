@@ -5,7 +5,6 @@ import { formatAddr, } from "@/utilities";
 import { zeroAddress } from "viem";
 import { HandleTransactionParam } from "@/interfaces";
 import { Confirmation } from "@/components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
-import { flexSpread } from "@/constants";
 
 export default function SignUp() {
     const [ openDrawer, setDrawer ] = React.useState<number>(0);

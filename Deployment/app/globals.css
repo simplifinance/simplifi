@@ -29,10 +29,8 @@
 html,
 body {
   scroll-behavior: smooth;
-  /* background: #121212; */
   background-image: url('../public/hero-bg1.png');
   object-fit: cover;
-  /* color: #F9F4F4; */
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
   Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -167,9 +165,7 @@ main{
     position: fixed;
     width: 120px;
   }
-  /* .show{
-    display: block;
-  } */
+
   main{
     width: 100%;
   }
@@ -327,14 +323,3 @@ main{
     @apply bg-background text-foreground;
   }
 }
-
-/* .aibackground{
-  scroll-behavior: smooth;
-  background-image: url('../public/ai.svg');
-  object-fit: cover;
-  width: 100%;
-  height: 380px;
-  background-repeat: no-repeat;
-  display: flex;
-  justify-content: center;
-} */

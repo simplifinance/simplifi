@@ -750,7 +750,7 @@
       ]
     },
     "Faucet": {
-      "address": "0xEd8E71619bae50624Db76a986e0A7E4821F17ef2",
+      "address": "0xa8ac853Ec5Ba50eDB0617116b734578Fac6Fb214",
       "abi": [
         {
           "inputs": [
@@ -1056,7 +1056,7 @@
       ]
     },
     "FlexpoolFactory": {
-      "address": "0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511",
+      "address": "0x0A04Bc2e7eba58F9b60E9baBb7d6d2A9B8DF6B49",
       "abi": [
         {
           "inputs": [
@@ -3367,7 +3367,7 @@
       ]
     },
     "Points": {
-      "address": "0x5aD28E7E90DAfB40468FCa3F19B4771e33C795B5",
+      "address": "0x5b3d1a90717f6EDbD08b6c4aC8a6d900942BcAa6",
       "abi": [
         {
           "inputs": [
@@ -3399,31 +3399,19 @@
               "type": "address"
             },
             {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "contributor",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "creator",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "referrals",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "internalType": "struct Common.Point",
-              "name": "_point",
-              "type": "tuple"
+              "internalType": "uint8",
+              "name": "contributor",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "creator",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "referrals",
+              "type": "uint8"
             }
           ],
           "name": "deductPoint",
@@ -3438,11 +3426,29 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getPhase",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
               "name": "user",
               "type": "address"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_phase",
+              "type": "uint8"
             }
           ],
           "name": "getPoint",
@@ -3468,6 +3474,11 @@
                   "internalType": "address",
                   "name": "user",
                   "type": "address"
+                },
+                {
+                  "internalType": "enum Common.Phase",
+                  "name": "phase",
+                  "type": "uint8"
                 }
               ],
               "internalType": "struct Common.Point",
@@ -3485,29 +3496,59 @@
             {
               "components": [
                 {
-                  "internalType": "uint256",
-                  "name": "contributor",
-                  "type": "uint256"
+                  "internalType": "string",
+                  "name": "key",
+                  "type": "string"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "creator",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "referrals",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "contributor",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "creator",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "referrals",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "user",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "enum Common.Phase",
+                      "name": "phase",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct Common.Point[]",
+                  "name": "value",
+                  "type": "tuple[]"
                 }
               ],
-              "internalType": "struct Common.Point[]",
-              "name": "_points",
+              "internalType": "struct Common.PointsReturnValue[]",
+              "name": "",
               "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "phase",
+          "outputs": [
+            {
+              "internalType": "enum Common.Phase",
+              "name": "",
+              "type": "uint8"
             }
           ],
           "stateMutability": "view",
@@ -3541,31 +3582,19 @@
               "type": "address"
             },
             {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "contributor",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "creator",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "referrals",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "user",
-                  "type": "address"
-                }
-              ],
-              "internalType": "struct Common.Point",
-              "name": "_point",
-              "type": "tuple"
+              "internalType": "uint8",
+              "name": "contributor",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "creator",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint8",
+              "name": "referrals",
+              "type": "uint8"
             }
           ],
           "name": "setPoint",
@@ -3597,11 +3626,24 @@
           ],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "switchPhase",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
     "Providers": {
-      "address": "0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a",
+      "address": "0xf3226E5bc32Ad476916C808198cFEBc5a154dD97",
       "abi": [
         {
           "inputs": [
@@ -4467,7 +4509,7 @@
       ]
     },
     "SafeFactory": {
-      "address": "0x52Efc8EDcceC2282e0B9bf68586e2Daad6021Be7",
+      "address": "0xdc560eeCad067cbA9d0Ea10c134e3332A9B80dB4",
       "abi": [
         {
           "inputs": [
