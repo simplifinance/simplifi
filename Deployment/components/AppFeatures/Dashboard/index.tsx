@@ -29,7 +29,7 @@ export default function Dashboard() {
   return(
     <div className="bg-white1 shadow-sm shadow-green1/60 dark:bg-green1 border border-gray1/50 md:border-none p-4 md:p-8 rounded-xl">
       <OnboardWrapperDiv overrideClassName="shadow-m">
-          <AutoSwipeableViews >
+          <AutoSwipeableViews>
             {
               swipeableContent.map(({imageComponent, title, description}, i) => (
                   <Box className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>

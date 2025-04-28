@@ -98,18 +98,10 @@ export default function SimplifiApp() {
    */
   React.useEffect(() => {
     if(!isConnected) {
-      // openPopUp && setTimeout(() => {
-      //   setPopUp(0);
-      // }, 6000);
-      // clearTimeout(6000);
-    } else {
       refetch();
-      if(!isSuportedChain(chainId!) && !chainModalOpen) openChainModal?.(); 
-    }
+    } 
+  }, [isConnected]);
 
-  }, [isConnected, chainId, chainModalOpen, openChainModal]);
- 
-  if(!isMounted) return null;
   return (
     <StorageContextProvider 
       value={
@@ -142,7 +134,9 @@ export default function SimplifiApp() {
         }
       }
     >
-      <AppFeatures currentPath={activePath} />
+      {
+        isMounted && <AppFeatures currentPath={activePath} />
+      }
       <Notification message={messages[messages.length - 1] || ''} resetMessage={() => setmessage('')} />
     </StorageContextProvider>
   );
