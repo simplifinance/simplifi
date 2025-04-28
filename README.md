@@ -24,7 +24,7 @@ Collateral staked in the pool can optionally be channeled into the yield strateg
 - Low transparency and financial exclusion (especially for the lower class of users).
 
 ## Solution
-- Financial Inclusion for all classes of users.
+- Financial inclusion for all classes of users.
 - Near-zero interest loans via peer-funding mechanism.
 - User-driven liquidity pool through our FlexPool design.
 - Enhanced flexibility and inclusion for all classes of users.
@@ -33,18 +33,24 @@ Collateral staked in the pool can optionally be channeled into the yield strateg
 
 By blending traditional group lending practices with blockchain technology, Simplifi creates a financial solution that's transparent, inclusive, and uniquely user-focused.
 
-## How FlexPool works
-![ob2](https://github.com/user-attachments/assets/e806c380-96e5-4557-a076-dac58238dca9)
+## Current web view
+- Light version
+![lightversion](https://github.com/user-attachments/assets/0f75c821-e791-46f7-85fc-9d2ba7df59ee)
+
 
 Flexpool emphasizes true decentralization, user control, and healthy loan competition to accommodate lower-class to middle-class users. Through liquidity synergy, users can create a large pool of funds with little or no interest, rotate it in form or loan it among themselves, invest their collaterals via the __Yield__ dashboard, and share the proceeds accordingly. The liquidity generated in a pool is accessible only to the contributors. You can view FlexPool as a form of loan equity where users provide only a part of the aggregate loan (based on the expected number of contributors) to access the total contributed amounts in the form of borrowed funds payable within a short period, usually between 1 to 30 days. FlexPools are owned and controlled by the users, not us.
+
+- Dark version
+- ![darkersion](https://github.com/user-attachments/assets/bd9583dc-af81-43c8-9742-e95717f37308)
+
 
 ## Architecture
 
 Simplifinance __[repository](https://github.com/simplifinance/simplifi/)__ contains both the `frontend` and `contract` folders that manages te user interface and smart contracts. Smart contracts are the heart of Simplifinance serving as the database. Although the structure may change in the future as we plan to switch to a more robust structure.
 
-- The frontend is divided into two segments - `Web app`/`Action-based` and `AI-Assist`. 
+- The front end is divided into two segments - `Web app`/`Action-based` and `AI-Assist`. 
 ![slide4](https://github.com/user-attachments/assets/00aefd67-a545-43b9-9bee-74617aa585ab)
-It is built with NextJs framework using __ReactJS__ and __Typescript__ libraries. We used __Shadcn__ and __TailwindCSS__ to give it a nice and customizable theme and components. The web-app uses a mobile-first approach while maintaining compatibility with the desktop. The __AI-Assist__ version uses LLM and Agentic workflow to give users an interactive chat-based experience. We have halted the development of the AI-version, and we plan to resume working on it in the future. We used Wagmi and the Viem libraries (coupled with the Alchemy APIs) to connect to and fetch data from the blockchain. 
+It is built with the NextJs framework using __ReactJS__ and __Typescript__ libraries. We used __Shadcn__ and __TailwindCSS__ to give it a nice and customizable theme and components. The web app uses a mobile-first approach while maintaining compatibility with the desktop. The __AI-Assist__ version uses LLM and Agentic workflow to give users an interactive chat-based experience. We have halted the development of the AI version, and we plan to resume working on it in the future. We used Wagmi and the Viem libraries (coupled with the Alchemy APIs) to connect to and fetch data from the blockchain. 
 
 - [contract] folder contains the smart contracts code and test files built with Solidity language and the Etherjs library.
 
@@ -67,7 +73,7 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
     - __[0x803C0997623CF5bcb033cD03bA4B3E662aa843ed]()__ (v1)
 
 - Description
-    - A contract that tracks rewards for participating to the project. Only account with role permission can make state changes such as the FlexpoolFactory contract. It has a few APIs that allow for integraing with other rolebased smart contracts.   
+    - A contract that tracks rewards for participating in the project. Only accounts with role permission can make state changes e.g. the FlexpoolFactory contract. It has a few APIs for integrating with other role-based smart contracts.   
 
 ### Providers 
 - Contract addresses
@@ -77,14 +83,14 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
     - __[0x3252e2F4097936f078213937a356b65619341E3b]()__ (v1)
 
 - Description
-    - Providers is a standalone contract where users provide liquidity to the pool using stable assets such as the cUSD, etc. Users with excess savings can engage their assets in a low-risk income generator like the providers pool where Flexpool users can access loan with minimal and competitive interest to finance a contribution.
+    - Providers is a standalone contract where users provide liquidity to the pool using stable assets such as the cUSD, etc. Users with excess savings can engage their assets in a low-risk income generator like the providers pool where Flexpool users can access loans with minimal and competitive interest to finance a contribution.
 
 ### Collateral asset 
 - Contract addresses
     - __[0x962289B0F4f0Aa00d84D7a55DAFC68F28C54fAC0]()__ (current)
 
 - Description
-    - Since our peer-funding structure requires contributing in a stable asset such as the cUSD, it requires a collateral asset to function as expected. Any supported ERC20 compatible asset can be used as a collateral cover against getting finance hence Simplifi Token can act as a collateral asset including any supported Mento stable assets.
+    - Since our peer-funding structure requires contributing in a stable asset such as the CUSD, it requires a collateral asset to function as expected. Any supported ERC20 compatible asset can be used as a collateral cover against getting finance hence Simplifi Token can act as a collateral asset including any supported Mento stable assets.
 
 ### Faucet 
 - Contract addresses
@@ -92,7 +98,7 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
     -  __[0x1DD9a1535AfE5FB5A9FdbD12ce741aE82475BC37q]()__ (v1)
 
 - Description
-    - This is temporary contracts we created for the purpose of testing. Through the __[ui](https://testnet.simplifinance.xyz)__, our users can access test tokens to be able to test with us and earn rewards in points for contribution to the project.
+    - This is a temporary contract we created for testing. Through the __[ui](https://testnet.simplifinance.xyz)__, our users can access test tokens to be able to test with us and earn rewards in points for contribution to the project.
 
 ### FlexPoolFactory (main) 
 - Contract addresses
@@ -101,7 +107,7 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
     - __[0x16f0512caA28DA6a890589819Fb70815DFd1206E]()__ (v1)
 
 - Description
-    - This is the main engine that powers the Simplifi's vehicle. It is designed with consideration for conciseness, modularity, readability, scalability and standard security practices. It enables users to initiate Flexpools, join a pool, getFinance, payback and liquidate.
+    - This is the main engine that powers the Simplifi's vehicle. It is designed with conciseness, modularity, readability, scalability, and standard security practices. It enables users to initiate Flexpools, join a pool, getFinance, payback, and liquidate.
 
 
 # Relevant Links
