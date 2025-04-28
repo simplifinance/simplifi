@@ -49,66 +49,63 @@ It is built with NextJs framework using __ReactJS__ and __Typescript__ libraries
 - [contract] folder contains the smart contracts code and test files built with Solidity language and the Etherjs library.
 
 ## Smart Contracts - Unverified (Celo Alfajores)
-The following smart contracts are tentatively deployed on the Celo testnet, as they undergo constant changes. 
-- __[0x885a9F1077B02CeBc384217B18bd6ca2B8D957B1]()__
-- __[0x90395731cb1DE69f4DF80208c572EedbaE84986a]()__
-- __[0xbdAE8eB1417979E6a95c74BB771bFBb5C52ff27a]()__
-- __[0x2993871C97b80914Bb4580CE89e3cD5cC463aEbF]()__
-- __[0x5Be0fA900F3488eF4282417afEfaC57d71Cb2EAa]()__
-- __[0x12dFb47DA38787d9c80c3680dc73bc347Ca3fcCB]()__
+The following smart contracts are deployed to the Celo Alfajores network for thorough testing.
 
-# How to run
+### SupportedAssetManager 
+- Contract addresses
+    - __[0xa00E598D0c6c2Ab62E74B1282c9Efd9d2010F47A]()__ (current)
+    -  __[0xa00E598D0c6c2Ab62E74B1282c9Efd9d2010F47A]()__ (v2)
+    - __[0x7fa06DeeF92926964ed0D49Cc63E689C690D1b31]()__ (v1)
 
-## Contracts
+- Description
+    - A standalone smart contract that manages the type of assets used as base contribution and collateral. It can be used to add or remove assets. Only accounts with role permission can call most of the functions. It is consumed by other standalone contracts such as the Flexpool and Providers contracts. 
 
-run:
-```
-    cd contract  
-```
+### Points And Rewards 
+- Contract addresses
+    - __[0x5b3d1a90717f6EDbD08b6c4aC8a6d900942BcAa6]()__ (current)
+    -  __[0x5aD28E7E90DAfB40468FCa3F19B4771e33C795B5]()__ (v2)
+    - __[0x803C0997623CF5bcb033cD03bA4B3E662aa843ed]()__ (v1)
 
-```
-    yarn install
-```
+- Description
+    - A contract that tracks rewards for participating to the project. Only account with role permission can make state changes such as the FlexpoolFactory contract. It has a few APIs that allow for integraing with other rolebased smart contracts.   
 
-```
-    yarn compile
-```
+### Providers 
+- Contract addresses
+    - __[0xf3226E5bc32Ad476916C808198cFEBc5a154dD97]()__ (current)
+    -  __[0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a]()__ (v3)
+    - __[0x74C073D9d460458f2703cc27e6eD39fe3270a602]()__ (v2)
+    - __[0x3252e2F4097936f078213937a356b65619341E3b]()__ (v1)
 
-Deploy locally to Hardhat built-in VM engine
-```
-    yarn deploy
-```
+- Description
+    - Providers is a standalone contract where users provide liquidity to the pool using stable assets such as the cUSD, etc. Users with excess savings can engage their assets in a low-risk income generator like the providers pool where Flexpool users can access loan with minimal and competitive interest to finance a contribution.
 
-Deploy to Celo testnet
-```
-    yarn deploy-alfa
-```
+### Collateral asset 
+- Contract addresses
+    - __[0x962289B0F4f0Aa00d84D7a55DAFC68F28C54fAC0]()__ (current)
 
-## UI
+- Description
+    - Since our peer-funding structure requires contributing in a stable asset such as the cUSD, it requires a collateral asset to function as expected. Any supported ERC20 compatible asset can be used as a collateral cover against getting finance hence Simplifi Token can act as a collateral asset including any supported Mento stable assets.
 
-```
-    cd Deployment
-```
+### Faucet 
+- Contract addresses
+    - __[0xa8ac853Ec5Ba50eDB0617116b734578Fac6Fb214]()__ (current)
+    -  __[0x1DD9a1535AfE5FB5A9FdbD12ce741aE82475BC37q]()__ (v1)
 
-Install dependencies
-```
-    yarn install
-```
+- Description
+    - This is temporary contracts we created for the purpose of testing. Through the __[ui](https://testnet.simplifinance.xyz)__, our users can access test tokens to be able to test with us and earn rewards in points for contribution to the project.
 
-Run development server
-```
-    yarn run dev
-```
+### FlexPoolFactory (main) 
+- Contract addresses
+    - __[0x0A04Bc2e7eba58F9b60E9baBb7d6d2A9B8DF6B49]()__ (current)
+    -  __[0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511]()__ (v2)
+    - __[0x16f0512caA28DA6a890589819Fb70815DFd1206E]()__ (v1)
 
-Build
-```
-    yarn run build
-```
+- Description
+    - This is the main engine that powers the Simplifi's vehicle. It is designed with consideration for conciseness, modularity, readability, scalability and standard security practices. It enables users to initiate Flexpools, join a pool, getFinance, payback and liquidate.
 
 
 # Relevant Links
-
 - __[Webiste](https://simplifinance.xyz)__
 - __[X/Twitter](https://x.com/SimpliFina)__
-- __[Testnet live](https://testnet.simplifinance.xyz)__
+- __[Testnet site](https://testnet.simplifinance.xyz)__
 - __[Documentation](https://simplifinance.gitbook.io/docs/)__
