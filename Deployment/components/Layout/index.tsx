@@ -12,11 +12,11 @@ import RightSideBar from "./RightSidebar";
 
 const Layout = ({children} : {children: React.ReactNode}) => {
   const [loading, setLoading] = React.useState(true);
-  const [isMounted, setMount] = React.useState(false);
+  // const [isMounted, setMount] = React.useState(false);
   const windowIsDefined = typeof window !== "undefined"
   
   React.useEffect(() => {
-    setMount(true);
+    // setMount(true);
     setTimeout(() => {
       setLoading(false)
     }, 3000)
@@ -29,32 +29,29 @@ const Layout = ({children} : {children: React.ReactNode}) => {
       enableSystem
       disableTransitionOnChange
     >
-      {
-        isMounted? 
-          <ErrorBoundary fallback={<p>Something went wrong</p>}>
-            <section
-              className={[
-                "fixed h-screen w-full flex justify-center items-center bg-green1 z-50",
-                !loading && "hidden",
-              ].join(" ")}
-            >
-              <Stack className="place-items-center space-y-4 text-orange-300">
-                <Spinner color="#fed7aa" />
-              </Stack>
-            </section>
-            <div className="w-full h-screen relative appContainer">
-              <Navbar />
-              <LeftSidebar />
-              <ScrollButton windowIsDefined={windowIsDefined} />
-              <main className='relative py-4 pr-4 bg-transparent'>
-                <div className="p-4 bg-white1 dark:bg-gray1 border-t border-t-green1/30 dark:border-gray1 md:rounded-xl">
-                  {children}
-                </div>
-              </main>
-              <RightSideBar />
+      <ErrorBoundary fallback={<p>Something went wrong</p>}>
+        <section
+          className={[
+            "fixed h-screen w-full flex justify-center items-center bg-green1 z-50",
+            !loading && "hidden",
+          ].join(" ")}
+        >
+          <Stack className="place-items-center space-y-4 text-orange-300">
+            <Spinner color="#fed7aa" />
+          </Stack>
+        </section>
+        <div className="w-full h-screen relative appContainer">
+          <Navbar />
+          <LeftSidebar />
+          <ScrollButton windowIsDefined={windowIsDefined} />
+          <main className='relative py-4 pr-4 bg-transparent'>
+            <div className="p-4 bg-white1 dark:bg-gray1 border-t border-t-green1/30 dark:border-gray1 md:rounded-xl">
+              {children}
             </div>
-          </ErrorBoundary> : null
-      }
+          </main>
+          <RightSideBar />
+        </div>
+      </ErrorBoundary>
     </ThemeProvider>
   )
 }

@@ -37,16 +37,17 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
 
   /**
    * @dev Initialize state variables
-   * @param _asset : Initial supported asset
+   * @param _assets : Initial supported asset
    */
   constructor(
-    address _asset,
+    address[] memory _assets,
     IRoleBase _roleManager
   ) 
     OnlyRoleBase(_roleManager) 
   {
-    if(_asset == address(0)) 'Default asset is empty'._throw();
-    _supportAsset(_asset);
+    for(uint i = 0; i < _assets.length; i++) {
+      if(_assets[i] != address(0)) _supportAsset(_assets[i]);
+    }
   }
 
   /**
@@ -64,7 +65,6 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   }
 
   function _supportAsset(address _asset) private {
-    
     if(!listed[_asset]){
       listed[_asset] = true;
       assets.push(SupportedAsset(

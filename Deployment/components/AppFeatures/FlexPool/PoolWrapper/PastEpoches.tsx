@@ -15,8 +15,7 @@ const PastPools = (props: { index: number, recordId: bigint, totalPool: number})
   if(!data) {
     return ( <NotFound />);
   }
-  // 
-  // 0x4045FD2c1ce56Fe5C50c6F631EC5df8e6bcc4b00
+
   if(data?.cData.length > 0) {
     return(
       <Grid item xs={12} sm={6} md={4} >
@@ -35,6 +34,7 @@ export const PastEpoches:React.FC = () => {
         return [...Array(totalPool).keys()];
     }
     return(
+      <MotionDivWrap className="w-full">
         <Grid container xs={"auto"} spacing={2}>
         {
             totalPool > 0? 
@@ -48,5 +48,6 @@ export const PastEpoches:React.FC = () => {
               )) : <NotFound />
         }
         </Grid> 
+      </MotionDivWrap>
     );
 }

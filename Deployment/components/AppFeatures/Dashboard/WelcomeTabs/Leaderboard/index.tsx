@@ -120,7 +120,7 @@ export default function Leaderboard() {
 
     return (
         <div className="w-full">
-            <SelectComponent callback={callback} />
+            <SelectComponent data='phases' callback={callback} />
             <div className="flex items-center py-4">
                 <Input
                     placeholder="Filter by user..."

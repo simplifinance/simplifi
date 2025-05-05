@@ -8,7 +8,7 @@ A protocol for short-term lending and borrowing services through a peer-funding 
 Our solutions allow users to access short-term, flexible, and expandable credit with little or no interest. By eliminating centralized liquidity pools, users themselves control inflow and outflow, ensuring autonomy over their funds, interest rates, if applicable, are determined by the participants, not the platform, creating a competitive and fair lending environment.
 
 - __FlexPool: User-Driven Liquidity Pools__
-FlexPool is at the heart of our system. These user-created pools can be permissioned (for trusted groups like friends and colleagues) or permissionless (open to anyone). Participants have equal access to the total liquidity generated within a pool, distributed on a rotational basis. The decentralized model is ideal for users ranging from market women to crypto traders.
+FlexPool is at the heart of our system. These user-centred pools can be permissioned (for trusted groups like friends and colleagues) or permissionless (open to anyone). Participants have equal access to the total liquidity generated within a pool, distributed on a rotational basis. The decentralized model is ideal for users ranging from market women to crypto traders.
 
 ## How it works
 For example, Bob, a crypto trader, creates a FlexPool with $500 unit liquidity and a maximum of five participants. He sets parameters: no interest, a 6-hour duration, and a collateral requirement in SFToken with 130 index. Once the quorum is achieved, Bob receives $2,500 to execute his trade, replenishes the pool before the 6-hour deadline, and the next participant in line gets access. This cycle continues until all participants benefit.
@@ -21,7 +21,7 @@ Collateral staked in the pool can optionally be channeled into the yield strateg
 - Financial exclusion.
 - High interest rate monopoly.
 - Centralized and rigid liquidity pattern.
-- Low transparency and financial exclusion (especially for the lower class of users).
+- Low transparency (especially for the lower classes of users).
 
 ## Solution
 - Financial inclusion for all classes of users.
@@ -38,7 +38,7 @@ By blending traditional group lending practices with blockchain technology, Simp
 ![lightversion](https://github.com/user-attachments/assets/0f75c821-e791-46f7-85fc-9d2ba7df59ee)
 
 
-Flexpool emphasizes true decentralization, user control, and healthy loan competition to accommodate lower-class to middle-class users. Through liquidity synergy, users can create a large pool of funds with little or no interest, rotate it in form or loan it among themselves, invest their collaterals via the __Yield__ dashboard, and share the proceeds accordingly. The liquidity generated in a pool is accessible only to the contributors. You can view FlexPool as a form of loan equity where users provide only a part of the aggregate loan (based on the expected number of contributors) to access the total contributed amounts in the form of borrowed funds payable within a short period, usually between 1 to 30 days. FlexPools are owned and controlled by the users, not us.
+Flexpool emphasizes true decentralization, user control, and healthy loan competition to accommodate lower-class to middle-class users. Through liquidity synergy, users can create a large pool of funds with little or no interest, rotate it in form or loan among the participants, optionally divert their collaterals via the __Yield__ strategy, and share the proceeds accordingly. The liquidity generated in a pool is accessible only to the contributors. You can view FlexPool as a form of loan equity where users provide only a portion of the aggregate projected pooled funds (i.e based on the expected number of contributors) to access the total contributed amounts in the form of borrowed funds payable within a short period, usually between 1 to 30 days. FlexPools are owned and controlled by the users, not us.
 
 - Dark version
 - ![darkersion](https://github.com/user-attachments/assets/bd9583dc-af81-43c8-9742-e95717f37308)

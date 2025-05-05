@@ -27,7 +27,7 @@ import assert from "assert";
 import { getContractData } from "./apis/utils/getContractData";
 import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { Router, StageStr } from "./constants";
+import { Router, StageStr, supportedCeloCollateralAsset } from "./constants";
 import approveToSpendCUSD from "./apis/update/cUSD/approveToSpendCUSD";
 import withdrawLoanInCUSD from "./apis/update/cUSD/withdrawLoanInCUSD";
 import { formatEther } from "viem";
@@ -38,6 +38,7 @@ import provideLiquidity from "./apis/update/providers/providerLiquidity";
 import removeLiquidity from "./apis/update/providers/removeLiquidity";
 import registerToEarnPoints from "./apis/update/points/registerToEarnPoints";
 import withdrawCollateral from "./apis/update/collateralToken/withdrawCollateral";
+import checkAndConvertAssetHolding from "./apis/utils/checkAndConvertAssetHolding";
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -83,7 +84,7 @@ export const formatAddr = (x: string | (Address | undefined)) : Address => {
 */
 export const toBigInt = (x: string | number | ethers.BigNumberish | bigint | undefined) : bigint => {
   if(!x) return 0n;
-  return ethers.toBigInt(x);
+  return BigInt(toBN(x).toString());
 } 
 
 /**
@@ -91,7 +92,7 @@ export const toBigInt = (x: string | number | ethers.BigNumberish | bigint | und
  * @param arg : Argument to convert;
  * @returns BigNumber
 */
-export const toBN = (x: string | number ) => {
+export const toBN = (x: string | number | BigNumber | any) => {
   return new BigNumber(x);
 }
 
@@ -114,12 +115,13 @@ export function getTimeFromEpoch(onchainUnixTime: number) {
  * @param callback : A callback function
  * @param collateralAsset : Collateral asset contract
  */
-export const checkAndApprove = async({account, callback, config, txnType, contractAddress, unit} : CheckAndApproveParam) => {
+export const checkAndApprove = async({account, callback, config, txnType, contractAddress, unit} : CheckAndApproveParam, selectedAsset?: Address) => {
   let { factory, providers, } = getContractData(config.state.chainId);
   let amtToApprove : bigint = 0n;
   let owner = account;
   let spender = factory;
   let previousAllowance : bigint = 0n;
+  // let canProceed = true;
 
   switch (txnType) {
     case 'Create':
@@ -136,9 +138,14 @@ export const checkAndApprove = async({account, callback, config, txnType, contra
       break;
     case 'GetFinance':
       const collateral = await getCollateralQuote({config, unit});
-      // console.log("ColQiote", collateral[0]);
       amtToApprove = collateral[0];
+      // Expected contractAddress is the collateral asset that was selected during pool creation
       assert(contractAddress !== undefined, "Collateral asset not provided");
+      if(selectedAsset !== supportedCeloCollateralAsset[1].address && selectedAsset !== supportedCeloCollateralAsset[0].address){
+        assert(selectedAsset !== undefined, "SelectedAsset is undefined");
+        await checkAndConvertAssetHolding({selectedAsset, amountIn: amtToApprove, config: {account, config, callback}});
+
+      }
       previousAllowance = await getAllowance({config, account, owner, spender, contractAddress, callback});
       break;
     case 'ProvideLiquidity':
@@ -179,12 +186,13 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     createPermissionedPoolParam, 
     createPermissionlessPoolParam,
     commonParam, 
+    selectedAsset
   } = param;
   let result : SendTransactionResult = { errored:false, error: {} };
   const {unit, ...rest} = commonParam;
   const { providers } = getContractData(rest.config.state.chainId);
   try {
-    await checkAndApprove({txnType, unit, ...rest});
+    await checkAndApprove({txnType, unit, ...rest}, selectedAsset);
     switch (txnType) {
       case 'Contribute':
         await addToPool({unit, ...rest});

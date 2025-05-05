@@ -1,6 +1,6 @@
 import React from 'react';
 import Tooltip from '@mui/material/Tooltip';
-import { flexStart, flexSpread, flexEnd } from '@/constants';
+import { flexStart, flexSpread } from '@/constants';
 import { PastEpoches } from './PoolWrapper/PastEpoches';
 import { CurrentEpoches } from './PoolWrapper/CurrentEpoches';
 import { Button } from '@/components/ui/button';

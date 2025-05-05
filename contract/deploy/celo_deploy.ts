@@ -3,6 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
 import { parseEther } from 'viem';
+import { getSupportedAssets } from "../getSupportedAssets";
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -118,7 +119,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const supportedAssetManager = await deploy("SupportedAssetManager", {
     from: deployer,
     args: [
-      collateralToken.address,
+      getSupportedAssets(collateralToken.address),
       roleManager.address,
     ],
     log: true,

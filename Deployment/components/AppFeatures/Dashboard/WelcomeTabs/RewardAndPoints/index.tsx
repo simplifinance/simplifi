@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+// import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -58,7 +58,6 @@ const getColumns = () => {
       },
     ];
     return columns;
-    
 }
 
 function getUserPoints(account: Address, points: PointsReturnValue[], phase: string) {
@@ -96,7 +95,7 @@ export default function RewardAndPoints() {
     return (
         <div className="w-full">
             <div className="flex items-center py-4">
-                <SelectComponent callback={callback} />
+                <SelectComponent data='phases' callback={callback} />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="ml-auto">
