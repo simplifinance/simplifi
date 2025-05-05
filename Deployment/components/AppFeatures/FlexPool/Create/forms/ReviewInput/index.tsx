@@ -5,11 +5,19 @@ import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapp
 import type { Address, InputSelector } from "@/interfaces";
 import { Chevron } from "@/components/utilities/Icons";
 import { Button } from "@/components/ui/button";
-import { flexSpread } from "@/constants";
+import { flexSpread, supportedConvertibleAssets } from "@/constants";
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [openCollapse, setCollapseState] = React.useState<boolean>(false);
     const { values, participants, type, } = props;
+    const filterSymbol = (arg: string | number) => {
+        const isAddress = typeof arg === 'string' && arg.length === 42;
+        if(isAddress) {
+            const filteredSymbol = supportedConvertibleAssets.filter(({address}) => address === arg);
+            if(filteredSymbol.length > 0) return filteredSymbol[0].symbol;
+        }
+        return '';
+    }
     return(
         <div className="">
             <div className="bg-white1/50 dark:bg-green1/60 space-y-3 p-4 rounded-lg text-green1/90 dark:text-orange-200 font-semibold border">
@@ -44,11 +52,7 @@ export const ReviewInput = (props: ReviewInputProps) => {
                                 <div key={item.title} className="flex justify-between items-center px-4 text-sm ">
                                     <h3 >{ item.title }</h3>
                                     {
-                                        (typeof item.value === 'string' && item.value.length === 42)? <AddressWrapper 
-                                            account={item.value}
-                                            display={false}
-                                            size={4}
-                                        /> : <h3 >{`${item.value}${item.affix}`}</h3>
+                                        (typeof item.value === 'string' && item.value.length === 42)? <h3>{filterSymbol(item.value)}</h3> : <h3 >{`${item.value}${item.affix}`}</h3>
                                     }
                                 </div>
                             )

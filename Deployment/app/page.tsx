@@ -9,7 +9,7 @@ import { useAccount, useReadContracts,} from "wagmi";
 import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 import AppFeatures from "@/components/AppFeatures";
 import { useChainModal } from "@rainbow-me/rainbowkit";
-import { isSuportedChain } from "@/apis/utils/getContractData";
+// import { isSuportedChain } from "@/apis/utils/getContractData";
 
 export default function SimplifiApp() {
   const [isMounted, setMount] = React.useState<boolean>(false);
@@ -25,7 +25,6 @@ export default function SimplifiApp() {
   const [appState, setAppState] = React.useState<AppState>(appData);
     
   const { isConnected, chainId } = useAccount();
-  const { openChainModal, chainModalOpen } = useChainModal();
   const { getFactoryDataConfig, readSymbolConfig, getPointsConfig, getProvidersConfig, getSupportedAssetConfig, } = getReadFunctions({chainId});
   
   // Read contract data from the blockchain

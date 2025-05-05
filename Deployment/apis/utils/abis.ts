@@ -1555,3 +1555,19 @@ export const allowanceCUSDAbi = [
     "type": "function"
   },
 ] as const;
+
+export const supportAssetAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_asset",
+        "type": "address"
+      }
+    ],
+    "name": "supportAsset",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;

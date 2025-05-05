@@ -4,6 +4,7 @@ import { Common } from "@/typechain-types/contracts/peripherals/Contributor";
 import { Common as Cmon } from "@/typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
+import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -12,7 +13,7 @@ export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "F
 export type Str = string;
 export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
-export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest';
+export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey';
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
@@ -134,6 +135,7 @@ export interface CreatePermissionedPoolParams {
   durationInHours: number;
   colCoverage: number;
   contractAddress?: Address;
+  // baseAssetHolding: Address;
 }
 
 export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
@@ -176,6 +178,7 @@ export interface HandleTransactionParam {
   txnType: ButtonText;
   rate?: number;
   providersSlots?: bigint[];
+  selectedAsset?: Address;
 }
 
 export interface DrawerState {
@@ -321,6 +324,23 @@ export type FactoryData = {
   makerRate: number;
   currentEpoches: bigint;
   recordEpoches: bigint;
+}
+
+export interface ExecuteSwapParam {
+  common: Config;
+  client: Mento;
+  tokenIn: Address;
+  tokenOut: Address;
+  amountIn: bigint;
+  symbolIn: string;
+  symbolOut: string;
+  tradablePair: TradablePair;
+}
+
+export interface CheckAndConvertAssetHoldingParam {
+  amountIn: bigint;
+  selectedAsset: Address;
+  config: Config;
 }
 
 export type AppState = [string, FactoryData, PointsReturnValue[], ProviderResult[], SupportedAsset[]];

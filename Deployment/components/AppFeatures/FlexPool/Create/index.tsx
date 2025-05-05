@@ -4,6 +4,7 @@ import { Permissionless } from "./forms/Permissionless";
 import { flexSpread, flexStart } from "@/constants";
 import type { Router, } from "@/interfaces";
 import { Button } from "@/components/ui/button";
+import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 
 export default function CreateFlexpool() {
   const [formType, setFormType] = React.useState<Router>('Permissionless');
@@ -24,7 +25,7 @@ export default function CreateFlexpool() {
   }
 
   return (
-    <div>
+    <MotionDivWrap>
       <div className={`${flexSpread} pb-4 border-b-4 border-b-green1/90 dark:border-b-2`}>
         <div className={`md:hidden w-[fit-content] ${flexStart}`}>
           <Button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${!disablebutton? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${!disablebutton && 'hover:shadow-sm hover:shadow-orange-200'}`}>
@@ -47,7 +48,7 @@ export default function CreateFlexpool() {
           </Button>
         </div>
       </div>
-      <div className="p-4 border dark:border-none rounded-b-xl">{ renderForm() }</div>
-    </div>
+      <MotionDivWrap className="p-4 border dark:border-none rounded-b-xl">{ renderForm() }</MotionDivWrap>
+    </MotionDivWrap>
   );
 }

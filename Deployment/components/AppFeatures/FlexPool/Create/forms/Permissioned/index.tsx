@@ -3,7 +3,7 @@ import type { Address, HandleTransactionParam, InputSelector } from '@/interface
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr, toBN } from "@/utilities";
 import { useAccount, useConfig } from "wagmi";
-import { zeroAddress } from "viem";
+import { parseUnits, zeroAddress } from "viem";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
 import CollateralAsset from "../userInputsComponents/CollateralAsset";
@@ -12,12 +12,14 @@ import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { Button } from "@/components/ui/button";
 import { Confirmation } from "../../../update/ActionButton/Confirmation";
+// import SelectBaseAssetHolding from "../userInputsComponents/SelectBaseAssetHolding";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [duration, setDuration] = React.useState<number>(1);
-    const [colCoverage, setCollateralCoverage] = React.useState<number>(100);
+    const [colCoverage, setCollateralCoverage] = React.useState<string>('110');
     const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
+    // const [baseAssetHolding, setBaseAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
@@ -67,13 +69,16 @@ export const Permissioned = () => {
                 setDuration(toBN(inputProp).toNumber());
                 break;
             case 'CCR':
-                setCollateralCoverage(toBN(inputProp).times(100).toNumber());
+                setCollateralCoverage(inputProp);
                 break;
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
+            // case 'SelectBaseAssetHolding':
+            //     setBaseAsset(formatAddr(inputProp));
+            //     break;
             case 'UnitLiquidity':
-                setUnitLiquidity(toBN(inputProp).times('1e18').toString());
+                setUnitLiquidity(inputProp);
                 break;
             default:
                 break;
@@ -81,11 +86,13 @@ export const Permissioned = () => {
     }
 
     const transactionArgs : HandleTransactionParam = {
-        commonParam: {account, config, unit: BigInt(unitLiquidity), contractAddress: collateralAsset},
+        // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
+        commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionedPoolParam: {
-            colCoverage,
+            colCoverage: toBN(colCoverage).times(100).toNumber(),
             contributors: participants!,
             durationInHours: duration,
+            // baseAssetHolding
         },
         txnType: 'Create',
         router: 'Permissioned',
@@ -114,9 +121,13 @@ export const Permissioned = () => {
                                 element: (<CollateralMultiplier selected={colCoverage} handleChange={onChange}/>),
                             },
                             {
-                                id: "CollateralAsset",
+                                id: "Collateral asset",
                                 element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
+                            // {
+                            //     id: "Select base asset",
+                            //     element: (<SelectBaseAssetHolding selected={baseAssetHolding} handleChange={onChange}/>),
+                            // },
                         ] as const
                     ).map(({ id, element }) => (
                         <div key={id}>
@@ -166,6 +177,11 @@ export const Permissioned = () => {
                                 value: collateralAsset,
                                 affix: ''
                             },
+                            // {
+                            //     title: 'Base Asset',
+                            //     value: baseAssetHolding,
+                            //     affix: ''
+                            // },
                             {
                                 title: 'Collateral Index',
                                 value: toBN(colCoverage).div(100).toString(),

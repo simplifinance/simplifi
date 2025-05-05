@@ -150,14 +150,39 @@ main{
   opacity: 0.5;
 }
 
-@media all and (max-width:767px) {
+@media all and (max-width:1023px) {
   .appContainer{
-    grid-template-columns: 1fr;
+    grid-template-columns: 400px calc(100% - 400px);
     grid-template-rows: auto 1fr;
     grid-template-areas:
     "navbar navbar" 
-    "rightmain rightmain"
-    "main main"
+    "rightmain main"
+  }
+
+  .main {
+    padding: 40px;
+  }
+
+  .rightmain {
+    padding: 40px;
+  }
+}
+
+@media all and (max-width:767px) {
+  /* .appContainer {
+    display: grid;
+    grid-template-columns: 300px calc(100% - 700px) 400px;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: 
+    "navbar navbar navbar"
+    "leftsidebar main rightmain"
+  } */
+  .appContainer{
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+    "navbar" 
+    "main"
   }
   aside{
     top: 72px; 

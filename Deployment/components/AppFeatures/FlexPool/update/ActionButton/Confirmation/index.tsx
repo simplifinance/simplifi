@@ -4,10 +4,11 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import Drawer from './Drawer';
 import { formatError, } from "@/apis/update/formatError";
 import Message from "../../../../../utilities/Message";
-import { ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
+import { Address, ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { handleTransact } from "@/utilities";
+import { formatAddr, handleTransact } from "@/utilities";
+import SelectComponent from "@/components/AppFeatures/Dashboard/WelcomeTabs/SelectComponent";
 
 export const Confirmation : 
     React.FC<{
@@ -22,14 +23,20 @@ export const Confirmation :
         ({transactionArgs, back, toggleDrawer, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
+    const [assetHolding, setAssetHolding] = React.useState<Address | string>('');
     const { setmessage, setError, setActivepath } = useAppStorage();
+    let isGetFinance = false;
+    if(transactionArgs !== null && transactionArgs?.txnType){
+        isGetFinance = transactionArgs.txnType === 'GetFinance';
+    }
 
     const handleCloseDrawer = () => {
         setmessage('');
         setError('');
         toggleDrawer(0);
     };
-    
+
+    const setConvertible = (arg: Address | string) => setAssetHolding(arg);
     const callback : TransactionCallback = (arg) => {
         if(arg.message) setmessage(arg.message);
         if(arg.errorMessage) setError(arg.errorMessage);
@@ -49,6 +56,8 @@ export const Confirmation :
 
     const handleSendTransaction = async() => {
         transactionArgs.commonParam.callback = callback;
+        if(isGetFinance && assetHolding === '') return alert("Please select the asset you wish to use as collateral");
+        transactionArgs.selectedAsset = formatAddr(assetHolding);
         setLoading(true);
         await handleTransact(transactionArgs)
         .then(({error, errored}) => callback_after(errored, transactionArgs.txnType, error))
@@ -64,6 +73,9 @@ export const Confirmation :
         >
             <div className="bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
                 { optionalDisplay && optionalDisplay }
+                {
+                    isGetFinance && !loading && <SelectComponent data='convertible' callback={setConvertible} label="Asset holding" placeholder="Which asset are you holding?"/>
+                } 
                 <Message />
                 <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || "Proceed"}</Button>
             </div>

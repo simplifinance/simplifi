@@ -9,16 +9,18 @@ import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
 import { formatAddr, toBN } from "@/utilities";
 import { Button } from "@/components/ui/button";
-import { zeroAddress } from "viem";
+import { parseUnits, zeroAddress } from "viem";
 import { useAccount, useConfig } from "wagmi";
 import { Confirmation } from "../../../update/ActionButton/Confirmation";
+// import SelectBaseAssetHolding from "../userInputsComponents/SelectBaseAssetHolding";
 
 export const Permissionless = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [quorum, setQuorum] = React.useState<number>(2);
     const [duration, setDuration] = React.useState<number>(1);
-    const [colCoverage, setCollateralCoverage] = React.useState<number>(120);
+    const [colCoverage, setCollateralCoverage] = React.useState<string>('110');
     const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
+    // const [baseAssetHolding, setBaseAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
 
     const account = formatAddr(useAccount().address);
@@ -34,13 +36,16 @@ export const Permissionless = () => {
                 setDuration(toBN(inputProp).toNumber());
                 break;
             case 'CCR':
-                setCollateralCoverage(toBN(inputProp).times(100).toNumber());
+                setCollateralCoverage(inputProp);
                 break;
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
+            // case 'SelectBaseAssetHolding':
+            //     setBaseAsset(formatAddr(inputProp));
+            //     break;
             case 'UnitLiquidity':
-                setUnitLiquidity(toBN(inputProp).times('1e18').toString());
+                setUnitLiquidity(inputProp);
                 break;
         
             default:
@@ -49,12 +54,14 @@ export const Permissionless = () => {
     }
 
     const transactionArgs : HandleTransactionParam = {
-        commonParam: {account, config, unit: BigInt(unitLiquidity), contractAddress: collateralAsset},
+        // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
+        commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionlessPoolParam: {
-            colCoverage,
+            colCoverage: toBN(colCoverage).times(100).toNumber(),
             contributors: [account],
             quorum,
             durationInHours: duration,
+            // baseAssetHolding
         },
         txnType: 'Create',
         router: 'Permissionless',
@@ -86,6 +93,10 @@ export const Permissionless = () => {
                                 id: "Collateral asset",
                                 element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
+                            //  {
+                            //     id: "Select base asset",
+                            //     element: (<SelectBaseAssetHolding selected={baseAssetHolding} handleChange={onChange}/>),
+                            // },
                         ] as const
                     ).map(({ id, element }) => (
                         <div key={id} >
@@ -132,6 +143,11 @@ export const Permissionless = () => {
                                 value: collateralAsset,
                                 affix: '',
                             },
+                            // {
+                            //     title: 'Base Asset',
+                            //     value: baseAssetHolding,
+                            //     affix: ''
+                            // },
                             {
                                 title: 'Collateral Index',
                                 value: toBN(colCoverage).div(100).toString(),
