@@ -33,7 +33,7 @@ export default function LeftSidebar() {
   const emptyPath : Path = '';
   const { showSidebar, activePath, prevPaths, setActivepath } = useAppStorage();
   return(
-    <aside className={`${!showSidebar? 'hidden' : 'flex'} md:flex z-50 md:p-[16px]`}>
+    <aside className={`${!showSidebar? 'hidden' : 'flex w-fit'} md:flex z-50 md:p-[16px]`}>
       <div className="w-full relative md:rounded-xl min-h-[fit-content] bg-white1 dark:bg-green1 md:dark:bg-gray1 md:border border-green1/30 dark:border-gray1 animateSidebar">
           {
             prevPaths.length > 0 && 

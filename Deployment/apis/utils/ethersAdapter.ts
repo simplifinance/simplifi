@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { JsonRpcProvider, FallbackProvider, BrowserProvider } from 'ethers/providers';
 import { useMemo } from 'react';
 import type { Account, Chain, Client, Transport } from 'viem';
 import { Config, useConnectorClient, useClient } from 'wagmi';
+import { providers } from 'ethers';
 
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client
@@ -12,12 +12,12 @@ export function clientToProvider(client: Client<Transport, Chain>) {
     ensAddress: chain.contracts?.ensRegistry?.address,
   }
   if (transport.type === 'fallback')
-    return new FallbackProvider(
+    return new providers.FallbackProvider(
       (transport.transports as ReturnType<Transport>[]).map(
-        ({ value }) => new JsonRpcProvider(value?.url, network),
+        ({ value }) => new providers.JsonRpcProvider(value?.url, network),
       ),
     )
-  return new JsonRpcProvider(transport.url, network)
+  return new providers.JsonRpcProvider(transport.url, network)
 }
 
 export function clientToSigner(client: Client<Transport, Chain, Account | undefined>) {
@@ -28,7 +28,7 @@ export function clientToSigner(client: Client<Transport, Chain, Account | undefi
         name: chain.name,
         ensAddress: chain.contracts?.ensRegistry?.address,
     }
-    const provider = new BrowserProvider(transport, network)
+    const provider = new providers.Web3Provider(transport, network)
     const signer = provider.getSigner(account.address)
   return signer
 }

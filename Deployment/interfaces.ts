@@ -3,8 +3,7 @@ import BigNumber from "bignumber.js";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
-import { BigNumberish } from "ethers/utils";
-import { AddressLike } from "ethers";
+import { BigNumberish } from "ethers";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -40,7 +39,7 @@ export type ContributorStruct = {
   getFinanceTime: BigNumberish;
   loan: BigNumberish;
   colBals: BigNumberish;
-  id: AddressLike;
+  id: Address;
   sentQuota: boolean;
 }
 
@@ -61,10 +60,10 @@ export type BigStruct = {
 }
 
 export type AddressesStruct = {
-  colAsset: AddressLike;
-  lastPaid: AddressLike;
-  safe: AddressLike;
-  admin: AddressLike;
+  colAsset: Address;
+  lastPaid: Address;
+  safe: Address;
+  admin: Address;
 }
 
 export type Pool = {
@@ -92,7 +91,7 @@ export type ProviderStruct = {
   amount: BigNumberish;
   rate: BigNumberish;
   earnStartDate: BigNumberish;
-  account: AddressLike;
+  account: Address;
   accruals: CommonInterestStruct;
 }
 
@@ -451,7 +450,7 @@ export const profileMock : Profile = {
     getFinanceTime: '0',
     loan: '0',
     colBals: '0',
-    id: '0',
+    id: zeroAddress,
     sentQuota: false
   },
   slot: {isAdmin: false, isMember: false, value: '0'},
