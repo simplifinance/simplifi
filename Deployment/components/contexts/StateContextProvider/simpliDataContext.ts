@@ -1,5 +1,4 @@
-import { Path, PointsReturnValue, ProviderResult, SupportedAsset, VoidFunc } from "@/interfaces";
-import { Common } from "@/typechain-types/contracts/standalone/celo/FlexpoolFactory";
+import type { Analytics, Path, PointsReturnValue, ProviderResult, SupportedAsset, VoidFunc } from "@/interfaces";
 
 export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
@@ -15,7 +14,7 @@ export interface DataContextProps {
     openDisplayForm: VoidFunc;
     activePath: Path;
     setActivepath: (arg: Path) => void;
-    analytics: Common.AnalyticsStruct;
+    analytics: Analytics;
     currentEpoches: bigint;
     recordEpoches: bigint;
     symbol: string;
