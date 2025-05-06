@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import { IDIAOracleV2 } from "../apis/IDIAOracleV2.sol";
-import { IERC20 } from "../apis/IERC20.sol";
+import { IDIAOracleV2 } from "../interfaces/IDIAOracleV2.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase, ISafeFactory } from "./ERC20Manager.sol";
 

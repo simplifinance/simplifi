@@ -61,9 +61,3 @@ export const appChildren : CustomNode[] = Array.from([
       path: 'Faq' 
     },
   ]);
-  
-  // {
-  //   location: 3,
-  //   element: ( <SimpliDao /> ),
-  //   path: 'Dao'
-  // },

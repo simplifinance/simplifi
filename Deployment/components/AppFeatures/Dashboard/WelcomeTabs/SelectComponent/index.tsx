@@ -1,6 +1,5 @@
 import React from "react";
 import { type Address, phases } from "@/interfaces";
-// import { SupportedAssetManager } from "@/typechain-types/contracts/standalone/SupportedAssetManager"
 import { formatAddr } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { Chevron } from "@/components/utilities/Icons";
@@ -54,7 +53,6 @@ export default function SelectComponent({data, placeholder, callback} : SelectPr
                 <Chevron open={showDropDown} />
             </Button>
             <div hidden={!showDropDown} className="absolute top-[95%] w-full bg-white1 space-y-2 max-h-[150px] overflow-auto">
-                {/* { label && <h3 className="text-xs font-semibold text-opacity-50">{label || 'Phases'}</h3>} */}
                 { renderData() }
             </div>
             
@@ -64,7 +62,6 @@ export default function SelectComponent({data, placeholder, callback} : SelectPr
 
 type Data = 'supported' | 'phases' | 'convertible'
 interface SelectProps {
-    // data?: Readonly<SupportedAssetManager.SupportedAssetStruct[]>;
     data: Data;
     callback?: (arg: Address | string) => void;
     placeholder?: string;

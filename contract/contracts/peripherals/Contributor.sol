@@ -6,7 +6,7 @@ import { Epoches, Common } from "./Epoches.sol";
 import { Slots } from "./Slots.sol" ;
 import { Utils } from "../libraries/Utils.sol";
 import { AwardPoint, IRoleBase, IERC20, ErrorLib, IPoint, ISupportedAsset, ISafeFactory } from "./AwardPoint.sol";
-import { ISafe } from "../apis/ISafe.sol";
+import { ISafe } from "../interfaces/ISafe.sol";
 
 abstract contract Contributor is Epoches, Slots, AwardPoint {
     using ErrorLib for *;

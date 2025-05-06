@@ -3,8 +3,8 @@
 pragma solidity 0.8.24;
 
 import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
-import { ISupportedAsset } from "../apis/ISupportedAsset.sol"; 
-import { IERC20 } from "../apis/IERC20.sol"; 
+import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol"; 
+import { IERC20 } from "../interfaces/IERC20.sol"; 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {

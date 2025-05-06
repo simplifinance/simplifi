@@ -10,7 +10,10 @@ import type {
   FormattedSlot, 
   HandleTransactionParam, 
   SendTransactionResult,
-  CheckAndApproveParam, 
+  CheckAndApproveParam,
+  ContributorStruct,
+  ProviderStruct,
+  SlotStruct, 
 } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
@@ -20,7 +23,6 @@ import addToPool from "./apis/update/factory/addToPool";
 import getFinance from "./apis/update/factory/getFinance";
 import liquidate from "./apis/update/factory/liquidate";
 import payback from "./apis/update/factory/payback";
-import { Common } from "@/typechain-types/contracts/peripherals/Contributor";
 import createPermissioned from "./apis/update/factory/createPermissioned";
 import createPermissionless from "./apis/update/factory/createPermissionless";
 import assert from "assert";
@@ -189,6 +191,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     selectedAsset
   } = param;
   let result : SendTransactionResult = { errored:false, error: {} };
+  let error : any = {};
   const {unit, ...rest} = commonParam;
   const { providers } = getContractData(rest.config.state.chainId);
   try {
@@ -264,7 +267,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       default:
         break;
     }
-  } catch (error) {
+  } catch (error: any) {
     result = {errored: true, error};
   }
   return result;
@@ -348,7 +351,7 @@ export const formatPoolData = (pool: ReadDataReturnValue): FormattedPoolData => 
  * @param arg : Data of type Common.ContributorStruct. See @/typechain-types
  * @returns  Formatted data of type  FormattedContributor. See @/interface.ts
  */
-export const formatContributor = (arg: Common.ContributorStruct) : FormattedContributor => {
+export const formatContributor = (arg: ContributorStruct) : FormattedContributor => {
   const { paybackTime, colBals, turnStartTime, sentQuota, id, loan, getFinanceTime } = arg;
   const paybackTimeInSec = toBN(paybackTime.toString()).toNumber();
   const turnStartTimeInSec = toBN(turnStartTime.toString()).toNumber();
@@ -373,10 +376,10 @@ export const formatContributor = (arg: Common.ContributorStruct) : FormattedCont
 
 /**
  * @dev Format providers' data to usable form
- * @param arg : Data of type Common.ProviderStruct. See @/typechain-types
+ * @param arg : Data of type ProviderStruct. See @/typechain-types
  * @returns  Formatted data of type  FormattedProvider. See @/interface.ts
  */
-const formatProvider = (arg: Common.ProviderStruct) : FormattedProvider => {
+const formatProvider = (arg: ProviderStruct) : FormattedProvider => {
   const { 
     account,
     accruals: { fullInterest, intPerSec },
@@ -398,10 +401,10 @@ const formatProvider = (arg: Common.ProviderStruct) : FormattedProvider => {
 
 /**
  * @dev Format slot data to usable form
- * @param arg : Data of type Common.SlotStruct. See @/typechain-types
+ * @param arg : Data of type SlotStruct. See @/typechain-types
  * @returns  Formatted data of type  FormattedSlot. See @/interface.ts
 */
-const formatSlot = ({ isAdmin, isMember, value }: Common.SlotStruct) : FormattedSlot => {
+const formatSlot = ({ isAdmin, isMember, value }: SlotStruct) : FormattedSlot => {
   return {
     isAdmin,
     isMember,
@@ -411,10 +414,10 @@ const formatSlot = ({ isAdmin, isMember, value }: Common.SlotStruct) : Formatted
 
 /**
  * @dev Format a list of providers data to usable form
- * @param arg : Data of type Common.ProviderStruct[]. See @/typechain-types
+ * @param arg : Data of type ProviderStruct[]. See @/typechain-types
  * @returns  Formatted data of type  FormattedProviders. See @/interface.ts
 */
-export const formatProviders = (providers: Readonly<Common.ProviderStruct[]>): FormattedProviders => {
+export const formatProviders = (providers: Readonly<ProviderStruct[]>): FormattedProviders => {
   let formattedProviders : FormattedProviders = [];
   if(providers && providers.length > 0) {
     providers.forEach((provider) => {

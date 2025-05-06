@@ -1,8 +1,8 @@
 import assert from 'assert';
-import { providers } from 'ethers';
 import { useMemo } from 'react';
 import type { Account, Chain, Client, Transport } from 'viem';
 import { Config, useConnectorClient, useClient } from 'wagmi';
+import { providers } from 'ethers';
 
 export function clientToProvider(client: Client<Transport, Chain>) {
   const { chain, transport } = client

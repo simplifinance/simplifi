@@ -41,7 +41,7 @@ body {
   grid-template-rows: auto 1fr;
   grid-template-areas: 
   "navbar navbar navbar"
-  "leftsidebar main rightmain"
+  "leftsidebar main rightbar"
 }
 
 nav{
@@ -60,15 +60,50 @@ aside{
   overflow: auto;
 }
 
-.main2{
+.rightsidebar{
   top: 72px;
-  grid-area: rightmain;
+  grid-area: rightbar;
   height: calc(100vh - 72px);
   position: fixed;
   width: 400px;
   align-self: start;
   overflow: auto;
 }
+
+/* .appContainer {
+  display: grid;
+  grid-template-columns: 300px calc(100% - 700px) 400px;
+  grid-template-rows: auto 1fr;
+  grid-template-areas: 
+  "navbar navbar navbar"
+  "leftsidebar main rightsidebar"
+}
+
+nav{
+  grid-area: navbar;
+  top: 0;
+  position: sticky;
+} */
+
+/* aside{
+  top: 72px; 
+  grid-area: leftsidebar;
+  height: calc(100vh - 72px);
+  position: fixed;
+  width: 300px;
+  align-self: start;
+  overflow: auto;
+}
+
+.main2{
+  top: 72px;
+  grid-area: rightsidebar;
+  height: calc(100vh - 72px);
+  position: fixed;
+  width: 400px;
+  align-self: start;
+  overflow: auto;
+} */
 
 
 main{ 
@@ -150,33 +185,25 @@ main{
   opacity: 0.5;
 }
 
-@media all and (max-width:1023px) {
+/* @media all and (max-width:1023px) {
   .appContainer{
     grid-template-columns: 400px calc(100% - 400px);
     grid-template-rows: auto 1fr;
     grid-template-areas:
     "navbar navbar" 
-    "rightmain main"
+    "rightsidebar main"
   }
 
   .main {
     padding: 40px;
   }
 
-  .rightmain {
+  .rightsidebar {
     padding: 40px;
   }
-}
-
+} */
+/* 
 @media all and (max-width:767px) {
-  /* .appContainer {
-    display: grid;
-    grid-template-columns: 300px calc(100% - 700px) 400px;
-    grid-template-rows: auto 1fr;
-    grid-template-areas: 
-    "navbar navbar navbar"
-    "leftsidebar main rightmain"
-  } */
   .appContainer{
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
@@ -194,7 +221,7 @@ main{
   main{
     width: 100%;
   }
-
+  
   .animateSidebar::after, .animateSidebar::before{
     border-radius: 0px;
     background-image: none;
@@ -207,6 +234,43 @@ main{
   .animateSidebar::before{
     opacity: 0;
   }
+} */
+
+@media all and (max-width:640px) {
+  .appContainer{
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas:
+    "navbar" 
+    "rightbar"
+    "main"
+  }
+
+  .rightsidebar{
+    top: 0;
+    /* grid-area: rightsidebar; */
+    height: 100vh;
+    position: relative;
+    width: 100%;
+    align-self: start;
+    /* overflow: auto; */
+  }
+
+  aside{
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .main {
+    padding-left: 40px;
+  }
+
+  .rightsidebar{
+    height: 100%;
+    align-self: middle;
+    overflow: hidden;
+  }
+
 }
 
 .onboardButton{

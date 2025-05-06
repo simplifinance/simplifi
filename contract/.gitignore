@@ -12,6 +12,9 @@ node_modules
 /typechain
 /typechain-types
 
+# Large deployment files
+/deployments
+
 # solidity-coverage files
 /coverage
 /coverage.json

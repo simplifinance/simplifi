@@ -12,14 +12,12 @@ import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { Button } from "@/components/ui/button";
 import { Confirmation } from "../../../update/ActionButton/Confirmation";
-// import SelectBaseAssetHolding from "../userInputsComponents/SelectBaseAssetHolding";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [duration, setDuration] = React.useState<number>(1);
     const [colCoverage, setCollateralCoverage] = React.useState<string>('110');
     const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
-    // const [baseAssetHolding, setBaseAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
     const [participants, setParticipant] = React.useState<Address[]>([]);
 
@@ -89,7 +87,7 @@ export const Permissioned = () => {
         // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
         commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionedPoolParam: {
-            colCoverage: toBN(colCoverage).times(100).toNumber(),
+            colCoverage: toBN(colCoverage).toNumber(),
             contributors: participants!,
             durationInHours: duration,
             // baseAssetHolding

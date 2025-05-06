@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import { IPoint } from "../apis/IPoint.sol";
-import { Common } from "../apis/Common.sol";
+import { IPoint } from "../interfaces/IPoint.sol";
+import { Common } from "../interfaces/Common.sol";
 import { Price, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from './Price.sol';
 
 abstract contract AwardPoint is Price {

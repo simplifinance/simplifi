@@ -10,12 +10,12 @@ export default function RightSideBar() {
     const { activePath } = useAppStorage();
 
     return(
-        <div className="main2 py-4">
+        <div className="rightsidebar md:py-4">
             {
                 (activePath === "Flexpool" || activePath === 'CreateFlexpool')? 
                 <Providers />
                     :
-                <div className='minHeight p-4 bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 md:rounded-xl space-y-4'>
+                <div className='p-4 bg-white1 dark:bg-gray1 md:border border-green1/30 dark:border-gray1 md:rounded-xl space-y-4'>
                     <div className={`${flexSpread} dark:bg-green1 p-4 rounded-xl`}>
                         <h1 className='text-xl text-green1 dark:text-orange-300 md:text-2xl font-bold'>Welcome to Simplifi!</h1>
                         <Button className={`${flexSpread}`}>

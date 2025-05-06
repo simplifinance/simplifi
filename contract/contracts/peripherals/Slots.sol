@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "../apis/Common.sol";
+import { Common } from "../interfaces/Common.sol";
 
 abstract contract Slots {
     // Every contributor owns a slot in each unit contribution

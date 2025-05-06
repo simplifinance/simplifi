@@ -3,10 +3,10 @@
 pragma solidity 0.8.24;
 
 import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
-import { IERC20 } from "../apis/IERC20.sol";
-import { IFactory } from "../apis/IFactory.sol";
-import { ISafe } from "../apis/ISafe.sol";
-import { Common } from "../apis/Common.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
+import { IFactory } from "../interfaces/IFactory.sol";
+import { ISafe } from "../interfaces/ISafe.sol";
+import { Common } from "../interfaces/Common.sol";
 import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 

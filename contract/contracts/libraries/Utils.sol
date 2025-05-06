@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { IERC20Metadata } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { Common } from "../apis/Common.sol";
+import { Common } from "../interfaces/Common.sol";
 import { ErrorLib } from "./ErrorLib.sol";
 
 library Utils {

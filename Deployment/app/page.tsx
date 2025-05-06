@@ -3,13 +3,12 @@
 import React from "react";
 import Notification from "@/components/utilities/Notification";
 import { appData, emptyMockPoint, mockAssets, mockPoint, mockProviders, phases } from "@/interfaces";
-import type { AppState, Path, PointsReturnValue, ProviderResult, SupportedAsset, } from "@/interfaces";
+import type { Path, PointsReturnValue, ProviderResult, SupportedAsset, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
-import { useAccount, useReadContracts,} from "wagmi";
+import { useAccount, useBlockNumber, useReadContracts,} from "wagmi";
 import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 import AppFeatures from "@/components/AppFeatures";
-import { useChainModal } from "@rainbow-me/rainbowkit";
-// import { isSuportedChain } from "@/apis/utils/getContractData";
+import { toBN } from "@/utilities";
 
 export default function SimplifiApp() {
   const [isMounted, setMount] = React.useState<boolean>(false);
@@ -22,13 +21,13 @@ export default function SimplifiApp() {
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
   const [activePath, setActivePath] = React.useState<Path>('Dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
-  const [appState, setAppState] = React.useState<AppState>(appData);
     
   const { isConnected, chainId } = useAccount();
+  const { data: blockNumber} = useBlockNumber({watch: true});
   const { getFactoryDataConfig, readSymbolConfig, getPointsConfig, getProvidersConfig, getSupportedAssetConfig, } = getReadFunctions({chainId});
   
   // Read contract data from the blockchain
-  const { refetch } = useReadContracts({
+  const { refetch, data, isPending } = useReadContracts({
     contracts: [
       readSymbolConfig(),
       getFactoryDataConfig(),
@@ -38,27 +37,26 @@ export default function SimplifiApp() {
     ],
     allowFailure: true,
     query: {
-      refetchInterval: (data_) => {
-        data_.fetch()
-        .then((newData) => {
-          const symbol = newData[0]?.result || appState[0];
-          const factoryData = newData[1]?.result || appState[1];
-          const beta : PointsReturnValue = {key: newData?.[2]?.result?.[0]?.key || phases[0].phase, value: [...newData?.[2]?.result?.[0].value || [mockPoint]]}
-          const alpha : PointsReturnValue = {key: newData?.[2]?.result?.[1]?.key || phases[1].phase, value: [...newData?.[2]?.result?.[1].value || [emptyMockPoint]]}
-          const mainnet : PointsReturnValue = {key: newData?.[2]?.result?.[2]?.key || phases[2].phase, value: [...newData?.[2]?.result?.[2].value || [emptyMockPoint]]}
-          const points : PointsReturnValue[] = [beta, alpha, mainnet];
-          const supportedAssets : SupportedAsset[] = [...newData?.[4]?.result || mockAssets];
-          const providers : ProviderResult[] = [...newData?.[3]?.result || mockProviders];
-          setAppState([symbol, factoryData, points, providers, supportedAssets]);
-        })
-        return 15000
-      }, 
+      enabled: !!isConnected,
+      // refetchInterval: (data_) => {
+      //   data_.setData()
+      //   return 15000
+      // }, 
       refetchOnReconnect: 'always', 
       refetchOnMount: 'always',
       refetchIntervalInBackground: true,
       retry: true,
     }
   });
+  const notReady = isPending || !data;
+  const symbol = notReady? appData[0] : data[0]?.result || appData[0];
+  const factoryData = notReady? appData[1] : data[1]?.result || appData[1];
+  const beta : PointsReturnValue = notReady? {key: phases[0].phase, value: [mockPoint]} : {key: data?.[2]?.result?.[0]?.key || phases[0].phase, value: [...data?.[2]?.result?.[0].value || [mockPoint]]}
+  const alpha : PointsReturnValue = notReady? {key: phases[1].phase, value: [emptyMockPoint]} : {key: data?.[2]?.result?.[1]?.key || phases[1].phase, value: [...data?.[2]?.result?.[1].value || [emptyMockPoint]]}
+  const mainnet : PointsReturnValue = notReady? {key: phases[2].phase, value: [emptyMockPoint]} : {key: data?.[2]?.result?.[2]?.key || phases[2].phase, value: [...data?.[2]?.result?.[2].value || [emptyMockPoint]]}
+  const points : PointsReturnValue[] = [beta, alpha, mainnet];
+  const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...data?.[4]?.result || mockAssets];
+  const providers : ProviderResult[] = notReady? mockProviders : [...data?.[3]?.result || mockProviders];
 
   const toggleProviders = (arg: bigint) => {
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
@@ -88,30 +86,25 @@ export default function SimplifiApp() {
     setMount(true);
   }, []),
   
-
-  /**
-   * React UseEffect. Watches changes to the 'isConnected' variable.
-   * If user is not connected, they're restricted access to the app functionalities. 
-   * A popup modal is activated instead. At the same time, it ensures that users are 
-   * connected to a supported network.
-   */
   React.useEffect(() => {
-    if(!isConnected) {
-      refetch();
+    if(isConnected) {
+      !data && refetch();
+      // refetch every 10 blocks
+      if(toBN(blockNumber).toNumber() % 10 === 0) refetch();
     } 
-  }, [isConnected]);
+  }, [isConnected, blockNumber]);
 
   return (
     <StorageContextProvider 
       value={
         {
-          symbol: appState[0],
-          currentEpoches: appState[1].currentEpoches,
-          recordEpoches: appState[1].recordEpoches || 0n, 
-          analytics: appState[1].analytics,
-          points: appState[2],
-          providers: appState[3],
-          supportedAssets: appState[4],
+          symbol,
+          currentEpoches: factoryData.currentEpoches,
+          recordEpoches: factoryData.recordEpoches, 
+          analytics: factoryData.analytics,
+          points,
+          providers,
+          supportedAssets,
           toggleProviders,
           displayForm,
           closeDisplayForm,
@@ -141,3 +134,15 @@ export default function SimplifiApp() {
   );
 }
 
+// data_.fetch()
+//         .then((newData) => {
+//           const symbol = newData[0]?.result || appState[0];
+//           const factoryData = newData[1]?.result || appState[1];
+//           const beta : PointsReturnValue = {key: newData?.[2]?.result?.[0]?.key || phases[0].phase, value: [...newData?.[2]?.result?.[0].value || [mockPoint]]}
+//           const alpha : PointsReturnValue = {key: newData?.[2]?.result?.[1]?.key || phases[1].phase, value: [...newData?.[2]?.result?.[1].value || [emptyMockPoint]]}
+//           const mainnet : PointsReturnValue = {key: newData?.[2]?.result?.[2]?.key || phases[2].phase, value: [...newData?.[2]?.result?.[2].value || [emptyMockPoint]]}
+//           const points : PointsReturnValue[] = [beta, alpha, mainnet];
+//           const supportedAssets : SupportedAsset[] = [...newData?.[4]?.result || mockAssets];
+//           const providers : ProviderResult[] = [...newData?.[3]?.result || mockProviders];
+//           setAppState([symbol, factoryData, points, providers, supportedAssets]);
+//         })

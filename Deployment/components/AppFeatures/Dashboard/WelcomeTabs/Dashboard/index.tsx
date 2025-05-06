@@ -21,7 +21,7 @@ export default function Dashboard() {
     const handleRouteToFlexpool = () => isConnected? setActivepath('Flexpool') : alert('Please connect wallet');
 
     return(
-        <div className="space-y-4 overflow-auto">
+        <div className="space-y-4 md:overflow-auto">
             <SignUp />
             <div className="bg-green1 p-4 rounded-[16px] text-white1/80 space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Connect your Wallet</h3>
@@ -33,7 +33,7 @@ export default function Dashboard() {
                     Connect
                 </Button>
             </div>
-             <div className="bg-green1  text-white1/80 p-4 rounded-lg space-y-4">
+             <div className="bg-green1 text-white1/80 p-4 rounded-lg space-y-4">
                 <h3 className="text-lg font-semibold text-orange-200">Create a Flexpool</h3>
                 <p>Create a customized Flexpool with liquidity to receive <span>SIMPL Points</span>, and possibly be eligible to receive airdrops from future partner projects</p>
                 <Button onClick={handleRouteToFlexpool} disabled={!isConnected} className={`${flexSpread} border border-white1/50`}>

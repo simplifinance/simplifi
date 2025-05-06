@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { parseUnits, zeroAddress } from "viem";
 import { useAccount, useConfig } from "wagmi";
 import { Confirmation } from "../../../update/ActionButton/Confirmation";
-// import SelectBaseAssetHolding from "../userInputsComponents/SelectBaseAssetHolding";
 
 export const Permissionless = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
@@ -20,7 +19,6 @@ export const Permissionless = () => {
     const [duration, setDuration] = React.useState<number>(1);
     const [colCoverage, setCollateralCoverage] = React.useState<string>('110');
     const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
-    // const [baseAssetHolding, setBaseAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
 
     const account = formatAddr(useAccount().address);
@@ -41,9 +39,6 @@ export const Permissionless = () => {
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
-            // case 'SelectBaseAssetHolding':
-            //     setBaseAsset(formatAddr(inputProp));
-            //     break;
             case 'UnitLiquidity':
                 setUnitLiquidity(inputProp);
                 break;
@@ -57,7 +52,7 @@ export const Permissionless = () => {
         // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
         commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionlessPoolParam: {
-            colCoverage: toBN(colCoverage).times(100).toNumber(),
+            colCoverage: toBN(colCoverage).toNumber(),
             contributors: [account],
             quorum,
             durationInHours: duration,

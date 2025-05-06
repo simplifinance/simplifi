@@ -2,8 +2,8 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "../apis/Common.sol";
-import { ISafeFactory } from "../apis/ISafeFactory.sol";
+import { Common } from "../interfaces/Common.sol";
+import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
 import { Pausable, IRoleBase } from "./Pausable.sol";
 
 /**

@@ -48,7 +48,7 @@ const executeSwap = async({tokenIn, tokenOut, amountIn, tradablePair, common, cl
     callback?.({message: `Converting ${formatEther(amountIn)} ${symbolIn} to ${formatEther(quoteAmountOut.toBigInt())} ${symbolOut}`});
     const allowanceTxObj = await client.increaseTradingAllowance( tokenIn, amountIn);
     console.log("allowanceTxObj", allowanceTxObj);
-    const signer = clientToSigner(config.getClient())
+    const signer = await clientToSigner(config.getClient())
     const expectedAmountOut = toBN(quoteAmountOut).times(99).div(100); 
     callback?.({message: `Executing conversion from ${symbolIn} to ${symbolOut}. Expected amount: ${formatEther(toBigInt(expectedAmountOut.toString()))}`});
     const allowanceTx = await signer.sendTransaction(allowanceTxObj);

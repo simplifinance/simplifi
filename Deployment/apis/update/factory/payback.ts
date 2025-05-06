@@ -26,7 +26,7 @@ export default async function payback(args: CommonParam) {
     returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Payback successful'});
   }).catch((error: any) => {
     returnValue = 'reverted';
-    callback?.({errorMessage: errorMessage(error)});
+    callback?.({errorMessage: error});
   });
       
   return returnValue;
