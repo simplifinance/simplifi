@@ -3,7 +3,7 @@
 
 pragma solidity 0.8.24;
 
-import { IERC20 } from "../../apis/IERC20.sol";
+import { IERC20 } from "../../interfaces/IERC20.sol";
 import { Pausable, IRoleBase } from "../Pausable.sol";
 
 library Lib {

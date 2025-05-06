@@ -1,7 +1,7 @@
+import React from "react";
 import { useAccount, useReadContract } from "wagmi";
 import getReadFunctions from '../update/DrawerWrapper/readContractConfig';
 import Grid from "@mui/material/Grid";
-import { motion } from 'framer-motion';
 import { Loading, NotFound } from "./Nulls";
 import { FlexCard } from "../update/FlexCard";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
@@ -10,8 +10,24 @@ import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 
 const PastPools = (props: { index: number, recordId: bigint, totalPool: number}) => {
   const { index, recordId, totalPool } = props;
-  const { chainId } = useAccount();
-  const { data, isPending } = useReadContract({ ...getReadFunctions({chainId}).readRecordConfig({recordId}) });
+  const { chainId, isConnected } = useAccount();
+  const { data, isPending, refetch} = useReadContract({
+    ...getReadFunctions({chainId}).readRecordConfig({recordId}),
+    query: {
+      enabled: !!isConnected,
+      refetchOnReconnect: 'always', 
+      refetchOnMount: 'always',
+      refetchIntervalInBackground: true,
+      retry: true,
+    },
+  });
+
+  React.useEffect(() => {
+    if(isConnected) {
+      refetch();
+    } 
+  }, [isConnected, recordId]);
+
   if(!data) {
     return ( <NotFound />);
   }

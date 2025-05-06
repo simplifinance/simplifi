@@ -11,7 +11,7 @@ import { Confirmation } from "../FlexPool/update/ActionButton/Confirmation";
 import AddLiquidity from "./AddLiquidity";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 import RemoveLiquidity from "./RemoveLiquidity";
-import { DataTableProps, HandleTransactionParam, } from "@/interfaces";
+import { HandleTransactionParam, } from "@/interfaces";
 import DataTable from "./DataTable";
 
 export default function Providers() {
@@ -50,7 +50,7 @@ export default function Providers() {
     }
 
     return(
-        <div className="minHeight p-4 bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 md:rounded-xl space-y-4">
+        <div className="p-4 bg-white1 dark:bg-gray1 border border-green1/30 dark:border-gray1 md:rounded-xl space-y-4">
             <div className="dark:bg-green1/90 p-4 shadow-sm shadow-green1/30 rounded-lg">
                 {
                     addLiquidity? 

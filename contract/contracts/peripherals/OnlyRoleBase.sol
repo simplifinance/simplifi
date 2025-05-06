@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { IRoleBase } from "../apis/IRoleBase.sol";
+import { IRoleBase } from "../interfaces/IRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 /**

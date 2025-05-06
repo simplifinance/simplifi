@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { IERC20 } from "../apis/IERC20.sol";
-import { ISupportedAsset } from "../apis/ISupportedAsset.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
+import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { SafeGetter, IRoleBase, ISafeFactory } from "./SafeGetter.sol";
 

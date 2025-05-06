@@ -1,10 +1,10 @@
 import React from "react";
 import BigNumber from "bignumber.js";
-import { Common } from "@/typechain-types/contracts/peripherals/Contributor";
-import { Common as Cmon } from "@/typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
+import { BigNumberish } from "ethers/utils";
+import { AddressLike } from "ethers";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -21,16 +21,94 @@ export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'prov
 export type ToggleDrawer = (value: number, setState: (value: number) => void) => (event: React.KeyboardEvent | React.MouseEvent) => void;
 export type ButtonContent = 'Approve' | 'CreatePool' | 'Completed' | 'Failed';
 export type Anchor = 'top' | 'left' | 'bottom' | 'right';
-export type Profile = Common.ContributorReturnValueStruct;
 export type TransactionCallback = (arg: TrxState) => void;
 export type Message = string;
 export type TrxResult = 'success' | 'reverted';
 export type RenderType = 'Back' | 'Current' | '';
-export type Pool = Common.PoolStruct; 
-export type Contributor = Common.ContributorReturnValueStruct;
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
-export type Analytics = Cmon.AnalyticsStruct
+
+export type Contributor = {
+  profile: ContributorStruct;
+  slot: SlotStruct;
+  providers: ProviderStruct[];
+}
+
+export type ContributorStruct = {
+  paybackTime: BigNumberish;
+  turnStartTime: BigNumberish;
+  getFinanceTime: BigNumberish;
+  loan: BigNumberish;
+  colBals: BigNumberish;
+  id: AddressLike;
+  sentQuota: boolean;
+}
+
+export type LowStruct = {
+  maxQuorum: BigNumberish;
+  selector: BigNumberish;
+  colCoverage: BigNumberish;
+  duration: BigNumberish;
+  allGh: BigNumberish;
+  userCount: BigNumberish;
+}
+
+export type BigStruct = {
+  unit: BigNumberish;
+  currentPool: BigNumberish;
+  recordId: BigNumberish;
+  unitId: BigNumberish;
+}
+
+export type AddressesStruct = {
+  colAsset: AddressLike;
+  lastPaid: AddressLike;
+  safe: AddressLike;
+  admin: AddressLike;
+}
+
+export type Pool = {
+  low: LowStruct;
+  big: BigStruct;
+  addrs: AddressesStruct;
+  router: BigNumberish;
+  stage: BigNumberish;
+  status: BigNumberish;
+}
+
+export type SlotStruct = {
+  value: BigNumberish;
+  isMember: boolean;
+  isAdmin: boolean;
+}
+
+export type CommonInterestStruct = {
+  fullInterest: BigNumberish;
+  intPerSec: BigNumberish;
+}
+
+export type ProviderStruct = {
+  slot: BigNumberish;
+  amount: BigNumberish;
+  rate: BigNumberish;
+  earnStartDate: BigNumberish;
+  account: AddressLike;
+  accruals: CommonInterestStruct;
+}
+
+export type Profile = {
+  profile: ContributorStruct;
+  slot: SlotStruct;
+  providers: ProviderStruct[];
+}
+
+export type Analytics = {
+  tvlCollateral: BigNumberish;
+  tvlBase: BigNumberish;
+  totalPermissioned: BigNumberish;
+  totalPermissionless: BigNumberish;
+}
+
 export type DataTableProps = {
   currentUser: Address;
   providerSlots: bigint[];
@@ -120,13 +198,13 @@ export interface TrxState {
 }
 
 export interface CData {
-  profile: Common.ContributorStruct;
-  slot: Common.SlotStruct;
-  providers: Readonly<Common.ProviderStruct[]>;
+  profile: ContributorStruct;
+  slot: SlotStruct;
+  providers: Readonly<ProviderStruct[]>;
 }
 
 export interface ReadDataReturnValue  {
-  pool: Common.PoolStruct;
+  pool: Pool;
   cData: Readonly<CData[]>;
 }
 
@@ -343,7 +421,13 @@ export interface CheckAndConvertAssetHoldingParam {
   config: Config;
 }
 
-export type AppState = [string, FactoryData, PointsReturnValue[], ProviderResult[], SupportedAsset[]];
+export type AppState = [
+  string, 
+  FactoryData, 
+  PointsReturnValue[], 
+  ProviderResult[], 
+  SupportedAsset[]
+];
 
 
 // MOCK DATA
@@ -412,18 +496,18 @@ const mockAsset : SupportedAsset = {
 }
 
 export const phases = [
-    {
-        phase: 'beta',
-        active: true 
-    },
-    {
-        phase: 'alpha',
-        active: false
-    },
-    {
-        phase: 'mainnet',
-        active: false
-    },
+  {
+    phase: 'beta',
+    active: true 
+  },
+  {
+    phase: 'alpha',
+    active: false
+  },
+  {
+    phase: 'mainnet',
+    active: false
+  },
 ] as const;
 export const mockProviders : ProviderResult[] = [1, 2, 3].map(() => mockProvider);
 export const mockPointsReturnValue : PointsReturnValue[] = phases.map(({phase}) => {
@@ -433,7 +517,13 @@ export const mockPointsReturnValue : PointsReturnValue[] = phases.map(({phase}) 
   }
 });
 export const mockAssets : SupportedAsset[] = [1].map(() => mockAsset);
-export const appData : AppState = ['USD', mockFactoryData, mockPointsReturnValue, mockProviders, mockAssets];
+export const appData : AppState = [
+  'USD', 
+  mockFactoryData, 
+  mockPointsReturnValue, 
+  mockProviders, 
+  mockAssets
+];
 
 export const poolMock : Pool = {
   big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },

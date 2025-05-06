@@ -57,13 +57,13 @@ export default function OnchainStatistics() {
     <div className='space-y-4'>
         <h1 className='text-lg text-green1/90 font-bold dark:text-white1 md:text-2xl'>Onchain Stats</h1>
         <div className='grid grid-cols-2 gap-4 '>
-            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-green1 text-green1/90  dark:bg-green1/90 dark:text-white1 font-bold text-center'>
+            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-gray1 md:border-green1 text-green1/90 dark:bg-green1/90 dark:text-white1 font-bold text-center'>
                 <CardContent>
                     <h3 className='text-xs text-start text-orangec dark:text-orange-300'>Active Epoches</h3>
                     <h3 className='text-2xl font-black'>{currentEpoches.toString() || '0'}</h3>
                 </CardContent>
             </Card>
-            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-green1 text-green1/90 dark:bg-green1/90 dark:text-white1 font-bold text-center'>
+            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-gray1 md:border-green1 text-green1/90 dark:bg-green1/90 dark:text-white1 font-bold text-center'>
                 <CardContent>
                     <h3 className='text-xs text-start text-orangec dark:text-orange-300'>Past Epoches</h3>
                     <h3 className='text-2xl font-black'>{recordEpoches.toString() || '0'}</h3>
@@ -73,7 +73,7 @@ export default function OnchainStatistics() {
         <div className='grid grid-cols-2 gap-2'>
             {
                 dashboardInfo.map(({title, value}, i) => (
-                    <Card key={i} className='dark:bg-gray1 text-green1/90 border border-green1/70 dark:text-current font-bold text-center'>
+                    <Card key={i} className='md:dark:bg-gray1 text-green1/90 border border-green1/70 dark:text-current font-bold text-center p-2'>
                         <CardContent>
                             <h3 className='text-[10px] text-start  dark:text-orange-300'>{title}</h3>
                             <h3 className=' text-center font-black'>{value}</h3>

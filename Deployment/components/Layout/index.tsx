@@ -40,12 +40,12 @@ const Layout = ({children} : {children: React.ReactNode}) => {
             <Spinner color="#fed7aa" />
           </Stack>
         </section>
-        <div className="w-full h-screen relative appContainer">
+        <div className="relative appContainer">
           <Navbar />
           <LeftSidebar />
           <ScrollButton windowIsDefined={windowIsDefined} />
-          <main className='relative py-4 pr-4 bg-transparent'>
-            <div className="p-4 bg-white1 dark:bg-gray1 border-t border-t-green1/30 dark:border-gray1 md:rounded-xl">
+          <main className='relative md:py-4 md:pr-4 bg-gray1 md:bg-transparent'>
+            <div className="p-4 bg-white1 dark:bg-gray1 border-t border-t-green1/30 md:dark:border-gray1 md:rounded-xl">
               {children}
             </div>
           </main>

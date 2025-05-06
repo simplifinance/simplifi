@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { IFactory, Common } from "../../apis/IFactory.sol";
+import { IFactory, Common } from "../../interfaces/IFactory.sol";
 import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from "../../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 

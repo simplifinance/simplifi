@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { IPoint, Common } from "../apis/IPoint.sol";
+import { IPoint, Common } from "../interfaces/IPoint.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
 

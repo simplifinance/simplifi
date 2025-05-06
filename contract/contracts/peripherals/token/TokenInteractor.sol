@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 import { OnlyRoleBase, IRoleBase } from "../OnlyRoleBase.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
 import { Lib } from "./ERC20Abstract.sol";
-import { IERC20 } from "../../apis/IERC20.sol";
+import { IERC20 } from "../../interfaces/IERC20.sol";
 
 abstract contract TokenInteractor is OnlyRoleBase {
   using Lib for *;

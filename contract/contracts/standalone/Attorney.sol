@@ -5,7 +5,7 @@ pragma solidity 0.8.24;
 import { Pausable, IRoleBase } from "../peripherals/Pausable.sol";
 import { Lib } from "../peripherals/token/ERC20Abstract.sol";
 import { SafeERC20 } from "../peripherals/token/SafeERC20.sol";
-import { IERC20 } from "../apis/IERC20.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
 
 /**
  * Attorney acts as mediator between token and their holders when they lost access to their account and had previously

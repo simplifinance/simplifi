@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Common } from "../apis/Common.sol";
+import { Common } from "../interfaces/Common.sol";
 import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
 
 abstract contract PastEpoches {

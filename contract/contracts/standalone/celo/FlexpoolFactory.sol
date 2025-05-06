@@ -2,10 +2,10 @@
 pragma solidity 0.8.24;
 
 import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset, ISafeFactory } from "../../peripherals/FeeToAndRate.sol";
-import { IFactory, Common } from '../../apis/IFactory.sol';
-import { IERC20 } from "../../apis/IERC20.sol";
-import { IPoint } from "../../apis/IPoint.sol";
-import { ISafe } from "../../apis/ISafe.sol";
+import { IFactory, Common } from '../../interfaces/IFactory.sol';
+import { IERC20 } from "../../interfaces/IERC20.sol";
+import { IPoint } from "../../interfaces/IPoint.sol";
+import { ISafe } from "../../interfaces/ISafe.sol";
 
 /**
     * @title FlexpoolFactory

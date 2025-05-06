@@ -1,12 +1,10 @@
-import type { CommonParam, ProvideLiquidityParam, TrxResult, } from "@/interfaces";
+import type { ProvideLiquidityParam, TrxResult, } from "@/interfaces";
 import { simulateContract, writeContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { provideLiquidityAbi, } from "@/apis/utils/abis";
 import { formatEther } from "viem";
 import { errorMessage } from "../formatError";
 import { getContractData } from "@/apis/utils/getContractData";
-import getAllowance from "../cUSD/getAllowanceInCUSD";
-import approveToSpendCUSD from "../cUSD/approveToSpendCUSD";
 
 /**
  * @dev Send provide liqidity request

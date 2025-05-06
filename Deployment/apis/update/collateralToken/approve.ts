@@ -3,7 +3,6 @@ import { writeContract, simulateContract } from "wagmi/actions";
 import { waitForConfirmation } from "../../utils/waitForConfirmation";
 import { errorMessage } from "../formatError";
 import { approveAbi } from "@/apis/utils/abis";
-// import getAllowance from "./getAllowance";
 import { getContractData } from "@/apis/utils/getContractData";
 import { formatAddr } from "@/utilities";
 
