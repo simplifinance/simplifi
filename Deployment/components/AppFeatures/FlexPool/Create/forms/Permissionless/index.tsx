@@ -39,9 +39,6 @@ export const Permissionless = () => {
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
-            // case 'SelectBaseAssetHolding':
-            //     setBaseAsset(formatAddr(inputProp));
-            //     break;
             case 'UnitLiquidity':
                 setUnitLiquidity(inputProp);
                 break;
@@ -55,7 +52,7 @@ export const Permissionless = () => {
         // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
         commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionlessPoolParam: {
-            colCoverage: toBN(colCoverage).times(100).toNumber(),
+            colCoverage: toBN(colCoverage).toNumber(),
             contributors: [account],
             quorum,
             durationInHours: duration,

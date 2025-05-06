@@ -26,7 +26,7 @@ export default async function liquidate(args: CommonParam) {
     returnValue = await waitForConfirmation({config, hash, callback: callback!, message: 'Liquidation successful'});
   }).catch((error: any) => {
     returnValue = 'reverted';
-    callback?.({errorMessage: errorMessage(error)});
+    callback?.({errorMessage: error});
   });
     
   return returnValue;

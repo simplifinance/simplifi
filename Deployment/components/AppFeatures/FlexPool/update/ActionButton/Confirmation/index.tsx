@@ -2,7 +2,7 @@ import React from "react";
 import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
-import { formatError, } from "@/apis/update/formatError";
+import { errorMessage, } from "@/apis/update/formatError";
 import Message from "../../../../../utilities/Message";
 import { Address, ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export const Confirmation :
     }
     const isDark = useTheme().theme === 'dark';
     const callback_after = (errored: boolean, txnType: ButtonText, error?: any) => {
-        errored && setError(formatError({error}));
+        errored && setError(errorMessage(error));
         setLoading(false);
         setTimeout(() => {
             handleCloseDrawer();
@@ -55,6 +55,7 @@ export const Confirmation :
     }
 
     const handleSendTransaction = async() => {
+        console.log("transactionArgs", transactionArgs)
         transactionArgs.commonParam.callback = callback;
         if(isGetFinance && assetHolding === '') return alert("Please select the asset you wish to use as collateral");
         transactionArgs.selectedAsset = formatAddr(assetHolding);

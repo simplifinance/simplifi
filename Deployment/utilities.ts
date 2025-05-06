@@ -191,6 +191,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
     selectedAsset
   } = param;
   let result : SendTransactionResult = { errored:false, error: {} };
+  let error : any = {};
   const {unit, ...rest} = commonParam;
   const { providers } = getContractData(rest.config.state.chainId);
   try {
@@ -266,7 +267,7 @@ export const handleTransact = async(param: HandleTransactionParam) => {
       default:
         break;
     }
-  } catch (error) {
+  } catch (error: any) {
     result = {errored: true, error};
   }
   return result;

@@ -11,22 +11,17 @@ import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 const PastPools = (props: { index: number, recordId: bigint, totalPool: number}) => {
   const { index, recordId, totalPool } = props;
   const { chainId, isConnected } = useAccount();
-  const { data, isPending, refetch} = useReadContract({
+  const { data, isPending, } = useReadContract({
     ...getReadFunctions({chainId}).readRecordConfig({recordId}),
     query: {
       enabled: !!isConnected,
-      refetchOnReconnect: 'always', 
-      refetchOnMount: 'always',
-      refetchIntervalInBackground: true,
-      retry: true,
+      refetchInterval: 5000
+      // refetchOnReconnect: 'always', 
+      // refetchOnMount: 'always',
+      // refetchIntervalInBackground: true,
+      // retry: true,
     },
   });
-
-  React.useEffect(() => {
-    if(isConnected) {
-      refetch();
-    } 
-  }, [isConnected, recordId]);
 
   if(!data) {
     return ( <NotFound />);

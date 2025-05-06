@@ -193,7 +193,7 @@ export interface FormattedProvider {
 export interface TrxState {
   status?: TrxResult;
   message?: string;
-  errorMessage?: string;
+  errorMessage?: any;
 }
 
 export interface CData {

@@ -26,7 +26,7 @@ export default async function addToPool(args: CommonParam) : Promise<TrxResult> 
     const hash = await writeContract(config, request );
     returnValue = await waitForConfirmation({config, hash, callback, message: 'Successfully contributed!'})
   }).catch((error: any) => {
-    callback?.({errorMessage: errorMessage(error)});
+    callback?.({errorMessage: error});
   });
 
   return returnValue;

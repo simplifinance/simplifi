@@ -1,8 +1,7 @@
-import { WriteContractErrorType } from "wagmi/actions";
-
-export const formatError = (e: any) : string => {
-    const error = e as WriteContractErrorType;
-    return error.message?.length > 120? error.message.substring(0, 120) : error.message;
+export const formatError = (error: any) : string => {
+    const errorMessage = error?.message || error?.data.message || error;
+    console.log("ErrorMEssage", errorMessage)
+    return errorMessage > 120? errorMessage.substring(0, 120) : errorMessage;
 }
 
 export const errorMessage = (error: any) => {

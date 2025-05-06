@@ -87,7 +87,7 @@ export const Permissioned = () => {
         // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
         commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
         createPermissionedPoolParam: {
-            colCoverage: toBN(colCoverage).times(100).toNumber(),
+            colCoverage: toBN(colCoverage).toNumber(),
             contributors: participants!,
             durationInHours: duration,
             // baseAssetHolding

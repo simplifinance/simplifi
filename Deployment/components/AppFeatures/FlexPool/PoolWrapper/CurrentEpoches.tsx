@@ -16,15 +16,16 @@ export const CurrentEpoches:React.FC = () => {
   }
   const { chainId } = useAccount();
 
-  const {data, isError, refetch} = useReadContracts(
+  const {data, isError,} = useReadContracts(
     {
       allowFailure: true,
       query: {
         enabled: !!isConnected,
-        refetchOnReconnect: 'always', 
-        refetchOnMount: 'always',
-        refetchIntervalInBackground: true,
-        retry: true,
+        refetchInterval: 5000,
+        // refetchOnReconnect: 'always', 
+        // refetchOnMount: 'always',
+        // refetchIntervalInBackground: true,
+        // retry: true,
       },
       contracts: unfilteredPools().map((item) => {
         return {
@@ -33,12 +34,6 @@ export const CurrentEpoches:React.FC = () => {
       })
     }
   );
-
-  React.useEffect(() => {
-    if(isConnected) {
-      refetch();
-    } 
-  }, [isConnected, currentEpoches]);
 
   if(isError) {
     return ( <NotFound errorMessage={'No pool found'} />);

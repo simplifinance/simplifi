@@ -28,8 +28,8 @@ export default async function createPermissionlessLiquidityPool(param: CreatePer
   }).then(async({request}) => {
       const hash = await writeContract(config, request );
       returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Flexpool creation successful"});
-    }).catch((e) => {
-      callback?.({errorMessage: errorMessage(e)})
+    }).catch((e: any) => {
+      callback?.({errorMessage: e})
     });
 
   return returnValue;

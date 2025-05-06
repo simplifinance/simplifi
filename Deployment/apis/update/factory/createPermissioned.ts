@@ -27,7 +27,7 @@ export default async function createPermissioned(param: CreatePermissionedPoolPa
   }).then(async({request}) => {
     const hash = await writeContract(config, request );
     returnValue = await waitForConfirmation({config, hash, callback: callback!, message: "Flexpool creation successful"});
-  }).catch((error: any) => callback?.({errorMessage: errorMessage(error)}));
+  }).catch((error: any) => callback?.({errorMessage: error}));
   
   return returnValue;
 }
