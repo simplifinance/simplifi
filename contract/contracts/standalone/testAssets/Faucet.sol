@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, MsgSender, IRoleBase } from "../../../peripherals/OnlyRoleBase.sol";
-import { IERC20 } from "../../../interfaces/IERC20.sol";
-import { ErrorLib } from "../../../libraries/ErrorLib.sol";
-import { Utils } from "../../../libraries/Utils.sol";
+import { OnlyRoleBase, MsgSender, IRoleBase } from "../../peripherals/OnlyRoleBase.sol";
+import { IERC20 } from "../../interfaces/IERC20.sol";
+import { ErrorLib } from "../../libraries/ErrorLib.sol";
+import { Utils } from "../../libraries/Utils.sol";
 
 contract Faucet is OnlyRoleBase {
     using ErrorLib for *;

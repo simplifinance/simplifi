@@ -2,11 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { IPoint } from "../interfaces/IPoint.sol";
-import { Common } from "../interfaces/Common.sol";
-import { Price, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from './Price.sol';
+import { IPoint, Common } from "../interfaces/IPoint.sol";
+import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
+import { ErrorLib } from "../libraries/ErrorLib.sol";
+import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase, ISafeFactory } from "./ERC20Manager.sol";
 
-abstract contract AwardPoint is Price {
+abstract contract AwardPoint is ERC20Manager {
     using ErrorLib for *;
 
     // Whether to award point to users or not
@@ -14,6 +15,8 @@ abstract contract AwardPoint is Price {
 
     // Point factory address
     IPoint public immutable pointFactory;
+
+    IPriceOracle public immutable priceOracle;
 
     /**
      * ================ Constructor ==============
@@ -24,15 +27,17 @@ abstract contract AwardPoint is Price {
         IRoleBase _roleManager, 
         IPoint _pointFactory,
         IERC20 _baseAsset,
-        address _diaOracleAddress, 
-        ISupportedAsset _assetManager,
-        ISafeFactory _safeFactory
+        ISupportedAsset _assetManager, 
+        ISafeFactory _safeFactory,
+        IPriceOracle _priceOracle
     ) 
-        Price(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _safeFactory)
+        ERC20Manager(_assetManager,  _baseAsset, _roleManager, _safeFactory)
     {
         if(address(_pointFactory) == address(0)) 'IPointFactory is zero'._throw();
+        if(address(_priceOracle) == address(0)) 'IPriceOracle is zero'._throw();
         awardPoint = true;
         pointFactory = _pointFactory;
+        priceOracle = _priceOracle;
     }
 
     ///@dev Award points for users
@@ -53,6 +58,15 @@ abstract contract AwardPoint is Price {
         if(!awardPoint) 'Is inActive'._throw();
         awardPoint = false;
         return true;
+    }
+
+    /**
+     * @dev Get price quote from the oracle contract
+     * @param key : Asset pair to get price for
+     * @param network : Current connected network
+     */
+    function _getCollateralTokenPrice(string memory key, Common.Network network) internal returns(uint128 result) {
+        result = IPriceOracle(priceOracle).getPriceQuote(key, network);
     }
 
 }

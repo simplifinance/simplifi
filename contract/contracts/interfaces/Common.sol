@@ -21,6 +21,8 @@ interface Common {
         ENDED
     }
 
+    enum Network { CELO, CROSSFI }
+
     enum Phase { BETA, ALPHA, MAINNET }
 
     enum Status { AVAILABLE, TAKEN }

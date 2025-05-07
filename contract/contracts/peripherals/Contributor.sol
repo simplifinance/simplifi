@@ -368,6 +368,14 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         }
     }
 
+    // CHainlink orale
+    CELO/USD = 0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946 mainnet
+    CUSD/USD = 0xe38A27BE4E7d866327e09736F3C570F256FFd048 mainnet
+    USDC/USD = 0xc7A353BaE210aed958a1A2928b654938EC59DaB2 mainnet
+    CELO/USD = 0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946 alfajores
+    USDC/USD = 0x642Abc0c069dC5041dEA5bFC155D38D844779274 alfajores
+    NGN/USD = 0xeDf0C69F723910750500A8136B971BE135775A07 alfajores
+
     /**
      * Returns the current debt of last paid acount i.e the contributor that last got finance
      * @param unit : Unit contribution
