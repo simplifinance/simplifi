@@ -27,14 +27,14 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
 
     // ============= constructor ============
     constructor(
-        address _diaOracleAddress, 
+        uint8 networkSelector, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-       AwardPoint(_roleManager, _pointFactory, _baseAsset, _diaOracleAddress, _assetManager, _safeFactory)
+       AwardPoint(_roleManager, _pointFactory, _baseAsset, _assetManager, _safeFactory, networkSelector)
     {}
 
     /**
@@ -356,8 +356,8 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         if(pool.big.unit > 0) {
             unchecked {
                 (collateral, colCoverage) = (Common.Price(
-                        _getCollateralTokenPrice(pool.addrs.colAsset), 
-                        diaOracleAddress == address(0)? 18 : 8
+                        ISupportedAsset(assetManager).getPriceWithoutUpdating(address(pool.addrs.colAsset), network),
+                        network == Common.Network.CELO? 18 : 8
                     ).computeCollateral(
                         uint24(pool.low.colCoverage), 
                         pool.big.unit * pool.low.maxQuorum
@@ -367,14 +367,6 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
             }
         }
     }
-
-    // CHainlink orale
-    CELO/USD = 0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946 mainnet
-    CUSD/USD = 0xe38A27BE4E7d866327e09736F3C570F256FFd048 mainnet
-    USDC/USD = 0xc7A353BaE210aed958a1A2928b654938EC59DaB2 mainnet
-    CELO/USD = 0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946 alfajores
-    USDC/USD = 0x642Abc0c069dC5041dEA5bFC155D38D844779274 alfajores
-    NGN/USD = 0xeDf0C69F723910750500A8136B971BE135775A07 alfajores
 
     /**
      * Returns the current debt of last paid acount i.e the contributor that last got finance

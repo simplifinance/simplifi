@@ -6,9 +6,8 @@ import { Common } from "./Common.sol";
 
 interface IPriceOracle {
   struct Oracle {
-    address oracle;
-    uint128 latestPrice; 
-    uint128 timestampOflatestPrice; 
+    uint latestPrice; 
+    uint timestampOflatestPrice; 
   }
 
   function getPriceQuote(string memory key, Common.Network network) external returns(uint128);

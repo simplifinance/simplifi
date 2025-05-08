@@ -3,7 +3,6 @@
 pragma solidity 0.8.24;
 
 import { IPoint, Common } from "../interfaces/IPoint.sol";
-import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase, ISafeFactory } from "./ERC20Manager.sol";
 
@@ -16,7 +15,7 @@ abstract contract AwardPoint is ERC20Manager {
     // Point factory address
     IPoint public immutable pointFactory;
 
-    IPriceOracle public immutable priceOracle;
+    Common.Network public network;
 
     /**
      * ================ Constructor ==============
@@ -29,15 +28,15 @@ abstract contract AwardPoint is ERC20Manager {
         IERC20 _baseAsset,
         ISupportedAsset _assetManager, 
         ISafeFactory _safeFactory,
-        IPriceOracle _priceOracle
+        uint8 networkSelector
     ) 
         ERC20Manager(_assetManager,  _baseAsset, _roleManager, _safeFactory)
     {
         if(address(_pointFactory) == address(0)) 'IPointFactory is zero'._throw();
-        if(address(_priceOracle) == address(0)) 'IPriceOracle is zero'._throw();
+        if(networkSelector >= 3) "Invalid network"._throw();
         awardPoint = true;
         pointFactory = _pointFactory;
-        priceOracle = _priceOracle;
+        network = Common.Network(networkSelector); 
     }
 
     ///@dev Award points for users
@@ -62,11 +61,10 @@ abstract contract AwardPoint is ERC20Manager {
 
     /**
      * @dev Get price quote from the oracle contract
-     * @param key : Asset pair to get price for
-     * @param network : Current connected network
-     */
-    function _getCollateralTokenPrice(string memory key, Common.Network network) internal returns(uint128 result) {
-        result = IPriceOracle(priceOracle).getPriceQuote(key, network);
+     * @param asset : Asset to get price for
+    */
+    function _getCollateralTokenPrice(address asset) internal returns(uint result) {
+        result = ISupportedAsset(assetManager).getPriceQuote(network, asset);
     }
 
 }

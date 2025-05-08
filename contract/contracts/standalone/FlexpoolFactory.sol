@@ -34,18 +34,19 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @param _baseAsset : ERC20 compatible asset to use as base contribution
      * @param _feeTo: Fee receiver
      * @param _pointFactory : Platform fee
+     * @param networkSelector : number flag to set the connected network
     */
     constructor(
         address _feeTo, 
         uint16 _makerRate,
-        address _diaOracleAddress, 
+        uint8 networkSelector, 
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-        FeeToAndRate(_feeTo, _makerRate, _diaOracleAddress, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
+        FeeToAndRate(_feeTo, _makerRate, networkSelector, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**

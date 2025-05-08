@@ -21,7 +21,7 @@ interface Common {
         ENDED
     }
 
-    enum Network { CELO, CROSSFI }
+    enum Network { HARDHAT, CELO, CROSSFI }
 
     enum Phase { BETA, ALPHA, MAINNET }
 

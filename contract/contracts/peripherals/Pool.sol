@@ -21,14 +21,14 @@ abstract contract Pool is Contributor {
 
     // ================ Constructor ==============
     constructor(
-        address _diaOracleAddress, 
+        uint8 networkSelector, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
+        Contributor(networkSelector, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**

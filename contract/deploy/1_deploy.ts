@@ -2,22 +2,36 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
-import { parseEther } from 'viem';
-import { getSupportedAssets } from "../getSupportedAssets";
+import { parseEther, zeroAddress } from 'viem';
+import { alfajoresKeys, alfajoresOracleData, alfajoresPairAddresses, celoKeys, celoOracleData, celoPairAddresses, crossFiOracleData, getSupportedAssets, PriceData } from "../getSupportedAssets";
+
+enum Network { HARDHAT, CELO, CROSSFI };
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
-	const {deploy, execute, read, } = deployments;
-	const {deployer, oracle, feeTo, cUSDAddr} = await getNamedAccounts();
+	const {deploy, execute, read, getNetworkName} = deployments;
+	const {deployer, baseContributionAsset, feeTo, cUSDAddr} = await getNamedAccounts();
+
+  const networkName = getNetworkName().toLowerCase();
+  console.log(`NetworkName: ${networkName}`);
+  const isCeloMainnet = networkName === 'Celo';
+  const isAlfajores = networkName === 'CeloAlfajores';
+  const isCelo = isCeloMainnet || isAlfajores;
+  const isCrossFi = networkName === 'blaze' || networkName === 'crossfi';
+  const networkSelector = isCelo? Network.CELO : isCrossFi? Network.CROSSFI : Network.HARDHAT;
+  // const keys = isCelo? isCeloMainnet? celoKeys : alfajoresKeys : ['XFI/USD'] as const;
+  // const pairAddresses = isCelo? isCeloMainnet? celoPairAddresses : alfajoresPairAddresses : [oracle] as const;
+  const oracleData : PriceData[] = isAlfajores? alfajoresOracleData : isCeloMainnet? celoOracleData : isCrossFi? crossFiOracleData : alfajoresOracleData;
+  
+  console.log("Network: ", networkSelector);
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27", deployer];
+  const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"].concat([deployer]);
 
-  // console.log("Oracle: ", oracle);
   /**
    * Deploy Ownership Manager
    */
@@ -121,24 +135,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [
       getSupportedAssets(collateralToken.address),
       roleManager.address,
+      networkSelector,
+      oracleData
     ],
     log: true,
   });
   console.log(`SupportedAssetManager deployed to: ${supportedAssetManager.address}`);
   
-
   /**
    * Deploy Strategy Manager
   */
+
   const factory = await deploy("FlexpoolFactory", {
     from: deployer,
     args: [
       feeTo,
       serviceRate,
-      oracle,
+      networkSelector,
       roleManager.address,
       supportedAssetManager.address,
-      cUSDAddr,
+      baseContributionAsset === zeroAddress? baseAsset.address : baseContributionAsset,
       reward.address,
       safeFactory.address,
     ],
@@ -156,6 +172,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`Providers deployed to: ${providers.address}`);  
   
+  // /**
+  //  * Price Oracle
+  // */ 
+  // const priceOracle = await deploy("PriceOracle", {
+  //   from: deployer,
+  //   args: [ networkSelector, roleManager.address, keys, pairAddresses ],
+  //   log: true,
+  // });
+  // console.log(`PriceOracle deployed to: ${priceOracle.address}`);  
+  
 
   await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportedAssetManager.address, distributor.address, providers.address]);
   await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
@@ -163,4 +189,4 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
 export default func;
 
-func.tags = ["RoleBase", "SupportedAssetManager", "SimpliToken", "Reserve", "FlexpoolFactory", "Points", "Providers", "Attorney", "TokenDistributor", "SafeFactory", "Escape"];
+func.tags = ["RoleBase", "SupportedAssetManager", "SimpliToken", "Reserve", "PriceOracle", "FlexpoolFactory", "Points", "Providers", "Attorney", "TokenDistributor", "SafeFactory", "Escape"];
