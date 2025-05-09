@@ -1571,3 +1571,40 @@ export const supportAssetAbi = [
     "type": "function"
   },
 ] as const;
+
+export const editPoolAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "unit",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "maxQuorum",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint16",
+        "name": "durationInHours",
+        "type": "uint16"
+      },
+      {
+        "internalType": "uint24",
+        "name": "colCoverage",
+        "type": "uint24"
+      }
+    ],
+    "name": "editPool",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+] as const;

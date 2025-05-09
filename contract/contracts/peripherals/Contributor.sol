@@ -27,14 +27,14 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
 
     // ============= constructor ============
     constructor(
-        address _diaOracleAddress, 
+        uint8 networkSelector, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-       AwardPoint(_roleManager, _pointFactory, _baseAsset, _diaOracleAddress, _assetManager, _safeFactory)
+       AwardPoint(_roleManager, _pointFactory, _baseAsset, _assetManager, _safeFactory, networkSelector)
     {}
 
     /**
@@ -346,7 +346,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @param unit : EpochId
      * @return collateral Collateral
      * @return colCoverage Collateral coverage
-     */
+    */
     function _getCollateralQuote(uint256 unit)
         internal
         view
@@ -356,8 +356,8 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         if(pool.big.unit > 0) {
             unchecked {
                 (collateral, colCoverage) = (Common.Price(
-                        _getCollateralTokenPrice(pool.addrs.colAsset), 
-                        diaOracleAddress == address(0)? 18 : 8
+                        ISupportedAsset(assetManager).getPriceWithoutUpdating(address(pool.addrs.colAsset), network),
+                        network == Common.Network.CELO? 18 : 8
                     ).computeCollateral(
                         uint24(pool.low.colCoverage), 
                         pool.big.unit * pool.low.maxQuorum

@@ -22,7 +22,6 @@ import type {
 import { FEE, MAKER_RATE, QUORUM, UNIT_LIQUIDITY } from "./utilities";
 import { expect } from "chai";
 import { zeroAddress } from "viem";
-// import { executeTransaction, proposeTransaction, signTransaction } from "./utils";
 
 /**
  * Deploys and return an instance of the Escape contract.
@@ -167,9 +166,20 @@ export async function deployProvider(flexpoolFactory: Address, roleManager: Addr
   * @param deployer : Deployer address
   * @returns Contract instance
  */
+
 export async function deploySupportedAssetManager(collateralAsset: Address, roleManager: Address, deployer: Signer) :Promise<SupportedAssetManager> {
   const AssetMgr = await ethers.getContractFactory("SupportedAssetManager");
-  return (await AssetMgr.connect(deployer).deploy(collateralAsset, roleManager)).waitForDeployment();
+  return (await AssetMgr.connect(deployer).deploy(
+    [collateralAsset], 
+    roleManager, 
+    0, 
+    [{
+      pair: 'SIMPL/USD',
+      oracleAddress: zeroAddress,
+      latestPrice: 0n,
+      timestampOflatestPrice: 0n
+    }]
+  )).waitForDeployment();
 }
 
 /**
