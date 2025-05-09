@@ -23,7 +23,7 @@ interface Common {
 
     enum Network { HARDHAT, CELO, CROSSFI }
 
-    enum Phase { BETA, ALPHA, MAINNET }
+    enum Phase { ALPHA, MAINNET }
 
     enum Status { AVAILABLE, TAKEN }
 

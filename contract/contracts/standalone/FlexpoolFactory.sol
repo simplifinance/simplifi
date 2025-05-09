@@ -20,7 +20,7 @@ import { ISafe } from "../interfaces/ISafe.sol";
     * When paying back, the contributor will repay the full loan with interest but halved for other contributors.  
 */
 contract FlexpoolFactory is IFactory, FeeToAndRate {
-    using Utils for uint;
+    using Utils for *;
     using ErrorLib for *;
 
     // Analytics
@@ -90,6 +90,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         IERC20 defaultColAsset = IERC20(ISupportedAsset(assetManager).getDefaultSupportedCollateralAsset());
         initialPool = _createPool(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset);
         _awardPoint(users[0], 0, 5, false);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, true);
         emit Common.PoolCreated(initialPool);
     }
 
@@ -113,16 +114,18 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     ) external onlyRoleBearer whenNotPaused returns(bool)
     {
         Common.Pool memory pool;
+        bool isNewOrCancel = false;
         if(!isPoolAvailable(unit)){
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool.big.unitId, pool);
             emit Common.NewContributorAdded(pool);
         } else {
+            isNewOrCancel = true;
             pool = _launchDefault(borrower, unit);
         }
         _setProviders(providers, borrower, pool.big.recordId);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, pool.big.currentPool == unit);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, isNewOrCancel);
 
         return true;
     }
@@ -185,8 +188,14 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     */
     function getFinance(uint256 unit) public _onlyIfUnitIsActive(unit) whenNotPaused returns(bool) {
         _onlyContributor(_msgSender(), unit, false);
-        (uint collateral,) = _getCollateralQuote(unit);
         Common.Pool memory pool = _getPool(unit);
+        uint collateral = Common.Price(
+            uint128(ISupportedAsset(assetManager).getPriceQuote(network, address(pool.addrs.colAsset))),
+            network == Common.Network.CELO? 18 : 8
+        ).computeCollateral(
+            uint24(pool.low.colCoverage),
+            pool.big.currentPool
+        );
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
         if(pool.stage != Common.Stage.GET) 'Borrow not ready'._throw();
         if(pool.low.allGh == pool.low.maxQuorum) 'Epoch ended'._throw();

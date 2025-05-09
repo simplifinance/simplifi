@@ -346,7 +346,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @param unit : EpochId
      * @return collateral Collateral
      * @return colCoverage Collateral coverage
-     */
+    */
     function _getCollateralQuote(uint256 unit)
         internal
         view

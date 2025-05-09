@@ -7,14 +7,15 @@ import { IERC20 } from "../../interfaces/IERC20.sol";
 import { OnlyRoleBase, IRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
 
 /**
- * @title WrappedXFI is a supported collateral asset on the CrossFi network.
+ * @title WrappedNative is a supported collateral asset on the connected network e.g. Celo or XFI can be used
+ * used as collateral in Flexpool.
  * @author 
- * @notice Wrapped token denominated in XFI native coin. Contributors get finance by depositing XFI
- * coin as cover for the stable asset they're borrowing. To have more granular control over the deposited
- * XFI coin, we provide a wrapped version of the XFI coin. 
+ * @notice Wrapped token denominated in native coin. Contributors can get finance by depositing a native or corresponding
+ * stablecoin as cover for the asset they're borrowing. To have more granular control over the deposited
+ * XFI coin, we provide a wrapped version of the native coin. 
  */
-contract WrappedXFI is ERC20, OnlyRoleBase {
-    constructor(IRoleBase _roleManager) ERC20("WrappedXFI Token", "WXFI") OnlyRoleBase(_roleManager) {}
+contract WrappedNative is ERC20, OnlyRoleBase {
+    constructor(IRoleBase _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
 
     /**
      * @dev Deposit collateral

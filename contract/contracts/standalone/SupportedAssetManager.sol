@@ -63,7 +63,7 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   constructor(
     address[] memory _assets,
     IRoleBase _roleManager,
-    uint networkSelector,
+    uint8 networkSelector,
     PriceData[] memory oracleData
   )
     OnlyRoleBase(_roleManager) 
@@ -198,7 +198,7 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
     } else {
       price = 1e16;
     }
-    return price;
+    return price; 
   }
 
   /**

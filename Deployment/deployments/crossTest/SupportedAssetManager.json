@@ -1,0 +1,578 @@
+{
+  "address": "0x9fe6878BCD506b103a604D790f34BF722eC43816",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "_assets",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IRoleBase",
+          "name": "_roleManager",
+          "type": "address"
+        },
+        {
+          "internalType": "uint8",
+          "name": "networkSelector",
+          "type": "uint8"
+        },
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "pair",
+              "type": "string"
+            },
+            {
+              "internalType": "address",
+              "name": "oracleAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "latestPrice",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestampOflatestPrice",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct SupportedAssetManager.PriceData[]",
+          "name": "oracleData",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "errorMsg",
+          "type": "string"
+        }
+      ],
+      "name": "ErrorOccurred",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "celoPriceData",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "pair",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "oracleAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "latestPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestampOflatestPrice",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "diaOracleAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getDefaultSupportedCollateralAsset",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum Common.Network",
+          "name": "network",
+          "type": "uint8"
+        },
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        }
+      ],
+      "name": "getPriceQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "enum Common.Network",
+          "name": "network",
+          "type": "uint8"
+        }
+      ],
+      "name": "getPriceWithoutUpdating",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "price",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getSupportedAssets",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "id",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct SupportedAssetManager.SupportedAsset[]",
+          "name": "_assets",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_asset",
+          "type": "address"
+        }
+      ],
+      "name": "isSupportedAsset",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "listed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "roleManager",
+      "outputs": [
+        {
+          "internalType": "contract IRoleBase",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newManager",
+          "type": "address"
+        }
+      ],
+      "name": "setRoleManager",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_asset",
+          "type": "address"
+        }
+      ],
+      "name": "supportAsset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newAsset",
+          "type": "address"
+        }
+      ],
+      "name": "unsupportAsset",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x77c7b4b58cbd13d1e2ff64cd0b3a2c88101d521e312f35308a92726d1d6ce63f",
+  "receipt": {
+    "to": null,
+    "from": "0xD7c271d20c9E323336bFC843AEb8deC23B346352",
+    "contractAddress": "0x9fe6878BCD506b103a604D790f34BF722eC43816",
+    "transactionIndex": 0,
+    "gasUsed": "1464962",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xc48e961da9fcd8a23363d2ae410e43eb367a226c1ff3360307e487f8c79a5e51",
+    "transactionHash": "0x77c7b4b58cbd13d1e2ff64cd0b3a2c88101d521e312f35308a92726d1d6ce63f",
+    "logs": [],
+    "blockNumber": 8846775,
+    "cumulativeGasUsed": "1464962",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    [
+      "0xEA9E8754D1C459104B227A42A86982b8d3c86410",
+      "0x33976f7D860A399De49F454A094A42Fe9B456fb0"
+    ],
+    "0xd91FdF9d46ddbcdBD7EBE4485bdC9D2d5DE9a333",
+    2,
+    [
+      {
+        "latestPrice": "0",
+        "timestampOflatestPrice": "0",
+        "oracleAddress": "0x859e221ada7cebdf5d4040bf6a2b8959c05a4233",
+        "pair": "SIMPL/USD"
+      },
+      {
+        "latestPrice": "0",
+        "timestampOflatestPrice": "0",
+        "oracleAddress": "0x859e221ada7cebdf5d4040bf6a2b8959c05a4233",
+        "pair": "XFI/USD"
+      }
+    ]
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "6633f07e79bb2954b91208fca544bdc2",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"_assets\",\"type\":\"address[]\"},{\"internalType\":\"contract IRoleBase\",\"name\":\"_roleManager\",\"type\":\"address\"},{\"internalType\":\"uint8\",\"name\":\"networkSelector\",\"type\":\"uint8\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"pair\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestampOflatestPrice\",\"type\":\"uint256\"}],\"internalType\":\"struct SupportedAssetManager.PriceData[]\",\"name\":\"oracleData\",\"type\":\"tuple[]\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"errorMsg\",\"type\":\"string\"}],\"name\":\"ErrorOccurred\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"celoPriceData\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"pair\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"oracleAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"latestPrice\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestampOflatestPrice\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"diaOracleAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDefaultSupportedCollateralAsset\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum Common.Network\",\"name\":\"network\",\"type\":\"uint8\"},{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"}],\"name\":\"getPriceQuote\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"price\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"asset\",\"type\":\"address\"},{\"internalType\":\"enum Common.Network\",\"name\":\"network\",\"type\":\"uint8\"}],\"name\":\"getPriceWithoutUpdating\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"price\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getSupportedAssets\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"id\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"}],\"internalType\":\"struct SupportedAssetManager.SupportedAsset[]\",\"name\":\"_assets\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"isSupportedAsset\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"listed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"roleManager\",\"outputs\":[{\"internalType\":\"contract IRoleBase\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newManager\",\"type\":\"address\"}],\"name\":\"setRoleManager\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_asset\",\"type\":\"address\"}],\"name\":\"supportAsset\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAsset\",\"type\":\"address\"}],\"name\":\"unsupportAsset\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"_assets\":\": Supported assets\",\"_roleManager\":\": Role manager contract\",\"networkSelector\":\": Network selector i.e 0 or 1 or 2\",\"oracleData\":\": Celo oracle data: optional\"}},\"getPriceQuote(uint8,address)\":{\"details\":\"Get price data into external contracts\",\"params\":{\"asset\":\": Asset to get price for. If request is on CrossFi network, asset can be zero since we're only dealing with  XFI coin as collateral on the CrossFi network.\",\"network\":\": Network key. \"}},\"getPriceWithoutUpdating(address,uint8)\":{\"details\":\"Get price data without updating the storage\",\"params\":{\"asset\":\": Asset contract address. Only on CrossFi network\",\"network\":\": Connected Network\"}},\"getSupportedAssets()\":{\"details\":\"Returns a list of supported assets\"},\"isSupportedAsset(address)\":{\"details\":\"Check if an asset is supported\"},\"setRoleManager(address)\":{\"params\":{\"newManager\":\": New manager address\"}},\"supportAsset(address)\":{\"details\":\"Support a new asset Note: OnlyRoleBase action\",\"params\":{\"_asset\":\": Asset to add to list of supported asset\"}},\"unsupportAsset(address)\":{\"details\":\"Unsupports an asset Note: Only-owner action\",\"params\":{\"newAsset\":\": Removes an asset from the list of supported asset\"}}},\"stateVariables\":{\"supportedAssets\":{\"details\":\"Mapping assets address to bool i.e Assets must be contract account and must be supported\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Ensure the length of _assets matches that of celoOracleData.\"},\"setRoleManager(address)\":{\"notice\":\"Set Role manager\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/standalone/SupportedAssetManager.sol\":\"SupportedAssetManager\"},\"evmVersion\":\"constantinople\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\n// solhint-disable-next-line interface-starts-with-i\\ninterface AggregatorV3Interface {\\n  function decimals() external view returns (uint8);\\n\\n  function description() external view returns (string memory);\\n\\n  function version() external view returns (uint256);\\n\\n  function getRoundData(\\n    uint80 _roundId\\n  ) external view returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);\\n\\n  function latestRoundData()\\n    external\\n    view\\n    returns (uint80 roundId, int256 answer, uint256 startedAt, uint256 updatedAt, uint80 answeredInRound);\\n}\\n\",\"keccak256\":\"0x257a8d28fa83d3d942547c8e129ef465e4b5f3f31171e7be4739a4c98da6b4f0\",\"license\":\"MIT\"},\"contracts/interfaces/Common.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IERC20 } from './IERC20.sol';\\r\\n\\r\\ninterface Common {\\r\\n    event PoolCreated(Pool);\\r\\n    event NewContributorAdded(Pool);\\r\\n    event GetFinanced(Pool);\\r\\n    event Payback(Pool);\\r\\n    event Liquidated(Pool);\\r\\n    event Cancellation(uint unit);\\r\\n    event PoolEdited(Pool);\\r\\n\\r\\n    enum Stage {\\r\\n        JOIN, \\r\\n        GET, \\r\\n        PAYBACK, \\r\\n        CANCELED,\\r\\n        ENDED\\r\\n    }\\r\\n\\r\\n    enum Network { HARDHAT, CELO, CROSSFI }\\r\\n\\r\\n    enum Phase { ALPHA, MAINNET }\\r\\n\\r\\n    enum Status { AVAILABLE, TAKEN }\\r\\n\\r\\n    enum Branch { CURRENT, RECORD }\\r\\n\\r\\n    enum Router { NONE, PERMISSIONLESS, PERMISSIONED }\\r\\n\\r\\n    struct Pool {\\r\\n        Low low;\\r\\n        Big big;\\r\\n        Addresses addrs;\\r\\n        Router router;\\r\\n        Stage stage;\\r\\n        Status status;\\r\\n    }\\r\\n\\r\\n    struct Low {\\r\\n        uint8 maxQuorum;\\r\\n        uint8 selector;\\r\\n        uint24 colCoverage;\\r\\n        uint32 duration;\\r\\n        uint8 allGh;\\r\\n        uint8 userCount;\\r\\n    }\\r\\n\\r\\n    struct Big {\\r\\n        uint256 unit;\\r\\n        uint256 currentPool;\\r\\n        uint96 recordId;\\r\\n        uint96 unitId;\\r\\n    }\\r\\n\\r\\n    struct Point {\\r\\n        uint contributor;\\r\\n        uint creator;\\r\\n        uint referrals;\\r\\n        address user;\\r\\n        Phase phase;\\r\\n    }\\r\\n\\r\\n    struct PointsReturnValue {\\r\\n        string key;\\r\\n        Point[] value;\\r\\n    }\\r\\n\\r\\n    struct Interest {\\r\\n        uint fullInterest;\\r\\n        uint intPerSec;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Structured types - Address\\r\\n     * @param asset : Contract address of the asset in use.\\r\\n     * @param lastPaid: Last contributor who got finance.\\r\\n     * @param safe : Strategy for each pool or epoch. See Strategy.sol for more details.\\r\\n     * @param admin : Pool creator.\\r\\n     * \\r\\n    */\\r\\n    struct Addresses {\\r\\n        IERC20 colAsset;\\r\\n        address lastPaid;\\r\\n        address safe;\\r\\n        address admin;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     *  @param isMember : Whether user is a member or not\\r\\n     *  @param turnStartTime: Time when the contributor's turn start to count.\\r\\n     *  @param getFinanceTime: Date when loan was disbursed\\r\\n     *  @param paybackTime: Date which the borrowed fund must be retured\\r\\n     *  @param loan: Total debts owed by the last fund recipient.\\r\\n     *  @param colBals: Collateral balances of the last recipient.\\r\\n     *  @param sentQuota : Whether an user/current msg.sender has received or not.\\r\\n     *  @param id : Address of the last recipient.\\r\\n     * @param interestPaid : The amount of interest paid  \\r\\n    */\\r\\n    struct Contributor {\\r\\n        uint32 paybackTime;\\r\\n        uint32 turnStartTime;\\r\\n        uint32 getFinanceTime;\\r\\n        uint loan;\\r\\n        uint colBals;\\r\\n        address id;\\r\\n        bool sentQuota;\\r\\n    }\\r\\n\\r\\n    struct Price {\\r\\n        uint128 price;\\r\\n        uint8 decimals;\\r\\n    }\\r\\n\\r\\n    struct Provider {\\r\\n        uint slot;\\r\\n        uint amount;\\r\\n        uint rate;\\r\\n        uint earnStartDate;\\r\\n        address account;\\r\\n        Interest accruals;\\r\\n    }\\r\\n\\r\\n    struct Payback_Safe {\\r\\n        address user; \\r\\n        IERC20 baseAsset; \\r\\n        uint256 debt;\\r\\n        uint256 attestedInitialBal;\\r\\n        bool allGF; \\r\\n        Contributor[] cData;\\r\\n        bool isSwapped;\\r\\n        address defaulted;\\r\\n        uint96 recordId;\\r\\n        IERC20 collateralAsset;\\r\\n    }\\r\\n\\r\\n    struct Slot {\\r\\n        uint value;\\r\\n        bool isMember;\\r\\n        bool isAdmin;\\r\\n    }\\r\\n\\r\\n    struct ReadPoolDataReturnValue {\\r\\n        Pool pool;\\r\\n        ContributorReturnValue[] cData;\\r\\n    }\\r\\n\\r\\n    struct ReadRecordDataReturnValue {\\r\\n        Pool pool;\\r\\n        Contributor[] cData;\\r\\n    }\\r\\n\\r\\n    struct UpdatePoolData {\\r\\n        uint unit;\\r\\n        uint96 unitId;\\r\\n        uint96 recordId;\\r\\n        uint8 maxQuorum;\\r\\n        uint24 colCoverage;\\r\\n        IERC20 colAsset;\\r\\n        uint16 durationInHours;\\r\\n        address creator;\\r\\n        Router router; \\r\\n    }\\r\\n\\r\\n    struct Analytics {\\r\\n        uint256 tvlCollateral;\\r\\n        uint256 tvlBase;\\r\\n        uint totalPermissioned;\\r\\n        uint totalPermissionless;\\r\\n    }\\r\\n\\r\\n    struct ViewFactoryData {\\r\\n        Analytics analytics;\\r\\n        uint16 makerRate;\\r\\n        uint currentEpoches;\\r\\n        uint recordEpoches;\\r\\n    }\\r\\n\\r\\n    struct ContributorReturnValue {\\r\\n        Contributor profile;\\r\\n        Slot slot;\\r\\n        Common.Provider[] providers;\\r\\n    }\\r\\n\\r\\n}\",\"keccak256\":\"0xb072d1a143c14088daae7037754766836195cec9c0ac4a02b8c6fc3cedcce2f6\",\"license\":\"MIT\"},\"contracts/interfaces/IDIAOracleV2.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\ninterface IDIAOracleV2 {\\r\\n    function getValue(string memory key) \\r\\n        external \\r\\n        view \\r\\n        returns(uint128 price, uint128 timestamp);\\r\\n}\",\"keccak256\":\"0x825021853ca1327a2567193276908a6a4850f0c2e680dd97435b62a7c3af6675\",\"license\":\"MIT\"},\"contracts/interfaces/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n// OpenZeppelin Contracts (last updated v4.9.0) (token/ERC20/IERC20.sol)\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport \\\"./IERC20Metadata.sol\\\";\\r\\n\\r\\n/**\\r\\n * @dev Interface of the ERC20 standard as defined in the EIP.\\r\\n */\\r\\ninterface IERC20 is IERC20Metadata{\\r\\n    error NotCallable();\\r\\n    error AddressIsZero(address);\\r\\n    error NoPreviousLockDetected();\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\r\\n     * another (`to`).\\r\\n     *\\r\\n     * Note that `value` may be zero.\\r\\n     */\\r\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\r\\n\\r\\n    /**\\r\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\r\\n     * a call to {approve}. `value` is the new allowance.\\r\\n     */\\r\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens in existence.\\r\\n     */\\r\\n    function totalSupply() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the amount of tokens owned by `account`.\\r\\n     */\\r\\n    function balanceOf(address account) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from the caller's account to `to`.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transfer(address to, uint256 amount) external returns (bool);\\r\\n    \\r\\n    /** \\r\\n     * @dev Moves `amounts` tokens from the caller's account to `to`.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event for each transfer.\\r\\n     * Note: BE AWARE OF THE GAS COST WHEN USING THIS FUNCTION. IT INCREASES \\r\\n                RELATIVE TO THE ACCOUNTS ARRAY\\r\\n     */\\r\\n    function batchTransfer(uint[] memory amounts, address[] memory accounts) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the remaining number of tokens that `spender` will be\\r\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\r\\n     * zero by default.\\r\\n     *\\r\\n     * This value changes when {approve} or {transferFrom} are called.\\r\\n     */\\r\\n    function allowance(address owner, address spender) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Sets `amount` as the allowance of `spender` over the caller's tokens.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\r\\n     * that someone may use both the old and the new allowance by unfortunate\\r\\n     * transaction ordering. One possible solution to mitigate this race\\r\\n     * condition is to first reduce the spender's allowance to 0 and set the\\r\\n     * desired value afterwards:\\r\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\r\\n     *\\r\\n     * Emits an {Approval} event.\\r\\n     */\\r\\n    function approve(address spender, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Moves `amount` tokens from `from` to `to` using the\\r\\n     * allowance mechanism. `amount` is then deducted from the caller's\\r\\n     * allowance.\\r\\n     *\\r\\n     * Returns a boolean value indicating whether the operation succeeded.\\r\\n     *\\r\\n     * Emits a {Transfer} event.\\r\\n     */\\r\\n    function transferFrom(address from, address to, uint256 amount) external returns (bool);\\r\\n\\r\\n    /**@dev Locks specific amount of JFT to the private ledger.\\r\\n        param: routeTo - Alternative address that funds will be sent to when panic call is made.\\r\\n        param: amount - Amount to lock.\\r\\n    */\\r\\n    function lockToken(address routeTo, uint256 amount) external returns(bool);\\r\\n\\r\\n    /**@dev Moves an 'amount' from private ledger to regular balances.\\r\\n        @param amount - Amount to unlock.\\r\\n        Note: If the lock duration was set, holder will not be able to unlock until the \\r\\n            set time has passed else they can withdraw to regular balance anytime.\\r\\n     */\\r\\n    function unlockToken(uint amount) external returns(bool);\\r\\n\\r\\n    /** @dev Returns seperate balances of @param who\\r\\n        return value will be in struct format having two values\\r\\n     */\\r\\n    function accountBalances(address who) external view returns(Balances memory);\\r\\n   \\r\\n    // /**@dev Return JFT's Metadata including the information of `who`\\r\\n    //  */\\r\\n    // function getInfo(address who) external view returns(Protected memory);\\r\\n\\r\\n    /**\\r\\n     * @dev PanicUnlock is meant to be invoked only by the Attorney.\\r\\n     * It should only be called when JFT holder has lost access to their account and they had \\r\\n     * earlier initiated a lock. The locked token is simply unlocked and sent to an escape address\\r\\n     * provided at the time the lock was activated.\\r\\n     * \\r\\n     * Note: Attorney charges a fee for doing this. \\r\\n     * @param account : Account that owns this token.\\r\\n     */\\r\\n    function panicUnlock(address account, Balances memory _bal) external returns(bool);\\r\\n\\r\\n    struct Protected {\\r\\n        uint256 value; // Total value currently locked\\r\\n        address escapeTo;\\r\\n    }\\r\\n\\r\\n    struct Balances {\\r\\n        uint256 spendable;\\r\\n        Protected locked;\\r\\n    }\\r\\n\\r\\n    struct TokenInfo {\\r\\n        uint8 decimals;\\r\\n        uint256 totalSupply;\\r\\n        string name;\\r\\n        string symbol;\\r\\n        address attorney;\\r\\n        // address rewarder;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x0f16e22e9c3da96f41e8237352b0d826ca0421b69340e09aedae74eb222428e6\",\"license\":\"MIT\"},\"contracts/interfaces/IERC20Metadata.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n// OpenZeppelin Contracts v4.4.1 (token/ERC20/extensions/IERC20Metadata.sol)\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @dev Interface for the optional metadata functions from the ERC20 standard.\\r\\n *\\r\\n * _Available since v4.1._\\r\\n */\\r\\ninterface IERC20Metadata {\\r\\n    /**\\r\\n     * @dev Returns the name of the token.\\r\\n     */\\r\\n    function name() external view returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the symbol of the token.\\r\\n     */\\r\\n    function symbol() external view returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Returns the decimals places of the token.\\r\\n     */\\r\\n    function decimals() external view returns (uint8);\\r\\n}\\r\\n\",\"keccak256\":\"0xcb50d28f397609626ce66bde796d1ea41ce80b047482aea9d7f228b285c619ad\",\"license\":\"MIT\"},\"contracts/interfaces/IPriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { Common } from \\\"./Common.sol\\\";\\r\\n\\r\\ninterface IPriceOracle {\\r\\n  struct Oracle {\\r\\n    uint latestPrice; \\r\\n    uint timestampOflatestPrice; \\r\\n  }\\r\\n\\r\\n  function getPriceQuote(string memory key, Common.Network network) external returns(uint128);\\r\\n}\",\"keccak256\":\"0x3733964719433fc82314eb13a219e1f0724dfc23e765dd1a0683442aa4cea2fe\",\"license\":\"MIT\"},\"contracts/interfaces/IRoleBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IRoleBase \\r\\n * Interface of the OwnerShip contract\\r\\n * @author Simplifi (Bobeu)\\r\\n */\\r\\ninterface IRoleBase {\\r\\n    function setRole(\\r\\n        address[] memory newRoleTos\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function removeRole(\\r\\n        address target\\r\\n    ) \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function renounceRole() \\r\\n        external\\r\\n        returns(bool);\\r\\n\\r\\n    function getRoleBearer(\\r\\n        uint ownerId\\r\\n    ) \\r\\n        external \\r\\n        view \\r\\n        returns(address);\\r\\n\\r\\n    function hasRole(\\r\\n        address target\\r\\n    )\\r\\n        external\\r\\n        view \\r\\n        returns(bool);\\r\\n}\",\"keccak256\":\"0xa166efe0dfbcd8f4e00f33c155797b3e2d652087f630893518b0dec1f823519b\",\"license\":\"MIT\"},\"contracts/interfaces/ISupportedAsset.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { Common } from \\\"./Common.sol\\\";\\r\\n\\r\\ninterface ISupportedAsset {\\r\\n  function isSupportedAsset(address _asset) external view returns(bool);\\r\\n  function getPriceWithoutUpdating(address asset, Common.Network network) external view returns(uint128 price);\\r\\n  function getPriceQuote(Common.Network network, address asset) external returns(uint price);\\r\\n  function getDefaultSupportedCollateralAsset() external view returns(address);\\r\\n}\",\"keccak256\":\"0xf27cfa2054a7857ea7a2863a7c9a331f981be35fa986581986878e51f4af428d\",\"license\":\"MIT\"},\"contracts/libraries/ErrorLib.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nlibrary ErrorLib {\\r\\n    error ErrorOccurred(string errorMsg);\\r\\n\\r\\n    /**\\r\\n     * @dev Reverts any operation.\\r\\n     * @param _error : Error struct\\r\\n     */\\r\\n    function _throw(string memory _error) internal pure {\\r\\n        if(bytes(_error).length > 0){ \\r\\n            revert ErrorOccurred(_error);\\r\\n        }\\r\\n    }\\r\\n\\r\\n}\",\"keccak256\":\"0x967582ca2a833932c7403e6950ede1972f1b7f94ecfedd2d3ddee9175d309e5a\",\"license\":\"MIT\"},\"contracts/peripherals/OnlyRoleBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { IRoleBase } from \\\"../interfaces/IRoleBase.sol\\\";\\r\\nimport { ErrorLib } from \\\"../libraries/ErrorLib.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title MsgSender \\r\\n * @author Simplifi (Bobeu)\\r\\n * @notice Non-deployable contract simply returning the calling account.\\r\\n */\\r\\nabstract contract MsgSender {\\r\\n    function _msgSender() internal view virtual returns(address sender) {\\r\\n        sender = msg.sender;\\r\\n    }\\r\\n}\\r\\n\\r\\nabstract contract OnlyRoleBase is MsgSender {\\r\\n    using ErrorLib for *;\\r\\n\\r\\n    // Role manager address\\r\\n    IRoleBase public roleManager;\\r\\n\\r\\n    // ============= constructor ============\\r\\n    constructor(IRoleBase _roleManager)\\r\\n    {\\r\\n        _setRoleManager(_roleManager);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Caller must have owner role before execeution can proceed.\\r\\n     * The 'errorMessage' argument can be used to return error specific to \\r\\n     * a context e.g function call. \\r\\n     */\\r\\n    modifier onlyRoleBearer {\\r\\n        _onlyRoleBearer();\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // Allow only account with role access\\r\\n    function _onlyRoleBearer() internal view {\\r\\n        IRoleBase mgr = roleManager;\\r\\n        if(address(mgr) == address(0)) 'Manager is zero'._throw();\\r\\n        if(!_hasRole(_msgSender())) 'Access denied'._throw();\\r\\n    }\\r\\n\\r\\n    function _hasRole(address target) internal view returns(bool result) {\\r\\n        result = IRoleBase(roleManager).hasRole(target);\\r\\n    }  \\r\\n\\r\\n    /// @dev Set role manager\\r\\n    function _setRoleManager(IRoleBase newManager) private{\\r\\n        roleManager = newManager;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * Set Role manager\\r\\n     * @param newManager : New manager address\\r\\n     */\\r\\n    function setRoleManager(\\r\\n        address newManager\\r\\n    )\\r\\n        public\\r\\n        onlyRoleBearer\\r\\n        returns(bool)\\r\\n    {\\r\\n        _setRoleManager(IRoleBase(newManager));\\r\\n        return true;\\r\\n    }\\r\\n}\",\"keccak256\":\"0xd10e299b8bf634ae026b74cefab6933d135d5cc8265acde354aafccbbed4ad23\",\"license\":\"MIT\"},\"contracts/standalone/SupportedAssetManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\n\\r\\npragma solidity 0.8.24;\\r\\n\\r\\nimport { OnlyRoleBase, IRoleBase } from \\\"../peripherals/OnlyRoleBase.sol\\\";\\r\\nimport { ISupportedAsset } from \\\"../interfaces/ISupportedAsset.sol\\\"; \\r\\nimport { IERC20 } from \\\"../interfaces/IERC20.sol\\\"; \\r\\nimport { ErrorLib } from \\\"../libraries/ErrorLib.sol\\\";\\r\\nimport { IPriceOracle } from \\\"../interfaces/IPriceOracle.sol\\\";\\r\\nimport { IDIAOracleV2 } from \\\"../interfaces/IDIAOracleV2.sol\\\";\\r\\nimport { Common } from \\\"../interfaces/Common.sol\\\";\\r\\nimport {AggregatorV3Interface} from \\\"@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol\\\";\\r\\n\\r\\ncontract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {\\r\\n  using ErrorLib for *;\\r\\n\\r\\n  struct PriceData {\\r\\n    string pair;\\r\\n    address oracleAddress;\\r\\n    uint256 latestPrice;\\r\\n    uint256 timestampOflatestPrice;\\r\\n  }\\r\\n\\r\\n  struct SupportedAsset {\\r\\n    address id;\\r\\n    string name;\\r\\n    string symbol;\\r\\n  }\\r\\n\\r\\n  address public immutable diaOracleAddress;\\r\\n\\r\\n  PriceData private crossFiPriceData;\\r\\n\\r\\n  mapping(address => PriceData) public celoPriceData;\\r\\n\\r\\n  // Supported assets\\r\\n  SupportedAsset[] private assets;\\r\\n\\r\\n  /**\\r\\n   * @dev Mapping assets address to bool i.e Assets must be contract account\\r\\n   * and must be supported\\r\\n   */\\r\\n  mapping(address => bool) private supportedAssets;\\r\\n\\r\\n  mapping(address => bool) public listed;\\r\\n\\r\\n  /**\\r\\n   * @dev Asset must be supported before they can be used.\\r\\n   */\\r\\n  modifier onlySupportedAsset(address _asset) {\\r\\n    if(!supportedAssets[_asset]) 'Unsupported asset'._throw();\\r\\n    _;\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * \\r\\n   * @param _assets : Supported assets\\r\\n   * @param _roleManager : Role manager contract\\r\\n   * @param networkSelector : Network selector i.e 0 or 1 or 2\\r\\n   * @param oracleData : Celo oracle data: optional\\r\\n   * @notice Ensure the length of _assets matches that of celoOracleData.\\r\\n  */\\r\\n  constructor(\\r\\n    address[] memory _assets,\\r\\n    IRoleBase _roleManager,\\r\\n    uint8 networkSelector,\\r\\n    PriceData[] memory oracleData\\r\\n  )\\r\\n    OnlyRoleBase(_roleManager) \\r\\n  {\\r\\n    require(_assets.length == oracleData.length, \\\"Oracle keys & values mismatch\\\");\\r\\n    for(uint i = 0; i < _assets.length; i++) {\\r\\n      if(_assets[i] != address(0)) _supportAsset(_assets[i]);\\r\\n    }\\r\\n    if(networkSelector >= 3) \\\"Invalid network selector\\\"._throw();\\r\\n    if(Common.Network(networkSelector) == Common.Network.CROSSFI){\\r\\n      crossFiPriceData.oracleAddress = oracleData[0].oracleAddress;\\r\\n      crossFiPriceData.pair = oracleData[0].pair;\\r\\n    } else {\\r\\n      for(uint8 i = 0; i < oracleData.length; i++) {\\r\\n        celoPriceData[_assets[i]] = oracleData[i];\\r\\n      }\\r\\n    }\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Support a new asset\\r\\n   * Note: OnlyRoleBase action\\r\\n   * @param _asset : Asset to add to list of supported asset\\r\\n   */\\r\\n  function supportAsset(address _asset) \\r\\n    public \\r\\n    onlyRoleBearer\\r\\n  {\\r\\n    _supportAsset(_asset); \\r\\n  }\\r\\n\\r\\n  function _supportAsset(address _asset) private {\\r\\n    if(!listed[_asset]){\\r\\n      listed[_asset] = true;\\r\\n      assets.push(SupportedAsset(\\r\\n        _asset, \\r\\n        IERC20(_asset).name(), \\r\\n        IERC20(_asset).symbol()\\r\\n      ));\\r\\n    }\\r\\n    if(!_isAssetSupported(_asset)){\\r\\n      supportedAssets[_asset] = true;\\r\\n    }\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Unsupports an asset\\r\\n   * Note: Only-owner action\\r\\n   * @param newAsset : Removes an asset from the list of supported asset\\r\\n   */\\r\\n  function unsupportAsset(\\r\\n    address newAsset\\r\\n  ) \\r\\n    public \\r\\n    onlyRoleBearer\\r\\n  {\\r\\n    supportedAssets[newAsset] = false;\\r\\n  }\\r\\n\\r\\n  function _isAssetSupported(address _asset) internal view returns(bool) {\\r\\n    return supportedAssets[_asset];\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Check if an asset is supported\\r\\n   */\\r\\n  function isSupportedAsset(address _asset) external view returns(bool) {\\r\\n    return _isAssetSupported(_asset);\\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Returns a list of supported assets\\r\\n   */\\r\\n  function getSupportedAssets() public view returns(SupportedAsset[] memory _assets) {\\r\\n    _assets = assets;\\r\\n    return _assets;\\r\\n  }\\r\\n\\r\\n  /**\\r\\n  * @dev A function that retreives the price and the corresponding timestamp\\r\\n  * from the DIA oracle and saves them in storage variables on the crossFi Network.\\r\\n  * @param network : Network key.\\r\\n  * @param data : Mutable oracle data.\\r\\n  */ \\r\\n  function _getPriceInfo(Common.Network network, address asset, PriceData memory data) internal returns(uint price) {\\r\\n    if(network == Common.Network.CROSSFI) {\\r\\n      (data.latestPrice, data.timestampOflatestPrice) = IDIAOracleV2(diaOracleAddress).getValue(data.pair);\\r\\n      crossFiPriceData = data;\\r\\n    } else {\\r\\n      assert(asset != address(0));\\r\\n      (,int256 answer,,uint256 timestampOflatestPrice,) = AggregatorV3Interface(data.oracleAddress).latestRoundData();\\r\\n      data.latestPrice = uint(answer);\\r\\n      data.timestampOflatestPrice = timestampOflatestPrice;\\r\\n      celoPriceData[asset] = data;\\r\\n    }\\r\\n    price = data.latestPrice;\\r\\n  }\\r\\n\\r\\n  /**\\r\\n  * @dev A function that checks if the timestamp of the saved price\\r\\n  * is older than maxTimePassed.\\r\\n  * @param maxTimePassed - The max acceptable amount of time passed since the\\r\\n  * oracle price was last updated.\\r\\n  * @param timestampOflatestPrice: The time price was last updated. \\r\\n  * @return inTime - A bool that will be true if the price was updated\\r\\n  * at most maxTimePassed seconds ago, otherwise false.\\r\\n  */ \\r\\n  function _checkPriceAge(uint128 maxTimePassed, uint128 timestampOflatestPrice) internal view returns (bool inTime){\\r\\n      if((block.timestamp - timestampOflatestPrice) < maxTimePassed){\\r\\n          inTime = true;\\r\\n      } else {\\r\\n          inTime = false;\\r\\n      }\\r\\n  } \\r\\n\\r\\n  /**\\r\\n   * @dev Get price data into external contracts\\r\\n   * @param network : Network key. \\r\\n   * @param asset : Asset to get price for. If request is on CrossFi network, asset can be zero since we're only dealing with \\r\\n   * XFI coin as collateral on the CrossFi network.\\r\\n   */\\r\\n  function getPriceQuote(Common.Network network, address asset) external onlyRoleBearer returns(uint price) {\\r\\n    if(network != Common.Network.HARDHAT){\\r\\n      PriceData memory data;\\r\\n      if(network == Common.Network.CROSSFI) data = crossFiPriceData;\\r\\n      else data = celoPriceData[asset];\\r\\n      if(_checkPriceAge(1 minutes, uint128(data.timestampOflatestPrice))) {\\r\\n        price = _getPriceInfo(network, asset, data);\\r\\n      } else {\\r\\n        price = data.latestPrice;\\r\\n      }\\r\\n    } else {\\r\\n      price = 1e16;\\r\\n    }\\r\\n    return price; \\r\\n  }\\r\\n\\r\\n  /**\\r\\n   * @dev Get price data without updating the storage\\r\\n   * @param asset : Asset contract address. Only on CrossFi network\\r\\n   * @param network : Connected Network\\r\\n   */\\r\\n  function getPriceWithoutUpdating(address asset, Common.Network network) external view returns(uint128 price) {\\r\\n    if(network == Common.Network.CROSSFI){\\r\\n      price = uint128(crossFiPriceData.latestPrice);\\r\\n    } else if(network == Common.Network.CELO) {\\r\\n      assert(asset != address(0));\\r\\n      price = uint128(celoPriceData[asset].latestPrice);\\r\\n    } else {\\r\\n      price = uint128(1e16);\\r\\n    }\\r\\n    return price;\\r\\n  }\\r\\n\\r\\n  function getDefaultSupportedCollateralAsset() external view returns(address){\\r\\n    return assets[0].id;\\r\\n  }\\r\\n\\r\\n}\",\"keccak256\":\"0xf916e51d3a50be4e71739e9db7b24e2a99667cff67c13284ad44e3bf5c6b3b34\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60a06040523480156200001157600080fd5b5060405162001e1238038062001e128339810160408190526200003491620007d8565b600080546001600160a01b0319166001600160a01b0385161790558051845114620000c0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601d60248201527f4f7261636c65206b65797320262076616c756573206d69736d6174636800000060448201526064015b60405180910390fd5b60005b84518110156200013a5760006001600160a01b0316858281518110620000ed57620000ed620008cf565b60200260200101516001600160a01b0316146200013157620001318582815181106200011d576200011d620008cf565b60200260200101516200031960201b60201c565b600101620000c3565b5060038260ff1610620001865760408051808201909152601881527f496e76616c6964206e6574776f726b2073656c6563746f7200000000000000006020820152620001869062000513565b60028260ff166002811115620001a057620001a0620008fe565b6002811115620001b457620001b4620008fe565b036200023c5780600081518110620001d057620001d0620008cf565b6020026020010151602001516001800160006101000a8154816001600160a01b0302191690836001600160a01b03160217905550806000815181106200021a576200021a620008cf565b602090810291909101015151600190620002359082620009d7565b506200030f565b60005b81518160ff1610156200030d57818160ff1681518110620002645762000264620008cf565b602002602001015160056000878460ff1681518110620002885762000288620008cf565b6020908102919091018101516001600160a01b0316825281019190915260400160002081518190620002bb9082620009d7565b5060208201516001820180546001600160a01b0319166001600160a01b039092169190911790556040820151600282015560609091015160039091015580620003048162000aa3565b9150506200023f565b505b5050505062000b57565b6001600160a01b03811660009081526008602052604090205460ff16620004cb576001600160a01b0381166000818152600860209081526040808320805460ff19166001179055805160608101825284815281517f06fdde03000000000000000000000000000000000000000000000000000000008152915160069591949385019391926306fdde039260048083019391928290030181865afa158015620003c5573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f19168201604052620003ef919081019062000aea565b8152602001836001600160a01b03166395d89b416040518163ffffffff1660e01b8152600401600060405180830381865afa15801562000433573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f191682016040526200045d919081019062000aea565b90528154600180820184556000938452602093849020835160039093020180546001600160a01b0319166001600160a01b03909316929092178255928201519192909190820190620004b09082620009d7565b5060408201516002820190620004c79082620009d7565b5050505b6001600160a01b03811660009081526007602052604090205460ff1662000510576001600160a01b0381166000908152600760205260409020805460ff191660011790555b50565b8051156200051057806040517fcc861063000000000000000000000000000000000000000000000000000000008152600401620000b7919062000b22565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b604051608081016001600160401b0381118282101715620005a557620005a562000551565b60405290565b604051601f8201601f191681016001600160401b0381118282101715620005d657620005d662000551565b604052919050565b60006001600160401b03821115620005fa57620005fa62000551565b5060051b60200190565b6001600160a01b03811681146200051057600080fd5b8051620006278162000604565b919050565b805160ff811681146200062757600080fd5b60005b838110156200065b57818101518382015260200162000641565b50506000910152565b600082601f8301126200067657600080fd5b81516001600160401b0381111562000692576200069262000551565b620006a7601f8201601f1916602001620005ab565b818152846020838601011115620006bd57600080fd5b620006d08260208301602087016200063e565b949350505050565b600082601f830112620006ea57600080fd5b8151602062000703620006fd83620005de565b620005ab565b82815260059290921b840181019181810190868411156200072357600080fd5b8286015b84811015620007cd5780516001600160401b0380821115620007495760008081fd5b908801906080828b03601f1901811315620007645760008081fd5b6200076e62000580565b8784015183811115620007815760008081fd5b620007918d8a8388010162000664565b8252506040925082840151620007a78162000604565b818901526060848101519382019390935292015190820152835291830191830162000727565b509695505050505050565b60008060008060808587031215620007ef57600080fd5b84516001600160401b03808211156200080757600080fd5b818701915087601f8301126200081c57600080fd5b815160206200082f620006fd83620005de565b82815260059290921b8401810191818101908b8411156200084f57600080fd5b948201945b838610156200087a5785516200086a8162000604565b8252948201949082019062000854565b98506200088b90508982016200061a565b965050506200089d604088016200062c565b93506060870151915080821115620008b457600080fd5b50620008c387828801620006d8565b91505092959194509250565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052602160045260246000fd5b600181811c908216806200094257607f821691505b6020821081036200097c577f4e487b7100000000000000000000000000000000000000000000000000000000600052602260045260246000fd5b50919050565b601f821115620009d2576000816000526020600020601f850160051c81016020861015620009ad5750805b601f850160051c820191505b81811015620009ce57828155600101620009b9565b5050505b505050565b81516001600160401b03811115620009f357620009f362000551565b62000a0b8162000a0484546200092d565b8462000982565b602080601f83116001811462000a43576000841562000a2a5750858301515b600019600386901b1c1916600185901b178555620009ce565b600085815260208120601f198616915b8281101562000a745788860151825594840194600190910190840162000a53565b508582101562000a935787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b600060ff821660ff810362000ae1577f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b60010192915050565b60006020828403121562000afd57600080fd5b81516001600160401b0381111562000b1457600080fd5b620006d08482850162000664565b602081526000825180602084015262000b438160408501602087016200063e565b601f01601f19169190910160400192915050565b60805161129862000b7a600039600081816101730152610ac501526112986000f3fe608060405234801561001057600080fd5b50600436106100b35760003560e01c80637d07db3c116100715780637d07db3c1461016e5780639be918e614610195578063a040aee9146101a8578063cd89295b146101c9578063e5406dbf146101f4578063f1d588c51461020957600080fd5b8062435da5146100b85780634cd55c2d146100e857806364138230146100fd57806366212c8b146101305780636968751214610153578063739c13db14610166575b600080fd5b6000546100cb906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100fb6100f6366004610d5d565b61021c565b005b61012061010b366004610d5d565b60086020526000908152604090205460ff1681565b60405190151581526020016100df565b61014361013e366004610d5d565b610230565b6040516100df9493929190610dcf565b6100fb610161366004610d5d565b6102ec565b6100cb610315565b6100cb7f000000000000000000000000000000000000000000000000000000000000000081565b6101206101a3366004610d5d565b61034a565b6101bb6101b6366004610e16565b61036d565b6040519081526020016100df565b6101dc6101d7366004610e49565b6105cd565b6040516001600160801b0390911681526020016100df565b6101fc610642565b6040516100df9190610e73565b610120610217366004610d5d565b6107db565b610224610809565b61022d81610885565b50565b60056020526000908152604090208054819061024b90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461027790610f11565b80156102c45780601f10610299576101008083540402835291602001916102c4565b820191906000526020600020905b8154815290600101906020018083116102a757829003601f168201915b505050506001830154600284015460039094015492936001600160a01b039091169290915084565b6102f4610809565b6001600160a01b03166000908152600760205260409020805460ff19169055565b6000600660008154811061032b5761032b610f4b565b60009182526020909120600390910201546001600160a01b0316919050565b6001600160a01b03811660009081526007602052604081205460ff165b92915050565b6000610377610809565b600083600281111561038b5761038b610f61565b146105be576103c460405180608001604052806060815260200160006001600160a01b0316815260200160008152602001600081525090565b60028460028111156103d8576103d8610f61565b036104ab5760016040518060800160405290816000820180546103fa90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461042690610f11565b80156104735780601f1061044857610100808354040283529160200191610473565b820191906000526020600020905b81548152906001019060200180831161045657829003601f168201915b505050918352505060018201546001600160a01b0316602082015260028201546040820152600390910154606090910152905061058a565b6001600160a01b038316600090815260056020526040908190208151608081019092528054829082906104dd90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461050990610f11565b80156105565780601f1061052b57610100808354040283529160200191610556565b820191906000526020600020905b81548152906001019060200180831161053957829003601f168201915b505050918352505060018201546001600160a01b031660208201526002820154604082015260039091015460609091015290505b610599603c8260600151610a59565b156105b0576105a9848483610a91565b91506105b8565b806040015191505b50610367565b50662386f26fc1000092915050565b600060028260028111156105e3576105e3610f61565b036105f15750600354610367565b600182600281111561060557610605610f61565b036105be576001600160a01b03831661062057610620610f77565b506001600160a01b038216600090815260056020526040902060020154610367565b60606006805480602002602001604051908101604052809291908181526020016000905b828210156107d257600084815260209081902060408051606081019091526003850290910180546001600160a01b0316825260018101805492939192918401916106af90610f11565b80601f01602080910402602001604051908101604052809291908181526020018280546106db90610f11565b80156107285780601f106106fd57610100808354040283529160200191610728565b820191906000526020600020905b81548152906001019060200180831161070b57829003601f168201915b5050505050815260200160028201805461074190610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461076d90610f11565b80156107ba5780601f1061078f576101008083540402835291602001916107ba565b820191906000526020600020905b81548152906001019060200180831161079d57829003601f168201915b50505050508152505081526020019060010190610666565b50505050905090565b60006107e5610809565b600080546001600160a01b0319166001600160a01b0384161790555060015b919050565b6000546001600160a01b03168061084a5761084a6040518060400160405280600f81526020016e4d616e61676572206973207a65726f60881b815250610cac565b61085333610cd7565b61022d5761022d6040518060400160405280600d81526020016c1058d8d95cdcc819195b9a5959609a1b815250610cac565b6001600160a01b03811660009081526008602052604090205460ff16610a13576001600160a01b0381166000818152600860209081526040808320805460ff19166001179055805160608101825284815281516306fdde0360e01b8152915160069591949385019391926306fdde039260048083019391928290030181865afa158015610916573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405261093e9190810190610fa3565b8152602001836001600160a01b03166395d89b416040518163ffffffff1660e01b8152600401600060405180830381865afa158015610981573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f191682016040526109a99190810190610fa3565b90528154600180820184556000938452602093849020835160039093020180546001600160a01b0319166001600160a01b039093169290921782559282015191929091908201906109fa90826110a1565b5060408201516002820190610a0f90826110a1565b5050505b6001600160a01b03811660009081526007602052604090205460ff1661022d576001600160a01b0381166000908152600760205260409020805460ff1916600117905550565b6000826001600160801b0316826001600160801b031642610a7a9190611161565b1015610a8857506001610367565b50600092915050565b60006002846002811115610aa757610aa7610f61565b03610ba45781516040516304b01c2560e51b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000169163960384a091610af99190600401611182565b6040805180830381865afa158015610b15573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b3991906111ac565b6001600160801b039081166060850152166040830152815182906001908190610b6290826110a1565b5060208201516001820180546001600160a01b0319166001600160a01b0390921691909117905560408201516002820155606090910151600390910155610ca1565b6001600160a01b038316610bba57610bba610f77565b60008083602001516001600160a01b031663feaf968c6040518163ffffffff1660e01b815260040160a060405180830381865afa158015610bff573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2391906111f0565b506040808901849052606089018290526001600160a01b038a166000908152600560205220885193965090945087935091829150610c6190826110a1565b5060208201516001820180546001600160a01b0319166001600160a01b039092169190911790556040820151600282015560609091015160039091015550505b506040015192915050565b80511561022d578060405163cc86106360e01b8152600401610cce9190611182565b60405180910390fd5b60008054604051633f784de560e11b81526001600160a01b03848116600483015290911690637ef09bca90602401602060405180830381865afa158015610d22573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103679190611240565b80356001600160a01b038116811461080457600080fd5b600060208284031215610d6f57600080fd5b610d7882610d46565b9392505050565b60005b83811015610d9a578181015183820152602001610d82565b50506000910152565b60008151808452610dbb816020860160208601610d7f565b601f01601f19169290920160200192915050565b608081526000610de26080830187610da3565b6001600160a01b03959095166020830152506040810192909252606090910152919050565b80356003811061080457600080fd5b60008060408385031215610e2957600080fd5b610e3283610e07565b9150610e4060208401610d46565b90509250929050565b60008060408385031215610e5c57600080fd5b610e6583610d46565b9150610e4060208401610e07565b600060208083018184528085518083526040925060408601915060408160051b87010184880160005b83811015610f0357888303603f19018552815180516001600160a01b0316845287810151606089860181905290610ed582870182610da3565b91505087820151915084810388860152610eef8183610da3565b968901969450505090860190600101610e9c565b509098975050505050505050565b600181811c90821680610f2557607f821691505b602082108103610f4557634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052602160045260246000fd5b634e487b7160e01b600052600160045260246000fd5b634e487b7160e01b600052604160045260246000fd5b600060208284031215610fb557600080fd5b815167ffffffffffffffff80821115610fcd57600080fd5b818401915084601f830112610fe157600080fd5b815181811115610ff357610ff3610f8d565b604051601f8201601f19908116603f0116810190838211818310171561101b5761101b610f8d565b8160405282815287602084870101111561103457600080fd5b611045836020830160208801610d7f565b979650505050505050565b601f82111561109c576000816000526020600020601f850160051c810160208610156110795750805b601f850160051c820191505b8181101561109857828155600101611085565b5050505b505050565b815167ffffffffffffffff8111156110bb576110bb610f8d565b6110cf816110c98454610f11565b84611050565b602080601f83116001811461110457600084156110ec5750858301515b600019600386901b1c1916600185901b178555611098565b600085815260208120601f198616915b8281101561113357888601518255948401946001909101908401611114565b50858210156111515787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b8181038181111561036757634e487b7160e01b600052601160045260246000fd5b602081526000610d786020830184610da3565b80516001600160801b038116811461080457600080fd5b600080604083850312156111bf57600080fd5b6111c883611195565b9150610e4060208401611195565b805169ffffffffffffffffffff8116811461080457600080fd5b600080600080600060a0868803121561120857600080fd5b611211866111d6565b9450602086015193506040860151925060608601519150611234608087016111d6565b90509295509295909350565b60006020828403121561125257600080fd5b81518015158114610d7857600080fdfea2646970667358221220a6382dacbea1b1a5ca1ec752d6a0fac8ed5a76851d9799cd0a9886d40ad3f56464736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100b35760003560e01c80637d07db3c116100715780637d07db3c1461016e5780639be918e614610195578063a040aee9146101a8578063cd89295b146101c9578063e5406dbf146101f4578063f1d588c51461020957600080fd5b8062435da5146100b85780634cd55c2d146100e857806364138230146100fd57806366212c8b146101305780636968751214610153578063739c13db14610166575b600080fd5b6000546100cb906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100fb6100f6366004610d5d565b61021c565b005b61012061010b366004610d5d565b60086020526000908152604090205460ff1681565b60405190151581526020016100df565b61014361013e366004610d5d565b610230565b6040516100df9493929190610dcf565b6100fb610161366004610d5d565b6102ec565b6100cb610315565b6100cb7f000000000000000000000000000000000000000000000000000000000000000081565b6101206101a3366004610d5d565b61034a565b6101bb6101b6366004610e16565b61036d565b6040519081526020016100df565b6101dc6101d7366004610e49565b6105cd565b6040516001600160801b0390911681526020016100df565b6101fc610642565b6040516100df9190610e73565b610120610217366004610d5d565b6107db565b610224610809565b61022d81610885565b50565b60056020526000908152604090208054819061024b90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461027790610f11565b80156102c45780601f10610299576101008083540402835291602001916102c4565b820191906000526020600020905b8154815290600101906020018083116102a757829003601f168201915b505050506001830154600284015460039094015492936001600160a01b039091169290915084565b6102f4610809565b6001600160a01b03166000908152600760205260409020805460ff19169055565b6000600660008154811061032b5761032b610f4b565b60009182526020909120600390910201546001600160a01b0316919050565b6001600160a01b03811660009081526007602052604081205460ff165b92915050565b6000610377610809565b600083600281111561038b5761038b610f61565b146105be576103c460405180608001604052806060815260200160006001600160a01b0316815260200160008152602001600081525090565b60028460028111156103d8576103d8610f61565b036104ab5760016040518060800160405290816000820180546103fa90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461042690610f11565b80156104735780601f1061044857610100808354040283529160200191610473565b820191906000526020600020905b81548152906001019060200180831161045657829003601f168201915b505050918352505060018201546001600160a01b0316602082015260028201546040820152600390910154606090910152905061058a565b6001600160a01b038316600090815260056020526040908190208151608081019092528054829082906104dd90610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461050990610f11565b80156105565780601f1061052b57610100808354040283529160200191610556565b820191906000526020600020905b81548152906001019060200180831161053957829003601f168201915b505050918352505060018201546001600160a01b031660208201526002820154604082015260039091015460609091015290505b610599603c8260600151610a59565b156105b0576105a9848483610a91565b91506105b8565b806040015191505b50610367565b50662386f26fc1000092915050565b600060028260028111156105e3576105e3610f61565b036105f15750600354610367565b600182600281111561060557610605610f61565b036105be576001600160a01b03831661062057610620610f77565b506001600160a01b038216600090815260056020526040902060020154610367565b60606006805480602002602001604051908101604052809291908181526020016000905b828210156107d257600084815260209081902060408051606081019091526003850290910180546001600160a01b0316825260018101805492939192918401916106af90610f11565b80601f01602080910402602001604051908101604052809291908181526020018280546106db90610f11565b80156107285780601f106106fd57610100808354040283529160200191610728565b820191906000526020600020905b81548152906001019060200180831161070b57829003601f168201915b5050505050815260200160028201805461074190610f11565b80601f016020809104026020016040519081016040528092919081815260200182805461076d90610f11565b80156107ba5780601f1061078f576101008083540402835291602001916107ba565b820191906000526020600020905b81548152906001019060200180831161079d57829003601f168201915b50505050508152505081526020019060010190610666565b50505050905090565b60006107e5610809565b600080546001600160a01b0319166001600160a01b0384161790555060015b919050565b6000546001600160a01b03168061084a5761084a6040518060400160405280600f81526020016e4d616e61676572206973207a65726f60881b815250610cac565b61085333610cd7565b61022d5761022d6040518060400160405280600d81526020016c1058d8d95cdcc819195b9a5959609a1b815250610cac565b6001600160a01b03811660009081526008602052604090205460ff16610a13576001600160a01b0381166000818152600860209081526040808320805460ff19166001179055805160608101825284815281516306fdde0360e01b8152915160069591949385019391926306fdde039260048083019391928290030181865afa158015610916573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f1916820160405261093e9190810190610fa3565b8152602001836001600160a01b03166395d89b416040518163ffffffff1660e01b8152600401600060405180830381865afa158015610981573d6000803e3d6000fd5b505050506040513d6000823e601f3d908101601f191682016040526109a99190810190610fa3565b90528154600180820184556000938452602093849020835160039093020180546001600160a01b0319166001600160a01b039093169290921782559282015191929091908201906109fa90826110a1565b5060408201516002820190610a0f90826110a1565b5050505b6001600160a01b03811660009081526007602052604090205460ff1661022d576001600160a01b0381166000908152600760205260409020805460ff1916600117905550565b6000826001600160801b0316826001600160801b031642610a7a9190611161565b1015610a8857506001610367565b50600092915050565b60006002846002811115610aa757610aa7610f61565b03610ba45781516040516304b01c2560e51b81526001600160a01b037f0000000000000000000000000000000000000000000000000000000000000000169163960384a091610af99190600401611182565b6040805180830381865afa158015610b15573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610b3991906111ac565b6001600160801b039081166060850152166040830152815182906001908190610b6290826110a1565b5060208201516001820180546001600160a01b0319166001600160a01b0390921691909117905560408201516002820155606090910151600390910155610ca1565b6001600160a01b038316610bba57610bba610f77565b60008083602001516001600160a01b031663feaf968c6040518163ffffffff1660e01b815260040160a060405180830381865afa158015610bff573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610c2391906111f0565b506040808901849052606089018290526001600160a01b038a166000908152600560205220885193965090945087935091829150610c6190826110a1565b5060208201516001820180546001600160a01b0319166001600160a01b039092169190911790556040820151600282015560609091015160039091015550505b506040015192915050565b80511561022d578060405163cc86106360e01b8152600401610cce9190611182565b60405180910390fd5b60008054604051633f784de560e11b81526001600160a01b03848116600483015290911690637ef09bca90602401602060405180830381865afa158015610d22573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906103679190611240565b80356001600160a01b038116811461080457600080fd5b600060208284031215610d6f57600080fd5b610d7882610d46565b9392505050565b60005b83811015610d9a578181015183820152602001610d82565b50506000910152565b60008151808452610dbb816020860160208601610d7f565b601f01601f19169290920160200192915050565b608081526000610de26080830187610da3565b6001600160a01b03959095166020830152506040810192909252606090910152919050565b80356003811061080457600080fd5b60008060408385031215610e2957600080fd5b610e3283610e07565b9150610e4060208401610d46565b90509250929050565b60008060408385031215610e5c57600080fd5b610e6583610d46565b9150610e4060208401610e07565b600060208083018184528085518083526040925060408601915060408160051b87010184880160005b83811015610f0357888303603f19018552815180516001600160a01b0316845287810151606089860181905290610ed582870182610da3565b91505087820151915084810388860152610eef8183610da3565b968901969450505090860190600101610e9c565b509098975050505050505050565b600181811c90821680610f2557607f821691505b602082108103610f4557634e487b7160e01b600052602260045260246000fd5b50919050565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052602160045260246000fd5b634e487b7160e01b600052600160045260246000fd5b634e487b7160e01b600052604160045260246000fd5b600060208284031215610fb557600080fd5b815167ffffffffffffffff80821115610fcd57600080fd5b818401915084601f830112610fe157600080fd5b815181811115610ff357610ff3610f8d565b604051601f8201601f19908116603f0116810190838211818310171561101b5761101b610f8d565b8160405282815287602084870101111561103457600080fd5b611045836020830160208801610d7f565b979650505050505050565b601f82111561109c576000816000526020600020601f850160051c810160208610156110795750805b601f850160051c820191505b8181101561109857828155600101611085565b5050505b505050565b815167ffffffffffffffff8111156110bb576110bb610f8d565b6110cf816110c98454610f11565b84611050565b602080601f83116001811461110457600084156110ec5750858301515b600019600386901b1c1916600185901b178555611098565b600085815260208120601f198616915b8281101561113357888601518255948401946001909101908401611114565b50858210156111515787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b8181038181111561036757634e487b7160e01b600052601160045260246000fd5b602081526000610d786020830184610da3565b80516001600160801b038116811461080457600080fd5b600080604083850312156111bf57600080fd5b6111c883611195565b9150610e4060208401611195565b805169ffffffffffffffffffff8116811461080457600080fd5b600080600080600060a0868803121561120857600080fd5b611211866111d6565b9450602086015193506040860151925060608601519150611234608087016111d6565b90509295509295909350565b60006020828403121561125257600080fd5b81518015158114610d7857600080fdfea2646970667358221220a6382dacbea1b1a5ca1ec752d6a0fac8ed5a76851d9799cd0a9886d40ad3f56464736f6c63430008180033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "_assets": ": Supported assets",
+          "_roleManager": ": Role manager contract",
+          "networkSelector": ": Network selector i.e 0 or 1 or 2",
+          "oracleData": ": Celo oracle data: optional"
+        }
+      },
+      "getPriceQuote(uint8,address)": {
+        "details": "Get price data into external contracts",
+        "params": {
+          "asset": ": Asset to get price for. If request is on CrossFi network, asset can be zero since we're only dealing with  XFI coin as collateral on the CrossFi network.",
+          "network": ": Network key. "
+        }
+      },
+      "getPriceWithoutUpdating(address,uint8)": {
+        "details": "Get price data without updating the storage",
+        "params": {
+          "asset": ": Asset contract address. Only on CrossFi network",
+          "network": ": Connected Network"
+        }
+      },
+      "getSupportedAssets()": {
+        "details": "Returns a list of supported assets"
+      },
+      "isSupportedAsset(address)": {
+        "details": "Check if an asset is supported"
+      },
+      "setRoleManager(address)": {
+        "params": {
+          "newManager": ": New manager address"
+        }
+      },
+      "supportAsset(address)": {
+        "details": "Support a new asset Note: OnlyRoleBase action",
+        "params": {
+          "_asset": ": Asset to add to list of supported asset"
+        }
+      },
+      "unsupportAsset(address)": {
+        "details": "Unsupports an asset Note: Only-owner action",
+        "params": {
+          "newAsset": ": Removes an asset from the list of supported asset"
+        }
+      }
+    },
+    "stateVariables": {
+      "supportedAssets": {
+        "details": "Mapping assets address to bool i.e Assets must be contract account and must be supported"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "Ensure the length of _assets matches that of celoOracleData."
+      },
+      "setRoleManager(address)": {
+        "notice": "Set Role manager"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 660,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "roleManager",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(IRoleBase)570"
+      },
+      {
+        "astId": 807,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "crossFiPriceData",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_struct(PriceData)795_storage"
+      },
+      {
+        "astId": 812,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "celoPriceData",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_struct(PriceData)795_storage)"
+      },
+      {
+        "astId": 816,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "assets",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_array(t_struct(SupportedAsset)802_storage)dyn_storage"
+      },
+      {
+        "astId": 821,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "supportedAssets",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 825,
+        "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+        "label": "listed",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_address,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_struct(SupportedAsset)802_storage)dyn_storage": {
+        "base": "t_struct(SupportedAsset)802_storage",
+        "encoding": "dynamic_array",
+        "label": "struct SupportedAssetManager.SupportedAsset[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IRoleBase)570": {
+        "encoding": "inplace",
+        "label": "contract IRoleBase",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_struct(PriceData)795_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct SupportedAssetManager.PriceData)",
+        "numberOfBytes": "32",
+        "value": "t_struct(PriceData)795_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(PriceData)795_storage": {
+        "encoding": "inplace",
+        "label": "struct SupportedAssetManager.PriceData",
+        "members": [
+          {
+            "astId": 788,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "pair",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 790,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "oracleAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 792,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "latestPrice",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 794,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "timestampOflatestPrice",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(SupportedAsset)802_storage": {
+        "encoding": "inplace",
+        "label": "struct SupportedAssetManager.SupportedAsset",
+        "members": [
+          {
+            "astId": 797,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "id",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 799,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "name",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 801,
+            "contract": "contracts/standalone/SupportedAssetManager.sol:SupportedAssetManager",
+            "label": "symbol",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

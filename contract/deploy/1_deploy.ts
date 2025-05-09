@@ -3,27 +3,25 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
 import { parseEther, zeroAddress } from 'viem';
-import { alfajoresKeys, alfajoresOracleData, alfajoresPairAddresses, celoKeys, celoOracleData, celoPairAddresses, crossFiOracleData, getSupportedAssets, PriceData } from "../getSupportedAssets";
-
-enum Network { HARDHAT, CELO, CROSSFI };
+import { alfajoresOracleData, celoOracleData, crossFiOracleData, getSupportedAssets, PriceData, Network, NetworkName } from "../getSupportedAssets";
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, getNetworkName} = deployments;
-	const {deployer, baseContributionAsset, feeTo, cUSDAddr} = await getNamedAccounts();
+	let {deployer, baseContributionAsset, feeTo } = await getNamedAccounts();
 
-  const networkName = getNetworkName().toLowerCase();
+  const networkName = getNetworkName().toLowerCase() as NetworkName;
   console.log(`NetworkName: ${networkName}`);
-  const isCeloMainnet = networkName === 'Celo';
-  const isAlfajores = networkName === 'CeloAlfajores';
+  const isCeloMainnet = networkName === 'celo';
+  const isAlfajores = networkName === 'alfajores';
   const isCelo = isCeloMainnet || isAlfajores;
-  const isCrossFi = networkName === 'blaze' || networkName === 'crossfi';
+  const isCrossFi = networkName === 'crosstest';
   const networkSelector = isCelo? Network.CELO : isCrossFi? Network.CROSSFI : Network.HARDHAT;
-  // const keys = isCelo? isCeloMainnet? celoKeys : alfajoresKeys : ['XFI/USD'] as const;
-  // const pairAddresses = isCelo? isCeloMainnet? celoPairAddresses : alfajoresPairAddresses : [oracle] as const;
-  const oracleData : PriceData[] = isAlfajores? alfajoresOracleData : isCeloMainnet? celoOracleData : isCrossFi? crossFiOracleData : alfajoresOracleData;
-  
+  // const oracleData : PriceData[] = isAlfajores? alfajoresOracleData : isCeloMainnet? celoOracleData : isCrossFi? crossFiOracleData : crossFiOracleData;
+  const name = isCelo? 'WrappedCelo Token' : isCrossFi? 'WrappedXFI Token' : 'Wrapped Token';
+  const symbol = isCelo? 'WCELO' : isCrossFi? 'WXFI' : 'WToken';
+
   console.log("Network: ", networkSelector);
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');
@@ -48,6 +46,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       log: true,
     });
     console.log(`BaseAsset contract deployed to: ${baseAsset.address}`);
+    if(baseContributionAsset === zeroAddress) baseContributionAsset = baseAsset.address;
 
     const escape = await deploy("Escape", {
       from: deployer,
@@ -100,6 +99,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`SimpliToken deployed to: ${collateralToken.address}`);
 
+  // Deploy token faucet contract
   const faucet = await deploy("Faucet", {
     from: deployer,
     args: [roleManager.address, collateralToken.address, baseAsset.address, baseAmount, collacteralAmount],
@@ -128,15 +128,31 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`SafeFactory deployed to: ${safeFactory.address}`);  
 
   /**
+   * Price Oracle
+  */ 
+   const wrappedNative = await deploy("WrappedNative", {
+    from: deployer,
+    args: [ roleManager.address, name, symbol ],
+    log: true,
+  });
+  console.log(`WrappedNative token deployed to: ${wrappedNative.address}`);  
+
+  // Built supported assets
+  const data = 
+    networkSelector === Network.HARDHAT? 
+      getSupportedAssets(networkSelector, networkName, [collateralToken.address]) : 
+        getSupportedAssets(networkSelector, networkName, [collateralToken.address, wrappedNative.address]);
+  
+  /**
   * Deploy Test Asset
   */
   const supportedAssetManager = await deploy("SupportedAssetManager", {
     from: deployer,
     args: [
-      getSupportedAssets(collateralToken.address),
+      data.assets,
       roleManager.address,
       networkSelector,
-      oracleData
+      data.priceData
     ],
     log: true,
   });
@@ -167,21 +183,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   */
   const providers = await deploy("Providers", {
     from: deployer,
-    args: [factory.address, roleManager.address, cUSDAddr, supportedAssetManager.address, safeFactory.address],
+    args: [factory.address, roleManager.address, baseContributionAsset, supportedAssetManager.address, safeFactory.address],
     log: true,
   });
   console.log(`Providers deployed to: ${providers.address}`);  
-  
-  // /**
-  //  * Price Oracle
-  // */ 
-  // const priceOracle = await deploy("PriceOracle", {
-  //   from: deployer,
-  //   args: [ networkSelector, roleManager.address, keys, pairAddresses ],
-  //   log: true,
-  // });
-  // console.log(`PriceOracle deployed to: ${priceOracle.address}`);  
-  
 
   await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportedAssetManager.address, distributor.address, providers.address]);
   await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
