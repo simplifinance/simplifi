@@ -42,7 +42,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
-    const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'Contribute', disable: false});
+    // const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'contribute', disable: false});
 
     const account = formatAddr(useAccount().address);
     const config = useConfig();
@@ -57,74 +57,77 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         pool: {
             big: { unit, unitId, currentPool },
             low: { userCount, maxQuorum, },
-            addrs: { colAsset, safe },
+            addrs: { colAsset, safe},
             stage,
             isPermissionless,
         }
     } = formattedPoolData;
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
-    const commonParam : CommonParam = { config, account, unit: unit.big, contractAddress: colAsset,}
+    const commonParam : CommonParam = { config, account, unit: unit.big, }
     const transactionArgs: HandleTransactionParam = {
-        txnType: buttonObj.value,
         commonParam,
+        collateralAsset: colAsset,
         safe
     };
 
-    React.useEffect(() => {
+    const getButtonObj = React.useCallback(() => {
+        let buttonObj : ButtonObj = {value: 'contribute', disable: false};
+        let args : any[] = [unit.big];
         switch (stage.toNum) {
             case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
                         if(userCount === 1) {
-                            setButtonObj({value: 'Remove', disable: false});
+                            buttonObj = {value: 'closePool', disable: false};
                         } else {
-                            setButtonObj({value: 'Wait', disable: true});
+                            buttonObj = {value: 'Wait', disable: true};
                         }
                     } else {
                         if(isMember && sentQuota){
-                            setButtonObj({value: 'Wait', disable: true});
+                            buttonObj = {value: 'Wait', disable: true};
                         } else {
-                            setButtonObj({value: 'Contribute', disable: false});
+                            buttonObj = {value: 'contribute', disable: false};
                         }
                     }
                 } else {
                     if(isAdmin) {
                         if(currentPool.big === unit.big){
-                            setButtonObj({value: 'Remove', disable: false});
+                            buttonObj = {value: 'closePool', disable: false};
                         } else {
-                            setButtonObj({value: 'Wait', disable: true});
+                            buttonObj = {value: 'Wait', disable: true};
                         }
                     } else if(isMember && !sentQuota){
-                        setButtonObj({value: 'Contribute', disable: false});
+                        buttonObj = {value: 'contribute', disable: false};
                     } else if(isMember && sentQuota){
-                        setButtonObj({value: 'Wait', disable: true});
+                        buttonObj = {value: 'Wait', disable: true};
                     } else {
-                        setButtonObj({value: 'Not Allowed', disable: true});
+                        buttonObj = {value: 'Not Allowed', disable: true};
                     }
                 }
                 break;
     
             case Stage.GET:
                 if(isMember) {
-                    setButtonObj({value: 'GetFinance', disable: false});
-                } else setButtonObj({ value: 'Not Allowed', disable: true});
+                    buttonObj = {value: 'getFinance', disable: false};
+                } else buttonObj = { value: 'Not Allowed', disable: true};
                 break;
             
             case Stage.PAYBACK:
                 if(isMember){
-                    if(loan.inBN.gt(BigNumber(0))) setButtonObj({value : 'Payback', disable: false});
-                    else setButtonObj({ value: 'Not Allowed', disable: true});
+                    if(loan.inBN.gt(BigNumber(0))) buttonObj = {value : 'payback', disable: false};
+                    else buttonObj = { value: 'Not Allowed', disable: true};
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTime.inSec) setButtonObj({ value: 'Liquidate', disable: false});
-                    else setButtonObj({ value: 'Not Allowed', disable: true});
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) buttonObj = { value: 'liquidate', disable: false};
+                    else buttonObj = { value: 'Not Allowed', disable: true};
                 }
                 break;
             default:
-                setButtonObj({ value: 'Ended', disable: true});
+                buttonObj = { value: 'Ended', disable: true};
                 break;
-        }    
-    }, [stage.toNum, currentPool.big, isAdmin, isMember, isPermissionless, loan.inBN, paybackTime.inSec, sentQuota, unit.big, userCount]);
+        } 
+        return { buttonObj, args};
+    }, [props]);
 
     return(
         <React.Fragment>
@@ -182,7 +185,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         Info
                     </Button>
                     <ActionButton
-                        buttonObj={buttonObj}
+                        getButtonObj={getButtonObj}
                         transactionArgs={transactionArgs}
                         setDrawerState={(arg:number) => setDrawerState(arg)}
                         confirmationDrawerOn={confirmationDrawerOn}
@@ -214,7 +217,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         toggleDrawer={(arg) => setShowInfo(arg)}
                         actions={
                             <ActionButton 
-                                buttonObj={buttonObj}
+                                getButtonObj={getButtonObj}
                                 transactionArgs={transactionArgs}
                                 setDrawerState={(arg:number) => setDrawerState(arg)}
                                 confirmationDrawerOn={confirmationDrawerOn}

@@ -72,6 +72,7 @@ const config: HardhatUserConfig = {
       44787: `privatekey://${PRIVATE_KEY}`,
       42220: zeroAddress
     },
+    // cUSD || xUSD
     baseContributionAsset: {
       default: zeroAddress,
       4157: zeroAddress,

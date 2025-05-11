@@ -1,49 +1,49 @@
-import { celoAddresses } from "@/constants";
-import { Address, Config } from "@/interfaces";
-import { TrxResult } from "@/interfaces";
-import { simulateContract, writeContract } from "wagmi/actions";
-import { waitForConfirmation } from "../../utils/waitForConfirmation";
-import { approveCUSDAbi } from "@/apis/utils/abis";
-import { errorMessage } from "../formatError";
+import { baseContracts } from "@/constants";
+import { Address, } from "@/interfaces";
+// import { TrxResult } from "@/interfaces";
+// import { simulateContract, writeContract } from "wagmi/actions";
+// import { waitForConfirmation } from "../../utils/waitForConfirmation";
+// import { approveCUSDAbi } from "@/apis/utils/abis";
+// import { errorMessage } from "../formatError";
 
 /**
  * @dev Get the cUSD contract addreses from the different chains
  * @param chainId : Chain Id of the connected chain i.e Alfajores or Celo mainnet
  * @returns cUSD contract addresses
  */
-export const getCUSD = (chainId: number) : Address => {
-  return celoAddresses[chainId];
+export const getBaseContract = (chainId: number) : Address => {
+  return baseContracts[chainId];
 } 
 
-/**
- * @dev Approve spender to spend amount of `amount` of cUSD from the owner's account 
- * @param props : Parameter
-*/
-export default async function approveToSpendCUSD(props: ApproveToSpendCUSDProps) {
-  const { config, account, amount, spender, callback } = props;
-  let returnValue : TrxResult = 'reverted';
-  callback?.({message: 'Request to approve to spend cUSD'});
-  const address = getCUSD(44787);
-  await simulateContract(config, {
-    address,
-    account,
-    abi: approveCUSDAbi,
-    functionName: 'approve',
-    args: [spender, amount]
-  }).then(async({request}) => {
-    const hash = await writeContract(config, request );
-    returnValue = await waitForConfirmation({config, hash, callback, message: 'Approval completed'})
-  }).catch((error: any) => {
-    callback?.({errorMessage: errorMessage(error)});
-  });
+// /**
+//  * @dev Approve spender to spend amount of `amount` of cUSD from the owner's account 
+//  * @param props : Parameter
+// */
+// export default async function approveToSpendCUSD(props: ApproveToSpendCUSDProps) {
+//   const { config, account, amount, spender, callback } = props;
+//   let returnValue : TrxResult = 'reverted';
+//   callback?.({message: 'Request to approve to spend cUSD'});
+//   const address = getCUSD(44787);
+//   await simulateContract(config, {
+//     address,
+//     account,
+//     abi: approveCUSDAbi,
+//     functionName: 'approve',
+//     args: [spender, amount]
+//   }).then(async({request}) => {
+//     const hash = await writeContract(config, request );
+//     returnValue = await waitForConfirmation({config, hash, callback, message: 'Approval completed'})
+//   }).catch((error: any) => {
+//     callback?.({errorMessage: errorMessage(error)});
+//   });
 
-  return returnValue;
-}
+//   return returnValue;
+// }
 
-interface ApproveToSpendCUSDProps extends Config {
-  spender: Address;
-  amount: bigint;
-}
+// interface ApproveToSpendCUSDProps extends Config {
+//   spender: Address;
+//   amount: bigint;
+// }
 
 // export default async function approveToSpendCUS(spender: Address, amount: bigint, callback?: TransactionCallback) {
 //   const contractAddress = celoAddresses['44787'];

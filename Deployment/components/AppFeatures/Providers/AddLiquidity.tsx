@@ -19,10 +19,9 @@ export default function AddLiquidity({back} : {back: VoidFunc}) {
     const config = useConfig();
     const toggleDrawer = (arg: number) => setOpenDrawer(arg);
     const commonParam : CommonParam = { account, config, unit: parseEther(unitLiquidity)}
+    const args = [toBN(rate).times(toBN(100)).toNumber()];
     const transactionArgs : HandleTransactionParam = {
         commonParam,
-        txnType: 'ProvideLiquidity',
-        rate: toBN(rate).times(toBN(100)).toNumber()
     }
 
     return(
@@ -34,6 +33,8 @@ export default function AddLiquidity({back} : {back: VoidFunc}) {
                 <Button onClick={() => setOpenDrawer(1)}>Submit</Button>
             </div>
             <Confirmation 
+                functionName='provideLiquidity'
+                args={args}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 back={back}

@@ -183,7 +183,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   */
   const providers = await deploy("Providers", {
     from: deployer,
-    args: [factory.address, roleManager.address, baseContributionAsset, supportedAssetManager.address, safeFactory.address],
+    args: [factory.address, roleManager.address, baseContributionAsset === zeroAddress? baseAsset.address : baseContributionAsset, supportedAssetManager.address, safeFactory.address],
     log: true,
   });
   console.log(`Providers deployed to: ${providers.address}`);  

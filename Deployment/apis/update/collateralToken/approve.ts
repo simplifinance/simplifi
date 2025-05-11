@@ -13,7 +13,7 @@ import { formatAddr } from "@/utilities";
 export default async function approve(args: ApproveParam) {
   const { callback, config, account, amountToApprove, contractAddress } = args;
   const { factory } = getContractData(config.state.chainId);
-  callback?.({message: "Request to approve spend limit"});
+  callback?.({message: "Request to approve spending limit"});
   await simulateContract(config, {
     address: formatAddr(contractAddress),
     account,

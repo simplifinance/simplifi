@@ -1,6 +1,6 @@
 import React from "react";
 import Stack from "@mui/material/Stack";
-import type { Address, HandleTransactionParam, InputSelector } from '@/interfaces';
+import type { Address, FunctionName, HandleTransactionParam, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import Quorum from "../userInputsComponents/Quorum";
 import Duration from "../userInputsComponents/Duration";
@@ -48,19 +48,18 @@ export const Permissionless = () => {
         }
     }
 
-    const transactionArgs : HandleTransactionParam = {
-        // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
-        commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
-        createPermissionlessPoolParam: {
-            colCoverage: toBN(colCoverage).toNumber(),
-            contributors: [account],
-            quorum,
-            durationInHours: duration,
-            // baseAssetHolding
-        },
-        txnType: 'Create',
-        router: 'Permissionless',
-    }
+    const { functionName, args, transactionArgs } = React.useMemo(() => {
+        const functionName : FunctionName = 'createPool';
+        const isPermissionless = true;
+        const args = [[account], parseUnits(unitLiquidity, 18), quorum, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
+        const transactionArgs : HandleTransactionParam = {
+            // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
+            commonParam: {account, config, unit: parseUnits(unitLiquidity, 18)},
+            router: 'Permissionless',
+        };
+        return { functionName, args, transactionArgs };
+    }, [account, unitLiquidity, quorum, colCoverage, collateralAsset]);
+
 
     return(
         <Stack className="space-y-8 mt-6">
@@ -88,10 +87,6 @@ export const Permissionless = () => {
                                 id: "Collateral asset",
                                 element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
-                            //  {
-                            //     id: "Select base asset",
-                            //     element: (<SelectBaseAssetHolding selected={baseAssetHolding} handleChange={onChange}/>),
-                            // },
                         ] as const
                     ).map(({ id, element }) => (
                         <div key={id} >
@@ -110,6 +105,8 @@ export const Permissionless = () => {
                 </Button>
             </div>
             <Confirmation 
+                functionName={functionName}
+                args={args}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 transactionArgs={transactionArgs}

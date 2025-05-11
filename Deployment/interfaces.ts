@@ -13,7 +13,8 @@ export type Str = string;
 export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
-export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit';
+export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
+export type FunctionName = 'createPool' | 'getFinance' | 'payback' | 'liquidate' | 'editPool' | 'closePool' | 'contribute' | 'registerToEarnPoints' | 'provideLiquidity' | 'removeLiquidity' | 'borrow' | 'claimTestTokens' | 'setBaseToken' | 'setCollateralToken' | 'panicUnlock' | 'unlockToken' | 'lockToken' | 'transferFrom' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -208,10 +209,10 @@ export interface ReadDataReturnValue  {
 }
 
 export interface CreatePermissionedPoolParams {
-  contributors: Address[];
-  durationInHours: number;
-  colCoverage: number;
-  contractAddress?: Address;
+  // contributors: Address[];
+  // durationInHours: number;
+  // colCoverage: number;
+  // collateralAsset: Address;
   // baseAssetHolding: Address;
 }
 
@@ -222,7 +223,7 @@ export interface EditPoolParam {
 }
 
 export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
-  quorum: number;
+  // quorum: number;
 }
 
 export interface GetProfileParam {
@@ -234,7 +235,6 @@ export interface Config {
   config: WagmiConfig;
   account: Address;
   callback?: TransactionCallback;
-  contractAddress?: Address;
 }
 
 export interface DepositCollateralParam extends Config {
@@ -253,15 +253,20 @@ export interface ScreenUserResult{
 }
 
 export interface HandleTransactionParam { 
-  createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
-  createPermissionedPoolParam?: CreatePermissionedPoolParams;
+  // createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
+  // createPermissionedPoolParam?: CreatePermissionedPoolParams;
   commonParam: CommonParam;
   router?: Router;
   safe?: Address;
-  txnType: ButtonText;
-  rate?: number;
-  providersSlots?: bigint[];
-  selectedAsset?: Address;
+  allowance?: bigint;
+  // txnType: FunctionName;
+  collateralAsset?: Address;
+  // rate?: number;
+  // routeTo?: Address;
+  // lostAccount?: Address;
+  // providersSlots?: bigint[];
+  // contractAddress?: Address;
+  // args: any[];
 }
 
 export interface DrawerState {
@@ -275,7 +280,7 @@ export interface InputCategoryProp {
 }
 
 export interface ButtonObj {
-  value: ButtonText;
+  value: FunctionName;
   disable: boolean;
 }
 
@@ -315,6 +320,7 @@ export interface ApproveParam extends Config {
 export interface GetAllowanceParam extends Config {
   owner: Address;
   spender: Address;
+  contractAddress?: Address;
 }
 
 export interface TransferFromParam extends Config {
@@ -340,7 +346,7 @@ export interface BalancesProps {
 }
 
 export interface ActionsButtonProps {
-  buttonObj: ButtonObj;
+  getButtonObj: () => {buttonObj: ButtonObj, args: any[]};
   transactionArgs: HandleTransactionParam;
   confirmationDrawerOn: number;
   setDrawerState: (arg: number) => void
@@ -366,9 +372,17 @@ export type ProviderResult = {
   accruals: InterestStruct;
 }
 
-export interface CheckAndApproveParam extends Config {
-  txnType: ButtonText,
+// export interface CheckAndApproveParam extends Config {
+//   txnType: ButtonText,
+//   unit: bigint,
+// }
+export interface GetAmountToApprove extends Config {
+  functionName: FunctionName,
   unit: bigint,
+  factory: Address;
+  providers: Address;
+  safe?: Address;
+  collateralContractAddress?: Address;
 }
 
 export type Point = {
@@ -495,7 +509,7 @@ export const emptyMockPoint : Point = {
 }
 
 const mockAsset : SupportedAsset = {
-  id: getContractData(44787).token,
+  id: getContractData(44787).token.address,
   name: "Simplfinance Token",
   symbol: "TSFT"
 }
