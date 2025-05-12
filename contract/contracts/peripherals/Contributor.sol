@@ -27,14 +27,13 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
 
     // ============= constructor ============
     constructor(
-        uint8 networkSelector, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-       AwardPoint(_roleManager, _pointFactory, _baseAsset, _assetManager, _safeFactory, networkSelector)
+       AwardPoint(_roleManager, _pointFactory, _baseAsset, _assetManager, _safeFactory)
     {}
 
     /**
@@ -345,25 +344,24 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      * @dev Returns amount of collateral required in a pool.
      * @param unit : EpochId
      * @return collateral Collateral
-     * @return colCoverage Collateral coverage
     */
     function _getCollateralQuote(uint256 unit)
         internal
         view
-        returns(uint collateral, uint24 colCoverage)
+        returns(uint collateral, uint128 lastPrice, bool inTime)
     {
         Common.Pool memory pool = _getPool(unit);
+        uint8 priceDecimals;
+        (lastPrice, inTime, priceDecimals) = _getCollateralTokenPrice(address(pool.addrs.colAsset));
         if(pool.big.unit > 0) {
             unchecked {
-                (collateral, colCoverage) = (Common.Price(
-                        ISupportedAsset(assetManager).getPriceWithoutUpdating(address(pool.addrs.colAsset), network),
-                        network == Common.Network.CELO? 18 : 8
+                collateral = Common.Price(
+                        lastPrice,
+                        priceDecimals
                     ).computeCollateral(
                         uint24(pool.low.colCoverage), 
                         pool.big.unit * pool.low.maxQuorum
-                    ),
-                    uint24(pool.low.colCoverage)
-                );
+                    );
             }
         }
     }

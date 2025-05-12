@@ -11,7 +11,8 @@ import type {
   ContributorStruct,
   ProviderStruct,
   SlotStruct,
-  GetAmountToApprove, 
+  GetAmountToApprove,
+  FunctionName, 
 } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getAllowance from "./apis/update/collateralToken/getAllowance";
@@ -108,6 +109,17 @@ export function getTimeFromEpoch(onchainUnixTime: number) {
   return (onchainUnixTime === 0? 'Not Set' : `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-US")}`);
 }
 
+/**
+ * @dev Filter abi of 'any' type that contains the functionName
+ * @param abi: JSONInterface or abi
+ * @param functionName : Function name to call
+ * @returns : Filtered abi
+ */
+export const filterAbi = (abi: any[], functionName: FunctionName) => {
+  const funcName = functionName as string;
+  return abi.filter((item) => item.name === funcName);
+}
+
 // /**
 //  * @dev Check which transaction needs approval first, and approve.
 //  * @param txnType : Incoming transaction type
@@ -192,7 +204,7 @@ export function getTimeFromEpoch(onchainUnixTime: number) {
  * @param callback : A callback function
  * @param collateralAsset : Collateral asset contract
  */
-export const getAmountToApprove = async({account, callback, factory, safe, providers, config, collateralContractAddress, functionName, unit} : GetAmountToApprove) => {
+export const getAmountToApprove = async({account, callback, factory, providers, config, collateralContractAddress, functionName, unit} : GetAmountToApprove) => {
   // let amtToApprove : bigint = 0n;
   // let owner = account;
   // let spender = factory;

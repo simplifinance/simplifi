@@ -14,11 +14,17 @@ const API_KEY = process.env.ALCHEMY_API_KEY;
 const config: HardhatUserConfig = {
   
   networks: {
-    crossTest: {
+    crosstestnet: {
       // url: "https://rpc.testnet.ms",  // Not working
       url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
+    },
+    crossfimainnet: {
+      // url: "https://rpc.testnet.ms",  // Not working
+      url: `https://crossfi-mainnet.g.alchemy.com/v2/${API_KEY}`, // Good
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 4158,
     },
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
@@ -79,6 +85,12 @@ const config: HardhatUserConfig = {
       4158: zeroAddress,
       44787: "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
       42220: "0x765de816845861e75a25fca122bb6898b8b1282a"
+    },
+    linkToken: {
+      4157: zeroAddress,
+      4158: zeroAddress,
+      44787: '0x32E08557B14FaD8908025619797221281D439071',
+      42220: '0xd07294e6E917e07dfDcee882dd1e2565085C2ae0',
     },
     oracle: {
       default: zeroAddress,

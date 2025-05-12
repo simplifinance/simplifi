@@ -32,13 +32,12 @@ abstract contract FeeToAndRate is Pool {
     constructor(
         address _feeTo, 
         uint16 _makerRate,
-        uint8 networkSelector, 
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
-    ) Pool(networkSelector, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory) {
+    ) Pool(_assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory) {
         if(_feeTo == feeTo) '_feeTo is empty'._throw();
         if(_makerRate > Utils._getBase()) 'Invalid maker rate'._throw();
         feeTo = _feeTo;

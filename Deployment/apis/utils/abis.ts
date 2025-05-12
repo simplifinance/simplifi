@@ -154,29 +154,34 @@ export const getSafeDataAbi = [
 
 export const getCollateralQuoteAbi = [
   {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "unit",
-        "type": "uint256"
-      }
-    ],
-    "name": "getCollateralQuote",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "collateral",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint24",
-        "name": "colCoverage",
-        "type": "uint24"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "unit",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCollateralQuote",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint128",
+          "name": "",
+          "type": "uint128"
+        },
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
 ] as const;
 
 export const getCurrentDebtAbi = [

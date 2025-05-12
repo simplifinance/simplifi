@@ -6,6 +6,7 @@ import { IFactory, Common } from '../interfaces/IFactory.sol';
 import { IERC20 } from "../interfaces/IERC20.sol";
 import { IPoint } from "../interfaces/IPoint.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
+// import "hardhat/console.sol";
 
 /**
     * @title FlexpoolFactory
@@ -34,19 +35,17 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @param _baseAsset : ERC20 compatible asset to use as base contribution
      * @param _feeTo: Fee receiver
      * @param _pointFactory : Platform fee
-     * @param networkSelector : number flag to set the connected network
     */
     constructor(
         address _feeTo, 
         uint16 _makerRate,
-        uint8 networkSelector, 
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-        FeeToAndRate(_feeTo, _makerRate, networkSelector, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
+        FeeToAndRate(_feeTo, _makerRate, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**
@@ -189,13 +188,11 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     function getFinance(uint256 unit) public _onlyIfUnitIsActive(unit) whenNotPaused returns(bool) {
         _onlyContributor(_msgSender(), unit, false);
         Common.Pool memory pool = _getPool(unit);
-        uint collateral = Common.Price(
-            uint128(ISupportedAsset(assetManager).getPriceQuote(network, address(pool.addrs.colAsset))),
-            network == Common.Network.CELO? 18 : 8
-        ).computeCollateral(
-            uint24(pool.low.colCoverage),
-            pool.big.currentPool
-        );
+        (uint collateral,,bool inTime) = _getCollateralQuote(unit);
+        if(!inTime){ 
+            _updateTokenPrice(address(pool.addrs.colAsset));
+            (collateral,,inTime) = _getCollateralQuote(unit);
+        }
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
         if(pool.stage != Common.Stage.GET) 'Borrow not ready'._throw();
         if(pool.low.allGh == pool.low.maxQuorum) 'Epoch ended'._throw();

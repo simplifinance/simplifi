@@ -76,7 +76,7 @@ describe("Permissioned: Swap contributors", function () {
         unit: create.pool.pool.big.unit,
         factory:flexpool,
         signers: [signer3],
-        colQuote: quoted.collateral,
+        colQuote: quoted[0],
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -138,7 +138,7 @@ describe("Permissioned: Swap contributors", function () {
         unit: create.pool.pool.big.unit,
         factory:flexpool,
         signers: [signer2],
-        colQuote: quoted_2.collateral,
+        colQuote: quoted_2[0],
         collateral: collateralAsset,
         asset: baseAsset,
         deployer

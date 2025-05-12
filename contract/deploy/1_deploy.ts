@@ -1,28 +1,63 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { HardhatRuntimeEnvironment, } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
-import { parseEther, zeroAddress } from 'viem';
-import { alfajoresOracleData, celoOracleData, crossFiOracleData, getSupportedAssets, PriceData, Network, NetworkName } from "../getSupportedAssets";
+import { parseEther, parseUnits, zeroAddress } from 'viem';
+import { getSupportedAssets, PriceData, NetworkName, linkContractABI } from "../getSupportedAssets";
+import { ethers } from "hardhat"
+import { Contract } from 'ethers';
 
 dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
-	const {deploy, execute, read, getNetworkName} = deployments;
-	let {deployer, baseContributionAsset, feeTo } = await getNamedAccounts();
+	const {deploy, execute, read, getNetworkName } = deployments;
+	let {deployer, baseContributionAsset, feeTo, linkToken } = await getNamedAccounts();
 
   const networkName = getNetworkName().toLowerCase() as NetworkName;
-  console.log(`NetworkName: ${networkName}`);
-  const isCeloMainnet = networkName === 'celo';
-  const isAlfajores = networkName === 'alfajores';
-  const isCelo = isCeloMainnet || isAlfajores;
-  const isCrossFi = networkName === 'crosstest';
-  const networkSelector = isCelo? Network.CELO : isCrossFi? Network.CROSSFI : Network.HARDHAT;
-  // const oracleData : PriceData[] = isAlfajores? alfajoresOracleData : isCeloMainnet? celoOracleData : isCrossFi? crossFiOracleData : crossFiOracleData;
-  const name = isCelo? 'WrappedCelo Token' : isCrossFi? 'WrappedXFI Token' : 'Wrapped Token';
-  const symbol = isCelo? 'WCELO' : isCrossFi? 'WXFI' : 'WToken';
+  let supportedManagerAndOracle = '';
+  let wrappedAsset : {symbol: string, name: string} = {symbol: '', name: ''};
+  let supportedAssets : {assets: string[], priceData: PriceData[]} = {assets: [], priceData: []};
+  let supportedManagerAndOracleArgs : any[] = [];
+  let priceQuoteAsset = '';
+  let link : Contract | any = {};
 
-  console.log("Network: ", networkSelector);
+  if(networkName !== 'hardhat'){
+    const signer = await ethers.getSigner(deployer);
+    const provider = new ethers.JsonRpcProvider("https://alfajores-forno.celo-testnet.org");
+    const linkContract = await ethers.getContractAt(linkContractABI, linkToken, signer);
+    link = await linkContract.waitForDeployment();
+    const deployerBalance = await link.balanceOf(deployer);
+    console.log("deployerBalance", deployerBalance);
+  }
+
+  switch (networkName) {
+    case 'alfajores':
+      supportedManagerAndOracle = 'CeloSupportedAssetManager';
+      wrappedAsset = { name: 'Wrapped Test Celo', symbol: 'TCELO'};
+      
+      break;
+    case 'celo':
+      supportedManagerAndOracle = 'CeloSupportedAssetManager';
+      wrappedAsset = { name: 'Wrapped Celo', symbol: 'WCELO'};
+      break;
+    case 'crosstestnet':
+      supportedManagerAndOracle = 'CrossFiSupportedAssetManager';
+      wrappedAsset = { name: 'Wrapped Test XFI', symbol: 'TXFI'};
+      break;
+    case 'crossfimainnet':
+      supportedManagerAndOracle = 'CrossFiSupportedAssetManager';
+      wrappedAsset = { name: 'Wrapped XFI', symbol: 'WXFI'};
+      break;
+            
+    // Defaults to Hardhat
+    default:
+      supportedManagerAndOracle = 'HardhatSupportedAssetManager';
+      wrappedAsset = { name: 'Wrapped Token', symbol: 'WToken'};
+      break;
+  }
+
+  console.log(`NetworkName: ${networkName}`);
+
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');
   const baseAmount = parseEther('1000');
@@ -132,31 +167,34 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   */ 
    const wrappedNative = await deploy("WrappedNative", {
     from: deployer,
-    args: [ roleManager.address, name, symbol ],
+    args: [ roleManager.address, wrappedAsset.name, wrappedAsset.symbol ],
     log: true,
   });
+
   console.log(`WrappedNative token deployed to: ${wrappedNative.address}`);  
 
-  // Built supported assets
-  const data = 
-    networkSelector === Network.HARDHAT? 
-      getSupportedAssets(networkSelector, networkName, [collateralToken.address]) : 
-        getSupportedAssets(networkSelector, networkName, [collateralToken.address, wrappedNative.address]);
-  
+  switch (networkName) {
+    case 'hardhat':
+      supportedAssets = getSupportedAssets(networkName, [collateralToken.address]);
+      supportedManagerAndOracleArgs = [ supportedAssets.assets, roleManager.address ];
+      priceQuoteAsset = collateralToken.address;
+      break;
+    default:
+      supportedAssets = getSupportedAssets(networkName, [collateralToken.address, wrappedNative.address]);
+      supportedManagerAndOracleArgs = [ supportedAssets.assets, roleManager.address, supportedAssets.priceData ];
+      priceQuoteAsset = wrappedNative.address;
+      break;
+  }
+
   /**
   * Deploy Test Asset
   */
-  const supportedAssetManager = await deploy("SupportedAssetManager", {
+  const supportedAssetManager = await deploy(supportedManagerAndOracle, {
     from: deployer,
-    args: [
-      data.assets,
-      roleManager.address,
-      networkSelector,
-      data.priceData
-    ],
+    args: supportedManagerAndOracleArgs,
     log: true,
   });
-  console.log(`SupportedAssetManager deployed to: ${supportedAssetManager.address}`);
+  console.log(`${supportedManagerAndOracle} deployed to: ${supportedAssetManager.address}`);
   
   /**
    * Deploy Strategy Manager
@@ -167,7 +205,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     args: [
       feeTo,
       serviceRate,
-      networkSelector,
       roleManager.address,
       supportedAssetManager.address,
       baseContributionAsset === zeroAddress? baseAsset.address : baseContributionAsset,
@@ -188,10 +225,26 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`Providers deployed to: ${providers.address}`);  
 
+  if(networkName !== 'hardhat'){
+    await link.transfer(supportedAssetManager.address, parseUnits('1', 17));
+    const supportedAssetManagerBal = await link.balanceOf(supportedAssetManager.address);
+    console.log("supportedAssetManagerBal", supportedAssetManagerBal);
+  }
+  console.log("supportedManagerAndOracle", supportedManagerAndOracle);
   await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportedAssetManager.address, distributor.address, providers.address]);
   await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
+  await execute(supportedManagerAndOracle, {from: deployer}, 'updatePriceFeed', priceQuoteAsset);
+
+  // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
+  const result = await read(supportedManagerAndOracle, {from: deployer}, "getPriceQuote", priceQuoteAsset);
+  console.log("Price", result[0].toString());
+  console.log("InTime", result[1]);
 };
 
 export default func;
 
 func.tags = ["RoleBase", "SupportedAssetManager", "SimpliToken", "Reserve", "PriceOracle", "FlexpoolFactory", "Points", "Providers", "Attorney", "TokenDistributor", "SafeFactory", "Escape"];
+
+
+// 0xd07294e6E917e07dfDcee882dd1e2565085C2ae0  chainlink token on Celo mainet
+// 0x32E08557B14FaD8908025619797221281D439071  chainlink token on Celo ALfajores

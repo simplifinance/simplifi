@@ -8,8 +8,8 @@ import { Pausable, IRoleBase } from "./Pausable.sol";
 
 /**
  * @title : Safe storage contract
- * @author : Simplifi. Written by Isaac Jesse, a.k.a Bobeu https://github.com/bobeu
- * @notice : Safe is non-deployeable consumed by the FlexpoolFactory contract for managing contributors funds.
+ * @author : Written by Isaac Jesse, a.k.a Bobeu https://github.com/bobeu
+ * @notice : SafeGetter is abstract contract derived by the FlexpoolFactory contract for managing contributors funds.
  *          We employed this strategy to achieve high security and users confidence while interacting with the protocol.
  *          The strategy utilizes the SafeGlobal protocol on the frontend to deploy a new Safe account for every unique 
  *          contribution unit.

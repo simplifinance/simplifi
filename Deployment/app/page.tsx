@@ -39,14 +39,14 @@ export default function SimplifiApp() {
     query: {
       enabled: !!isConnected,
       refetchOnReconnect: 'always', 
-      // refetchInterval: 10000
+      refetchInterval: 5000,
       // refetchOnMount: 'always',
       // refetchIntervalInBackground: true,
       // retry: true,
     }
   });
 
-  const { notReady, symbol, factoryData, points, supportedAssets, providers } = React.useMemo(() => {
+  const { symbol, factoryData, points, supportedAssets, providers } = React.useMemo(() => {
     const notReady = isPending || !data;
     const symbol = notReady? appData[0] : data[0]?.result || appData[0];
     const factoryData = notReady? appData[1] : data[1]?.result || appData[1];

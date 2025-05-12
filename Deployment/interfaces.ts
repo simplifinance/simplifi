@@ -14,7 +14,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
-export type FunctionName = 'createPool' | 'getFinance' | 'payback' | 'liquidate' | 'editPool' | 'closePool' | 'contribute' | 'registerToEarnPoints' | 'provideLiquidity' | 'removeLiquidity' | 'borrow' | 'claimTestTokens' | 'setBaseToken' | 'setCollateralToken' | 'panicUnlock' | 'unlockToken' | 'lockToken' | 'transferFrom' | ButtonText;
+export type FunctionName = 'createPool' | 'getFinance' | 'deposit' | 'payback' | 'liquidate' | 'editPool' | 'closePool' | 'contribute' | 'registerToEarnPoints' | 'provideLiquidity' | 'removeLiquidity' | 'borrow' | 'claimTestTokens' | 'setBaseToken' | 'setCollateralToken' | 'panicUnlock' | 'unlockToken' | 'lockToken' | 'transferFrom' | 'approve' | 'getCollateralQuote' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -258,7 +258,7 @@ export interface HandleTransactionParam {
   commonParam: CommonParam;
   router?: Router;
   safe?: Address;
-  allowance?: bigint;
+  // allowance?: bigint;
   // txnType: FunctionName;
   collateralAsset?: Address;
   // rate?: number;

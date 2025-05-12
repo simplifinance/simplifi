@@ -60,7 +60,7 @@ describe("Permissionless: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted[0],
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
@@ -103,7 +103,7 @@ describe("Permissionless: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quote2.collateral,
+        colQuote: quote2[0],
         collateral: collateralAsset,
         deployer,
         asset: baseAsset

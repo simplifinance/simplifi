@@ -91,7 +91,7 @@ library Utils {
     {
         // uint8 minCCR = 100;
         // if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
-        if(ccr == 0) expCol = 0;
+        if(ccr == 0 || price.price == 0 || loanReqInDecimals == 0) expCol = 0;
         else {
             unchecked {
                 uint48 _ccr = uint48(ccr * 100);
