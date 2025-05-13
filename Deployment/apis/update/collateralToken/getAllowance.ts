@@ -11,7 +11,7 @@ export default async function getAllowance(args: GetAllowanceParam) {
   const { owner, spender, account, config, contractAddress } = args;
   assert(contractAddress !== undefined, "Collateral contract not provided");
   return await readContract(config, {
-    address: contractAddress!,
+    address: contractAddress,
     abi: allowanceAbi,
     functionName: "allowance",
     account,

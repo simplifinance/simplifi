@@ -1,26 +1,11 @@
-import { 
-    getSafeDataAbi, 
-    getFactoryDataAbi, 
-    getPoolDataAbi, 
-    getPoolRecordAbi, 
-    getProfileAbi,
-    getProvidersAbi,
-    getPointsAbi,
-    getPointAbi,
-    getUserDataAbi,
-    allowanceAbi,
-    symbolAbi,
-    balanceOfAbi,
-    getCollateralQuoteAbi,
-    getSupportedAssetsAbi
-} from "@/apis/utils/abis";
+import { allowanceAbi, balanceOfAbi, getCollateralQuoteAbi, getFactoryDataAbi, getPointAbi, getPointsAbi, getPoolDataAbi, getPoolRecordAbi, getProfileAbi, getProvidersAbi, getSafeDataAbi, getSupportedAssetsAbi, getUserDataAbi, symbolAbi, } from "@/apis/utils/abis";
 import { getContractData } from "@/apis/utils/getContractData";
 import { Address } from "@/interfaces";
 
 export default function getReadFunctions({chainId} : {chainId: number | undefined,}) {
     if(!chainId) chainId = 4157;
     const {factory, token, points, providers, supportAssetManager, ...rest }= getContractData(chainId);
-    // console.log("Manager", supportAssetManager);
+
     const readSafeDataConfig = ({safe}: {safe: Address}) => {
         const contractConfig = {
             address: safe,
@@ -43,7 +28,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     
     const readAllowanceConfig = ({owner, spender, asset}: {owner: Address, spender: Address, asset?: Address}) => {
         const contractConfig = {
-            address: asset || token,
+            address: asset || token.address,
             abi: allowanceAbi,
             functionName: 'allowance',
             args: [owner, spender],
@@ -54,7 +39,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     const readSymbolConfig = () => {
         const contractConfig = {
             abi: symbolAbi,
-            address: token,
+            address: token.address,
             functionName: 'symbol',
         } as const;
         return contractConfig;
@@ -72,17 +57,17 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     
     const readPoolConfig = ({unitId} : {unitId: bigint}) => {
         const contractConfig = {
-            address: factory,
+            address: factory.address,
             abi: getPoolDataAbi,
-            functionName: "getPoolData",
+            functionName: 'getPoolData',
             args: [unitId]
-        } as const;
+        };
         return contractConfig;
     }
     
     const readRecordConfig = ({recordId} : {recordId: bigint}) => {
         const contractConfig = {
-            address: factory,
+            address: factory.address,
             abi: getPoolRecordAbi,
             functionName: "getPoolRecord",
             args: [recordId]
@@ -92,7 +77,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     
     const collateralQuoteConfig = ({unit} : {unit: bigint}) => {
         const contractConfig = {
-            address: factory,
+            address: factory.address,
             abi: getCollateralQuoteAbi,
             functionName: "getCollateralQuote",
             args: [unit]
@@ -102,19 +87,16 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
     
     const getFactoryDataConfig = () => {
         const contractConfig = {
-            address: factory,
+            address: factory.address,
             abi: getFactoryDataAbi,
             functionName: 'getFactoryData',
-            // query: {
-            //     enabled: !!isConnected
-            // },
         } as const;
-        return contractConfig;
+        return contractConfig; 
     }
 
     const getProvidersConfig = () => {
         const contractConfig = {
-            address: providers,
+            address: providers.address,
             abi: getProvidersAbi,
             functionName: 'getProviders',
         } as const;
@@ -123,7 +105,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getSupportedAssetConfig = () => {
         const contractConfig = {
-            address: supportAssetManager,
+            address: supportAssetManager.address,
             abi: getSupportedAssetsAbi,
             functionName: 'getSupportedAssets',
         } as const;
@@ -132,7 +114,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getPointsConfig = () => {
         const contractConfig = {
-            address: points,
+            address: points.address,
             abi: getPointsAbi,
             functionName: 'getPoints',
         } as const;
@@ -141,7 +123,7 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getPointConfig = (user: Address) => {
         const contractConfig = {
-            address: points,
+            address: points.address,
             abi: getPointAbi,
             functionName: 'getPoint',
             args: [user]
@@ -151,9 +133,9 @@ export default function getReadFunctions({chainId} : {chainId: number | undefine
 
     const getProfileConfig = (unit: bigint, user: Address) => {
         const contractConfig = {
-            address: factory,
+            address: factory.address,
             abi: getProfileAbi,
-            functionName: 'getProfile',
+            functionName: 'getProfile', 
             args: [unit, user]
         } as const;
         return contractConfig;

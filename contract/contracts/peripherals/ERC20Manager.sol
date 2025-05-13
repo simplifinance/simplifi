@@ -12,7 +12,7 @@ abstract contract ERC20Manager is SafeGetter {
     // Supportasset manager contract
     ISupportedAsset public immutable assetManager;
 
-    // Base asset contract e.g cUSD
+    // Base asset contract e.g cUSD, xUSD
     IERC20 public immutable baseAsset;
 
     modifier onlySupportedAsset(IERC20 asset) {

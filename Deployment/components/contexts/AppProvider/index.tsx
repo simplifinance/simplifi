@@ -5,7 +5,7 @@ import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/ra
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 import { Chain } from "viem";
-import { celoAlfajores, } from 'wagmi/chains';
+import { celoAlfajores, celo } from 'wagmi/chains';
 
 // Your walletconnect project Id
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
@@ -42,28 +42,28 @@ const blaze : Chain = {
 }
 
 // CrossFi mainnet configuration
-// const crossFiMainnet : Chain = {
-//   id: 4158,
-//   name: "CrossFi Mainnet",
-//   nativeCurrency: {
-//     name: "CrossFi Mainnet Token",
-//     symbol: "XFI",
-//     decimals: 18
-//   },
-//   blockExplorers: {
-//     default: {
-//       name: "crossFi",
-//       url: "https://xfiscan.com"
-//     }
-//   },
-//   rpcUrls: {
-//     default: {
-//       // http: ["https://rpc.mainnet.ms",],
-//       http: ["https://rpc.mainet.ms", `https://crossfi-mainnet.g.alchemy.com/v2/${alchemy_api_key}`,],
-//       webSocket: ['']
-//     }
-//   }
-// } 
+const crossFiMainnet : Chain = {
+  id: 4158,
+  name: "CrossFi Mainnet",
+  nativeCurrency: {
+    name: "CrossFi Mainnet Token",
+    symbol: "XFI",
+    decimals: 18
+  },
+  blockExplorers: {
+    default: {
+      name: "crossFi",
+      url: "https://xfiscan.com"
+    }
+  },
+  rpcUrls: {
+    default: {
+      // http: ["https://rpc.mainnet.ms",],
+      http: ["https://rpc.mainet.ms", `https://crossfi-mainnet.g.alchemy.com/v2/${alchemy_api_key}`,],
+      webSocket: ['']
+    }
+  }
+} 
 
 // Load the defaut config from RainbowKit
 const config = getDefaultConfig({
@@ -72,8 +72,11 @@ const config = getDefaultConfig({
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
   appUrl: 'https://testnet.simplifinance.xyz',
-  chains: [ celoAlfajores, blaze ],
-  ssr: true
+  chains: [ celoAlfajores, blaze, celo, crossFiMainnet ],
+  ssr: true,
+  multiInjectedProviderDiscovery: true,
+  pollingInterval: 10_000,
+  syncConnectedChain: true
 });
 
 // Light theme configuration for RainbowKit wallet set up

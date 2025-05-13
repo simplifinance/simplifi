@@ -132,7 +132,7 @@ import type {
       recipients: recipients,
       sender: x.deployer
     });
-
+    // console.log("x.colQuote", x.colQuote)
     await approve({
       owner: signer,
       amount: x.colQuote,
@@ -169,7 +169,7 @@ import type {
     const signer = x.signers[0];
     const signerAddr = await signer.getAddress();
     const recipients = await getAddressFromSigners([signer]);
-    await x.factory.getCurrentDebt(x.unit);
+    await x.factory.getCurrentDebt(x.unit, signerAddr);
     const bal = await x.asset.balanceOf(signerAddr);
     if(bn(x.debt).gt(bn(bal))){
       await transferAsset({

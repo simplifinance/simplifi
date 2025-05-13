@@ -26,7 +26,8 @@ export default function Providers() {
     const unit = toBigInt(toBN(unitLiquidity).times('1e18').toString());
     const { toggleProviders, providersIds, } = useAppStorage();
     const hasSelectedProvider = providersIds.length > 0;
-    const handleClickProvider = (slot: bigint, amount: bigint, isSelected: boolean) => {
+    const handleClickProvider = React.useCallback(
+        (slot: bigint, amount: bigint, isSelected: boolean) => {
         const liquidity = totalLiquidity.current.value;
         if(isSelected){
             totalLiquidity.current.value = liquidity + amount;
@@ -35,13 +36,13 @@ export default function Providers() {
             if(liquidity > amount) totalLiquidity.current.value = liquidity - amount;
         }
         toggleProviders(slot);
-    };
+    }, [totalLiquidity.current.value]);
+
     const toggleDrawer = (arg: number) => setOpenDrawer(arg);
     const transactionArgs : HandleTransactionParam = {
-        commonParam: {account, config, contractAddress: zeroAddress, unit},
-        txnType: 'Borrow',
-        providersSlots: providersIds,
+        commonParam: {account, config, unit},
     }
+    const args = [providersIds, unit];
 
     const onChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -108,6 +109,8 @@ export default function Providers() {
                 />
             </div>
             <Confirmation 
+                functionName='borrow'
+                args={args}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 back={() => setOpenDrawer(0)}

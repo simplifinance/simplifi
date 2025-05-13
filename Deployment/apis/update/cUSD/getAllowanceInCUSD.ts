@@ -1,34 +1,31 @@
 import { GetAllowanceParam, } from "@/interfaces";
 import { readContract } from "wagmi/actions";
 import { allowanceCUSDAbi } from "@/apis/utils/abis";
-import { getCUSD } from "./approveToSpendCUSD";
+import { getBaseContract } from "./approveToSpendCUSD";
 
 /**
  * @dev Get the spending limit of spender from the owner's account 
  * @param args : Argument of type ApproveParam See interfaces.ts
 */
-export default async function getAllowanceInCUSD(args: AllowanceProps) {
-  const { owner, spender, account, config, callback, requestedAmount } = args;
+export default async function getAllowanceInCUSD(args: GetAllowanceParam) {
+  const { owner, spender, account, config, callback } = args;
   let allowance = 0n;
-  let errored = false;
-  callback?.({message: 'Check existing spending limit'});
+  const address = getBaseContract(config.state.chainId);
+  // console.log("basecontract adress: ", address);
+  // callback?.({message: 'Check existing spending limit'});
   await readContract(config, {
-    address:  getCUSD(44787),
+    address,
     abi: allowanceCUSDAbi,
     functionName: "allowance",
     account,
     args: [owner, spender]
   }).then((result) => {
-    callback?.({message: `${result >= requestedAmount? 'Previous spending limit detected' : 'No allowance detected'}`});
     allowance = result;
+    // callback?.({message: `${result >= requestedAmount? 'Previous spending limit detected' : 'No allowance detected'}`});
   })
-  .catch(() => errored = true);
+  .catch((error: any) => callback?.({errorMessage: error?.message || error?.data?.message || error}));
 
-  return { allowance, errored };
-}
-
-interface AllowanceProps extends GetAllowanceParam {
-  requestedAmount: bigint; 
+  return { allowance, address };
 }
 
 // /**

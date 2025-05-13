@@ -6,15 +6,13 @@ import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol"; 
 import { IERC20 } from "../interfaces/IERC20.sol"; 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
+import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 
-contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
+abstract contract SupportedAssetManager is ISupportedAsset, IPriceOracle, OnlyRoleBase {
   using ErrorLib for *;
 
-  struct SupportedAsset {
-    address id;
-    string name;
-    string symbol;
-  }
+  // The max acceptable amount of time passed since the oracle price was last updated.
+  uint128 public maxTimePassed;
 
   // Supported assets
   SupportedAsset[] private assets;
@@ -36,18 +34,20 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   }
 
   /**
-   * @dev Initialize state variables
-   * @param _assets : Initial supported asset
-   */
+   * 
+   * @param _assets : Supported assets
+   * @param _roleManager : Role manager contract
+  */
   constructor(
     address[] memory _assets,
     IRoleBase _roleManager
-  ) 
+  )
     OnlyRoleBase(_roleManager) 
   {
     for(uint i = 0; i < _assets.length; i++) {
       if(_assets[i] != address(0)) _supportAsset(_assets[i]);
     }
+    maxTimePassed = 120 seconds;
   }
 
   /**
@@ -55,9 +55,7 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
    * Note: OnlyRoleBase action
    * @param _asset : Asset to add to list of supported asset
    */
-  function supportAsset(
-    address _asset
-  ) 
+  function supportAsset(address _asset) 
     public 
     onlyRoleBearer
   {
@@ -111,11 +109,17 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
     return _assets;
   }
 
-  /// @dev Returns the default supported asset
-  function getDefaultSupportedCollateralAsset() external view returns(address _default) {
-    _default = assets[0].id;
-    assert(_default != address(0));
-    return _default;
+  function getDefaultSupportedCollateralAsset() external view returns(address){
+    return assets[0].id;
+  }
+
+  /**
+   * @dev Update the maxTimePass
+   * @param newMaxTimePass : New maxTime
+   */
+  function setMaxTimePass(uint128 newMaxTimePass) public onlyRoleBearer returns(bool) {
+    maxTimePassed = newMaxTimePass;
+    return true;
   }
 
 }

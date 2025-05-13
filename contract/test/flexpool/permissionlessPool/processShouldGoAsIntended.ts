@@ -60,7 +60,7 @@ describe("Permissionless: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted[0],
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
@@ -79,7 +79,7 @@ describe("Permissionless: Go as intended", function () {
       const future = BigInt((await time.latest()) + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
 
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
       await liquidate({
         asset: baseAsset,
         deployer,
@@ -103,7 +103,7 @@ describe("Permissionless: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quote2.collateral,
+        colQuote: quote2[0],
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
@@ -120,7 +120,7 @@ describe("Permissionless: Go as intended", function () {
 
       const durOfChoiceInSec_2 = await time.latest() + DURATION_IN_SECS;
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
       const pay_2 = await payback({
         asset: baseAsset,
         deployer,

@@ -64,7 +64,7 @@ describe("Permissionless: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted[0],
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -87,7 +87,7 @@ describe("Permissionless: Complete An Epoch", function () {
        */
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec
@@ -124,7 +124,7 @@ describe("Permissionless: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quoted.collateral,
+        colQuote: quoted[0],
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -141,7 +141,7 @@ describe("Permissionless: Complete An Epoch", function () {
 
       const durOfChoiceInSec_2 = await time.latest() + DURATION_IN_SECS;
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec

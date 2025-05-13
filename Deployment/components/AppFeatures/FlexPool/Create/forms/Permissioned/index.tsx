@@ -1,5 +1,5 @@
 import React from "react";
-import type { Address, HandleTransactionParam, InputSelector } from '@/interfaces';
+import type { Address, FunctionName, HandleTransactionParam, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr, toBN } from "@/utilities";
 import { useAccount, useConfig } from "wagmi";
@@ -11,7 +11,7 @@ import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { Button } from "@/components/ui/button";
-import { Confirmation } from "../../../update/ActionButton/Confirmation";
+import CreatePool from "../../../update/transactions/CreatePool";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
@@ -72,9 +72,6 @@ export const Permissioned = () => {
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
-            // case 'SelectBaseAssetHolding':
-            //     setBaseAsset(formatAddr(inputProp));
-            //     break;
             case 'UnitLiquidity':
                 setUnitLiquidity(inputProp);
                 break;
@@ -83,18 +80,16 @@ export const Permissioned = () => {
         }
     }
 
-    const transactionArgs : HandleTransactionParam = {
-        // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
-        commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
-        createPermissionedPoolParam: {
-            colCoverage: toBN(colCoverage).toNumber(),
-            contributors: participants!,
-            durationInHours: duration,
-            // baseAssetHolding
-        },
-        txnType: 'Create',
-        router: 'Permissioned',
-    }
+    const { functionName, args, transactionArgs } = React.useMemo(() => {
+        const functionName : FunctionName = 'createPool';
+        const isPermissionless = false;
+        const args = [[account], parseUnits(unitLiquidity, 18), participants.length, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
+        const transactionArgs : HandleTransactionParam = {
+            commonParam: {account, config, unit: parseUnits(unitLiquidity, 18)},
+            router: 'Permissioned',
+        };
+        return { functionName, args, transactionArgs };
+    }, [account, unitLiquidity, participants, colCoverage, collateralAsset]);
 
     return(
         <div className="space-y-8 mt-6">
@@ -144,12 +139,11 @@ export const Permissioned = () => {
                     Submit
                 </Button>
             </div>
-            <Confirmation 
+            <CreatePool 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                transactionArgs={transactionArgs}
-                displayMessage="Request to launch a private liquidity pool"
-                actionButtonText="SendTransaction"
+                args={args} 
+                unit={parseUnits(unitLiquidity, 18)}
                 optionalDisplay={
                     <ReviewInput
                         type={'address'}
@@ -175,11 +169,6 @@ export const Permissioned = () => {
                                 value: collateralAsset,
                                 affix: ''
                             },
-                            // {
-                            //     title: 'Base Asset',
-                            //     value: baseAssetHolding,
-                            //     affix: ''
-                            // },
                             {
                                 title: 'Collateral Index',
                                 value: toBN(colCoverage).div(100).toString(),
@@ -192,3 +181,16 @@ export const Permissioned = () => {
         </div>
     );
 }
+    {/* 
+                <Confirmation 
+                    functionName={functionName}
+                    args={args}                
+                    openDrawer={openDrawer}
+                    toggleDrawer={toggleDrawer}
+                    transactionArgs={transactionArgs}
+                    displayMessage="Request to launch a private liquidity pool"
+                    actionButtonText="SendTransaction"
+                    optionalDisplay={
+                        
+                    }
+                /> */}

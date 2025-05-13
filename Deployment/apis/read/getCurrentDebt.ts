@@ -7,7 +7,7 @@ export default async function getCurrentDebt(args: {config: WagmiConfig, unit: b
   const { config, unit } = args;
   return await readContract(config, {
     abi: getCurrentDebtAbi,
-    address: getContractData(config.state.chainId).factory, 
+    address: getContractData(config.state.chainId).factory.address, 
     functionName: "getCurrentDebt",
     args: [unit]
   });  

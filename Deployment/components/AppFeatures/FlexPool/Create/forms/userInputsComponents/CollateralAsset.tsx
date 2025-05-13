@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 export default function CollateralAsset({handleChange} : InputCategoryProp) {    
     // const { supportedAssets } = useAppStorage();
     const callback = (arg: Address | string) => {
+        console.log("Arg:", arg);
         handleChange(arg.toString(), 'CollateralAsset');
     };
     return (

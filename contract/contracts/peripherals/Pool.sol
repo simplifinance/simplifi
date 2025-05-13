@@ -21,14 +21,13 @@ abstract contract Pool is Contributor {
 
     // ================ Constructor ==============
     constructor(
-        address _diaOracleAddress, 
         ISupportedAsset _assetManager, 
         IRoleBase _roleManager,
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
+        Contributor(_assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**
@@ -150,21 +149,29 @@ abstract contract Pool is Contributor {
     /**
      * @dev Returns amount of collateral required in a pool.
      * @param unit : EpochId
-     * @return collateral Collateral
-     * @return colCoverage Collateral coverage
      */
-    function getCollateralQuote(uint256 unit) public view returns(uint collateral, uint24 colCoverage)
+    function getCollateralQuote(uint256 unit) public view returns(uint, uint128, bool)
     {
-       return _getCollateralQuote(unit);
+        // _onlyContributor(_msgSender(), unit, false);
+        return _getCollateralQuote(unit);
+    }
+
+    /**
+     * @dev Update token price if price is zero or not inTime
+     * @param asset : Asset for which to update price
+     */
+    function updateTokenPrice(address asset) public {
+        (uint128 price, bool updatedLessThanSixtySecsAgo,) = _getCollateralTokenPrice(asset);
+        if(!updatedLessThanSixtySecsAgo || price == 0) _updateTokenPrice(asset);
     }
 
     /**
      * Returns the current debt of target user.
      * @param unit : Unit contribution
      */
-    function getCurrentDebt(uint256 unit) public view returns(uint256 debt) 
+    function getCurrentDebt(uint256 unit, address target) public view returns(uint256 debt) 
     {
-       (debt,) = _getCurrentDebt(unit);
+       (debt,) = _getCurrentDebt(unit, target);
        return debt;
     }
 

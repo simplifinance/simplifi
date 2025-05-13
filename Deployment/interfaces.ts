@@ -4,6 +4,7 @@ import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
 import { BigNumberish } from "ethers";
+import { Transaction } from "./components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -13,7 +14,8 @@ export type Str = string;
 export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
-export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey';
+export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
+export type FunctionName = 'createPool'|'getFinance'|'deposit'|'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -26,6 +28,7 @@ export type TrxResult = 'success' | 'reverted';
 export type RenderType = 'Back' | 'Current' | '';
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
+export type ABI = AbiItem[];
 
 export type Contributor = {
   profile: ContributorStruct;
@@ -208,15 +211,21 @@ export interface ReadDataReturnValue  {
 }
 
 export interface CreatePermissionedPoolParams {
-  contributors: Address[];
-  durationInHours: number;
-  colCoverage: number;
-  contractAddress?: Address;
+  // contributors: Address[];
+  // durationInHours: number;
+  // colCoverage: number;
+  // collateralAsset: Address;
   // baseAssetHolding: Address;
 }
 
-export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
+export interface EditPoolParam {
+  durationInHours: number;
+  colCoverage: number;
   quorum: number;
+}
+
+export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
+  // quorum: number;
 }
 
 export interface GetProfileParam {
@@ -228,7 +237,6 @@ export interface Config {
   config: WagmiConfig;
   account: Address;
   callback?: TransactionCallback;
-  contractAddress?: Address;
 }
 
 export interface DepositCollateralParam extends Config {
@@ -247,15 +255,20 @@ export interface ScreenUserResult{
 }
 
 export interface HandleTransactionParam { 
-  createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
-  createPermissionedPoolParam?: CreatePermissionedPoolParams;
+  // createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
+  // createPermissionedPoolParam?: CreatePermissionedPoolParams;
   commonParam: CommonParam;
   router?: Router;
   safe?: Address;
-  txnType: ButtonText;
-  rate?: number;
-  providersSlots?: bigint[];
-  selectedAsset?: Address;
+  // allowance?: bigint;
+  // txnType: FunctionName;
+  collateralAsset?: Address;
+  // rate?: number;
+  // routeTo?: Address;
+  // lostAccount?: Address;
+  // providersSlots?: bigint[];
+  // contractAddress?: Address;
+  // args: any[];
 }
 
 export interface DrawerState {
@@ -269,8 +282,9 @@ export interface InputCategoryProp {
 }
 
 export interface ButtonObj {
-  value: ButtonText;
+  value: FunctionName;
   disable: boolean;
+  component: React.ReactNode;
 }
 
 export interface ContractData {
@@ -309,6 +323,7 @@ export interface ApproveParam extends Config {
 export interface GetAllowanceParam extends Config {
   owner: Address;
   spender: Address;
+  contractAddress?: Address;
 }
 
 export interface TransferFromParam extends Config {
@@ -334,11 +349,12 @@ export interface BalancesProps {
 }
 
 export interface ActionsButtonProps {
-  buttonObj: ButtonObj;
-  transactionArgs: HandleTransactionParam;
+  getButtonObj: () => {buttonObj: ButtonObj, };
+  // transactionArgs: HandleTransactionParam;
   confirmationDrawerOn: number;
   setDrawerState: (arg: number) => void
   back?: VoidFunc;
+  getTransactions: () => Transaction[];
 }
 
 export interface SendTransactionResult {
@@ -360,9 +376,17 @@ export type ProviderResult = {
   accruals: InterestStruct;
 }
 
-export interface CheckAndApproveParam extends Config {
-  txnType: ButtonText,
+// export interface CheckAndApproveParam extends Config {
+//   txnType: ButtonText,
+//   unit: bigint,
+// }
+export interface GetAmountToApprove extends Config {
+  functionName: FunctionName,
   unit: bigint,
+  factory: Address;
+  providers: Address;
+  safe?: Address;
+  collateralContractAddress?: Address;
 }
 
 export type Point = {
@@ -428,6 +452,20 @@ export type AppState = [
   SupportedAsset[]
 ];
 
+type InputsOrOutputs = {
+  "internalType": string,
+  "name": string,
+  "type": string
+};
+
+export type AbiItem = {
+  "inputs": InputsOrOutputs[] | [];
+  "name": string;
+  "outputs": InputsOrOutputs[] | [];
+  "stateMutability": string;
+  "type": string;
+};
+
 
 // MOCK DATA
 
@@ -489,7 +527,7 @@ export const emptyMockPoint : Point = {
 }
 
 const mockAsset : SupportedAsset = {
-  id: getContractData(44787).token,
+  id: getContractData(44787).token.address,
   name: "Simplfinance Token",
   symbol: "TSFT"
 }

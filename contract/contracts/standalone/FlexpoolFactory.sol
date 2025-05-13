@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset, ISafeFactory } from "../../peripherals/FeeToAndRate.sol";
-import { IFactory, Common } from '../../interfaces/IFactory.sol';
-import { IERC20 } from "../../interfaces/IERC20.sol";
-import { IPoint } from "../../interfaces/IPoint.sol";
-import { ISafe } from "../../interfaces/ISafe.sol";
+import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset, ISafeFactory } from "../peripherals/FeeToAndRate.sol";
+import { IFactory, Common } from '../interfaces/IFactory.sol';
+import { IERC20 } from "../interfaces/IERC20.sol";
+import { IPoint } from "../interfaces/IPoint.sol";
+import { ISafe } from "../interfaces/ISafe.sol";
+// import "hardhat/console.sol";
 
 /**
     * @title FlexpoolFactory
     * @author Simplifi (Bobeu)
-    * @notice Deployable FlexpoolFactory contract that enables peer-funding. Participants of each pool are referred to 
+    * @notice FlexpoolFactory enables peer-funding magic. Participants of each pool are referred to 
     * contributors. There is no limit to the amount that can be contributed except for zer0 value. Users can single-handedly run
     * a pool (where anyone is free to participate) or collectively with friends and family or peer operate a permissioned pool 
     * where participation is restricted to the preset members only.
@@ -20,7 +21,7 @@ import { ISafe } from "../../interfaces/ISafe.sol";
     * When paying back, the contributor will repay the full loan with interest but halved for other contributors.  
 */
 contract FlexpoolFactory is IFactory, FeeToAndRate {
-    using Utils for uint;
+    using Utils for *;
     using ErrorLib for *;
 
     // Analytics
@@ -38,14 +39,13 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     constructor(
         address _feeTo, 
         uint16 _makerRate,
-        address _diaOracleAddress, 
         IRoleBase _roleManager, 
         ISupportedAsset _assetManager, 
         IERC20 _baseAsset,
         IPoint _pointFactory,
         ISafeFactory _safeFactory
     ) 
-        FeeToAndRate(_feeTo, _makerRate, _diaOracleAddress, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
+        FeeToAndRate(_feeTo, _makerRate, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
     {}
 
     /**
@@ -82,6 +82,10 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @param user : Target user
      * @param unit : Unit contribution
      * @param initialPool : An Initialized pool. Can be an empty pool
+     * @notice Defaults value are set as
+     * - MaxQuorum - 2
+     * - Duration - 72 hours i.e 3 days
+     * - Collateral coverage - 120
      */
     function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
         address[] memory users = new address[](1);
@@ -89,6 +93,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         IERC20 defaultColAsset = IERC20(ISupportedAsset(assetManager).getDefaultSupportedCollateralAsset());
         initialPool = _createPool(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset);
         _awardPoint(users[0], 0, 5, false);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, true);
         emit Common.PoolCreated(initialPool);
     }
 
@@ -112,16 +117,18 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     ) external onlyRoleBearer whenNotPaused returns(bool)
     {
         Common.Pool memory pool;
+        bool isNewOrCancel = false;
         if(!isPoolAvailable(unit)){
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool.big.unitId, pool);
             emit Common.NewContributorAdded(pool);
         } else {
+            isNewOrCancel = true;
             pool = _launchDefault(borrower, unit);
         }
         _setProviders(providers, borrower, pool.big.recordId);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, pool.big.currentPool == unit);
+        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, isNewOrCancel);
 
         return true;
     }
@@ -164,9 +171,11 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         unchecked {
             duration = durationInHours * 1 hours;
         }
-        if(maxQuorum > pool.low.maxQuorum && maxQuorum < type(uint8).max) pool.low.maxQuorum = maxQuorum;
-        if(durationInHours <= 720 && duration > pool.low.duration) pool.low.duration = duration;
-        if(colCoverage > pool.low.colCoverage) pool.low.colCoverage = colCoverage;
+        if(pool.router == Common.Router.PERMISSIONLESS) {
+            if(maxQuorum != pool.low.maxQuorum && maxQuorum > 2 && maxQuorum < type(uint8).max) pool.low.maxQuorum = maxQuorum;
+        }
+        if(durationInHours <= 720 && duration != pool.low.duration) pool.low.duration = duration;
+        if(colCoverage != pool.low.colCoverage) pool.low.colCoverage = colCoverage;
         _setPool(pool.big.unitId, pool);
 
         emit Common.PoolEdited(pool);
@@ -182,8 +191,12 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     */
     function getFinance(uint256 unit) public _onlyIfUnitIsActive(unit) whenNotPaused returns(bool) {
         _onlyContributor(_msgSender(), unit, false);
-        (uint collateral,) = _getCollateralQuote(unit);
         Common.Pool memory pool = _getPool(unit);
+        (uint collateral,,bool inTime) = _getCollateralQuote(unit);
+        if(!inTime){ 
+            _updateTokenPrice(address(pool.addrs.colAsset));
+            (collateral,,inTime) = _getCollateralQuote(unit);
+        }
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
         if(pool.stage != Common.Stage.GET) 'Borrow not ready'._throw();
         if(pool.low.allGh == pool.low.maxQuorum) 'Epoch ended'._throw();
@@ -311,6 +324,14 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
             }
         }
         analytics = alt;
+    }
+
+    /**
+     * @dev Fetch current pool
+     * @param unit : Unit contribution
+     */
+    function getPool(uint unit) external view returns(Common.Pool memory) {
+       return _getPool(unit);
     }
 
     /**@dev Return contract data */

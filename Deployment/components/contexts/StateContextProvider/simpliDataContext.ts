@@ -1,4 +1,5 @@
 import type { Analytics, Path, PointsReturnValue, ProviderResult, SupportedAsset, VoidFunc } from "@/interfaces";
+import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
@@ -26,4 +27,5 @@ export interface DataContextProps {
     points: PointsReturnValue[];
     providers: ProviderResult[];
     supportedAssets: SupportedAsset[];
+    refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
 }

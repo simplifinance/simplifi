@@ -4,25 +4,26 @@ import { Confirmation } from "./Confirmation";
 import { Button } from "@/components/ui/button";
 
 export const ActionButton = (props: ActionsButtonProps) => {
-    const { buttonObj, confirmationDrawerOn, transactionArgs, back, setDrawerState, } = props;
+    const { getButtonObj, confirmationDrawerOn, getTransactions, back, setDrawerState } = props;
     const openDrawer = () => setDrawerState(1);
     const handleClick = () => openDrawer();
+    const { buttonObj: { disable, value } } = getButtonObj();
     
     return(
         <React.Fragment>
             <Button
                 variant={'outline'}
-                disabled={buttonObj.disable}
+                disabled={disable}
                 onClick={handleClick}
-                className=" bg-green1/90 text-orange-200"
+                className=" bg-green1/90 text-orange-200 capitalize"
             >
-                { buttonObj.value }
+                { value }
             </Button>
             <Confirmation
                 openDrawer={confirmationDrawerOn}
                 toggleDrawer={(arg: number) => setDrawerState(arg)}
-                transactionArgs={transactionArgs}
-                back={back}           
+                getTransactions={getTransactions}
+                back={back}
             />
         </React.Fragment>
     );

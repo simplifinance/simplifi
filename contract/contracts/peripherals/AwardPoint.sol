@@ -2,11 +2,12 @@
 
 pragma solidity 0.8.24;
 
-import { IPoint } from "../interfaces/IPoint.sol";
-import { Common } from "../interfaces/Common.sol";
-import { Price, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from './Price.sol';
+import { IPoint, Common } from "../interfaces/IPoint.sol";
+import { ErrorLib } from "../libraries/ErrorLib.sol";
+import { ERC20Manager, IERC20, ISupportedAsset, IRoleBase, ISafeFactory } from "./ERC20Manager.sol";
+import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 
-abstract contract AwardPoint is Price {
+abstract contract AwardPoint is ERC20Manager {
     using ErrorLib for *;
 
     // Whether to award point to users or not
@@ -24,11 +25,10 @@ abstract contract AwardPoint is Price {
         IRoleBase _roleManager, 
         IPoint _pointFactory,
         IERC20 _baseAsset,
-        address _diaOracleAddress, 
-        ISupportedAsset _assetManager,
+        ISupportedAsset _assetManager, 
         ISafeFactory _safeFactory
     ) 
-        Price(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _safeFactory)
+        ERC20Manager(_assetManager,  _baseAsset, _roleManager, _safeFactory)
     {
         if(address(_pointFactory) == address(0)) 'IPointFactory is zero'._throw();
         awardPoint = true;
@@ -55,4 +55,20 @@ abstract contract AwardPoint is Price {
         return true;
     }
 
+    /**
+     * @dev Get price quote from the oracle contract
+     * @param asset : Asset to get price for
+    */
+    function _getCollateralTokenPrice(address asset) internal view returns(uint128 result, bool inTime, uint8 decimals) {
+        (result, inTime, decimals) = IPriceOracle(address(assetManager)).getPriceQuote(asset);
+    }
+
+    /**
+     * @dev Get price quote from the oracle contract
+     * @param asset : Asset to get price for
+    */
+    function _updateTokenPrice(address asset) internal {
+        IPriceOracle(address(assetManager)).updatePriceFeed(asset);
+    }
+ 
 }
