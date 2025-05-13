@@ -79,11 +79,11 @@ describe("Permissioned: Liquidate", function () {
       // Fastrack block time
       const future = await time.latest() + (DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
       const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
       const s3BfLiq = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);
       expect(s3BfLiq.access).to.be.false;
-      const { liq: { balances: bal, pool: pl, profile: pr }, baseBalB4Liq, baseBalAfterLiq} = await liquidate({
+      const { liq: { pool: pl, profile: pr }, baseBalAfterLiq} = await liquidate({
         asset: baseAsset,
         deployer,
         unit: create.pool.pool.big.unit,

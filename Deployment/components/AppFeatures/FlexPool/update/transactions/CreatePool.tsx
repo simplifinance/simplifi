@@ -1,51 +1,66 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { getContractData } from '@/apis/utils/getContractData';
 import { useAccount, useConfig, useReadContract } from 'wagmi';
-import { filterAbi, formatAddr } from '@/utilities';
-import { allowanceAbi, allowanceCUSDAbi, approveAbi, approveCUSDAbi, } from '@/apis/utils/abis';
-import { baseContracts } from '@/constants';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import { Address, FunctionName, TransactionCallback } from '@/interfaces';
+import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
-export default function CreatePermissionlessPool({ unit, args }: CreatePermissionlessPoolProps) {
-    const [openDrawer, setDrawer] = React.useState<number>(0);
-    const toggleDrawer = (arg: number) => setDrawer(arg);
+const steps : FunctionName[] = ['allowance', 'approve', 'createPool'];
 
-    const { chainId, address } = useAccount();
+export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optionalDisplay }: CreatePoolProps) {
     const config = useConfig();
+    const { chainId, address } = useAccount();
     const account  = formatAddr(address);
-    const { factory, token } = getContractData(chainId || 44787);
-    const isCelo = (chainId === 44787 || chainId === 42220);
-    const { data: allowance } = useReadContract(
+    const { setmessage } = useAppStorage();
+
+    const callback : TransactionCallback = (arg) => {
+        if(arg.message) setmessage(arg.message);
+        if(arg.errorMessage) setmessage(arg.errorMessage);
+    };
+
+    const { contractAddresses: ca, transactionData: td, allowanceArg, approvalArg } = React.useMemo(() => {
+        const filtered = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: steps,
+            callback
+        });
+        const allowanceArg = [account, filtered.contractAddresses.FlexpoolFactory];
+        const approvalArg = [filtered.contractAddresses.FlexpoolFactory, unit];
+
+        return { ...filtered, allowanceArg, approvalArg };
+    }, [chainId, unit, account]);
+
+    const { data, refetch } = useReadContract(
         {
             config,
-            abi: isCelo? allowanceCUSDAbi : allowanceAbi,
-            address: factory.address,
-            args: [account, factory.address],
-            functionName: 'allowance',
+            abi: td[0].abi,
+            address: ca.stablecoin as Address,
+            args: allowanceArg,
+            functionName: td[0].functionName,
         }
     );
+    const allowance = data as bigint;
 
     const getTransactions = React.useCallback(() => {
-        let transactions : Transaction[] = [];
-        const approvalTransaction : Transaction =
-            {
-                contractAddress: baseContracts[chainId || 44787],
-                abi: isCelo? approveCUSDAbi : approveAbi,
-                args: [factory.address, unit],
-                functionName: 'approve'
+        const txObjects = td.filter(({functionName}) => functionName !== steps[0]);
+        if(!allowance) refetch();
+        let transactions = txObjects.map((txObject) => {
+            const isApprovalTx = txObject.functionName === steps[1];
+            const transaction : Transaction = {
+                abi: txObject.abi,
+                args: isApprovalTx? approvalArg : args,
+                contractAddress: txObject.contractAddress as Address,
+                functionName: txObject.functionName as FunctionName,
             };
-        if(allowance && allowance < unit){
-            transactions.push(approvalTransaction);
+            return transaction;
+        })
+        console.log("transactions", transactions);
+        if(allowance && allowance >= unit){
+            transactions = transactions.filter((tx) => tx.functionName = steps[1]);
         }
-        
-        const createPoolTransaction : Transaction = {
-            abi: filterAbi(factory.abi, 'createPool'),
-            contractAddress: factory.address,
-            functionName: 'createPool',
-            args
-        };
-
-        transactions.push(createPoolTransaction);
+        console.log("Popped transactions", transactions);
+    
         return transactions;
     
    }, [unit, allowance]);
@@ -56,11 +71,15 @@ export default function CreatePermissionlessPool({ unit, args }: CreatePermissio
             toggleDrawer={toggleDrawer}
             getTransactions={getTransactions}
             displayMessage='Request to create a Flexpool'
+            optionalDisplay={optionalDisplay}
         />
     )
 }
 
-type CreatePermissionlessPoolProps = {
+type CreatePoolProps = {
     unit: bigint;
     args: any[];
+    optionalDisplay?: React.ReactNode;
+    openDrawer: number;
+    toggleDrawer: (arg: number) => void;
 };

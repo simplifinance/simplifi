@@ -169,9 +169,9 @@ abstract contract Pool is Contributor {
      * Returns the current debt of target user.
      * @param unit : Unit contribution
      */
-    function getCurrentDebt(uint256 unit) public view returns(uint256 debt) 
+    function getCurrentDebt(uint256 unit, address target) public view returns(uint256 debt) 
     {
-       (debt,) = _getCurrentDebt(unit);
+       (debt,) = _getCurrentDebt(unit, target);
        return debt;
     }
 

@@ -114,7 +114,7 @@ describe("Permissionless: Swap contributors", function () {
        */
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer3Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec
@@ -169,7 +169,7 @@ describe("Permissionless: Swap contributors", function () {
 
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
-      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec

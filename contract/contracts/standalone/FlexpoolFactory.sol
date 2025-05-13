@@ -82,6 +82,10 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @param user : Target user
      * @param unit : Unit contribution
      * @param initialPool : An Initialized pool. Can be an empty pool
+     * @notice Defaults value are set as
+     * - MaxQuorum - 2
+     * - Duration - 72 hours i.e 3 days
+     * - Collateral coverage - 120
      */
     function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
         address[] memory users = new address[](1);
@@ -320,6 +324,14 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
             }
         }
         analytics = alt;
+    }
+
+    /**
+     * @dev Fetch current pool
+     * @param unit : Unit contribution
+     */
+    function getPool(uint unit) external view returns(Common.Pool memory) {
+       return _getPool(unit);
     }
 
     /**@dev Return contract data */

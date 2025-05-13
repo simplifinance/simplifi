@@ -6,7 +6,6 @@ import {
   UNIT_LIQUIDITY,
   COLLATER_COVERAGE_RATIO,
   DURATION_IN_HOURS,
-  ZERO,
   INTEREST_RATE,
   formatAddr,
 } from "../../utilities";

@@ -82,7 +82,6 @@ describe("Permissionless: Enquire Liquidation Success", function () {
       /**
        * When the paydate has passed, enquiry should return defaulter's profile.
       */
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
       const [prof, defaulted, val] = await enquireLiquidation({
         unit: create.pool.pool.big.unit,
         factory: flexpool,

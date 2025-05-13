@@ -4,10 +4,10 @@ import { Confirmation } from "./Confirmation";
 import { Button } from "@/components/ui/button";
 
 export const ActionButton = (props: ActionsButtonProps) => {
-    const { getButtonObj, confirmationDrawerOn, transactionArgs, back, setDrawerState } = props;
+    const { getButtonObj, confirmationDrawerOn, getTransactions, back, setDrawerState } = props;
     const openDrawer = () => setDrawerState(1);
     const handleClick = () => openDrawer();
-    const { buttonObj: { disable, value }, args } = getButtonObj();
+    const { buttonObj: { disable, value } } = getButtonObj();
     
     return(
         <React.Fragment>
@@ -22,10 +22,8 @@ export const ActionButton = (props: ActionsButtonProps) => {
             <Confirmation
                 openDrawer={confirmationDrawerOn}
                 toggleDrawer={(arg: number) => setDrawerState(arg)}
-                transactionArgs={transactionArgs}
+                getTransactions={getTransactions}
                 back={back}
-                args={args}
-                functionName={value}
             />
         </React.Fragment>
     );

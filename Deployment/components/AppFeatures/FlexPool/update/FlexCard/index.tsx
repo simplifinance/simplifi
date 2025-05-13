@@ -18,6 +18,7 @@ import { PermissionPopUp } from '../PermissionPopUp';
 import { getContractData } from "@/apis/utils/getContractData";
 import BigNumber from "bignumber.js";
 import { Button } from "@/components/ui/button";
+import Contribute from "../transactions/Contribute";
 
 /**
  * Filter the data list for current user
@@ -72,7 +73,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     };
 
     const getButtonObj = React.useCallback(() => {
-        let buttonObj : ButtonObj = {value: 'contribute', disable: false};
+        let buttonObj : ButtonObj = {value: 'contribute', disable: false, component: null};
         let args : any[] = [unit.big];
         switch (stage.toNum) {
             case Stage.JOIN:
@@ -87,7 +88,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         if(isMember && sentQuota){
                             buttonObj = {value: 'Wait', disable: true};
                         } else {
-                            buttonObj = {value: 'contribute', disable: false};
+                            buttonObj = {value: 'contribute', disable: false, component: <Contribute unit={unit.big} />};
                         }
                     }
                 } else {
@@ -98,7 +99,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                             buttonObj = {value: 'Wait', disable: true};
                         }
                     } else if(isMember && !sentQuota){
-                        buttonObj = {value: 'contribute', disable: false};
+                        buttonObj = {value: 'contribute', disable: false, component: <Contribute unit={unit.big} />};
                     } else if(isMember && sentQuota){
                         buttonObj = {value: 'Wait', disable: true};
                     } else {
@@ -186,7 +187,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     </Button>
                     <ActionButton
                         getButtonObj={getButtonObj}
-                        transactionArgs={transactionArgs}
+                        getTransactions={getTransactions}
                         setDrawerState={(arg:number) => setDrawerState(arg)}
                         confirmationDrawerOn={confirmationDrawerOn}
                     />
@@ -218,7 +219,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         actions={
                             <ActionButton 
                                 getButtonObj={getButtonObj}
-                                transactionArgs={transactionArgs}
+                                getTransactions={getTransactions}
                                 setDrawerState={(arg:number) => setDrawerState(arg)}
                                 confirmationDrawerOn={confirmationDrawerOn}
                             />

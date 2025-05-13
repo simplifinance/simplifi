@@ -11,7 +11,7 @@ import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { Button } from "@/components/ui/button";
-import { Confirmation } from "../../../update/ActionButton/Confirmation";
+import CreatePool from "../../../update/transactions/CreatePool";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
@@ -139,14 +139,11 @@ export const Permissioned = () => {
                     Submit
                 </Button>
             </div>
-            <Confirmation 
-                functionName={functionName}
-                args={args}                
+            <CreatePool 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                transactionArgs={transactionArgs}
-                displayMessage="Request to launch a private liquidity pool"
-                actionButtonText="SendTransaction"
+                args={args} 
+                unit={parseUnits(unitLiquidity, 18)}
                 optionalDisplay={
                     <ReviewInput
                         type={'address'}
@@ -184,3 +181,16 @@ export const Permissioned = () => {
         </div>
     );
 }
+    {/* 
+                <Confirmation 
+                    functionName={functionName}
+                    args={args}                
+                    openDrawer={openDrawer}
+                    toggleDrawer={toggleDrawer}
+                    transactionArgs={transactionArgs}
+                    displayMessage="Request to launch a private liquidity pool"
+                    actionButtonText="SendTransaction"
+                    optionalDisplay={
+                        
+                    }
+                /> */}

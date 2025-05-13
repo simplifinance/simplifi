@@ -1,51 +1,70 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { getContractData } from '@/apis/utils/getContractData';
 import { useAccount, useConfig, useReadContract } from 'wagmi';
-import { filterAbi, formatAddr } from '@/utilities';
-import { allowanceAbi, allowanceCUSDAbi, approveAbi, approveCUSDAbi, } from '@/apis/utils/abis';
-import { baseContracts } from '@/constants';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import { Address, FunctionName, TransactionCallback } from '@/interfaces';
+import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
+
+const steps : FunctionName[] = ['allowance', 'approve', 'contribute'];
 
 export default function Contribute({ unit }: ContributeProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
-
-    const { chainId, address } = useAccount();
+    
     const config = useConfig();
+    const { chainId, address } = useAccount();
     const account  = formatAddr(address);
-    const { factory } = getContractData(chainId || 44787);
-    const isCelo = (chainId === 44787 || chainId === 42220);
-    const { data: allowance } = useReadContract(
+    const { setmessage } = useAppStorage();
+
+    const callback : TransactionCallback = (arg) => {
+        if(arg.message) setmessage(arg.message);
+        if(arg.errorMessage) setmessage(arg.errorMessage);
+    };
+
+    const { contractAddresses: ca, transactionData: td, allowanceArg, contributeArg, approvalArg } = React.useMemo(() => {
+        const filtered = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames:steps,
+            callback
+        });
+        const allowanceArg = [account, filtered.contractAddresses.FlexpoolFactory];
+        const approvalArg = [filtered.contractAddresses.FlexpoolFactory, unit];
+        const contributeArg = [unit];
+
+        return { ...filtered, allowanceArg, approvalArg, contributeArg };
+    }, [chainId, unit, account]);
+
+    const { data, refetch  } = useReadContract(
         {
             config,
-            abi: isCelo? allowanceCUSDAbi : allowanceAbi,
-            address: factory.address,
-            args: [account, factory.address],
-            functionName: 'allowance',
+            abi: td[0].abi,
+            address: ca.stablecoin as Address,
+            args: allowanceArg,
+            functionName: td[0].functionName,
         }
     );
+    const allowance : bigint | undefined = data as bigint;
 
     const getTransactions = React.useCallback(() => {
-        let transactions : Transaction[] = [];
-        const approvalTransaction : Transaction =
-            {
-                contractAddress: baseContracts[chainId || 44787],
-                abi: isCelo? approveCUSDAbi : approveAbi,
-                args: [factory.address, unit],
-                functionName: 'approve'
+        const txObjects = td.filter(({functionName}) => functionName !== steps[0]);
+        if(!allowance) refetch();
+        let transactions = txObjects.map((txObject) => {
+            const isApprovalTx = txObject.functionName === steps[1];
+            const transaction : Transaction = {
+                abi: txObject.abi,
+                args: isApprovalTx? approvalArg : contributeArg,
+                contractAddress: txObject.contractAddress as Address,
+                functionName: txObject.functionName as FunctionName,
             };
-        if(allowance && allowance < unit){
-            transactions.push(approvalTransaction);
-        }
-        
-        const contributeTransaction : Transaction = {
-            abi: filterAbi(factory.abi, 'contribute'),
-            contractAddress: factory.address,
-            functionName: 'contribute',
-            args: [unit]
-        };
-
-        transactions.push(contributeTransaction);
+            return transaction;
+        })
+        console.log("transactions", transactions);
+        if(allowance && allowance >= unit){
+            transactions = transactions.filter((tx) => tx.functionName = steps[1]);
+        } 
+        console.log("Popped transactions", transactions);
+    
         return transactions;
     
    }, [unit, allowance]);

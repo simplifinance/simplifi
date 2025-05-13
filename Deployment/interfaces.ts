@@ -4,6 +4,7 @@ import { TransactionReceipt, zeroAddress } from "viem";
 import { getContractData } from "./apis/utils/getContractData";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
 import { BigNumberish } from "ethers";
+import { Transaction } from "./components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -14,7 +15,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
-export type FunctionName = 'createPool' | 'getFinance' | 'deposit' | 'payback' | 'liquidate' | 'editPool' | 'closePool' | 'contribute' | 'registerToEarnPoints' | 'provideLiquidity' | 'removeLiquidity' | 'borrow' | 'claimTestTokens' | 'setBaseToken' | 'setCollateralToken' | 'panicUnlock' | 'unlockToken' | 'lockToken' | 'transferFrom' | 'approve' | 'getCollateralQuote' | ButtonText;
+export type FunctionName = 'createPool'|'getFinance'|'deposit'|'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -27,6 +28,7 @@ export type TrxResult = 'success' | 'reverted';
 export type RenderType = 'Back' | 'Current' | '';
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
+export type ABI = AbiItem[];
 
 export type Contributor = {
   profile: ContributorStruct;
@@ -282,6 +284,7 @@ export interface InputCategoryProp {
 export interface ButtonObj {
   value: FunctionName;
   disable: boolean;
+  component: React.ReactNode;
 }
 
 export interface ContractData {
@@ -346,11 +349,12 @@ export interface BalancesProps {
 }
 
 export interface ActionsButtonProps {
-  getButtonObj: () => {buttonObj: ButtonObj, args: any[]};
-  transactionArgs: HandleTransactionParam;
+  getButtonObj: () => {buttonObj: ButtonObj, };
+  // transactionArgs: HandleTransactionParam;
   confirmationDrawerOn: number;
   setDrawerState: (arg: number) => void
   back?: VoidFunc;
+  getTransactions: () => Transaction[];
 }
 
 export interface SendTransactionResult {
@@ -447,6 +451,20 @@ export type AppState = [
   ProviderResult[], 
   SupportedAsset[]
 ];
+
+type InputsOrOutputs = {
+  "internalType": string,
+  "name": string,
+  "type": string
+};
+
+export type AbiItem = {
+  "inputs": InputsOrOutputs[] | [];
+  "name": string;
+  "outputs": InputsOrOutputs[] | [];
+  "stateMutability": string;
+  "type": string;
+};
 
 
 // MOCK DATA

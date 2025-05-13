@@ -79,7 +79,7 @@ describe("Permissioned: Liquidate", function () {
       const future = BigInt((await time.latest()) + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
 
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
       // const defaulter = await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr);
       const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
       const s3BfLiq = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);

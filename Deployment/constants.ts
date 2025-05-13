@@ -53,6 +53,8 @@ export const displayMessages : Record<string, string> = {
   'panicUnlock': 'Retrieving your token',
 }
 
+export const approvedFunctions : FunctionName[] = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'editPool', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt'];
+
 // We support only USDC and native platform token for now
 export const getSupportedCollateralAsset = (chainId: number) => {
   const { token, wrapped } = getContractData(chainId);

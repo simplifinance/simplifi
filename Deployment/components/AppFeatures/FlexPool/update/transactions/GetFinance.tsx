@@ -1,94 +1,107 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { getContractData } from '@/apis/utils/getContractData';
-import { useAccount, useConfig, useReadContracts } from 'wagmi';
-import { filterAbi, formatAddr } from '@/utilities';
-import { FunctionName, Address } from '@/interfaces';
-import { allowanceAbi, allowanceCUSDAbi, getCollateralQuoteAbi, transferFromAbi, withdrawCUSDAbi } from '@/apis/utils/abis';
-import { baseContracts } from '@/constants';
+import { useAccount, useConfig, useReadContract } from 'wagmi';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import { Address, FunctionName, TransactionCallback } from '@/interfaces';
+import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
-type GetFinanceProps = {
-    isWrappedAsset: boolean;
-    unit: bigint;
-    safe: Address;
-};
+const steps : FunctionName[] = ['getCollateralQuote', 'approve', 'deposit', 'getFinance'];
 
-export default function GetFinance({isWrappedAsset, unit, safe}: GetFinanceProps) {
+export default function GetFinance({ unit, collateralAddress }: GetFinanceProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
-
-    const { chainId, address } = useAccount();
+    
     const config = useConfig();
+    const { chainId, address } = useAccount();
     const account  = formatAddr(address);
-    const { factory, wrapped, token } = getContractData(chainId || 44787);
-    const approvalName : FunctionName = isWrappedAsset? 'deposit' : 'approve';
-    const isCelo = (chainId === 44787 || chainId === 42220);
-    const { data } = useReadContracts(
+    const { setmessage } = useAppStorage();
+
+    const callback : TransactionCallback = (arg) => {
+        if(arg.message) setmessage(arg.message);
+        if(arg.errorMessage) setmessage(arg.errorMessage);
+    };
+
+    const { contractAddresses: ca, transactionData: td, getQuoteArg, isWrappedAsset } = React.useMemo(() => {
+        const filtered = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: steps,
+            callback
+        });
+        const getQuoteArg = [unit];
+        const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
+        return { ...filtered, getQuoteArg, isWrappedAsset};
+    }, [chainId, unit, account]);
+
+    const { data  } = useReadContract(
         {
             config,
-            contracts: [
-                {
-                    abi: getCollateralQuoteAbi,
-                    address: factory.address,
-                    args: [unit],
-                    functionName: 'getCollateralQuote',
-                },
-                {
-                    abi: isCelo? allowanceCUSDAbi : allowanceAbi,
-                    address: factory.address,
-                    args: [safe, account],
-                    functionName: 'allowance',
-                },
-            ]
+            abi: td[0].abi,
+            address: td[0].contractAddress as Address,
+            args: getQuoteArg,
+            functionName: td[0].functionName,
         }
     );
-    const collateral = data?.[0]?.result?.[0];
-    const allowance = data?.[1]?.result;
+    const collateralQuote = data as bigint;
 
     const getTransactions = React.useCallback(() => {
-        let transactions : Transaction[] = [];
-        const approvalTransaction : Transaction 
-            = 
-                isWrappedAsset? 
-                    {
-                        contractAddress: wrapped.address,
-                        abi: filterAbi(wrapped.abi, approvalName),
-                        args: [factory.address],
-                        functionName: approvalName,
-                        value: unit
-                    } 
-                        : 
-                            {
-                                contractAddress: token.address,
-                                abi: filterAbi(token.abi, approvalName),
-                                args: [factory.address, collateral],
-                                functionName: approvalName
-                            };
-        const getFinanceTransaction : Transaction = {
-            abi: filterAbi(factory.abi, 'getFinance'),
-            contractAddress: factory.address,
-            functionName: 'getFinance',
-            args: [unit]
-        };
+        // Remove the first transaction from the list
+        const txObjects = td.filter(({functionName}) => functionName !== steps[0]);
+        
+        const approvalArgs = [ca.FlexpoolFactory, collateralQuote];
+        const depositArgs = [ca.FlexpoolFactory];
+        const getFinanceArgs = [unit];
+        const getArgs = (funcName: FunctionName) => {
+            let result = [];
+            let cAddress = ca.FlexpoolFactory;
+            switch (funcName) {
+                case steps[3]:
+                    result = getFinanceArgs;
+                    break;
+                default:
+                    if(isWrappedAsset) {
+                        cAddress = ca.WrappedNative;
+                        result = depositArgs;
+                    } else {
+                        cAddress = ca.SimpliToken;
+                        result = approvalArgs;
+                    }
+                    break;
+            }
+            return {result, cAddress};
+        }
 
-        const withdrawTransaction : Transaction = {
-            abi: isCelo? withdrawCUSDAbi : transferFromAbi,
-            contractAddress: baseContracts[chainId || 44787],
-            functionName: 'transferFrom',
-            args: [safe, account, allowance]
-        };
+        let transactions = txObjects.map((txObject) => {
+            const { result: args, cAddress} = getArgs(txObject.functionName as FunctionName);
+            const transaction : Transaction = {
+                abi: txObject.abi,
+                args,
+                contractAddress: formatAddr(cAddress),
+                functionName: txObject.functionName as FunctionName,
+            };
+            return transaction;
+        })
+        console.log("transactions", transactions);
 
-        transactions = [approvalTransaction, getFinanceTransaction, withdrawTransaction];
+        transactions = isWrappedAsset? transactions.filter((tx) => tx.functionName = steps[1]) : transactions.filter((tx) => tx.functionName = steps[2]);
+        
+        console.log("Popped transactions", transactions);
+    
         return transactions;
     
-   }, [unit, isWrappedAsset]);
+   }, [unit, collateralQuote, ca, td]);
 
     return(
         <Confirmation 
             openDrawer={openDrawer}
             toggleDrawer={toggleDrawer}
             getTransactions={getTransactions}
-            displayMessage='Request to get finance'
+            displayMessage='Request to getfinance'
         />
     )
 }
+
+type GetFinanceProps = {
+    unit: bigint;
+    collateralAddress: Address;
+};

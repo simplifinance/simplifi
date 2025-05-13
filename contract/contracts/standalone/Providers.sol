@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 import { IFactory, Common } from "../interfaces/IFactory.sol";
 import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from "../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import { Utils } from "../libraries/Utils.sol";
 
 /**
  * @title Providers
@@ -21,6 +22,8 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
  */
 contract Providers is MinimumLiquidity, ReentrancyGuard {
     using ErrorLib for *;
+    using Utils for uint;
+
     event LiquidityProvided(Common.Provider);
     event LiquidityRemoved(Common.Provider);
     event Borrowed(Common.Provider[] providers, address borrower);
@@ -118,8 +121,8 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
     function borrow(uint[] memory providersSlots, uint amount) public whenNotPaused returns(bool) {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
-        Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount); 
         address spender = address(flexpoolFactory);
+        Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount, IFactory(spender).getPool(amount)); 
         _setApprovalFor(baseAsset, spender, amount);
         if(!IFactory(spender).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
 
@@ -136,11 +139,13 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
      */
     function _aggregateLiquidityFromProviders(
         uint[] memory providersSlots, 
-        uint amount
+        uint amount,
+        Common.Pool memory pool
     ) 
         internal 
         returns(Common.Provider[] memory result)
     {
+        uint32 durationInSec = pool.low.duration > 0? pool.low.duration : uint32(72 hours);
         uint amountLeft = amount;
         uint providersSize = providersSlots.length;
         Common.Provider[] memory _providers = new Common.Provider[](providersSize);
@@ -158,8 +163,9 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
                 }
             }
 
-            uint snapshotBal = providers[slot].amount;
-            prov.amount -= snapshotBal; // Record actual amount the provider lends to the borrower
+            uint newBalance = providers[slot].amount;
+            prov.amount -= newBalance; // Record actual amount the provider lends to the borrower
+            prov.accruals = prov.amount.computeInterestsBasedOnDuration(uint16(prov.rate), durationInSec);
             _providers[i] = prov;
             if(amountLeft == 0) break;
         }

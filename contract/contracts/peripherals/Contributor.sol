@@ -7,6 +7,7 @@ import { Slots } from "./Slots.sol" ;
 import { Utils } from "../libraries/Utils.sol";
 import { AwardPoint, IRoleBase, IERC20, ErrorLib, IPoint, ISupportedAsset, ISafeFactory } from "./AwardPoint.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
+// import "hardhat/console.sol";
 
 abstract contract Contributor is Epoches, Slots, AwardPoint {
     using ErrorLib for *;
@@ -238,7 +239,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         _onlyIfUnitIsActive(unit)
         returns(Common.Pool memory pool, uint debt, uint collateral)
     {
-        (debt, pool) = _getCurrentDebt(unit);
+        (debt, pool) = _getCurrentDebt(unit, payer);
         if(debt == 0) 'No debt found'._throw();
         uint slot = _getSlot(pool.addrs.lastPaid, unit).value;
         contributors[pool.big.recordId][slot].loan = 0;
@@ -336,8 +337,6 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         contributors[recordId][slot.value].id = liquidator;
         _setSlot(liquidator, unit, slot, false);
         _setSlot(_defaulter, unit, slot, true);
-        // _defaulter.id = liquidator;
-        // contributors[recordId][slot.value] = _defaulter;
     }
 
     /**
@@ -369,28 +368,25 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     /**
      * Returns the current debt of last paid acount i.e the contributor that last got finance
      * @param unit : Unit contribution
+     * @param currentUser : Account for whom to query debt
      * @notice For every contributor that provide liquidity through providers, they are required to 
      * pay interest in proportion to the providers' rate. Every other contributors in the same pool 
      * will pay interest to the same set of providers but the interest will be halved.
      */
-    function _getCurrentDebt(uint unit) internal view returns (uint256 debt, Common.Pool memory pool) {
+    function _getCurrentDebt(uint unit, address currentUser) internal view returns (uint256 debt, Common.Pool memory pool) {
         pool = _getPool(unit);
-        assert(pool.addrs.lastPaid != address(0));
+        if(currentUser == address(0)) 'Current user is zero'._throw();
         Common.Contributor[] memory profiles = contributors[pool.big.recordId];
         if(profiles.length > 0) {
             for(uint i = 0; i < profiles.length; i++){
                 Common.ContributorReturnValue memory data = _getContributor(profiles[i].id, unit);
-                if(data.profile.id == pool.addrs.lastPaid) {
+                if(data.profile.id == currentUser) {
                     debt += data.profile.loan;
                 }
                 if(data.providers.length > 0) {
                     for(uint j = 0; j < data.providers.length; j++){
                         unchecked { 
-                            Common.Provider memory provider = data.providers[j];
-                            if(_now() > provider.earnStartDate) {
-                                if(data.profile.id == pool.addrs.lastPaid) debt += provider.accruals.intPerSec * (_now() - provider.earnStartDate);
-                                else debt += (provider.accruals.intPerSec / 2) * (_now() - provider.earnStartDate);
-                            }
+                            debt += data.providers[j].accruals.fullInterest;
                         }
                     }
                 }
