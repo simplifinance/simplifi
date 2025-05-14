@@ -23,7 +23,8 @@ export const Permissioned = () => {
 
     // const isLargeScreen = useMediaQuery('(min-width:768px)');
     const { setmessage } = useAppStorage();
-    const account = formatAddr(useAccount().address);
+    const { address, isConnected } = useAccount();
+    const account = formatAddr(address);
     const config = useConfig();
     const toggleDrawer = (arg:number) => setDrawerState(arg);
 
@@ -140,6 +141,7 @@ export const Permissioned = () => {
                 </Button>
             </div>
             <CreatePool 
+                disabled={!isConnected}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 args={args} 

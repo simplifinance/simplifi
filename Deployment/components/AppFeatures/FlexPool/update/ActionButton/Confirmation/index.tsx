@@ -3,43 +3,24 @@ import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
 import Message from "../../../../../utilities/Message";
-import { Address, FunctionName, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
+import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { formatAddr, getAmountToApprove } from "@/utilities";
+import { formatAddr } from "@/utilities";
 import { useAccount, useConfig, useWriteContract } from "wagmi";
-import { getContractData } from "@/apis/utils/getContractData";
-import { zeroAddress } from "viem";
 import { WriteContractErrorType } from "wagmi/actions";
-import { displayMessages } from "@/constants";
-import { transferFromAbi, withdrawCUSDAbi } from "@/apis/utils/abis";
-import { getBaseContract } from "@/apis/update/cUSD/approveToSpendCUSD";
-import assert from "assert";
-import getAllowanceInCUSD from "@/apis/update/cUSD/getAllowanceInCUSD";
-import getAllowance from "@/apis/update/collateralToken/getAllowance";
 
 export const Confirmation : 
-    React.FC<{
-        // transactionArgs: HandleTransactionParam
-        toggleDrawer: (arg: number) => void
-        openDrawer: number,
-        back?: VoidFunc,
-        optionalDisplay?: React.ReactNode,
-        displayMessage?: string,
-        actionButtonText?: string,
-        getTransactions: () => Transaction[]
-    }> = 
-        ({ getTransactions, back, toggleDrawer, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
+    React.FC<ConfirmationProps> = 
+        ({ getTransactions, back, toggleDrawer, lastStepInList, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
 
     const { setmessage, setError, setActivepath, refetch } = useAppStorage();
     const isDark = useTheme().theme === 'dark';
-    const { chainId, address } = useAccount();
+    const { address } = useAccount();
     const account = formatAddr(address);
     const config = useConfig();
-    const transactions = getTransactions();
-    // const { factory, providers, points, faucets, token, attorney } = getContractData(chainId || 44787);
 
     // Reset the messages and error messages in state, and close the drawer when transaction is completed
     const handleCloseDrawer = () => {
@@ -60,142 +41,76 @@ export const Confirmation :
         clearTimeout(10000);
     };
 
-    const { writeContractAsync, } = useWriteContract({
-        config, 
-        mutation: {
-            meta: {},
-            onError: (error, variables) => {
+    // Call this function when transaction successfully completed
+    const onSuccess = (data: Address, variables: any) => {
+        if(variables.functionName === lastStepInList){
+            setmessage(`Completed ${variables.functionName} with hash: ${data.substring(0, 16)}...`);
+            setCompletion(variables.functionName as FunctionName);
+        } else {
+            setmessage(`Completed approval request with: ${data.substring(0, 8)}...`);
+        }
+    };
+
+    
+    const { writeContractAsync: retry} = useWriteContract({
+        config,
+        mutation: { 
+            onSuccess, 
+            onError : (error, variables) => {
                 setError(error.message);
                 setCompletion(variables.functionName as FunctionName);
-            },
-            onSuccess: (data, variables) => {
-                if(variables.functionName === transactions[transactions.length - 1].functionName){
-                    setmessage(`Completed ${variables.functionName} with: ${data.substring(0, 8)}...`);
-                    setCompletion(variables.functionName as FunctionName);
-                } else {
-                    setmessage(`Completed approval request with: ${data.substring(0, 8)}...`);
-                }
             }
         }
     });
 
-    // let isGetFinance = false;
-    // if(tArg !== null){
-    //     isGetFinance = functionName === 'getFinance';
-    // }
+    const onError = async(error: WriteContractErrorType, variables: any) => {
+        if(variables.functionName !== lastStepInList){
+            setError('');
+            setmessage(`${variables.functionName.toLocaleUpperCase()} failed!. Retrying ${lastStepInList}...`);
+            const transactions = getTransactions();
+            const { abi, functionName, args: inArgs, value, requireArgUpdate, refetchArgs, contractAddress,  } = transactions[transactions.length - 1];
+            let args = inArgs;
+            let value_ = value;
+            if(requireArgUpdate) {
+                const result = await refetchArgs?.(functionName);
+                args = result?.args || [];
+                value_ = result?.value;
+            }
+            console.log("argsreeee", args)
+            await retry({
+                abi,
+                functionName,
+                address: contractAddress,
+                account,
+                args,
+                value
+            })
+            setCompletion(variables.functionName as FunctionName);
 
-    // const setConvertible = (arg: Address | string) => setAssetHolding(arg);
-    // const callback : TransactionCallback = (arg) => {
-    //     if(arg.message) setmessage(arg.message);
-    //     if(arg.errorMessage) setError(arg.errorMessage);
-    //     // if(arg.status === 'success') handleCloseDrawer();
-    // }
-    
-    // const { contractAddress, abi } = React.useMemo(() => {
-    //     let abi : any[] = [];
-    //     let contractAddress : Address = zeroAddress;
-    //     // let args : any[] = [];
-    //     switch (functionName) {
-    //         case 'borrow':
-    //             abi = providers.abi.filter((item) => item.name === functionName);
-    //             contractAddress = providers.address;
-    //             // assert(tArg.providersSlots !== undefined, "Provider's slot not given");
-    //             // args.concat([tArg.providersSlots, tArg.commonParam.unit]);
-    //             break;
-    //         case 'claimTestTokens':
-    //             abi = faucets.abi.filter((item) => item.name === functionName);
-    //             contractAddress = faucets.address;
-    //             break;
-    //         case 'closePool':
-    //             abi = factory.abi.filter((item) => item.name === functionName);
-    //             contractAddress = factory.address;
-    //             // args.push(tArg.commonParam.unit);
-    //             break;
-    //         case 'lockToken':
-    //             abi = token.abi.filter((item) => item.name === functionName);
-    //             contractAddress = token.address;
-    //             // assert(tArg.routeTo !== undefined, "Escape address not provided");
-    //             // args.concat([tArg.routeTo, tArg.commonParam.unit]);
-    //             break;
-    //         case 'panicUnlock':
-    //             abi = token.abi.filter((item) => item.name === functionName);
-    //             contractAddress = attorney.address;
-    //             // assert(tArg.lostAccount !== undefined, "Lost address not provided");
-    //             // args.push(tArg.lostAccount);
-    //             break;
-    //         case 'registerToEarnPoints':
-    //             abi = points.abi.filter((item) => item.name === functionName);
-    //             contractAddress = points.address;
-    //             break;
-    //         case 'provideLiquidity':
-    //             abi = providers.abi.filter((item) => item.name === functionName);
-    //             contractAddress = providers.address;
-    //             // assert(tArg.rate !== undefined, "Rate not provided");
-    //             // args.push(tArg.rate);
-    //             break;
-    //         case 'removeLiquidity':
-    //             abi = providers.abi.filter((item) => item.name === functionName);
-    //             contractAddress = providers.address;
-    //             break;
-    //         case 'unlockToken':
-    //             abi = token.abi.filter((item) => item.name === functionName);
-    //             contractAddress = token.address;
-    //             // args.push(tArg.commonParam.unit);
-    //             break;
-    //         case 'setBaseToken':
-    //             abi = faucets.abi.filter((item) => item.name === functionName);
-    //             contractAddress = faucets.address;
-    //             // assert(tArg.contractAddress !== undefined, "Contract address not provided");
-    //             // args.push(tArg.contractAddress);
-    //             break;
-    //         case 'setCollateralToken':
-    //             abi = faucets.abi.filter((item) => item.name === functionName);
-    //             contractAddress = faucets.address;
-    //             // assert(tArg.contractAddress !== undefined, "Contract address not provided");
-    //             // args.push(tArg.contractAddress);
-    //             break;
-    //         default:
-    //             contractAddress = factory.address;
-    //             switch (functionName) {
-    //                 case 'createPool':
-    //                     abi = factory.abi.filter((item) => item.name === functionName);
-    //                     switch (tArg.router) {
-    //                         case 'Permissionless':
-    //                             // const cpa = tArg.createPermissionlessPoolParam;
-    //                             // assert(cpa !== undefined, "CreatePermissionless args not provided");
-    //                             // const contributors = Array.from([formatAddr(address)]);
-    //                             // args.concat([contributors, tArg.commonParam.unit, cpa.quorum, cpa.durationInHours, cpa.colCoverage, true, contractAddress]);
-    //                             break;
-    //                         case 'Permissioned':
-    //                             // const cpp = tArg.createPermissionlessPoolParam;
-    //                             // assert(cpp !== undefined, "CreatePermissioned args not provided");
-    //                             // args.concat([cpa?.contributors, tArg.commonParam.unit, cpp.contributors.length, cpp.durationInHours, cpp.colCoverage, false, contractAddress]);
-    //                             break;
-    //                         default:
-    //                             break;
-    //                     }
-    //                     break;
-    //                 case 'editPool':
-    //                     abi = factory.abi.filter((item) => item.name === functionName);
-    //                     // const cpa = tArg.createPermissionlessPoolParam;
-    //                     // assert(cpa !== undefined, "EditPool: CreatePermissionless args not provided");
-    //                     // args.concat([tArg.commonParam.unit, cpa.quorum, cpa.durationInHours, cpa.colCoverage]);
-    //                     break;
-    //                 default:
-    //                     // args.push(tArg.commonParam.unit);
-    //                     abi = factory.abi.filter((item) => item.name === functionName);
-    //                     break;
-    //             }
-    //             break;
-    //     }
-    //     // console.log("functionName: ", functionName);
-    //     // console.log("Abi: ", abi);
-    //     return {contractAddress, abi};
-    // }, [functionName]);
-    setmessage('');
+        } else {
+            setError(error.message);
+            setCompletion(variables.functionName as FunctionName);
+        }
+    }
+
+    const { writeContractAsync, } = useWriteContract({
+        config, 
+        mutation: { onError, onSuccess }
+    });
+
     const handleSendTransaction = async() => {
-        transactions.forEach(async({abi, value, functionName, contractAddress: address, args}) => {
-             await writeContractAsync({
+        const transactions = getTransactions();
+        console.log("confirmation transactions", transactions);
+        for( let i = 0; i < transactions.length; i++) {
+            const {abi, value, functionName, refetchArgs, requireArgUpdate, contractAddress: address, args: inArgs} = transactions[i];
+            let args = inArgs;
+            let value_ = value;
+            if(requireArgUpdate) {
+                const result = await refetchArgs?.(functionName);
+                args = result?.args || [];
+                value_ = result?.value;
+            }
+            await writeContractAsync({
                 abi,
                 functionName,
                 address,
@@ -203,61 +118,7 @@ export const Confirmation :
                 args,
                 value
             });
-        });
-        // const { runMain, requireApproval, withdrawBase, args: approvalArgs, contractAddress: token, withdrawCollateral, abi: approvalAbi, functionName: approvalFunctionName } = await getAmountToApprove({
-        //     account,
-        //     config,
-        //     factory: factory.address,
-        //     functionName,
-        //     providers: providers.address,
-        //     unit: tArg.commonParam.unit,
-        //     callback,
-        //     collateralContractAddress: tArg.collateralAsset
-        // });
-        // console.log("result.requireApproval", result.requireApproval)
-        // console.log("Result: ", result);
-        // if(requireApproval) {
-        //     callback({message: displayMessages['Approve']});
-        //     await writeContractAsync({
-        //         abi: approvalAbi,
-        //         functionName: approvalFunctionName,
-        //         address: token,
-        //         account,
-        //         args: approvalArgs
-        //     });
-        // }
-
-       
-        // if(runMain) {
-        //     console.log("Main run");
-        //     callback({message: displayMessages[functionName]});
-        // }
-
-        // if(withdrawBase || withdrawCollateral) {
-        //     console.log("two run");
-        //     let owner = tArg.safe;
-        //     const key = withdrawCollateral? 'WithdrawCollateral' : 'WithdrawLoan';
-        //     withdrawCollateral && assert(tArg.collateralAsset !== undefined, "Collateral asset not found");
-        //     const address = formatAddr(withdrawCollateral? tArg.collateralAsset : getBaseContract(chainId || 44787));
-        //     const withdrawLoanAbi = withdrawCollateral? transferFromAbi : withdrawCUSDAbi;
-        //     if(functionName !== 'removeLiquidity'){
-        //         assert(owner !== undefined, 'Safe, allowance not valid');
-        //     } else {
-        //         owner = providers.address;
-        //     }
-        //     const allowance = withdrawBase? (await getAllowanceInCUSD({...tArg.commonParam, owner, spender: account})).allowance : await getAllowance({contractAddress: tArg.collateralAsset, ...tArg.commonParam, owner, spender: account});
-        //     console.log("allowamce", allowance);
-        //     if(allowance > 0n) {
-        //         callback({message: displayMessages[key]});
-        //         await writeContractAsync({
-        //             abi: withdrawLoanAbi,
-        //             functionName: 'transferFrom',
-        //             address,
-        //             account,
-        //             args: [owner, account, allowance]
-        //         });
-        //     }
-        // }
+        }
     }
 
     return (
@@ -283,15 +144,20 @@ export const Confirmation :
 export type Transaction = {
     functionName: FunctionName,
     contractAddress: Address,
-    args: any[],
+    args: any[] | [],
+    requireArgUpdate: boolean;
     abi: any[] | Readonly<any[]>;
     value?: bigint;
+    refetchArgs?: (funcName: FunctionName) => Promise<{args: any[], value: bigint}>;
 };
 
-                // switch (transactionArgs.router) {
-                //     case 'Permissioned':
-                //         break;
-                        
-                //     default:
-                //         break;
-                // }
+export interface ConfirmationProps {
+    toggleDrawer: (arg: number) => void;
+    openDrawer: number;
+    back?: VoidFunc;
+    optionalDisplay?: React.ReactNode;
+    displayMessage?: string;
+    actionButtonText?: string;
+    getTransactions: () => Transaction[];
+    lastStepInList: FunctionName;
+}

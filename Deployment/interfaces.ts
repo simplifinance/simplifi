@@ -15,7 +15,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
-export type FunctionName = 'createPool'|'getFinance'|'deposit'|'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | ButtonText;
+export type FunctionName = 'createPool'|'getFinance'|'deposit'| 'getProviders' | 'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | 'symbol' | 'getFactoryData' | 'getPoints' | 'getSupportedAssets' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -282,9 +282,8 @@ export interface InputCategoryProp {
 }
 
 export interface ButtonObj {
-  value: FunctionName;
+  value: FunctionName[];
   disable: boolean;
-  component: React.ReactNode;
 }
 
 export interface ContractData {

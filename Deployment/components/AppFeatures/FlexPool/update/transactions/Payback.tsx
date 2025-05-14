@@ -4,22 +4,19 @@ import { useAccount, useConfig, useReadContracts } from 'wagmi';
 import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
 import { Address, FunctionName, TransactionCallback } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
+import { zeroAddress } from 'viem';
+import { ActionButton } from '../ActionButton';
 
 const steps : FunctionName[] = ['getCurrentDebt', 'allowance', 'approve', 'payback', 'transferFrom'];
 
-export default function Contribute({ unit, safe, collateralAddress }: PaybackProps) {
+export default function Payback({ unit, safe, collateralAddress, disabled }: PaybackProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
     const config = useConfig();
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
-    const { setmessage } = useAppStorage();
-
-    const callback : TransactionCallback = (arg) => {
-        if(arg.message) setmessage(arg.message);
-        if(arg.errorMessage) setmessage(arg.errorMessage);
-    };
+    const { callback } = useAppStorage();
 
     const { contractAddresses: ca, transactionData: td, allowanceArg, paybackArg, allowanceContract, getDebtArg } = React.useMemo(() => {
         const filtered = filterTransactionData({
@@ -28,8 +25,8 @@ export default function Contribute({ unit, safe, collateralAddress }: PaybackPro
             functionNames: steps,
             callback
         });
-        const allowanceArg = [safe, account];
         const getDebtArg = [unit, account];
+        const allowanceArg = [safe, account];
         const paybackArg = [unit];
         const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
         const allowanceContract = isWrappedAsset? filtered.contractAddresses.WrappedNative as Address : filtered.contractAddresses.SimpliToken as Address;
@@ -37,7 +34,7 @@ export default function Contribute({ unit, safe, collateralAddress }: PaybackPro
         return { ...filtered, allowanceArg, paybackArg, getDebtArg, allowanceContract };
     }, [chainId, unit, account]);
 
-    const { data, refetch  } = useReadContracts(
+    const { refetch  } = useReadContracts(
         {
             config,
             contracts: [
@@ -56,30 +53,41 @@ export default function Contribute({ unit, safe, collateralAddress }: PaybackPro
             ]
         }
     );
-    const debt : bigint | undefined = data?.[0].result as bigint;
-    const allowance : bigint | undefined = data?.[1].result as bigint;
 
     const getTransactions = React.useCallback(() => {
         const txObjects = td.filter(({functionName}) => functionName !== steps[0] && functionName !== steps[1]);
-        if(!debt) refetch();
-        if(!allowance) refetch();
+        const refetchArgs = async(funcName: FunctionName) => {
+            let args : any[] = [];
+            await refetch().then((result) => {
+                const debt = result?.data?.[1].result as bigint;
+                const allowance = result?.data?.[1]?.result as bigint;
+                switch (funcName) {
+                    case 'approve':
+                        args = [ca.FlexpoolFactory, debt];
+                        break;
+                    case 'transferFrom':
+                        args = [safe, account, allowance];
+                        break;
+                    default:
+                        break;
+                }
+                
+            });
+            return {args, value: 0n};
+        };
 
         const getArgs = (txObject: TransactionData) => {
             let args :any[] = [];
-            let contractAddress = txObject.contractAddress 
+            let contractAddress = zeroAddress as string;
             switch (txObject.functionName) {
-                case steps[2]:
-                    args = [ca.FlexpoolFactory, debt];
-                    contractAddress = allowanceContract
-                    break;
-                case steps[3]:
+                case 'payback':
                     args = paybackArg;
                     break;
-                case steps[4]:
-                    args = [safe, account, allowance];
+                case 'transferFrom':
                     contractAddress = allowanceContract
                     break;
                 default:
+                    contractAddress = txObject.contractAddress
                     break;
             }
             return {args, contractAddress: formatAddr(contractAddress)};
@@ -92,26 +100,30 @@ export default function Contribute({ unit, safe, collateralAddress }: PaybackPro
                 args,
                 contractAddress,
                 functionName: txObject.functionName as FunctionName,
+                refetchArgs: txObject.requireArgUpdate? refetchArgs : undefined,
+                requireArgUpdate: txObject.requireArgUpdate
             };
             return transaction;
         })
         console.log("transactions", transactions);
-        if(allowance && allowance >= debt){
-            transactions = transactions.filter((tx) => tx.functionName !== steps[2]);
-        } 
-        console.log("Popped transactions", transactions);
-    
         return transactions;
-    
-   }, [unit, allowance]);
+   }, [unit, ca]);
 
     return(
-        <Confirmation 
-            openDrawer={openDrawer}
-            toggleDrawer={toggleDrawer}
-            getTransactions={getTransactions}
-            displayMessage='Request to contribute to a Flexpool'
-        />
+        <React.Fragment>
+            <ActionButton 
+                disabled={disabled} 
+                toggleDrawer={toggleDrawer}
+                buttonContent='Payback'
+            />
+            <Confirmation 
+                openDrawer={openDrawer}
+                toggleDrawer={toggleDrawer}
+                getTransactions={getTransactions}
+                displayMessage='Request to payback loan'
+                lastStepInList={'transferFrom'}
+            />
+        </React.Fragment>
     )
 }
 
@@ -119,4 +131,5 @@ type PaybackProps = {
     unit: bigint;
     safe: Address;
     collateralAddress: Address;
+    disabled: boolean;
 };

@@ -2,46 +2,43 @@ import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount } from 'wagmi';
 import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { Address, FunctionName } from '@/interfaces';
+import { FunctionName, VoidFunc } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
-const steps : FunctionName[] = ['approve', 'createPool'];
+const steps : FunctionName[] = ['approve', 'provideLiquidity'];
 
-export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optionalDisplay }: CreatePoolProps) {
-    const { chainId, address } = useAccount();
-    const account  = formatAddr(address);
+export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liquidityAmount, openDrawer, toggleDrawer  }: ProvideLiquidityProps) {
+    const { chainId } = useAccount();
     const { callback } = useAppStorage();
-    
     const { contractAddresses: ca, transactionData: td, approvalArg } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: steps,
+            functionNames:steps,
             callback
         });
-        const approvalArg = [filtered.contractAddresses.FlexpoolFactory, unit];
+        const approvalArg = [filtered.contractAddresses.Providers, liquidityAmount];
         return { ...filtered, approvalArg };
-    }, [chainId, unit, account]);
+    }, [chainId, liquidityAmount]);
 
     const getTransactions = React.useCallback(() => {
         const getArgs = (txObject: TransactionData) => {
             let result: any[] = [];
-            let contractAddress = '';
+            let contractAddress = txObject.contractAddress;
             switch (txObject.functionName) {
                 case 'approve':
                     result = approvalArg;
                     contractAddress = ca.stablecoin;
                     break;
                 default:
-                    result = args;
-                    contractAddress = txObject.contractAddress;
+                    result = provideLiquidityArgs;
                     break;
             }
             return {result, contractAddress: formatAddr(contractAddress)};
-        }
+        };
 
         let transactions = td.map((txObject) => {
-            const { contractAddress, result} = getArgs(txObject)
+            const { result, contractAddress } = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args: result,
@@ -53,25 +50,24 @@ export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optio
         })
         return transactions;
     
-   }, [unit, args]);
+   }, [provideLiquidityArgs, td, approvalArg]);
 
     return(
         <Confirmation 
             openDrawer={openDrawer}
             toggleDrawer={toggleDrawer}
             getTransactions={getTransactions}
-            displayMessage='Request to create a Flexpool'
-            optionalDisplay={optionalDisplay}
-            lastStepInList='createPool'
+            displayMessage='Request to provide liquidity'
+            lastStepInList='provideLiquidity'
+            back={back}
         />
     )
 }
 
-type CreatePoolProps = {
-    unit: bigint;
-    args: any[];
-    optionalDisplay?: React.ReactNode;
+type ProvideLiquidityProps = {
+    args: number[];
+    liquidityAmount: bigint;
     openDrawer: number;
-    toggleDrawer: (arg: number) => void;
-    disabled: boolean;
+    toggleDrawer: (arg:number) => void;
+    back?: VoidFunc;
 };

@@ -20,7 +20,7 @@ export default function Message() {
                                         checked
                                         color="warning"
                                     />
-                                    <h1>{ message }</h1>
+                                    <h1 className="max-w-sm overflow-auto">{ message }</h1>
                                 </MotionDivWrap>
                             ))
                         }
@@ -30,7 +30,7 @@ export default function Message() {
                                         checked
                                         color="error"
                                     />
-                                    <h1>{ errorMessage }</h1>
+                                    <h1 className="max-w-sm overflow-auto">{ errorMessage }</h1>
                             </MotionDivWrap>
                         }
                     </MotionDivWrap>

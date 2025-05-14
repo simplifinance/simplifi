@@ -21,7 +21,8 @@ export const Permissionless = () => {
     const [collateralAsset, setCollateralAsset] = React.useState<Address>(zeroAddress);
     const [unitLiquidity, setUnitLiquidity] = React.useState<string>('1');
 
-    const account = formatAddr(useAccount().address);
+    const { isConnected, address} = useAccount();
+    const account = formatAddr(address);
     const toggleDrawer = (arg: number) => setDrawerState(arg);
     
     const onChange = (inputProp: string, tag: InputSelector) => {
@@ -97,6 +98,7 @@ export const Permissionless = () => {
                 </Button>
             </div>
             <CreatePool 
+                disabled={!isConnected}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 args={args} 
@@ -134,16 +136,6 @@ export const Permissionless = () => {
                     />
                 }
             />
-            {/* <Confirmation 
-                functionName={functionName}
-                args={args}
-                openDrawer={openDrawer}
-                toggleDrawer={toggleDrawer}
-                transactionArgs={transactionArgs}
-                displayMessage="Request to launch a public liquidity pool"
-                optionalDisplay={
-                }
-            /> */}
         </Stack>
     );
 }

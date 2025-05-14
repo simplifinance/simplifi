@@ -1,30 +1,19 @@
 import React from "react";
-import { ActionsButtonProps } from "@/interfaces";
-import { Confirmation } from "./Confirmation";
+import { ButtonObj, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 
-export const ActionButton = (props: ActionsButtonProps) => {
-    const { getButtonObj, confirmationDrawerOn, getTransactions, back, setDrawerState } = props;
-    const openDrawer = () => setDrawerState(1);
-    const handleClick = () => openDrawer();
-    const { buttonObj: { disable, value } } = getButtonObj();
-    
+export const ActionButton = (props: {disabled: boolean, buttonContent: string, toggleDrawer: (arg: number) => void}) => {
+    const { disabled, buttonContent, toggleDrawer} = props;
     return(
         <React.Fragment>
             <Button
                 variant={'outline'}
-                disabled={disable}
-                onClick={handleClick}
-                className=" bg-green1/90 text-orange-200 capitalize"
+                disabled={disabled}
+                onClick={() => toggleDrawer(1)}
+                className=" bg-green1/90 text-orange-200 capitalize w-full max-w-sm"
             >
-                { value }
+                { buttonContent }
             </Button>
-            <Confirmation
-                openDrawer={confirmationDrawerOn}
-                toggleDrawer={(arg: number) => setDrawerState(arg)}
-                getTransactions={getTransactions}
-                back={back}
-            />
         </React.Fragment>
     );
 }

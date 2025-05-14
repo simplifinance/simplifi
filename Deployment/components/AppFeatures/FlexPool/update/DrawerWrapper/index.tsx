@@ -5,12 +5,12 @@ import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapp
 import { Address, RekeyParam, FormattedCData, FormattedPoolData, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
 import { formatAddr, } from "@/utilities";
-import LiquidityAndStrategyBalances from "./LiquidityAndSafeBalances";
+// import LiquidityAndStrategyBalances from "./LiquidityAndSafeBalances";
 // import AccessAndCollateralBalances from "./CollateralBalances";
 import CollateralQuote from "./CollateralQuote";
 import { zeroAddress } from "viem";
-import { Button } from "@/components/ui/button";
-import DrawerHeader from "@/components/utilities/DrawerHeader";
+// import { Button } from "@/components/ui/button";
+// import DrawerHeader from "@/components/utilities/DrawerHeader";
 
 const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
 
@@ -81,12 +81,12 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                     </li>
                 </ul>
                 <CollateralQuote unit={unit.big} />
-                <LiquidityAndStrategyBalances
+                {/* <LiquidityAndStrategyBalances
                     safe={safe}
                     collateralAsset={collateralAsset}
                     isPermissionless={isPermissionless}
                     param={rekeyParam}
-                />
+                /> */}
                 {/* <AccessAndCollateralBalances collateralAsset={collateralAsset} safe={safe}/> */}
 
                 <ul className={`${BOXSTYLING} text-xs`}>

@@ -1,27 +1,28 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount, useConfig, useReadContract } from 'wagmi';
-import { filterTransactionData, formatAddr } from '@/utilities';
+import { useAccount, useConfig, useReadContracts } from 'wagmi';
+import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
 import { Address, FunctionName, TransactionCallback } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
+import { ActionButton } from '../ActionButton';
 
-const steps : FunctionName[] = ['getCollateralQuote', 'approve', 'deposit', 'getFinance'];
+const getSteps = (isWrappedAsset: boolean) :FunctionName[] => {
+    const secondStep = isWrappedAsset? 'deposit' : 'approve';
+    return Array.from(['getCollateralQuote', 'allowance', secondStep, 'getFinance', 'transferFrom']);
+}
 
-export default function GetFinance({ unit, collateralAddress }: GetFinanceProps) {
+export default function GetFinance({ unit, collateralAddress, safe, disabled}: GetFinanceProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
     const config = useConfig();
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
-    const { setmessage } = useAppStorage();
+    const { callback } = useAppStorage();
 
-    const callback : TransactionCallback = (arg) => {
-        if(arg.message) setmessage(arg.message);
-        if(arg.errorMessage) setmessage(arg.errorMessage);
-    };
-
-    const { contractAddresses: ca, transactionData: td, getQuoteArg, isWrappedAsset } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, getQuoteArg, getFinanceArgs, steps, allowanceArg, isWrappedAsset } = React.useMemo(() => {
+        const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative.toLowerCase();
+        const steps = getSteps(isWrappedAsset);
         const filtered = filterTransactionData({
             chainId,
             filter: true,
@@ -29,79 +30,126 @@ export default function GetFinance({ unit, collateralAddress }: GetFinanceProps)
             callback
         });
         const getQuoteArg = [unit];
-        const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
-        return { ...filtered, getQuoteArg, isWrappedAsset};
+        const getFinanceArgs = [unit];
+        const allowanceArg = [safe, account];
+        return { ...filtered, getQuoteArg, isWrappedAsset, getFinanceArgs, steps, allowanceArg};
     }, [chainId, unit, account]);
 
-    const { data  } = useReadContract(
+    const { data, refetch } = useReadContracts(
         {
             config,
-            abi: td[0].abi,
-            address: td[0].contractAddress as Address,
-            args: getQuoteArg,
-            functionName: td[0].functionName,
+            contracts: [
+                {
+                    abi: td[0].abi,
+                    address: td[0].contractAddress as Address,
+                    args: getQuoteArg,
+                    functionName: td[0].functionName,
+                },
+                {
+                    abi: td[1].abi,
+                    address: ca.stablecoin as Address,
+                    args: allowanceArg,
+                    functionName: td[1].functionName,
+                },
+            ]
         }
     );
-    const collateralQuote = data as bigint;
 
     const getTransactions = React.useCallback(() => {
-        // Remove the first transaction from the list
-        const txObjects = td.filter(({functionName}) => functionName !== steps[0]);
-        
-        const approvalArgs = [ca.FlexpoolFactory, collateralQuote];
+        // Remove unnecessary transactions from the list
+        const txObjects = td.filter(({functionName}) => functionName !== 'getCollateralQuote' && functionName !== 'allowance');
+        const refetchArgs = async(funcName: FunctionName) => {
+            let args : any[] = [];
+            let value : bigint = 0n;
+            await refetch().then((result) => {
+                const collateralQuote = result?.data?.[0].result as bigint;
+                const allowance = result?.data?.[1]?.result as bigint;
+                switch (funcName) {
+                    case 'approve':
+                        console.log("collateralQuote", collateralQuote)
+                        args = [ca.FlexpoolFactory, collateralQuote];
+                        break;
+                    case 'deposit':
+                        args = [ca.FlexpoolFactory];
+                        value = collateralQuote;
+                        break;
+                    case 'transferFrom':
+                        console.log("allowance", allowance)
+                        args = [safe, account, allowance];
+                        break;
+                    default:
+                        break;
+                }
+                
+            });
+            return {args, value};
+        };
+
+        // const approvalArgs = [ca.FlexpoolFactory, collateralQuote];
         const depositArgs = [ca.FlexpoolFactory];
-        const getFinanceArgs = [unit];
-        const getArgs = (funcName: FunctionName) => {
-            let result = [];
-            let cAddress = ca.FlexpoolFactory;
-            switch (funcName) {
-                case steps[3]:
-                    result = getFinanceArgs;
+        const getArgs = (functionName: FunctionName) => {
+            let args : any[] = [];
+            let cAddress = '';
+            let value = 0n;
+            switch (functionName) {
+                case 'getFinance':
+                    args = getFinanceArgs;
+                    cAddress = ca.FlexpoolFactory;
+                    break;
+                case 'deposit':
+                    args = depositArgs;
+                    value = data?.[0]?.result as bigint;
+                    cAddress = ca.WrappedNative;
+                    break;
+                case 'approve':
+                    args = [];
+                    cAddress = ca.SimpliToken;
                     break;
                 default:
-                    if(isWrappedAsset) {
-                        cAddress = ca.WrappedNative;
-                        result = depositArgs;
-                    } else {
-                        cAddress = ca.SimpliToken;
-                        result = approvalArgs;
-                    }
                     break;
             }
-            return {result, cAddress};
+            return {args, cAddress, value};
         }
 
         let transactions = txObjects.map((txObject) => {
-            const { result: args, cAddress} = getArgs(txObject.functionName as FunctionName);
+            const { args, cAddress, value} = getArgs(txObject.functionName as FunctionName);
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args,
                 contractAddress: formatAddr(cAddress),
                 functionName: txObject.functionName as FunctionName,
+                refetchArgs: txObject.requireArgUpdate? refetchArgs : undefined,
+                requireArgUpdate: txObject.requireArgUpdate,
+                value
             };
             return transaction;
         })
         console.log("transactions", transactions);
 
-        transactions = isWrappedAsset? transactions.filter((tx) => tx.functionName = steps[1]) : transactions.filter((tx) => tx.functionName = steps[2]);
-        
-        console.log("Popped transactions", transactions);
-    
         return transactions;
-    
-   }, [unit, collateralQuote, ca, td]);
+   }, [unit, ca, td]);
 
     return(
-        <Confirmation 
-            openDrawer={openDrawer}
-            toggleDrawer={toggleDrawer}
-            getTransactions={getTransactions}
-            displayMessage='Request to getfinance'
-        />
+        <React.Fragment>
+            <ActionButton 
+                disabled={disabled} 
+                toggleDrawer={toggleDrawer}
+                buttonContent='GetFinance'
+            />
+            <Confirmation 
+                openDrawer={openDrawer}
+                toggleDrawer={toggleDrawer}
+                getTransactions={getTransactions}
+                displayMessage='Request to Getfinance'
+                lastStepInList={'transferFrom'}
+            />
+        </React.Fragment>
     )
 }
 
 type GetFinanceProps = {
     unit: bigint;
     collateralAddress: Address;
+    safe: Address;
+    disabled: boolean;
 };

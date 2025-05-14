@@ -1,17 +1,9 @@
 import React from "react";
-import { 
-    type ButtonObj, 
-    type Address, 
-    type ReadDataReturnValue, 
-    type FormattedCData, 
-    type HandleTransactionParam, 
-    type CommonParam,
-    formattedMockData, 
-} from "@/interfaces";
+
+import { type ButtonObj, type Address, type ReadDataReturnValue, type FormattedCData, formattedMockData } from "@/interfaces";
 import { formatAddr, formatPoolData } from "@/utilities";
 import { flexCenter, flexSpread, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
-import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
@@ -19,6 +11,10 @@ import { getContractData } from "@/apis/utils/getContractData";
 import BigNumber from "bignumber.js";
 import { Button } from "@/components/ui/button";
 import Contribute from "../transactions/Contribute";
+import ClosePool from "../transactions/ClosePool";
+import GetFinance from "../transactions/GetFinance";
+import Payback from "../transactions/Payback";
+import EditPool from "../transactions/EditPool";
 
 /**
  * Filter the data list for current user
@@ -43,7 +39,6 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
-    // const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'contribute', disable: false});
 
     const account = formatAddr(useAccount().address);
     const config = useConfig();
@@ -65,69 +60,91 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     } = formattedPoolData;
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
-    const commonParam : CommonParam = { config, account, unit: unit.big, }
-    const transactionArgs: HandleTransactionParam = {
-        commonParam,
-        collateralAsset: colAsset,
-        safe
-    };
 
-    const getButtonObj = React.useCallback(() => {
-        let buttonObj : ButtonObj = {value: 'contribute', disable: false, component: null};
-        let args : any[] = [unit.big];
+    // A function that when called, renders the action components with packed transactions
+    const renderAction = React.useCallback((buttonObject: ButtonObj) => {
+        const { value, disable } = buttonObject;
+        return value.map((functionName) => {
+            let component : React.ReactNode = <></>;
+            switch (functionName) {
+                case 'closePool':
+                    component = <ClosePool unit={unit.big} safe={safe} disabled={disable} />;
+                    break;
+                case 'contribute':
+                    component = <Contribute unit={unit.big} disabled={disable}/>;
+                    break;
+                case 'getFinance':
+                    component = <GetFinance collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={disable}/>;
+                    break;
+                case 'payback':
+                    component = <Payback collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={disable}/>;
+                    break;
+                case 'editPool':
+                    component = <EditPool unit={unit.big} args={[]} disabled={disable}/>;
+                    break;
+    
+                default:
+                    break;
+            }
+            return component;
+        })
+    }, []);
+
+    const buttonObj = React.useMemo(() => {
+        let result : ButtonObj = {value: ['contribute'], disable: false};
         switch (stage.toNum) {
             case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
                         if(userCount === 1) {
-                            buttonObj = {value: 'closePool', disable: false};
+                            result = {value: ['closePool', 'editPool'], disable: false};
                         } else {
-                            buttonObj = {value: 'Wait', disable: true};
+                            result = {value: ['Wait'], disable: true};
                         }
                     } else {
                         if(isMember && sentQuota){
-                            buttonObj = {value: 'Wait', disable: true};
+                            result = {value: ['Wait'], disable: true};
                         } else {
-                            buttonObj = {value: 'contribute', disable: false, component: <Contribute unit={unit.big} />};
+                            result = {value: ['contribute'], disable: false};
                         }
                     }
                 } else {
                     if(isAdmin) {
                         if(currentPool.big === unit.big){
-                            buttonObj = {value: 'closePool', disable: false};
+                            result = {value: ['closePool', 'editPool'], disable: false};
                         } else {
-                            buttonObj = {value: 'Wait', disable: true};
+                            result = {value: ['Wait'], disable: true};
                         }
                     } else if(isMember && !sentQuota){
-                        buttonObj = {value: 'contribute', disable: false, component: <Contribute unit={unit.big} />};
+                        result = {value: ['contribute'], disable: false};
                     } else if(isMember && sentQuota){
-                        buttonObj = {value: 'Wait', disable: true};
+                        result = {value: ['Wait'], disable: true};
                     } else {
-                        buttonObj = {value: 'Not Allowed', disable: true};
+                        result = {value: ['Not Allowed'], disable: true};
                     }
                 }
                 break;
     
             case Stage.GET:
                 if(isMember) {
-                    buttonObj = {value: 'getFinance', disable: false};
-                } else buttonObj = { value: 'Not Allowed', disable: true};
+                    result = {value: ['getFinance'], disable: false};
+                } else result = { value: ['Not Allowed'], disable: true};
                 break;
             
             case Stage.PAYBACK:
                 if(isMember){
-                    if(loan.inBN.gt(BigNumber(0))) buttonObj = {value : 'payback', disable: false};
-                    else buttonObj = { value: 'Not Allowed', disable: true};
+                    if(loan.inBN.gt(BigNumber(0))) result = {value : ['payback'], disable: false};
+                    else result = { value: ['Not Allowed'], disable: true};
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTime.inSec) buttonObj = { value: 'liquidate', disable: false};
-                    else buttonObj = { value: 'Not Allowed', disable: true};
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) result = { value: ['liquidate'], disable: false};
+                    else result = { value: ['Not Allowed'], disable: true};
                 }
                 break;
             default:
-                buttonObj = { value: 'Ended', disable: true};
+                result = { value: ['Ended'], disable: true};
                 break;
         } 
-        return { buttonObj, args};
+        return result;
     }, [props]);
 
     return(
@@ -185,12 +202,13 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     >
                         Info
                     </Button>
-                    <ActionButton
-                        getButtonObj={getButtonObj}
-                        getTransactions={getTransactions}
-                        setDrawerState={(arg:number) => setDrawerState(arg)}
-                        confirmationDrawerOn={confirmationDrawerOn}
-                    />
+                    <div className={`${flexSpread}`}>
+                        {
+                            renderAction(buttonObj).map((component, index) => (
+                                <React.Fragment key={index}>{component}</React.Fragment>
+                            ))
+                        }
+                    </div>
                 </div>
             </div>
             <PermissionPopUp
@@ -217,12 +235,13 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         popUpDrawer={infoDrawer}
                         toggleDrawer={(arg) => setShowInfo(arg)}
                         actions={
-                            <ActionButton 
-                                getButtonObj={getButtonObj}
-                                getTransactions={getTransactions}
-                                setDrawerState={(arg:number) => setDrawerState(arg)}
-                                confirmationDrawerOn={confirmationDrawerOn}
-                            />
+                            <div className={`${flexSpread}`}>
+                                {
+                                    renderAction(buttonObj).map((component, index) => (
+                                        <React.Fragment key={index}>{component}</React.Fragment>
+                                    ))
+                                }
+                            </div>
                         } 
                     />
             }

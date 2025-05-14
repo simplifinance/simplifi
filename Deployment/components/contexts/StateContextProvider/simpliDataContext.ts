@@ -1,4 +1,4 @@
-import type { Analytics, Path, PointsReturnValue, ProviderResult, SupportedAsset, VoidFunc } from "@/interfaces";
+import type { Analytics, Path, PointsReturnValue, ProviderResult, SupportedAsset, TransactionCallback, VoidFunc } from "@/interfaces";
 import { QueryObserverResult, RefetchOptions } from "@tanstack/react-query";
 
 export interface DataContextProps {
@@ -28,4 +28,5 @@ export interface DataContextProps {
     providers: ProviderResult[];
     supportedAssets: SupportedAsset[];
     refetch: (options?: RefetchOptions) => Promise<QueryObserverResult>;
+    callback: TransactionCallback;
 }

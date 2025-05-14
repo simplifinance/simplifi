@@ -83,7 +83,10 @@ abstract contract ERC20Manager is SafeGetter {
     function _setApprovalFor(IERC20 asset, address spender, uint value) internal {
         assert(spender != address(0));
         assert(address(asset) != address(0));
-        if(!IERC20(asset).approve(spender, value)) 'Approval Failed'._throw();
+        uint prevAllowance = IERC20(asset).allowance(address(this), spender);
+        unchecked {
+            if(!IERC20(asset).approve(spender, value + prevAllowance)) 'Approval Failed'._throw();
+        }
     }
 
 }

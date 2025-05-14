@@ -24,6 +24,7 @@ import { formatEther, zeroAddress } from "viem";
 import getAllowanceInCUSD from "./apis/update/cUSD/getAllowanceInCUSD";
 import { approveAbi, approveCUSDAbi } from "./apis/utils/abis";
 import rawData from "@/contractsData.json";
+import assert from "assert";
 
 export type TransactionData = {
   contractAddress: string;
@@ -31,11 +32,12 @@ export type TransactionData = {
   inputs: string[];
   functionName: string;
   abi: ABI;
+  requireArgUpdate: boolean;
 };
 
 export type FilterTransactionDataProps = {
   chainId: number | undefined;
-  functionNames: FunctionName[];
+  functionNames?: FunctionName[];
   callback?: TransactionCallback;
   filter: boolean;
 }
@@ -131,6 +133,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
   const isCelo = chainId === chainIds[0];
 
   if(filter) {
+    assert(functionNames !== undefined, "FunctionNames not provided");
     functionNames.forEach((functionName) => {
       if(!approvedFunctions.includes(functionName)) {
         const errorMessage = `Operation ${functionName} is not supported`;
