@@ -248,3 +248,56 @@ func.tags = ["RoleBase", "SupportedAssetManager", "SimpliToken", "Reserve", "Pri
 
 // 0xd07294e6E917e07dfDcee882dd1e2565085C2ae0  chainlink token on Celo mainet
 // 0x32E08557B14FaD8908025619797221281D439071  chainlink token on Celo ALfajores
+//  Band Alfajores 0x3d00deA966314E47aC3D4ACd2f00121351Cec1C5 
+// Band Mainnet  0xDA7a001b254CD22e46d3eAB04d937489c93174C3
+
+
+
+// pragma solidity ^0.8.0;
+ 
+// import "@pythnetwork/pyth-sdk-solidity/IPyth.sol";
+// import "@pythnetwork/pyth-sdk-solidity/PythStructs.sol";
+ 
+// contract SomeContract {
+//   IPyth pyth;
+ 
+//   /**
+//    * @param pythContract The address of the Pyth contract
+//    */
+//   constructor(address pythContract) {
+//     // The IPyth interface from pyth-sdk-solidity provides the methods to interact with the Pyth contract.
+//     // Instantiate it with the Pyth contract address from https://docs.pyth.network/price-feeds/contract-addresses/evm
+//     pyth = IPyth(pythContract);
+//   }
+ 
+//   /**
+//      * This method is an example of how to interact with the Pyth contract.
+//      * Fetch the priceUpdate from Hermes and pass it to the Pyth contract to update the prices.
+//      * Add the priceUpdate argument to any method on your contract that needs to read the Pyth price.
+//      * See https://docs.pyth.network/price-feeds/fetch-price-updates for more information on how to fetch the priceUpdate.
+ 
+//      * @param priceUpdate The encoded data to update the contract with the latest price
+//      */
+//   function exampleMethod(bytes[] calldata priceUpdate) public payable {
+//     // Submit a priceUpdate to the Pyth contract to update the on-chain price.
+//     // Updating the price requires paying the fee returned by getUpdateFee.
+//     // WARNING: These lines are required to ensure the getPriceNoOlderThan call below succeeds. If you remove them, transactions may fail with "0x19abf40e" error.
+//     uint fee = pyth.getUpdateFee(priceUpdate);
+//     pyth.updatePriceFeeds{ value: fee }(priceUpdate);
+ 
+//     // Read the current price from a price feed if it is less than 60 seconds old.
+//     // Each price feed (e.g., ETH/USD) is identified by a price feed ID.
+//     // The complete list of feed IDs is available at https://pyth.network/developers/price-feed-ids
+//     bytes32 priceFeedId = 0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace; // ETH/USD
+//     PythStructs.Price memory price = pyth.getPriceNoOlderThan(priceFeedId, 60);
+//   }
+// }
+ 
+
+
+// Pyth network ids
+// 0x7d669ddcdd23d9ef1fa9a9cc022ba055ec900e91c4cb960f3c20429d4447a411  Crypto.CELO/USD
+// 0x8f218655050a1476b780185e89f19d2b1e1f49e9bd629efad6ac547a946bf6ab Crypto.CUSD/USD
+// oracle addreses
+// 0xff1a0f4744e8582DF1aE09D5611b887B6a12925C celo mainnet
+// Celo Alfajores (testnet)	0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E

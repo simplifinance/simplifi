@@ -1,0 +1,5427 @@
+{
+  "stateUpdateSteps": [
+    "symbol",
+    "getFactoryData",
+    "getPoints",
+    "getProviders"
+  ],
+  "transactionSteps": [
+    "createPool",
+    "getFinance",
+    "payback",
+    "liquidate",
+    "editPool",
+    "closePool",
+    "contribute",
+    "registerToEarnPoints",
+    "provideLiquidity",
+    "removeLiquidity",
+    "borrow",
+    "claimTestTokens",
+    "setBaseToken",
+    "setCollateralToken",
+    "panicUnlock",
+    "unlockToken",
+    "lockToken",
+    "getProviders",
+    "symbol",
+    "getFactoryData",
+    "getPoints"
+  ],
+  "chainName": {
+    "4157": "crossTest",
+    "44787": "alfajores"
+  },
+  "chainIds": [
+    44787,
+    4157
+  ],
+  "data": [
+    [
+      {
+        "stateUpdate": [
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [
+              "0xc773CE4EFfbf902A5e5807186F7d6f60A2729b3e"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [
+              "0xBEfE9A70f4AE058C445EC0A06269aB4aa4356b9F"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [
+              "0xD4C7C2B8B5FE35A8900461b7C3A6fD5864696aFA"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          }
+        ],
+        "transaction": [
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [
+              "0x523C9B67F3Dd1C271Ed7D3dfF7DE08538f82A11B"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [
+              "0x8A4AD5c647c7365BB696a6F6dCA1E598dB981db7"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [
+              "0x8A4AD5c647c7365BB696a6F6dCA1E598dB981db7"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [
+              "0x8A4AD5c647c7365BB696a6F6dCA1E598dB981db7"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [
+              "0xBEfE9A70f4AE058C445EC0A06269aB4aa4356b9F"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [
+              "0xD4C7C2B8B5FE35A8900461b7C3A6fD5864696aFA"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+              "0xD4C7C2B8B5FE35A8900461b7C3A6fD5864696aFA"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0xD4C7C2B8B5FE35A8900461b7C3A6fD5864696aFA",
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B",
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B",
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [
+              "0xFc9685ecaf3063002E97595A5Fe0D037a9d8A75B"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          }
+        ]
+      }
+    ],
+    [
+      {
+        "stateUpdate": [
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [
+              "0x6Ca245fe5254D8ca13A8676CEDb70500e896C586"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [
+              "0xD3EEF29dD82B156Be2999D546420693914e4663e"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [
+              "0x715aAdf03272823c39c0ca5664C7a468CFbeCBEB"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "symbol",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "symbol"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFactoryData",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getFactoryData"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getProviders",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "getProviders"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          }
+        ],
+        "transaction": [
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [
+              "0x009C0585E4456Cc54821332867CAab9fF660aE22"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [
+              "0x29c033bd42E4D631A08a479c86669a355fFBf154"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [
+              "0x29c033bd42E4D631A08a479c86669a355fFBf154"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [
+              "0x29c033bd42E4D631A08a479c86669a355fFBf154"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [
+              "0xD3EEF29dD82B156Be2999D546420693914e4663e"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [
+              "0x715aAdf03272823c39c0ca5664C7a468CFbeCBEB"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000",
+              "0x715aAdf03272823c39c0ca5664C7a468CFbeCBEB"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x715aAdf03272823c39c0ca5664C7a468CFbeCBEB",
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410",
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410",
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000",
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000",
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000",
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000",
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [
+              "0xEA9E8754D1C459104B227A42A86982b8d3c86410"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "createPool",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "createPool"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "getFinance",
+            "readSteps": [
+              "allowance",
+              "getCollateralQuote",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "getFinance",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "contribute",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "contribute"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "editPool",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "editPool"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "borrow",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "borrow"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "payback",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "payback",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "liquidate",
+            "readSteps": [
+              "getCurrentDebt",
+              "allowance",
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "liquidate",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              true,
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "provideLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "approve",
+              "provideLiquidity"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "removeLiquidity",
+            "readSteps": [
+              "allowance"
+            ],
+            "readStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "transactionSteps": [
+              "removeLiquidity",
+              "transferFrom"
+            ],
+            "transactionStepsContract": [
+              "0x0000000000000000000000000000000000000000"
+            ],
+            "trxStepsRequireArgUpdate": [
+              false,
+              true
+            ],
+            "abis": []
+          },
+          {
+            "main": "registerToEarnPoints",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "registerToEarnPoints"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "lockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "lockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "unlockToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "unlockToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "claimTestToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "claimTestToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "panicUnlock",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "panicUnlock"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setBaseToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setBaseToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          },
+          {
+            "main": "setCollateralToken",
+            "readSteps": [],
+            "readStepsContract": [],
+            "transactionSteps": [
+              "setCollateralToken"
+            ],
+            "transactionStepsContract": [],
+            "trxStepsRequireArgUpdate": [
+              false
+            ],
+            "abis": []
+          }
+        ]
+      }
+    ]
+  ],
+  "paths": {
+    "4157": [
+      "deployments\\crossTest\\Attorney.json",
+      "deployments\\crossTest\\Faucet.json",
+      "deployments\\crossTest\\FlexpoolFactory.json",
+      "deployments\\crossTest\\Points.json",
+      "deployments\\crossTest\\Providers.json",
+      "deployments\\crossTest\\SimpliToken.json",
+      "deployments\\crossTest\\TokenDistributor.json",
+      "deployments\\crossTest\\WrappedNative.json"
+    ],
+    "44787": [
+      "deployments\\alfajores\\Attorney.json",
+      "deployments\\alfajores\\Faucet.json",
+      "deployments\\alfajores\\FlexpoolFactory.json",
+      "deployments\\alfajores\\Points.json",
+      "deployments\\alfajores\\Providers.json",
+      "deployments\\alfajores\\SimpliToken.json",
+      "deployments\\alfajores\\TokenDistributor.json",
+      "deployments\\alfajores\\WrappedNative.json"
+    ]
+  },
+  "contracts": [
+    {
+      "Stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+    },
+    {
+      "Stablecoin": "0x0000000000000000000000000000000000000000"
+    }
+  ]
+}

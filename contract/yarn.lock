@@ -1364,6 +1364,11 @@
     proper-lockfile "^4.1.1"
     solidity-ast "^0.4.60"
 
+"@pythnetwork/pyth-sdk-solidity@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@pythnetwork/pyth-sdk-solidity/-/pyth-sdk-solidity-4.1.0.tgz#03ac0f31c976aef2cdbd88ef5e1b5947c767cb84"
+  integrity sha512-SPqaWH1fKwYbdTsyTLGuSqCYDEEgCXw0SFW0KaOFRgzcGYcdZY/DYWhedCzFNb9lY/1RTk+ucgTtxO5e3Z1fIg==
+
 "@scroll-tech/contracts@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@scroll-tech/contracts/-/contracts-0.1.0.tgz#ccea8db1b3df7d740e4b7843ac01b5bd25b4438b"
