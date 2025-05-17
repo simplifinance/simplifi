@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "../OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../OnlyRoleBase.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
 import { Lib } from "./ERC20Abstract.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
@@ -17,7 +17,7 @@ abstract contract TokenInteractor is OnlyRoleBase {
     revert("NA");
   } 
 
-  constructor(IRoleBase _roleManager) OnlyRoleBase(_roleManager) { }
+  constructor(address _roleManager) OnlyRoleBase(_roleManager) { }
 
   function setToken(IERC20 newToken) public onlyRoleBearer {
     address(newToken).cannotBeEmptyAddress();

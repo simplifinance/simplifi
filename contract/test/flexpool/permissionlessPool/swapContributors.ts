@@ -60,11 +60,12 @@ describe("Permissionless: Swap contributors", function () {
        * Revert. 
       */
       const quoted1 = await flexpool.connect(signer1).getCollateralQuote(create.pool.pool.big.unit);
+      console.log("quoted1",quoted1)
       await expect(getFinance({
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer3],
-        colQuote: quoted1[0],
+        colQuote: quoted1,
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
@@ -91,7 +92,7 @@ describe("Permissionless: Swap contributors", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer3],
-        colQuote: quoted[0],
+        colQuote: quoted,
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
@@ -152,7 +153,7 @@ describe("Permissionless: Swap contributors", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quoted_2[0],
+        colQuote: quoted_2,
         collateral: collateralAsset,
         deployer,
         asset: baseAsset

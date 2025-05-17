@@ -5,12 +5,20 @@ pragma solidity 0.8.24;
 import { Epoches, Common } from "./Epoches.sol";
 import { Slots } from "./Slots.sol" ;
 import { Utils } from "../libraries/Utils.sol";
-import { AwardPoint, IRoleBase, IERC20, ErrorLib, IPoint, ISupportedAsset, ISafeFactory } from "./AwardPoint.sol";
+import { AwardPoint } from "./AwardPoint.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
 // import "hardhat/console.sol";
 
+/**
+ * ERROR CODE
+ * ==========
+ * 9 -  Not member
+ * 10 - Not allowed
+ * 11 - No debt
+ * 12 - No User
+ */
 abstract contract Contributor is Epoches, Slots, AwardPoint {
-    using ErrorLib for *;
     using Utils for *;
 
     /**
@@ -27,34 +35,17 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     mapping(uint96 => mapping(address => Common.Provider[])) private unitProviders;
 
     // ============= constructor ============
-    constructor(
-        ISupportedAsset _assetManager, 
-        IRoleBase _roleManager,
-        IERC20 _baseAsset,
-        IPoint _pointFactory,
-        ISafeFactory _safeFactory
-    ) 
-       AwardPoint(_roleManager, _pointFactory, _baseAsset, _assetManager, _safeFactory)
-    {}
+    constructor(address _stateManager, address _roleManager) 
+       AwardPoint(_stateManager, _roleManager)
+    {} 
 
     /**
      * @dev Only contributor in a pool is allowed
      * @param target : Target
      * @param unit : Unit Contribution
     */
-    function _onlyContributor(address target, uint256 unit, bool pass) internal view {
-        if(!pass){
-            if(!_getSlot(target, unit).isMember) 'Not a member'._throw();
-        }
-    }
-
-    /**
-     * @dev Only Non contributor in a pool is allowed
-     * @param target : Target
-     * @param unit : Unit Contribution
-     */
-    function _onlyNonContributor(address target, uint256 unit) internal view {
-        if(_getSlot(target, unit).isMember) 'Member not allowed'._throw();
+    function _checkStatus(address target, uint256 unit, bool value) internal view {
+        value? require(_getSlot(target, unit).isMember, '9') : require(!_getSlot(target, unit).isMember, '10');
     }
 
     /**
@@ -186,7 +177,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         internal
         returns(Common.Contributor memory actualData) 
     {
-        _onlyContributor(actual, unit, false);
+        _checkStatus(actual, unit, true);
         uint96 recordId = _getRecordId(unit);
         Common.Slot memory actualSlot = _getSlot(actual, unit);
         actualData = _getContributor(actual, unit).profile;
@@ -236,11 +227,11 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
         address defaulter
     ) 
         internal
-        _onlyIfUnitIsActive(unit)
+        _checkUnitStatus(unit, true)
         returns(Common.Pool memory pool, uint debt, uint collateral)
     {
         (debt, pool) = _getCurrentDebt(unit, payer);
-        if(debt == 0) 'No debt found'._throw();
+        require(debt > 0, '11');
         uint slot = _getSlot(pool.addrs.lastPaid, unit).value;
         contributors[pool.big.recordId][slot].loan = 0;
         contributors[pool.big.recordId][slot].colBals = 0;
@@ -257,8 +248,9 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
             }
             _setPool(pool.big.unitId, pool);
         }
-        uint attestedInitialBal = IERC20(baseAsset).balanceOf(pool.addrs.safe);
-        _checkAndWithdrawAllowance(IERC20(baseAsset), payer, pool.addrs.safe, debt);
+        IERC20 baseAsset = _getVariables().baseAsset;
+        uint attestedInitialBal = baseAsset.balanceOf(pool.addrs.safe);
+        _checkAndWithdrawAllowance(baseAsset, payer, pool.addrs.safe, debt);
         collateral = ISafe(pool.addrs.safe).payback(
             Common.Payback_Safe(payer, baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.recordId], isSwapped, defaulter, pool.big.recordId, pool.addrs.colAsset),
             unit
@@ -266,27 +258,27 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     }
 
 
-    /**
-     * @dev Return past pools using unitId. 
-     * @notice The correct unitId must be parsed. 
-     * @param recordId: Record Id
-     * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
-     * associated with the current pool will return empty pool but may not return empty contributors.
-     */
-    function getPoolRecord(uint96 recordId) public view returns(Common.ReadPoolDataReturnValue memory result) {
-        result = _getPoolData(_getPastPool(recordId));
-        return result;
-    }
+    // /**
+    //  * @dev Return past pools using unitId. 
+    //  * @notice The correct unitId must be parsed. 
+    //  * @param recordId: Record Id
+    //  * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
+    //  * associated with the current pool will return empty pool but may not return empty contributors.
+    //  */
+    // function getPoolRecord(uint96 recordId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+    //     result = _getPoolData(_getPastPool(recordId));
+    //     return result;
+    // }
 
-    /**
-     * @dev Return past pools using unitId. 
-     * @notice For every unit contribution, the unit Id is unique to another and does not change
-     * @param unitId: UnitId 
-    */
-    function getPoolData(uint96 unitId) public view returns(Common.ReadPoolDataReturnValue memory result) {
-        result = _getPoolData(_getPoolWithUnitId(unitId));
-        return result;
-    }
+    // /**
+    //  * @dev Return past pools with its contributors using unitId. 
+    //  * @notice For every unit contribution, the unit Id is unique to another and does not change
+    //  * @param unitId: UnitId 
+    // */
+    // function getPoolData(uint96 unitId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+    //     result = _getPoolData(_getPoolWithUnitId(unitId));
+    //     return result;
+    // }
 
     function _getPoolData(Common.Pool memory pool) internal view returns(Common.ReadPoolDataReturnValue memory result) {
         result.pool = pool;
@@ -303,30 +295,30 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     }
 
     
-    /**
-     * @dev Get pool from storage
-     * @param unit : Unit contribution
-     */
-    function isPoolAvailable(uint256 unit) public view returns(bool) {
-        return _getPool(unit).status == Common.Status.AVAILABLE;
-    }
+    // /**
+    //  * @dev Get pool from storage
+    //  * @param unit : Unit contribution
+    //  */
+    // function isPoolAvailable(uint256 unit) public view returns(bool) {
+    //     return _getPool(unit).status == Common.Status.AVAILABLE;
+    // }
 
-    /**
-     * @dev Returns the profile of target
-     * @param unit : unit contribution
-     * @param target : User
-     */
-    function getProfile(
-        uint256 unit,
-        address target
-    )
-        external
-        view
-        // onlyInitialized(unit, false)
-        returns(Common.ContributorReturnValue memory) 
-    {
-        return _getContributor(target, unit);
-    }
+    // /**
+    //  * @dev Returns the profile of target
+    //  * @param unit : unit contribution
+    //  * @param target : User
+    //  */
+    // function getProfile(
+    //     uint256 unit,
+    //     address target
+    // )
+    //     external
+    //     view
+    //     // onlyInitialized(unit, false)
+    //     returns(Common.ContributorReturnValue memory) 
+    // {
+    //     return _getContributor(target, unit);
+    // }
 
     function _replaceContributor(address liquidator, uint96 recordId, Common.Slot memory slot, address _defaulter, uint unit) internal {
         Common.Provider[] memory providers = unitProviders[recordId][_defaulter];
@@ -340,32 +332,6 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     }
 
     /**
-     * @dev Returns amount of collateral required in a pool.
-     * @param unit : EpochId
-     * @return collateral Collateral
-    */
-    function _getCollateralQuote(uint256 unit)
-        internal
-        view
-        returns(uint collateral, uint128 lastPrice, bool inTime)
-    {
-        Common.Pool memory pool = _getPool(unit);
-        uint8 priceDecimals;
-        (lastPrice, inTime, priceDecimals) = _getCollateralTokenPrice(address(pool.addrs.colAsset));
-        if(pool.big.unit > 0) {
-            unchecked {
-                collateral = Common.Price(
-                        lastPrice,
-                        priceDecimals
-                    ).computeCollateral(
-                        uint24(pool.low.colCoverage), 
-                        pool.big.unit * pool.low.maxQuorum
-                    );
-            }
-        }
-    }
-
-    /**
      * Returns the current debt of last paid acount i.e the contributor that last got finance
      * @param unit : Unit contribution
      * @param currentUser : Account for whom to query debt
@@ -375,7 +341,7 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
      */
     function _getCurrentDebt(uint unit, address currentUser) internal view returns (uint256 debt, Common.Pool memory pool) {
         pool = _getPool(unit);
-        if(currentUser == address(0)) 'Current user is zero'._throw();
+        require(currentUser != address(0), '12');
         Common.Contributor[] memory profiles = contributors[pool.big.recordId];
         if(profiles.length > 0) {
             for(uint i = 0; i < profiles.length; i++){

@@ -3,11 +3,11 @@ import { Hex, Address as ContractAddress } from "viem";
 import type { 
   Points as Point, 
   RoleManager as RoleMgr, 
-  HardhatSupportedAssetManager as SupportedAssetMgr, 
-  FlexpoolFactory as Flex, 
+  HardhatBased as Flex, 
   Providers as ProviderContract, 
   SimpliToken as Collateral, 
   BaseAsset as Base,
+  SupportedAssetManager as SupportedAssetMgr,
   SafeFactory as SafeFactry,
   Safe,
   Faucet as Fct,

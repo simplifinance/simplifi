@@ -54,6 +54,7 @@ interface Common {
         uint256 currentPool;
         uint96 recordId;
         uint96 unitId;
+        // uint collateralQuote;
     }
 
     struct Point {
@@ -111,7 +112,7 @@ interface Common {
     }
 
     struct Price {
-        uint128 price;
+        uint price;
         uint8 decimals;
     }
 
@@ -148,10 +149,10 @@ interface Common {
         ContributorReturnValue[] cData;
     }
 
-    struct ReadRecordDataReturnValue {
-        Pool pool;
-        Contributor[] cData;
-    }
+    // struct ReadRecordDataReturnValue {
+    //     Pool pool;
+    //     Contributor[] cData;
+    // }
 
     struct UpdatePoolData {
         uint unit;
@@ -177,12 +178,25 @@ interface Common {
         uint16 makerRate;
         uint currentEpoches;
         uint recordEpoches;
+        ReadPoolDataReturnValue[] currentPools;
+        ReadPoolDataReturnValue[] pastPools;
     }
 
     struct ContributorReturnValue {
         Contributor profile;
         Slot slot;
         Common.Provider[] providers;
+    }
+
+    struct CreatePoolParam {
+        address[] users;
+        address sender;
+        uint unit;
+        uint8 maxQuorum;
+        uint16 durationInHours;
+        uint24 colCoverage;
+        Common.Router router;
+        address colAsset;
     }
 
 }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { TokenInteractor, IRoleBase } from "../peripherals/token/TokenInteractor.sol";
+import { TokenInteractor } from "../peripherals/token/TokenInteractor.sol";
 
 /**
  * @title Escape
@@ -10,9 +10,10 @@ import { TokenInteractor, IRoleBase } from "../peripherals/token/TokenInteractor
  */
 
 contract Escape is TokenInteractor {
-    constructor(IRoleBase _roleManager) TokenInteractor(_roleManager) { }
+    constructor(address _roleManager) TokenInteractor(_roleManager) { }
 
     function name() public pure returns(string memory) {
         return "ESCAPE";
     }
 }
+ 

@@ -22,7 +22,7 @@ contract RoleManager is IRoleBase, MsgSender{
      */
     
     mapping (address => bool) private _hasRole;
-
+ 
     /**
      * @notice Mapping of roleCount to addresses.
      * A valid id will return a mapped owner.

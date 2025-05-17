@@ -3,7 +3,7 @@
 pragma solidity 0.8.24;
 
 import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
-import { Safe, OnlyRoleBase, IRoleBase } from "../peripherals/Safe.sol";
+import { Safe, OnlyRoleBase } from "../peripherals/Safe.sol";
 
 /**@title SafeFactory: A standalone contract that manages safe creation and retrieval, 
   deletion, read and write data.
@@ -27,10 +27,10 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
    * @param _roleManager : Role manager contract
    * @param _feeTo : Fee receiver
    */
-  constructor (IRoleBase _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
+  constructor (address _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
     feeTo = _feeTo;
   }
-
+ 
   // Not accepting values
   receive() external payable {
     revert();
@@ -67,8 +67,8 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
   */
   function _createSafe(uint256 unit) private returns(address safe) {
     totalSafes ++;
-    safe = address(new Safe(roleManager, feeTo));
-    _updateSafe(unit, safe);
+    safe = address(new Safe(address(roleManager), feeTo));
+    _updateSafe(unit, safe); 
   }
 
   /**

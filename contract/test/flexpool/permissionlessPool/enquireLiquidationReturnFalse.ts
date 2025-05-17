@@ -61,7 +61,7 @@ describe("Permissionless: Enquire Liquidation", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted[0],
+        colQuote: quoted,
         asset: baseAsset,
         collateral: collateralAsset,
         deployer

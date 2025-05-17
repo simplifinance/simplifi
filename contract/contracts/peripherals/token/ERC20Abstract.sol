@@ -4,7 +4,7 @@
 pragma solidity 0.8.24;
 
 import { IERC20 } from "../../interfaces/IERC20.sol";
-import { Pausable, IRoleBase } from "../Pausable.sol";
+import { Pausable } from "../Pausable.sol";
 
 library Lib {
   function cannotBeEmptyAddress(address target) internal pure {
@@ -93,7 +93,7 @@ abstract contract ERC20Abstract is IERC20, Pausable {
     address attorney_,
     address reserve_,
     address initTokenReceiver,
-    IRoleBase _roleManager
+    address _roleManager
   )  
     Pausable(_roleManager)
   {

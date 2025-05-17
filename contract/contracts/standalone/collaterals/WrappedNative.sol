@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { ERC20, Context } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
-import { OnlyRoleBase, IRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
 
 /**
  * @title WrappedNative is a supported collateral asset on the connected network e.g. Celo or XFI can be used
@@ -15,7 +15,7 @@ import { OnlyRoleBase, IRoleBase, MsgSender } from "../../peripherals/OnlyRoleBa
  * XFI coin, we provide a wrapped version of the native coin. 
  */
 contract WrappedNative is ERC20, OnlyRoleBase {
-    constructor(IRoleBase _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
+    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
 
     /**
      * @dev Deposit collateral

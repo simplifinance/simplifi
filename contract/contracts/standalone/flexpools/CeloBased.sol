@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { FeeToAndRate, IRoleBase, ErrorLib, Utils, ISupportedAsset, ISafeFactory } from "../peripherals/FeeToAndRate.sol";
-import { IFactory, Common } from '../interfaces/IFactory.sol';
-import { IERC20 } from "../interfaces/IERC20.sol";
-import { IPoint } from "../interfaces/IPoint.sol";
-import { ISafe } from "../interfaces/ISafe.sol";
+import { IFactory } from '../../interfaces/IFactory.sol';
+import { IStateManager } from '../../interfaces/IStateManager.sol';
+import { ISafe } from "../../interfaces/ISafe.sol";
+import { IERC20 } from "../../interfaces/IERC20.sol";
+import { CeloPriceGetter, Utils, Common  } from "../../peripherals/priceGetter/CeloPriceGetter.sol";
 // import "hardhat/console.sol";
 
 /**
@@ -19,33 +19,35 @@ import { ISafe } from "../interfaces/ISafe.sol";
     * providers if the provider balance cannot the amount they wish to borrow. If this is the case, the selected providers are 
     * entitled to earn interest on the amount they provide.
     * When paying back, the contributor will repay the full loan with interest but halved for other contributors.  
+    *
+    ERROR CODE
+    ==========
+    14 - Borrow not ready
+    15 - Pool fund incomplete
+    16 - TurnTime has not pass
+    17 - Not defaulted
+    18 - Only admin can close
+    19 - Closing pool time elapsed
+    20 - Epoch ended
+
 */
-contract FlexpoolFactory is IFactory, FeeToAndRate {
+contract CeloBased is IFactory, CeloPriceGetter {
     using Utils for *;
-    using ErrorLib for *;
 
     // Analytics
     Common.Analytics public analytics;
 
     /** 
      * ================ Constructor ==============
-     * @param _roleManager : Role manager contract
-     * @param _pointFactory : Point Factory contract
-     * @param _assetManager : Asset manager contract
-     * @param _baseAsset : ERC20 compatible asset to use as base contribution
-     * @param _feeTo: Fee receiver
-     * @param _pointFactory : Platform fee
     */
     constructor(
-        address _feeTo, 
-        uint16 _makerRate,
-        IRoleBase _roleManager, 
-        ISupportedAsset _assetManager, 
-        IERC20 _baseAsset,
-        IPoint _pointFactory,
-        ISafeFactory _safeFactory
+        address _roleManager,
+        address _stateManager, 
+        address oracle,
+        address[] memory supportedAssets, 
+        PriceData[] memory priceData
     ) 
-        FeeToAndRate(_feeTo, _makerRate, _roleManager, _assetManager, _baseAsset, _pointFactory, _safeFactory)
+        CeloPriceGetter(_roleManager, _stateManager, oracle, supportedAssets, priceData)
     {}
 
     /**
@@ -67,11 +69,14 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         uint16 durationInHours,
         uint24 colCoverage,
         bool isPermissionless,
-        IERC20 colAsset
+        address colAsset
     ) public whenNotPaused returns(bool) {
-        Common.Pool memory pool = _createPool(users, _msgSender(), unit, maxQuorum, durationInHours, colCoverage, isPermissionless? Common.Router.PERMISSIONLESS : Common.Router.PERMISSIONED, colAsset);
+        Common.Pool memory pool = _createPool(Common.CreatePoolParam(users, _msgSender(), unit, maxQuorum, durationInHours, colCoverage, isPermissionless? Common.Router.PERMISSIONLESS : Common.Router.PERMISSIONED, colAsset));
         _awardPoint(users[0], 0, 5, false);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, isPermissionless, true);
+        unchecked {
+            analytics.tvlBase += unit;
+            isPermissionless? analytics.totalPermissionless += 1 : analytics.totalPermissioned += 1;
+        }
         emit Common.PoolCreated(pool);
       
         return true;
@@ -90,10 +95,13 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
         address[] memory users = new address[](1);
         users[0] = user;
-        IERC20 defaultColAsset = IERC20(ISupportedAsset(assetManager).getDefaultSupportedCollateralAsset());
-        initialPool = _createPool(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset);
+        address defaultColAsset = _getVariables().assetManager.getDefaultSupportedCollateralAsset();
+        initialPool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
         _awardPoint(users[0], 0, 5, false);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, true);
+        unchecked {
+            analytics.tvlBase += unit;
+            analytics.totalPermissionless += 1;
+        }
         emit Common.PoolCreated(initialPool);
     }
 
@@ -116,9 +124,9 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         uint unit
     ) external onlyRoleBearer whenNotPaused returns(bool)
     {
-        Common.Pool memory pool;
+        Common.Pool memory pool; 
         bool isNewOrCancel = false;
-        if(!isPoolAvailable(unit)){
+        if(_getPool(unit).status == Common.Status.TAKEN){
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool.big.unitId, pool);
@@ -128,8 +136,9 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
             pool = _launchDefault(borrower, unit);
         }
         _setProviders(providers, borrower, pool.big.recordId);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, true, isNewOrCancel);
-
+        unchecked {
+            analytics.tvlBase += unit;
+        }
         return true;
     }
 
@@ -141,44 +150,11 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         Common.Pool memory pool = _getPool(unit);
         pool = _joinAPool(unit, _msgSender(), pool);
         _setPool(pool.big.unitId, pool);
-        _recordAnalytics(unit, 0, Common.Stage.JOIN, pool.router == Common.Router.PERMISSIONLESS, false);
+        unchecked {
+            analytics.tvlBase += unit;
+        }
         emit Common.NewContributorAdded(pool);
 
-        return true;
-    }
-    
-    /**
-     * @dev Edit pool information
-     * @param unit : Unit contribution
-     * @param maxQuorum : Number of expected participants
-     * @param durationInHours : Number of time in hours each contributor can retain the loan
-     * @param colCoverage : Collateral coverage or ratio.
-     */
-    function editPool(
-        uint256 unit,
-        uint8 maxQuorum,
-        uint16 durationInHours,
-        uint24 colCoverage
-    ) 
-        public 
-        _onlyIfUnitIsActive(unit)
-        whenNotPaused
-        returns(bool) 
-    {
-        Common.Pool memory pool = _getPool(unit);
-        uint32 duration;
-        if(_msgSender() != pool.addrs.admin) 'Not Allowed'._throw();
-        unchecked {
-            duration = durationInHours * 1 hours;
-        }
-        if(pool.router == Common.Router.PERMISSIONLESS) {
-            if(maxQuorum != pool.low.maxQuorum && maxQuorum > 2 && maxQuorum < type(uint8).max) pool.low.maxQuorum = maxQuorum;
-        }
-        if(durationInHours <= 720 && duration != pool.low.duration) pool.low.duration = duration;
-        if(colCoverage != pool.low.colCoverage) pool.low.colCoverage = colCoverage;
-        _setPool(pool.big.unitId, pool);
-
-        emit Common.PoolEdited(pool);
         return true;
     }
 
@@ -189,32 +165,33 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      * @notice : To get finance, the unit contribution must be active. In the event the expected contributor failed to 
      * call, we swap their profile for the current msg.sender provided the grace period of 1hr has passed.
     */
-    function getFinance(uint256 unit) public _onlyIfUnitIsActive(unit) whenNotPaused returns(bool) {
-        _onlyContributor(_msgSender(), unit, false);
+    function getFinance(uint256 unit) public _checkUnitStatus(unit, true) whenNotPaused returns(bool) {
+        _checkStatus(_msgSender(), unit, true);
         Common.Pool memory pool = _getPool(unit);
-        (uint collateral,,bool inTime) = _getCollateralQuote(unit);
-        if(!inTime){ 
-            _updateTokenPrice(address(pool.addrs.colAsset));
-            (collateral,,inTime) = _getCollateralQuote(unit);
-        }
+        // uint collateral = _getCollateralQuote(unit);
+        uint collateral = 1e18;
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
-        if(pool.stage != Common.Stage.GET) 'Borrow not ready'._throw();
-        if(pool.low.allGh == pool.low.maxQuorum) 'Epoch ended'._throw();
+        require(pool.stage == Common.Stage.GET, '14');
+        require(pool.low.allGh < pool.low.maxQuorum, '20');
         unchecked {
-            if(pool.big.currentPool < (pool.big.unit * pool.low.maxQuorum)) 'Pool fund incomplete'._throw();
+            require(pool.big.currentPool >= (pool.big.unit * pool.low.maxQuorum), '15');
             if(_now() > profile.turnStartTime + 1 hours){
                 if(_msgSender() != profile.id) {
                     profile = _swapContributors(unit, _msgSender(), _getSlot(_msgSender(), unit), profile);
                 }
             } else {
-                if(_msgSender() != profile.id) 'TurnTime has not pass'._throw();
+                require(_msgSender() == profile.id, '16');
             }
             pool.low.allGh += 1;
         }
         pool.addrs.lastPaid = profile.id;
-        _recordAnalytics(pool.big.currentPool, collateral, Common.Stage.GET, pool.router == Common.Router.PERMISSIONLESS, false);
+        unchecked {
+            if(analytics.tvlBase >= pool.big.currentPool) analytics.tvlBase -= pool.big.currentPool;
+            analytics.tvlCollateral += collateral;
+        }
+        IStateManager.StateVariables memory vars = _getVariables();
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
-        if(!ISafe(pool.addrs.safe).getFinance(profile.id, baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(makerRate)), collateral, pool.big.recordId)) 'Safe call failed'._throw();
+        ISafe(pool.addrs.safe).getFinance(profile.id, vars.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(vars.makerRate)), collateral, pool.big.recordId);
         (pool, profile) = _completeGetFinance(pool, collateral, profile);
         _setContributor(profile, pool.big.recordId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unit).value), false);
         _setPool(pool.big.unitId, pool);
@@ -230,7 +207,10 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS, false);
+        unchecked {
+            analytics.tvlBase += debt;
+            if(analytics.tvlCollateral >= collateral) analytics.tvlCollateral -= collateral;
+        }
         emit Common.Payback(pool);
 
         return true;
@@ -247,14 +227,17 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     */
     function liquidate(uint256 unit) public whenNotPaused returns(bool) {
         (Common.Contributor memory _defaulter, bool isDefaulted, Common.Slot memory slot) = _enquireLiquidation(unit);
-        if(!isDefaulted) 'Not defaulted'._throw();
+        require(isDefaulted, '17');
         address liquidator = _msgSender() ;
-        _onlyNonContributor(liquidator, unit);
+        _checkStatus(liquidator, unit, false);
         _replaceContributor(liquidator, _getPool(unit).big.recordId, slot, _defaulter.id, unit);
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        _recordAnalytics(debt, collateral, Common.Stage.PAYBACK, pool.router == Common.Router.PERMISSIONLESS, false);
+        unchecked {
+            analytics.tvlBase += debt;
+            if(analytics.tvlCollateral >= collateral) analytics.tvlCollateral -= collateral;
+        }
         emit Common.Payback(pool);
         return true;
     }
@@ -264,21 +247,25 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
         @param unit : Unit contribution.
         @notice : Only the creator of a pool can close it provided the number of contributors does not exceed one.
     */
-    function closePool(uint256 unit) public whenNotPaused _onlyIfUnitIsActive(unit) returns(bool){
+    function closePool(uint256 unit) public whenNotPaused _checkUnitStatus(unit, true) returns(bool){
         Common.Pool memory pool = _getPool(unit);
         address creator = _msgSender();
-        if(creator != pool.addrs.admin) 'Only Admin can close pool'._throw();
+        require(creator == pool.addrs.admin, '18');
         bool isPermissionLess = pool.router == Common.Router.PERMISSIONLESS;
-        if(isPermissionLess) {
-            if(pool.low.userCount > 1) 'Cancellation disabled'._throw();
-        } else {
-            if(pool.big.currentPool > pool.big.unit) 'Cancellation disabled'._throw();
+        unchecked {
+            if(isPermissionLess) {
+                require(pool.low.userCount == 1, '19');
+                if(analytics.totalPermissionless > 0) analytics.totalPermissionless -= 1;
+            } else {
+                require(pool.big.currentPool == pool.big.unit, '19');
+                if(analytics.totalPermissioned > 0) analytics.totalPermissioned -= 1;
+            }
+            if(analytics.tvlBase >= pool.big.unit) analytics.tvlBase -= pool.big.unit;
         }
         _awardPoint(creator, 0, 5, true);
         pool.stage = Common.Stage.CANCELED;
         _shufflePool(pool);
-        _recordAnalytics(pool.big.unit, 0, Common.Stage.CANCELED, isPermissionLess, true);
-        if(!ISafe(pool.addrs.safe).cancel(creator, baseAsset, pool.big.unit, pool.big.recordId)) 'Safe call failed'._throw();
+        ISafe(pool.addrs.safe).cancel(creator, _getVariables().baseAsset, pool.big.unit, pool.big.recordId);
 
         emit Common.Cancellation(unit);
         return true;
@@ -292,40 +279,7 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
     function getContributorProviders(address target, uint96 recordId) external view returns(Common.Provider[] memory result){
         return  _getContributorProviders(target, recordId);
     }
-    
-    /**
-     * @dev Record snapshot balances of base asset and collateral asset at any point in time
-     * @param baseValue : Value of baseAsset e.g Amount of cUSD contributed
-     * @param collateral : Collateral value going out or coming in.
-     * @param flag : For determining the type of operation to perform.
-     * @param isPermissionless : Whether the pool is permissioned or permissionless 
-     */
-    function _recordAnalytics(uint baseValue, uint collateral, Common.Stage flag, bool isPermissionless, bool isNewOrCancelled) internal {
-        Analytics memory alt = analytics;
-        unchecked { 
-            if(flag == Common.Stage.JOIN) {
-                alt.tvlBase += baseValue;
-                if(isNewOrCancelled) isPermissionless? alt.totalPermissionless += 1 : alt.totalPermissioned += 1;
-            } else if(flag == Common.Stage.GET) {
-                if(alt.tvlBase >= baseValue) alt.tvlBase -= baseValue;
-                alt.tvlCollateral += collateral;
-            } else if(flag == Common.Stage.PAYBACK) {
-                if(alt.tvlCollateral >= collateral) alt.tvlCollateral -= collateral;
-                alt.tvlBase += baseValue;
-            } else {
-                if(isNewOrCancelled) {
-                    if(isPermissionless) {
-                        if(alt.totalPermissionless > 0) alt.totalPermissionless -= 1;
-                    } else {
-                        if(alt.totalPermissioned > 0) alt.totalPermissioned -= 1;
-                    }
-                }
-                if(alt.tvlBase >= baseValue) alt.tvlBase -= baseValue;
-            }
-        }
-        analytics = alt;
-    }
-
+   
     /**
      * @dev Fetch current pool
      * @param unit : Unit contribution
@@ -334,13 +288,24 @@ contract FlexpoolFactory is IFactory, FeeToAndRate {
        return _getPool(unit);
     }
 
-    /**@dev Return contract data */
+    /**@dev Return contract data. At any point in time, currentEpoches will always equal pastEpoches*/
     function getFactoryData() public view returns(Common.ViewFactoryData memory data) {
         data.analytics = analytics;
-        data.makerRate = uint16(makerRate);
+        data.makerRate = uint16(_getVariables().makerRate);
         data.currentEpoches = _getEpoches();
         data.recordEpoches = _getPastEpoches();
+        Common.ReadPoolDataReturnValue[] memory currentPools = new Common.ReadPoolDataReturnValue[](data.currentEpoches);
+        Common.ReadPoolDataReturnValue[] memory pastPools = new Common.ReadPoolDataReturnValue[](data.recordEpoches);
+        for(uint96 i = 0; i < data.currentEpoches; i++) {
+            Common.ReadPoolDataReturnValue memory cPool = _getPoolData(_getPoolWithUnitId(i));
+            Common.ReadPoolDataReturnValue memory pPool = _getPoolData(_getPastPool(i));
+            if(cPool.pool.big.unit > 0) currentPools[i] = cPool;
+            if(pPool.pool.big.unit > 0) pastPools[i] = pPool;
+        }
+        data.currentPools = currentPools;
+        data.pastPools = pastPools;
+
         return data;
-    } 
+    }
 
 }

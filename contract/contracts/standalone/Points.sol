@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { IPoint, Common } from "../interfaces/IPoint.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 
 contract Points is IPoint, OnlyRoleBase {
     using ErrorLib for *;
@@ -21,7 +21,7 @@ contract Points is IPoint, OnlyRoleBase {
     mapping(Common.Phase => Common.Point[]) private points;
 
     // =========== Constructor ===================
-    constructor(IRoleBase _roleManager) OnlyRoleBase(_roleManager) {} 
+    constructor(address _roleManager) OnlyRoleBase(_roleManager) {} 
 
     /**
      * @dev Returns the point

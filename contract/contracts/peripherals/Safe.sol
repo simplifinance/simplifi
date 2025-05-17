@@ -7,7 +7,7 @@ import { IERC20 } from "../interfaces/IERC20.sol";
 import { IFactory } from "../interfaces/IFactory.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
 import { Common } from "../interfaces/Common.sol";
-import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
@@ -44,7 +44,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param _roleManager : RoleBase manager contract
      * @param _feeTo : Fee receiver account
      */
-    constructor(IRoleBase _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
+    constructor(address _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
         feeTo = _feeTo;
     }
 

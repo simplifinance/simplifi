@@ -52,7 +52,7 @@ describe("Providers", function () {
           signerAddr: alc1Addr
         })
       ).to.be.revertedWithCustomError(providers, "ErrorOccurred")
-      .withArgs("Not a member");
+      .withArgs("Not member");
     });
   })
 })

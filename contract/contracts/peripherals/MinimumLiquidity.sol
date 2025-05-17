@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { ERC20Manager, IRoleBase, IERC20, ISupportedAsset, ISafeFactory } from "./ERC20Manager.sol";
+import { ERC20Manager } from "./ERC20Manager.sol";
 
 abstract contract MinimumLiquidity is ERC20Manager {
     using ErrorLib for *;
@@ -11,14 +11,7 @@ abstract contract MinimumLiquidity is ERC20Manager {
     uint public minimumLiquidity;
 
     // ============= Constructor ================
-    constructor(
-        ISupportedAsset _assetManager,
-        IERC20 _baseAsset, 
-        IRoleBase _roleManager,
-        ISafeFactory _safeFactory
-    ) ERC20Manager(_assetManager, _baseAsset, _roleManager, _safeFactory){
-        if(address(_roleManager) == address(0)) '_roleManager is zero'._throw();
-    }
+    constructor(address _statetManager, address _roleManager) ERC20Manager(_statetManager, _roleManager){}
 
     /**
      * @dev Set minimum liquidity. 
@@ -26,7 +19,7 @@ abstract contract MinimumLiquidity is ERC20Manager {
      * @notice Only accounts with rolebearer access are allowed
      */
     function setMinimumLiquidity(uint _minLiquidity) public onlyRoleBearer {
-        if(_minLiquidity == minimumLiquidity) 'Param is same'._throw();
+        if(_minLiquidity == minimumLiquidity) 'Same param'._throw();
         minimumLiquidity = _minLiquidity;
     }
 }

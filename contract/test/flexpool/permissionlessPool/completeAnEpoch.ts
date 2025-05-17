@@ -64,7 +64,7 @@ describe("Permissionless: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted[0],
+        colQuote: quoted,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -124,7 +124,7 @@ describe("Permissionless: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quoted[0],
+        colQuote: quoted,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer

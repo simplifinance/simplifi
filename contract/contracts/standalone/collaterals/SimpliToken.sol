@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { ERC20Abstract, IRoleBase } from "../../peripherals/token/ERC20Abstract.sol";
+import { ERC20Abstract } from "../../peripherals/token/ERC20Abstract.sol";
 
 /*
     @title SToken is the native token of the Simplifinance platform.
@@ -21,7 +21,7 @@ contract SimpliToken is ERC20Abstract {
         address attorney_,
         address reserve_,
         address initTokenReceiver,
-        IRoleBase _roleManager
+        address _roleManager
     ) ERC20Abstract(attorney_, reserve_, initTokenReceiver, _roleManager) { }
 
     ///@dev Contract accepts no platform coin

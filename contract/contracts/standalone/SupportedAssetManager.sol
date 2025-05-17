@@ -2,17 +2,13 @@
 
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol"; 
 import { IERC20 } from "../interfaces/IERC20.sol"; 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { IPriceOracle } from "../interfaces/IPriceOracle.sol";
 
-abstract contract SupportedAssetManager is ISupportedAsset, IPriceOracle, OnlyRoleBase {
+contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   using ErrorLib for *;
-
-  // The max acceptable amount of time passed since the oracle price was last updated.
-  uint128 public maxTimePassed;
 
   // Supported assets
   SupportedAsset[] private assets;
@@ -40,17 +36,16 @@ abstract contract SupportedAssetManager is ISupportedAsset, IPriceOracle, OnlyRo
   */
   constructor(
     address[] memory _assets,
-    IRoleBase _roleManager
+    address _roleManager
   )
     OnlyRoleBase(_roleManager) 
   {
     for(uint i = 0; i < _assets.length; i++) {
       if(_assets[i] != address(0)) _supportAsset(_assets[i]);
     }
-    maxTimePassed = 120 seconds;
   }
 
-  /**
+  /** 
    * @dev Support a new asset
    * Note: OnlyRoleBase action
    * @param _asset : Asset to add to list of supported asset
@@ -111,15 +106,6 @@ abstract contract SupportedAssetManager is ISupportedAsset, IPriceOracle, OnlyRo
 
   function getDefaultSupportedCollateralAsset() external view returns(address){
     return assets[0].id;
-  }
-
-  /**
-   * @dev Update the maxTimePass
-   * @param newMaxTimePass : New maxTime
-   */
-  function setMaxTimePass(uint128 newMaxTimePass) public onlyRoleBearer returns(bool) {
-    maxTimePassed = newMaxTimePass;
-    return true;
   }
 
 }

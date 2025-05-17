@@ -2,7 +2,7 @@
 pragma solidity 0.8.24;
 
 import { IFactory, Common } from "../interfaces/IFactory.sol";
-import { MinimumLiquidity, IRoleBase, ErrorLib, IERC20, ISupportedAsset, ISafeFactory } from "../peripherals/MinimumLiquidity.sol";
+import { MinimumLiquidity, ErrorLib } from "../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Utils } from "../libraries/Utils.sol";
 
@@ -34,7 +34,7 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
     }
 
     // Flexpool factory contract
-    IFactory public immutable flexpoolFactory;
+    IFactory public flexpoolFactory;
 
     // List of providers
     Common.Provider[] private providers;
@@ -47,24 +47,19 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
 
     /**
      * ============= Constructor ================
-     * @param _roleManager : RoleBase manager contract.
-     * @param _baseAsset : Base asset to use for contribution e.g cUSD.
-     * @param _assetManager : Asset Manager contract.
      * @notice At construction, we initialized the providers array slot 0 with an empty provider data.
      * This is so we can reuse the slot in the future such as reseting a provider's data or ensuring 
      * that providers with zero index are restricted from calling certain functions.
      */
     constructor(
-        IFactory _flexpoolFactory,
-        IRoleBase _roleManager, 
-        IERC20 _baseAsset,
-        ISupportedAsset _assetManager,
-        ISafeFactory _safeFactory
+        address _stateManager,
+        address _flexpoolFactory,
+        address _roleManager
     )
-        MinimumLiquidity(_assetManager, _baseAsset, _roleManager, _safeFactory)
+        MinimumLiquidity(_stateManager, _roleManager)
     {
-        if(address(_flexpoolFactory) == address(0)) '_flexpoolFactory is zero'._throw();
-        flexpoolFactory = _flexpoolFactory;
+        if(_flexpoolFactory == address(0)) '_flexpoolFactory is zero'._throw();
+        flexpoolFactory = IFactory(_flexpoolFactory);
     }
 
     /**
@@ -83,7 +78,7 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         address sender = _msgSender();
         Data memory data = slots[sender];
         Common.Interest memory interest;
-        uint liquidity = _checkAndWithdrawAllowance(baseAsset, sender, address(this), minimumLiquidity);
+        uint liquidity = _checkAndWithdrawAllowance(_getVariables().baseAsset, sender, address(this), minimumLiquidity);
         unchecked {
             if(!data.hasIndex){
                 data.id = providers.length;
@@ -107,7 +102,7 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         (Common.Provider memory prov, uint slot, address caller) = _getProvider();
         if(prov.amount == 0) "Nothing to remove"._throw();
         providers[slot].amount = 0;
-        _setApprovalFor(baseAsset, caller, prov.amount);
+        _setApprovalFor(_getVariables().baseAsset, caller, prov.amount);
 
         emit LiquidityRemoved(prov);
         return true;
@@ -122,9 +117,9 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         if(providersSlots.length == 0) 'List is empty'._throw();
         if(amount == 0) 'Loan amt is 0'._throw();
         address spender = address(flexpoolFactory);
-        Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount, IFactory(spender).getPool(amount)); 
-        _setApprovalFor(baseAsset, spender, amount);
-        if(!IFactory(spender).contributeThroughProvider(provs, _msgSender(), amount)) 'Factory erroed'._throw();
+        Common.Provider[] memory provs = _aggregateLiquidityFromProviders(providersSlots, amount, flexpoolFactory.getPool(amount)); 
+        _setApprovalFor(_getVariables().baseAsset, spender, amount);
+        if(!flexpoolFactory.contributeThroughProvider(provs, _msgSender(), amount)) 'Factory errored'._throw();
 
         emit Borrowed(provs, _msgSender());
         return true;

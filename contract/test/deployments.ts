@@ -167,7 +167,7 @@ export async function deployProvider(flexpoolFactory: Address, roleManager: Addr
  */
 
 export async function deploySupportedAssetManager(collateralAsset: Address, roleManager: Address, deployer: Signer) :Promise<SupportedAssetManager> {
-  const AssetMgr = await ethers.getContractFactory("HardhatSupportedAssetManager");
+  const AssetMgr = await ethers.getContractFactory("SupportedAssetManager");
   return (await AssetMgr.connect(deployer).deploy(
     [collateralAsset], 
     roleManager, 
@@ -206,7 +206,7 @@ export async function deployFlexpool(
   pointFactory: Address,
   safeFactory: Address,
 ) : Promise<FlexpoolFactory> {
-  const Factory = await ethers.getContractFactory("FlexpoolFactory");
+  const Factory = await ethers.getContractFactory("HardhatBased");
   return (await Factory.connect(deployer).deploy(
     feeTo, 
     MAKER_RATE, 

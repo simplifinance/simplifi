@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { Pausable, IRoleBase } from "../peripherals/Pausable.sol";
+import { Pausable } from "../peripherals/Pausable.sol";
 import { Lib } from "../peripherals/token/ERC20Abstract.sol";
 import { SafeERC20 } from "../peripherals/token/SafeERC20.sol";
 import { IERC20 } from "../interfaces/IERC20.sol";
@@ -37,7 +37,7 @@ contract Attorney is Pausable {
   constructor(
     uint _fee, 
     address _feeTo,
-    IRoleBase _roleManager
+    address _roleManager
   ) 
     Pausable(_roleManager) 
   {

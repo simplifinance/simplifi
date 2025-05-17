@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, MsgSender, IRoleBase } from "../../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { ErrorLib } from "../../libraries/ErrorLib.sol";
 import { Utils } from "../../libraries/Utils.sol";
@@ -34,10 +34,10 @@ contract Faucet is OnlyRoleBase {
     mapping (address => Tester) public testersMap;
 
     constructor(
-        IRoleBase _roleManager,
+        address _roleManager,
         IERC20 _collateralToken,
         IERC20 _baseToken,
-        uint _baseTokenAmount,
+        uint _baseTokenAmount, 
         uint _colTokenAmount
     ) OnlyRoleBase(_roleManager) {
         if(_collateralToken == collateralToken) "Collateral token is zero"._throw();

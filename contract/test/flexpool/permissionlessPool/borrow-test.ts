@@ -64,19 +64,19 @@ describe("Permissionless: Borrow", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted[0],
+        colQuote: quoted,
         asset: baseAsset,
         collateral: collateralAsset,
         deployer
       });      
-      expect(gf.balances?.collateral).to.be.equal(quoted[0]);
+      expect(gf.balances?.collateral).to.be.equal(quoted);
 
       // ERC20 balances in safe should remain thesame before claim.
       expect(gf.balances?.base).to.be.eq(join.balances?.base); 
       expect(gf.pool.pool.low.selector).to.be.eq(BigInt(1));
       expect(bn(gf.pool.pool.low.selector).gt(bn(join.pool.pool.low.selector))).to.be.true;
 
-      expect(bn(gf.profile.colBals).gte(bn((quoted[0])))).to.be.true;
+      expect(bn(gf.profile.colBals).gte(bn((quoted)))).to.be.true;
       expect(bn(gf.profile.turnStartTime).toNumber()).to.be.gte(turnStartTime);
       expect(bn(gf.profile.paybackTime).toNumber()).to.be.gte(turnStartTime + DURATION_IN_SECS);
       expect(gf.pool.pool.big.currentPool).to.be.equal(ZERO);
@@ -86,7 +86,7 @@ describe("Permissionless: Borrow", function () {
       const userData = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       expect(bn(aggregateFee).gt(0)).to.be.true;
       expect(userData.access).to.be.true;
-      expect(userData.collateralBalance).to.be.eq(quoted[0]);
+      expect(userData.collateralBalance).to.be.eq(quoted);
 
       const { balances: {base, collateral}, baseBalAfter, baseBalB4 } = await withdraw({
         asset: baseAsset,
@@ -97,7 +97,7 @@ describe("Permissionless: Borrow", function () {
         unit: create.pool.pool.big.unit
       });
       
-      expect(collateral).to.be.equal(quoted[0]);
+      expect(collateral).to.be.equal(quoted);
       expect(base).to.be.equal(aggregateFee);
       expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true; 
       expect(bn(baseBalAfter).lt(bn(gf.profile.loan))).to.be.true;
