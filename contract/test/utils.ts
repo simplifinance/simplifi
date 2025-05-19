@@ -365,7 +365,7 @@ import type {
     // const testAssetAddr = formatAddr(await x.testAsset.getAddress());
     const recipients = await getAddressFromSigners(x.signers);
     await transferAsset({
-      amount: x.contribution,
+      amount: x.unit,
       asset: x.testAsset,
       recipients: recipients,
       sender: x.deployer
@@ -374,7 +374,7 @@ import type {
     for(let i= 0; i < x.signers.length; i++) {
       const signer = x.signers[i];
       await approve({
-        amount: x.contribution,
+        amount: x.unit,
         owner: signer,
         spender: x.factoryAddr,
         testAsset: x.testAsset

@@ -43,12 +43,13 @@ contract CeloBased is IFactory, CeloPriceGetter {
     constructor(
         address _roleManager,
         address _stateManager, 
-        address oracle,
         address[] memory supportedAssets, 
         PriceData[] memory priceData
     ) 
-        CeloPriceGetter(_roleManager, _stateManager, oracle, supportedAssets, priceData)
+        CeloPriceGetter(_roleManager, _stateManager, supportedAssets, priceData)
     {}
+
+    receive() external payable {}
 
     /**
         * @dev Create a pool internally
@@ -165,11 +166,10 @@ contract CeloBased is IFactory, CeloPriceGetter {
      * @notice : To get finance, the unit contribution must be active. In the event the expected contributor failed to 
      * call, we swap their profile for the current msg.sender provided the grace period of 1hr has passed.
     */
-    function getFinance(uint256 unit) public _checkUnitStatus(unit, true) whenNotPaused returns(bool) {
+    function getFinance(uint256 unit) public payable _checkUnitStatus(unit, true) whenNotPaused returns(bool) {
         _checkStatus(_msgSender(), unit, true);
         Common.Pool memory pool = _getPool(unit);
-        // uint collateral = _getCollateralQuote(unit);
-        uint collateral = 1e18;
+        uint collateral = getCollateralQuote(unit);
         Common.Contributor memory profile = _getExpected(unit, pool.low.selector);
         require(pool.stage == Common.Stage.GET, '14');
         require(pool.low.allGh < pool.low.maxQuorum, '20');
@@ -294,17 +294,6 @@ contract CeloBased is IFactory, CeloPriceGetter {
         data.makerRate = uint16(_getVariables().makerRate);
         data.currentEpoches = _getEpoches();
         data.recordEpoches = _getPastEpoches();
-        Common.ReadPoolDataReturnValue[] memory currentPools = new Common.ReadPoolDataReturnValue[](data.currentEpoches);
-        Common.ReadPoolDataReturnValue[] memory pastPools = new Common.ReadPoolDataReturnValue[](data.recordEpoches);
-        for(uint96 i = 0; i < data.currentEpoches; i++) {
-            Common.ReadPoolDataReturnValue memory cPool = _getPoolData(_getPoolWithUnitId(i));
-            Common.ReadPoolDataReturnValue memory pPool = _getPoolData(_getPastPool(i));
-            if(cPool.pool.big.unit > 0) currentPools[i] = cPool;
-            if(pPool.pool.big.unit > 0) pastPools[i] = pPool;
-        }
-        data.currentPools = currentPools;
-        data.pastPools = pastPools;
-
         return data;
     }
 

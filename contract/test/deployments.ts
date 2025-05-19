@@ -16,7 +16,8 @@ import type {
   Reserve,
   TokenDistributor,
   Escape,
-  Faucet
+  Faucet,
+  StateManager
 } from "./types";
 
 import { FEE, MAKER_RATE, QUORUM, UNIT_LIQUIDITY } from "./utilities";
@@ -153,9 +154,9 @@ export async function deployPointsContract(deployer: Signer, roleManager: Addres
  * @param supportedAssetMgr : Supported manager contract
  * @returns Contract instance
  */
-export async function deployProvider(flexpoolFactory: Address, roleManager: Address, baseAsset: Address, supportedAssetMgr: Address, safeFactory: Address, deployer: Signer) : Promise<Providers> {
+export async function deployProvider(flexpoolFactory: Address, roleManager: Address, stateManagerAddr: Address, deployer: Signer) : Promise<Providers> {
   const BankFactory = await ethers.getContractFactory("Providers");
-  return (await BankFactory.connect(deployer).deploy(flexpoolFactory, roleManager, baseAsset, supportedAssetMgr, safeFactory)).waitForDeployment();
+  return (await BankFactory.connect(deployer).deploy(stateManagerAddr, flexpoolFactory, roleManager)).waitForDeployment();
 }
 
 /**
@@ -197,24 +198,50 @@ export async function deployBaseAsset(deployer: Signer): Promise<BaseAsset> {
  * @returns Contract instance.
 */
 
-export async function deployFlexpool(
+export async function deployStateManager(
   deployer: Signer,
-  feeTo: Address,
-  roleManager: Address, 
-  assetManager: Address, 
-  baseAsset: Address,
-  pointFactory: Address,
-  safeFactory: Address,
-) : Promise<FlexpoolFactory> {
-  const Factory = await ethers.getContractFactory("HardhatBased");
+  feeTo:Address, 
+  makerRate: number,
+  safeFactory:Address,
+  roleManager:Address,
+  assetManager:Address, 
+  baseAsset:Address,
+  pointFactory: Address
+) : Promise<StateManager> {
+  const Factory = await ethers.getContractFactory("StateManager");
   return (await Factory.connect(deployer).deploy(
-    feeTo, 
-    MAKER_RATE, 
+    feeTo,
+    makerRate,
+    safeFactory,
     roleManager,
     assetManager,
     baseAsset,
-    pointFactory,
-    safeFactory
+    pointFactory
+  )).waitForDeployment();
+}
+
+/**
+ * Deploy an instance of the FlexpoolFactory contract
+ * @param deployer : Deployer.
+ * @param feeTo : Fee receiver.
+ * @param makerRate : Platform fee
+ * @param diaOracleAddress : DiaOracle Address
+ * @param roleManager : Role manager contract
+ * @param assetManager : Supported asset manager
+ * @param baseAsset : Base asset contract
+ * @param pointFactory : Point factory contract
+ * @returns Contract instance.
+*/
+
+export async function deployFlexpool(
+  deployer: Signer,
+  roleManager: Address, 
+  stateManager: Address
+) : Promise<FlexpoolFactory> {
+  const Factory = await ethers.getContractFactory("HardhatBased");
+  return (await Factory.connect(deployer).deploy(
+    roleManager,
+    stateManager
   )).waitForDeployment();
 }
 
@@ -264,17 +291,19 @@ export async function deployContracts(getSigners_: () => Signers) {
   
   const supportedAssetMgr = await deploySupportedAssetManager(collateralAssetAddr, roleManagerAddr, deployer);
   const supportedAssetMgrAddr = await supportedAssetMgr.getAddress() as Address;
+  
+  const stateManager = await deployStateManager(deployer, feeToAddr as Address, MAKER_RATE, safeFactoryAddr, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr);
+  const stateManagerAddr = await stateManager.getAddress() as Address;
 
-  const flexpool = await deployFlexpool(deployer, feeToAddr as Address, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr, safeFactoryAddr);
+  const flexpool = await deployFlexpool(deployer, roleManagerAddr, stateManagerAddr);
   const flexpoolAddr = await flexpool.getAddress() as Address;
   
   const faucet = await deployFaucet(deployer, roleManagerAddr, collateralAssetAddr, baseAssetAddr, UNIT_LIQUIDITY, UNIT_LIQUIDITY * 2n);
   const faucetAddr = await faucet.getAddress() as Address;
-
-  const providers = await deployProvider(flexpoolAddr, roleManagerAddr,baseAssetAddr, supportedAssetMgrAddr, safeFactoryAddr, deployer);
+  const providers = await deployProvider(flexpoolAddr, roleManagerAddr, stateManagerAddr, deployer);
   const providersAddr = await providers.getAddress() as Address;
   
-  await roleManager.connect(deployer).setRole([flexpoolAddr, providersAddr, supportedAssetMgrAddr, deployerAddr]);
+  await roleManager.connect(deployer).setRole([flexpoolAddr, providersAddr, supportedAssetMgrAddr, deployerAddr, stateManagerAddr]);
   const isSupported = await supportedAssetMgr.isSupportedAsset(collateralAssetAddr);
   const isListed = await supportedAssetMgr.listed(collateralAssetAddr);
   await distributor.connect(deployer).setToken(collateralAssetAddr);

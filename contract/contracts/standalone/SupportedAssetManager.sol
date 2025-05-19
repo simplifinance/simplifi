@@ -22,14 +22,6 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   mapping(address => bool) public listed;
 
   /**
-   * @dev Asset must be supported before they can be used.
-   */
-  modifier onlySupportedAsset(address _asset) {
-    if(!supportedAssets[_asset]) 'Unsupported asset'._throw();
-    _;
-  }
-
-  /**
    * 
    * @param _assets : Supported assets
    * @param _roleManager : Role manager contract

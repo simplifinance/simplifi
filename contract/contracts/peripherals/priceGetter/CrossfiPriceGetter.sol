@@ -91,7 +91,7 @@ abstract contract CrossfiPriceGetter is Pool {
      * @notice Only account with role permissioned is allowed to access this function
     */
     function setAssetData(address supportedAsset, string memory pair, uint8 priceDecimals) public onlyRoleBearer returns(bool) {
-        priceData[supportedAsset] = PriceData(0, 0, pair, priceDecimals); 
+        priceData[supportedAsset] = PriceData(0, 0, pair, priceDecimals);
         _getPriceInfo(supportedAsset);
         return true;
     }

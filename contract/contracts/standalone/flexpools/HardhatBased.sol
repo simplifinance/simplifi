@@ -6,7 +6,6 @@ import { IStateManager } from '../../interfaces/IStateManager.sol';
 import { ISafe } from "../../interfaces/ISafe.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { HardhatPriceGetter, Utils, Common  } from "../../peripherals/priceGetter/HardhatPriceGetter.sol";
-// import "hardhat/console.sol";
 
 /** 
     * @title FlexpoolFactory
@@ -279,18 +278,19 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
         data.makerRate = uint16(_getVariables().makerRate);
         data.currentEpoches = _getEpoches();
         data.recordEpoches = _getPastEpoches();
-        Common.ReadPoolDataReturnValue[] memory currentPools = new Common.ReadPoolDataReturnValue[](data.currentEpoches);
-        Common.ReadPoolDataReturnValue[] memory pastPools = new Common.ReadPoolDataReturnValue[](data.recordEpoches);
-        for(uint96 i = 0; i < data.currentEpoches; i++) {
-            Common.ReadPoolDataReturnValue memory cPool = _getPoolData(_getPoolWithUnitId(i));
-            Common.ReadPoolDataReturnValue memory pPool = _getPoolData(_getPastPool(i));
-            if(cPool.pool.big.unit > 0) currentPools[i] = cPool;
-            if(pPool.pool.big.unit > 0) pastPools[i] = pPool;
-        }
-        data.currentPools = currentPools;
-        data.pastPools = pastPools;
 
         return data;
     }
 
 }
+
+        // Common.ReadPoolDataReturnValue[] memory currentPools = new Common.ReadPoolDataReturnValue[](data.currentEpoches);
+        // Common.ReadPoolDataReturnValue[] memory pastPools = new Common.ReadPoolDataReturnValue[](data.recordEpoches);
+        // for(uint96 i = 0; i < data.currentEpoches; i++) {
+        //     Common.ReadPoolDataReturnValue memory cPool = _getPoolData(_getPoolWithUnitId(i));
+        //     Common.ReadPoolDataReturnValue memory pPool = _getPoolData(_getPastPool(i));
+        //     if(cPool.pool.big.unit > 0) currentPools[i] = cPool;
+        //     if(pPool.pool.big.unit > 0) pastPools[i] = pPool;
+        // }
+        // data.currentPools = currentPools;
+        // data.pastPools = pastPools;

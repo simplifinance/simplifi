@@ -7,9 +7,9 @@ import { Utils } from "../libraries/Utils.sol";
 import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 
 contract StateManager is OnlyRoleBase, IStateManager {
-    
+     
     // State variables
-    StateVariables public stateVariables;
+    StateVariables private stateVariables;
 
     constructor(
         address feeTo, 

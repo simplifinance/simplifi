@@ -178,8 +178,8 @@ interface Common {
         uint16 makerRate;
         uint currentEpoches;
         uint recordEpoches;
-        ReadPoolDataReturnValue[] currentPools;
-        ReadPoolDataReturnValue[] pastPools;
+        // ReadPoolDataReturnValue[] currentPools;
+        // ReadPoolDataReturnValue[] pastPools;
     }
 
     struct ContributorReturnValue {

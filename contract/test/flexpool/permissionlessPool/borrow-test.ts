@@ -46,7 +46,6 @@ describe("Permissionless: Borrow", function () {
       );
 
       const join = await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,

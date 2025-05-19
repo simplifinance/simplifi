@@ -45,7 +45,6 @@ describe("Permissionless: Enquire Liquidation Success", function () {
       );
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,

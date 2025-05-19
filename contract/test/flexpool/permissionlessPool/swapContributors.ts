@@ -46,7 +46,6 @@ describe("Permissionless: Swap contributors", function () {
       );
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,
@@ -69,8 +68,7 @@ describe("Permissionless: Swap contributors", function () {
         collateral: collateralAsset,
         deployer,
         asset: baseAsset
-      })).to.be.revertedWithCustomError(flexpool, "ErrorOccurred")
-      .withArgs("TurnTime has not pass");
+      })).to.be.revertedWith("16");
       
       /**
        * NOTE: IN THE FACTORY CONTRACT, WHEN THE REQUIRED QUORUM IS ACHIEVED, GETFINANCE IS OPENED 

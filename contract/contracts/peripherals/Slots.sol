@@ -54,13 +54,13 @@ abstract contract Slots {
         slot = slots[target][unit];
     }
 
-    // // For detailed doc, see _getSlot
-    // function getSlot(address target, uint unit) 
-    //     external 
-    //     view 
-    //     // onlyInitialized(unit, false)
-    //     returns(Common.Slot memory) 
-    // {
-    //     return _getSlot(target, unit);
-    // }
+    // For detailed doc, see _getSlot
+    function getSlot(address target, uint unit) 
+        external 
+        view 
+        // onlyInitialized(unit, false)
+        returns(Common.Slot memory) 
+    {
+        return _getSlot(target, unit);
+    }
 }

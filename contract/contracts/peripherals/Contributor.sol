@@ -258,27 +258,27 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     }
 
 
-    // /**
-    //  * @dev Return past pools using unitId. 
-    //  * @notice The correct unitId must be parsed. 
-    //  * @param recordId: Record Id
-    //  * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
-    //  * associated with the current pool will return empty pool but may not return empty contributors.
-    //  */
-    // function getPoolRecord(uint96 recordId) public view returns(Common.ReadPoolDataReturnValue memory result) {
-    //     result = _getPoolData(_getPastPool(recordId));
-    //     return result;
-    // }
+    /**
+     * @dev Return past pools using unitId. 
+     * @notice The correct unitId must be parsed. 
+     * @param recordId: Record Id
+     * @notice The record id can be obtained by iterating over the past epoches. Using the record Id
+     * associated with the current pool will return empty pool but may not return empty contributors.
+     */
+    function getPoolRecord(uint96 recordId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+        result = _getPoolData(_getPastPool(recordId));
+        return result;
+    }
 
-    // /**
-    //  * @dev Return past pools with its contributors using unitId. 
-    //  * @notice For every unit contribution, the unit Id is unique to another and does not change
-    //  * @param unitId: UnitId 
-    // */
-    // function getPoolData(uint96 unitId) public view returns(Common.ReadPoolDataReturnValue memory result) {
-    //     result = _getPoolData(_getPoolWithUnitId(unitId));
-    //     return result;
-    // }
+    /**
+     * @dev Return past pools with its contributors using unitId. 
+     * @notice For every unit contribution, the unit Id is unique to another and does not change
+     * @param unitId: UnitId 
+    */
+    function getPoolData(uint96 unitId) public view returns(Common.ReadPoolDataReturnValue memory result) {
+        result = _getPoolData(_getPoolWithUnitId(unitId));
+        return result;
+    }
 
     function _getPoolData(Common.Pool memory pool) internal view returns(Common.ReadPoolDataReturnValue memory result) {
         result.pool = pool;
@@ -303,22 +303,22 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     //     return _getPool(unit).status == Common.Status.AVAILABLE;
     // }
 
-    // /**
-    //  * @dev Returns the profile of target
-    //  * @param unit : unit contribution
-    //  * @param target : User
-    //  */
-    // function getProfile(
-    //     uint256 unit,
-    //     address target
-    // )
-    //     external
-    //     view
-    //     // onlyInitialized(unit, false)
-    //     returns(Common.ContributorReturnValue memory) 
-    // {
-    //     return _getContributor(target, unit);
-    // }
+    /**
+     * @dev Returns the profile of target
+     * @param unit : unit contribution
+     * @param target : User
+     */
+    function getProfile(
+        uint256 unit,
+        address target
+    )
+        external
+        view
+        // onlyInitialized(unit, false)
+        returns(Common.ContributorReturnValue memory) 
+    {
+        return _getContributor(target, unit);
+    }
 
     function _replaceContributor(address liquidator, uint96 recordId, Common.Slot memory slot, address _defaulter, uint unit) internal {
         Common.Provider[] memory providers = unitProviders[recordId][_defaulter];

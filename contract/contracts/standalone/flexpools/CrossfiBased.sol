@@ -291,16 +291,6 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         data.makerRate = uint16(_getVariables().makerRate);
         data.currentEpoches = _getEpoches();
         data.recordEpoches = _getPastEpoches();
-        Common.ReadPoolDataReturnValue[] memory currentPools = new Common.ReadPoolDataReturnValue[](data.currentEpoches);
-        Common.ReadPoolDataReturnValue[] memory pastPools = new Common.ReadPoolDataReturnValue[](data.recordEpoches);
-        for(uint96 i = 0; i < data.currentEpoches; i++) {
-            Common.ReadPoolDataReturnValue memory cPool = _getPoolData(_getPoolWithUnitId(i));
-            Common.ReadPoolDataReturnValue memory pPool = _getPoolData(_getPastPool(i));
-            if(cPool.pool.big.unit > 0) currentPools[i] = cPool;
-            if(pPool.pool.big.unit > 0) pastPools[i] = pPool;
-        }
-        data.currentPools = currentPools;
-        data.pastPools = pastPools;
 
         return data;
     }

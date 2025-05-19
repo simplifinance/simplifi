@@ -147,7 +147,7 @@ library Utils {
         if(it.fullInterest > 0) {
             unchecked {
                 it.intPerSec = (it.fullInterest * 1) / fullDurationInSec;
-            }
+            } 
         }
     }
 

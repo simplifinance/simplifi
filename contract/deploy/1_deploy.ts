@@ -2,25 +2,10 @@ import { HardhatRuntimeEnvironment, } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
-import { parseEther, parseUnits, zeroAddress } from 'viem';
-import { baseContractABI, getContractData, NetworkName } from "../getSupportedAssets";
-import { ethers } from 'hardhat'
-import { Contract } from 'ethers';
+import { parseEther, zeroAddress } from 'viem';
+import { getContractData, NetworkName } from "../getSupportedAssets";
 
 dotconfig();
-
-type ConstructorArg = {
-  feeTo: string; 
-  makerRate: string | number;
-  roleManager: string; 
-  assetManager: string; 
-  baseAsset: string;
-  pointFactory: string;
-  safeFactory: string;
-  oracle: string;
-  supportedAssets: string[];
-};
-
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
@@ -30,7 +15,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const networkName = getNetworkName().toLowerCase() as NetworkName;
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');
-  const initialLaunchAmout = parseUnits('1', 15);
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
@@ -135,7 +119,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
   console.log(`SafeFactory deployed to: ${safeFactory.address}`);  
 
-  const { flexpool, oracleAddress, isNotHardhat, priceData, wrappedAssetMetadata } = getContractData(networkName);
+  const { flexpool, isNotHardhat, priceData, wrappedAssetMetadata } = getContractData(networkName);
   /**
    * Wrapped asset
   */ 
@@ -181,7 +165,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const flexpoolArgs = [
     roleManager.address,
     stateManager.address,
-    oracleAddress,
     [wrappedNative.address],
     priceData
   ];
@@ -212,26 +195,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
-  await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address]);
+  const receipt = await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);
+  console.log("Receipt", receipt.confirmations);
   await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
-  // await execute(supportedManagerAndOracle, {from: deployer}, 'updatePriceFeed', priceQuoteAsset);
   
   // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
   if(networkName !== 'hardhat') {
-    await execute(flexpool, {from: deployer}, "updateQuote", initialLaunchAmout, wrappedNative.address);
-    const result = await read(flexpool, {from: deployer}, "quotes", initialLaunchAmout);
-    console.log("Quote", result);
+    const result = await read(flexpool, {from: deployer}, "priceData", wrappedNative.address);
+    console.log("Quote", result?.any.toString() || result?.[3].toString());
   }
 };
 
 export default func;
 
-func.tags = ["RoleBase", "supportAssetManger", "SimpliToken", "Reserve", "PriceOracle", "FlexpoolFactory", "Points", "Providers", "Attorney", "TokenDistributor", "SafeFactory", "Escape"];
-
-
-// Pyth network ids
-// 0x7d669ddcdd23d9ef1fa9a9cc022ba055ec900e91c4cb960f3c20429d4447a411  Crypto.CELO/USD
-// 0x8f218655050a1476b780185e89f19d2b1e1f49e9bd629efad6ac547a946bf6ab Crypto.CUSD/USD
-// oracle addreses
-// 0xff1a0f4744e8582DF1aE09D5611b887B6a12925C celo mainnet
-// Celo Alfajores (testnet)	0x74f09cb3c7e2A01865f424FD14F6dc9A14E3e94E
+func.tags = ["RoleBase", "supportAssetManger", "SimpliToken", "Reserve", "FlexpoolFactory", "Points", "Providers", "Attorney", "TokenDistributor", "SafeFactory", "Escape"];

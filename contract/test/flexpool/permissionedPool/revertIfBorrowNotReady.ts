@@ -72,8 +72,7 @@ describe("Permissioned: Reverts", function () {
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
-      })).to.be.revertedWithCustomError(flexpool, "ErrorOccurred")
-      .withArgs("Borrow not ready");
+      })).to.be.revertedWith("14")
 
       /**
        * This is an indication that a pool was removed.
