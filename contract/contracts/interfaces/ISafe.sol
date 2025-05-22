@@ -6,21 +6,22 @@ import { Common } from "./Common.sol";
 import { IERC20 } from "./IERC20.sol";
 
 interface ISafe {
-  function addUp(address user, uint recordId) external returns(bool);
+  function addUp(address user, uint96 recordId) external returns(bool);
   function getFinance(
     address user, 
     IERC20 baseAsset, 
     uint256 loan, 
     uint fee, 
     uint256 calculatedCol,
-    uint recordId
+    uint96 recordId
   ) 
     external 
     returns(bool);
 
   function payback(Common.Payback_Safe memory, uint unit) external returns(uint collateral);
-  function cancel(address user, IERC20 asset, uint unit, uint recordId) external returns(bool);
+  function cancel(address user, IERC20 asset, uint unit, uint96 recordId) external returns(bool);
   function getData() external view returns(ViewData memory);
+  function registerProvidersTo(Common.Provider[] memory providers, address contributor, uint96 recordId) external;
 
   struct ViewData {
     uint totalClients;

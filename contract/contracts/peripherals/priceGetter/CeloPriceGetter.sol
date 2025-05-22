@@ -32,8 +32,9 @@ abstract contract CeloPriceGetter is Pool {
         address _roleManager,
         address _stateManager,
         address[] memory supportedAssets,
-        PriceData[] memory _priceData
-    ) Pool(_stateManager, _roleManager) {
+        PriceData[] memory _priceData,
+        address _safeFactory
+    ) Pool(_stateManager, _roleManager, _safeFactory) {
         require(supportedAssets.length == _priceData.length);
         for(uint i = 0; i < supportedAssets.length; i++) {
             priceData[supportedAssets[i]] = _priceData[i];

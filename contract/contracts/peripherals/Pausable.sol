@@ -108,8 +108,8 @@ abstract contract Pausable is OnlyRoleBase {
         public 
         onlyRoleBearer
     {
-        _paused? false : true;
-        if(_paused) emit Paused(_msgSender()); else emit Unpaused(_msgSender());
+        _paused = paused()? false : true;
+        if(paused()) emit Paused(_msgSender()); else emit Unpaused(_msgSender());
     }
 
 }

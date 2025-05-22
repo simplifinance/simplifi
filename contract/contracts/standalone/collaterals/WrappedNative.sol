@@ -5,6 +5,7 @@ pragma solidity 0.8.24;
 import { ERC20, Context } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
+import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
  * @title WrappedNative is a supported collateral asset on the connected network e.g. Celo or XFI can be used
@@ -14,7 +15,7 @@ import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
  * stablecoin as cover for the asset they're borrowing. To have more granular control over the deposited
  * XFI coin, we provide a wrapped version of the native coin. 
  */
-contract WrappedNative is ERC20, OnlyRoleBase {
+contract WrappedNative is ERC20, OnlyRoleBase, ReentrancyGuard {
     address public immutable deployer;
     constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {
         deployer = _msgSender();
@@ -31,20 +32,12 @@ contract WrappedNative is ERC20, OnlyRoleBase {
         return true;
     }
 
-    ///@dev Override _approval so user cannot accidentally or intentionally approve account to withdraw collateral deposit
-    function _approve(address owner, address spender, uint256 value, bool emitEvent) internal override {
-        if(!_hasRole(owner)) {
-            require(_hasRole(spender), "Approval forbidden");
-        } else {
-            require(!_hasRole(spender), "Approval forbidden");
-        }
-        super._approve(owner, spender, value, !emitEvent);
-    }
-
     ///@dev Transfer is disbled indefinitely
     function transfer(address to, uint256 value) public override returns (bool) {
         if(to != address(0)) to = address(0);
-        return super.transfer(to, value);
+        address owner = _msgSender();
+        _transfer(owner, to, value);
+        return true;
     }
 
     /**
@@ -57,16 +50,14 @@ contract WrappedNative is ERC20, OnlyRoleBase {
      * Caution:
      *          An account with a role permission should not participate in a Flexpool except for the deployer
      */
-    function transferFrom(address from, address to, uint256 value) public override returns (bool done) {
-        done = super.transferFrom(from, to, value);
+    function transferFrom(address from, address to, uint256 value) public override nonReentrant returns (bool) {
         address spender = _msgSender();
+        _spendAllowance(from, spender, value);
+        _burn(from, value);
         if(!_hasRole(spender) || spender == deployer) {
-            done = false;
-            _burn(to, value);
-            (done,) = payable(spender).call{value:value}('');
-            require(done, "Failed");
+            payable(to).transfer(value); 
         }
-        return done;
+        return true;
     }
 
     function _msgSender() internal view override(Context, MsgSender) returns(address sender) {

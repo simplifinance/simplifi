@@ -18,8 +18,8 @@ import { ISafe } from "../interfaces/ISafe.sol";
 
 abstract contract Pool is Contributor {
     // ================ Constructor ==============
-    constructor(address stateManager, address roleManager)
-        Contributor(stateManager, roleManager)
+    constructor(address stateManager, address roleManager, address _safeFactory)
+        Contributor(stateManager, roleManager, _safeFactory)
     {}
 
     /**
@@ -37,11 +37,10 @@ abstract contract Pool is Contributor {
         require(args.durationInHours > 0 && args.durationInHours <= 720, '3');
         if(args.router == Common.Router.PERMISSIONLESS){
             require(args.users.length == 1, '4');
-            assert(args.users[0] == args.sender);
         } else {
             require(args.users.length >= 2, '5');
-            require(args.sender == args.users[0], '6');
         } 
+        require(args.sender == args.users[0], '6');
         (uint96 unitId, uint96 recordId) = _generateIds(args.unit);
         pool = _updatePool(Common.UpdatePoolData(args.unit, unitId, recordId, args.maxQuorum, args.colCoverage, IERC20(args.colAsset), args.durationInHours, args.users[0], args.router));   
         pool = _addUserToPool(args.unit, args.users, pool);
@@ -62,9 +61,8 @@ abstract contract Pool is Contributor {
     ) internal returns(Common.Pool memory _pool) {
         for(uint i = 0; i < users.length; i++) {
             Common.ContributorReturnValue memory data;
-            if(i == 0){
-                data = _initializeContributor(pool, unit, users[i], true, true, true);
-            } else {
+            if(i == 0) data = _initializeContributor(pool, unit, users[i], true, true, true);
+            else {
                 require(users[0] != users[i], '7');
                 data = _initializeContributor(pool, unit, users[i], false, true, false);
             }
@@ -126,7 +124,7 @@ abstract contract Pool is Contributor {
             pool.low = Common.Low(data.maxQuorum, 0, data.colCoverage, uint32(uint(data.durationInHours) * 1 hours), 0, 1);
         }
         pool.big = Common.Big(data.unit, data.unit, data.recordId, data.unitId);
-        pool.addrs = Common.Addresses(data.colAsset, address(0), stateManager.getSafe(data.unit), data.creator);
+        pool.addrs = Common.Addresses(data.colAsset, address(0), _getSafe(data.unit), data.creator);
         pool.router = data.router;
         pool.status = Common.Status.TAKEN;
         pool.stage = Common.Stage.JOIN;

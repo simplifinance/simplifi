@@ -8,7 +8,7 @@ import { ActionButton } from '../ActionButton';
 
 const steps : FunctionName[] = ['allowance', 'approve', 'contribute'];
 
-export default function Contribute({ unit, disabled }: ContributeProps) {
+export default function Contribute({ unit, disabled, overrideButtonContent}: ContributeProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
@@ -80,7 +80,7 @@ export default function Contribute({ unit, disabled }: ContributeProps) {
             <ActionButton 
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer} 
-                buttonContent='Contribute'
+                buttonContent={overrideButtonContent || 'Contribute'}
                 widthType='fit-content'
             />
             <Confirmation 
@@ -97,4 +97,5 @@ export default function Contribute({ unit, disabled }: ContributeProps) {
 type ContributeProps = {
     unit: bigint;
     disabled: boolean;
+    overrideButtonContent?: string;
 };

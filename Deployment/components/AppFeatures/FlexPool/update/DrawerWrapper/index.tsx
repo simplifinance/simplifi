@@ -2,44 +2,39 @@ import React from "react";
 import { flexSpread, } from "@/constants";
 import { Contributor } from './Contributor';
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
-import { Address, RekeyParam, FormattedCData, FormattedPoolData, } from "@/interfaces";
+import { FormattedCData, FormattedPoolData, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
-import { formatAddr, } from "@/utilities";
-// import LiquidityAndStrategyBalances from "./LiquidityAndSafeBalances";
-// import AccessAndCollateralBalances from "./CollateralBalances";
-import CollateralQuote from "./CollateralQuote";
+import QuoteBalancesAndCollateral from "./QuoteBalancesAndCollateral";
 import { zeroAddress } from "viem";
-// import { Button } from "@/components/ui/button";
-// import DrawerHeader from "@/components/utilities/DrawerHeader";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
-const BOXSTYLING = "h-[180px] lg:h-[150px] w-full rounded-lg border border-white1/20 p-4 space-y-2 text-orange-200 bg-white1/10";
+const BOXSTYLING = "w-full rounded-lg border border-b-4 p-4 space-y-2 dark:text-white1";
 
 export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoDisplayProps) => {
+    const { symbol } = useAppStorage();
     const {
         pool: { 
             addrs: { colAsset, safe, lastPaid } ,
             low: { colCoverage, duration, allGh, },
             big: { unit, unitId,  recordId, currentPool },
-            isPermissionless,
             stage,
         },
-        cData,
     } = data;
 
-    const collateralAsset = formatAddr(colAsset.toString());
-    const extractAddresses = () => {
-        let addrs : Address[] = [];
-        cData.forEach((cd) => {
-            addrs.push(formatAddr(cd.profile.id.toString()))
-        });
-        return addrs;
-    }
-    const rekeyParam : RekeyParam = {
-        colCoverage: colCoverage,
-        durationInHours: Number(duration.toString()),
-        contributors: extractAddresses(),
-        allGH: allGh
-    }
+    // const collateralAsset = formatAddr(colAsset.toString());
+    // const extractAddresses = () => {
+    //     let addrs : Address[] = [];
+    //     cData.forEach((cd) => {
+    //         addrs.push(formatAddr(cd.profile.id.toString()))
+    //     });
+    //     return addrs;
+    // }
+    // const rekeyParam : RekeyParam = {
+    //     colCoverage: colCoverage,
+    //     durationInHours: Number(duration.toString()),
+    //     contributors: extractAddresses(),
+    //     allGH: allGh
+    // }
 
     return(
         <Drawer
@@ -50,11 +45,11 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
         >
             <div className={`space-y-4 md:space-y-4`}>
                 { actions }
-                <ul className={`bg-white1 dark:bg-gray1 p-4 rounded-lg text-orange-200 font-normal text-sm`}>
+                <ul className={`bg-white1 dark:bg-transparent border border-b-4 p-4 rounded-lg dark:text-white1  `}>
                     <li className={`${flexSpread}`}>
-                        <h3 className="">Asset</h3>
-                        <AddressWrapper 
-                            size={4} 
+                        <h3>{`Collateral denom : ${symbol}`}</h3>
+                        <AddressWrapper
+                            size={4}
                             copyIconSize="4" 
                             account={colAsset || zeroAddress}
                             overrideClassName="text-md" 
@@ -62,7 +57,7 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                         />
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3 className="">Safe</h3>
+                        <h3 className="">Pool Safe</h3>
                         <AddressWrapper 
                             size={4} 
                             copyIconSize="4" 
@@ -80,26 +75,20 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                         <p className="">{`${recordId.str}`}</p>
                     </li>
                 </ul>
-                <CollateralQuote unit={unit.big} />
-                {/* <LiquidityAndStrategyBalances
-                    safe={safe}
-                    collateralAsset={collateralAsset}
-                    isPermissionless={isPermissionless}
-                    param={rekeyParam}
-                /> */}
-                {/* <AccessAndCollateralBalances collateralAsset={collateralAsset} safe={safe}/> */}
 
-                <ul className={`${BOXSTYLING} text-xs`}>
+                <QuoteBalancesAndCollateral unit={unit.big} safe={safe} collateralAsset={colAsset} />
+                
+                <ul className={`${BOXSTYLING}`}>
                     <li className={`w-full ${flexSpread}`}>
-                        <h3>Unit Liquidity</h3>
+                        <h3>Contribution per user</h3>
                         <p>{`$${unit.inEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
-                        <h3>Total Pooled Liquidity</h3>
+                        <h3>Total contributed</h3>
                         <p>{`$${currentPool.inEther}`}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
-                        <h3>Unit Id</h3>
+                        <h3>Pool Id</h3>
                         <p>{unitId.str}</p>
                     </li>
                     <li className={`w-full ${flexSpread}`}>
@@ -120,7 +109,7 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                     </li>
                     <li className={`w-full ${flexSpread}`}>
                         <h3>Duration</h3>
-                        <p>{`${duration.inHour} hrs`}</p>
+                        <p>{`${duration.inHour} ${duration.inHour > 1? 'hrs' : 'hr'}`}</p>
                     </li>
                 </ul>
             </div>

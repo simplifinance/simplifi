@@ -297,7 +297,7 @@ export interface InputCategoryProp {
 }
 
 export interface ButtonObj {
-  value: FunctionName[];
+  value: FunctionName;
   disable: boolean;
 }
 
@@ -364,7 +364,6 @@ export interface BalancesProps {
 
 export interface ActionsButtonProps {
   getButtonObj: () => {buttonObj: ButtonObj, };
-  // transactionArgs: HandleTransactionParam;
   confirmationDrawerOn: number;
   setDrawerState: (arg: number) => void
   back?: VoidFunc;

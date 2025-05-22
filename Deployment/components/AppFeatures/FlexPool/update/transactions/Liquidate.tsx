@@ -6,7 +6,9 @@ import { Address, FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-export default function Payback({ unit, collateralAddress, disabled, overrideButtonContent}: PaybackProps) {
+const steps : FunctionName[] = ['getCurrentDebt', 'allowance', 'approve', 'liquidate', 'transferFrom'];
+
+export default function Liquidate({ unit, safe, collateralAddress, disabled, lastPaid, overrideButtonContent}: LiquidateProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
@@ -15,69 +17,60 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const {readTxObject, flexpoolContract, paybackArgs, mutate } = React.useMemo(() => {
-        const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative?.toLowerCase();
-        const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
+    const { contractAddresses: ca, transactionData: td, flexpoolContract, allowanceArg, paybackArg, allowanceContract, getDebtArg } = React.useMemo(() => {
+        const filtered = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: ['getCurrentDebt', 'allowance'],
+            functionNames: steps,
             callback
         });
+        const getDebtArg = [unit, lastPaid];
+        const allowanceArg = [safe, account];
+        const paybackArg = [unit];
+        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased as Address : filtered.contractAddresses.CeloBased as Address;
+        const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
+        const allowanceContract = isWrappedAsset? filtered.contractAddresses.WrappedNative as Address : filtered.contractAddresses.SimpliToken as Address;
 
-        const mutate = filterTransactionData({
-            chainId,
-            filter: true,
-            functionNames: ['approve', 'payback'],
-            callback
-        });
-
-        const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
-        const readArgs = [[unit, account], [account, flexpoolContract]];
-        const addresses = [flexpoolContract, ca.stablecoin];
-        const readTxObject = td.map((item, i) => {
-            return{
-                abi: item.abi,
-                functionName: item.functionName,
-                address: formatAddr(addresses[i]),
-                args: readArgs[i]
-            }
-        });
-
-        const paybackArgs = [unit];
-        return { readTxObject, flexpoolContract, isWrappedAsset, paybackArgs, mutate};
+        return { ...filtered, flexpoolContract, allowanceArg, paybackArg, getDebtArg, allowanceContract };
     }, [chainId, unit, account]);
 
-    const { data, refetch } = useReadContracts(
+    const { refetch  } = useReadContracts(
         {
             config,
-            contracts: readTxObject.map((item) => { return item})
+            contracts: [
+                {
+                    abi: td[0].abi,
+                    address: td[0].contractAddress as Address,
+                    args: getDebtArg,
+                    functionName: td[0].functionName,
+                },
+                {
+                    abi: td[1].abi,
+                    address: allowanceContract,
+                    args: allowanceArg,
+                    functionName: td[1].functionName,
+                },
+            ]
         }
     );
 
-
-    let debt = data?.[0]?.result as bigint;
-    let allowance = data?.[1]?.result as bigint;
-
     const getTransactions = React.useCallback(() => {
-        // const txObjects = td.filter(({functionName}) => functionName !== steps[0] && functionName !== steps[1]);
-        let txns = mutate.transactionData;
-        // if(debt && allowance && allowance > debt) {
-        //     txns = txns.filter((item) => item.functionName !== 'approve');
-        // }
+        const txObjects = td.filter(({functionName}) => functionName !== steps[0] && functionName !== steps[1]);
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
-            let proceed = 1;
+            let proceed= 1;
             await refetch().then((result) => {
-                debt = result?.data?.[0].result as bigint;
-                allowance = result?.data?.[1]?.result as bigint;
-            
+                const debt = result?.data?.[1].result as bigint;
+                const allowance = result?.data?.[1]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
                         args = [flexpoolContract, debt];
                         if(allowance >= debt) proceed = 0;
                         break;
+                    case 'transferFrom':
+                        args = [safe, account, allowance];
+                        break;
                     default:
-                        args = paybackArgs;
                         break;
                 }
                 
@@ -90,18 +83,20 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
             let contractAddress = '';
             switch (txObject.functionName) {
                 case 'payback':
-                    args = paybackArgs;
+                    args = paybackArg;
                     contractAddress = flexpoolContract;
                     break;
+                case 'transferFrom':
+                    contractAddress = allowanceContract;
+                    break;
                 default:
-                    contractAddress = mutate.contractAddresses.stablecoin;
-                    args = [flexpoolContract, debt];
+                    contractAddress = txObject.contractAddress;
                     break;
             }
             return {args, contractAddress: formatAddr(contractAddress)};
         };
 
-        let transactions = txns.map((txObject) => {
+        let transactions = txObjects.map((txObject) => {
             const { args, contractAddress} = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
@@ -113,9 +108,9 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
             };
             return transaction;
         })
-        // console.log("transactions", transactions);
+        console.log("transactions", transactions);
         return transactions;
-   }, [unit, mutate, flexpoolContract]);
+   }, [unit, ca]);
 
     return(
         <React.Fragment>
@@ -129,15 +124,17 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 getTransactions={getTransactions}
-                displayMessage='Request to payback loan'
-                lastStepInList={'payback'}
+                displayMessage='Requesting liquidate transaction'
+                lastStepInList={'transferFrom'}
             />
         </React.Fragment>
     )
 }
 
-type PaybackProps = {
+type LiquidateProps = {
     unit: bigint;
+    safe: Address;
+    lastPaid: Address;
     collateralAddress: Address;
     disabled: boolean;
     overrideButtonContent?: string;

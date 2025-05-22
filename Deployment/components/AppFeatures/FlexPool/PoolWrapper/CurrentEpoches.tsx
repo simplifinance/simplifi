@@ -17,9 +17,6 @@ export const CurrentEpoches:React.FC = () => {
     return [...Array(epoches).keys()];
   };
 
-  console.log("currentEpoches", currentEpoches);
-  console.log("Unfiltered", unfilteredPools());
-
   const { transactionData, } = React.useMemo(() => {
     const filtered = filterTransactionData({
       chainId,
@@ -32,18 +29,6 @@ export const CurrentEpoches:React.FC = () => {
     return { ...filtered }
   }, [chainId]);
 
-  
-  const contracts = unfilteredPools().map((item) => {
-    const td = transactionData?.[0];
-    return {
-      abi: td.abi,
-      address: td.contractAddress as Address,
-      functionName: td.functionName,
-      args: [item]
-    }
-  });
-  console.log("contracts", contracts);
-
   const {data, isError, isPending} = useReadContracts(
     {
       allowFailure: true,
@@ -52,11 +37,18 @@ export const CurrentEpoches:React.FC = () => {
         refetchInterval: 5000,
       },
       config,
-      contracts
+      contracts: unfilteredPools().map((item) => {
+        const td = transactionData?.[0];
+        const unitId = BigInt(item + 1);
+        return {
+          abi: td.abi,
+          address: td.contractAddress as Address,
+          functionName: td.functionName,
+          args: [unitId]
+        }
+      })
     }
   );
-
-  console.log("Data", data)
 
   if(isError) {
     return ( <NotFound errorMessage={'No pool found'} />);
@@ -69,14 +61,16 @@ export const CurrentEpoches:React.FC = () => {
         {
           data?.map((item, index) => {
             const item_ = item?.result as ReadDataReturnValue;
-            console.log("Item", item_)
-            return (
-              <Grid item xs={12} sm={6} md={4} key={index}>
-                <MotionDivWrap className='w-full rounded-md' transitionDelay={index / data?.length}>
-                  { (toBN(item_?.pool?.low.maxQuorum.toString()).toNumber() > 0 && toBN(item_.pool.big.unit.toString()).gt(0)) && <FlexCard cData={item_.cData} pool={item_.pool} /> }
-                </MotionDivWrap>
-              </Grid>
-            )
+            const hasPool = toBN(item_.pool.big.unit.toString()).gt(0);
+            if(hasPool) {
+              return (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <MotionDivWrap className='w-full rounded-md' transitionDelay={index / data?.length}>
+                    <FlexCard cData={item_.cData} pool={item_.pool} />
+                  </MotionDivWrap>
+                </Grid>
+              )
+            }
           })
         }
       </Grid> 

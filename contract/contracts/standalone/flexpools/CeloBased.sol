@@ -6,7 +6,6 @@ import { IStateManager } from '../../interfaces/IStateManager.sol';
 import { ISafe } from "../../interfaces/ISafe.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { CeloPriceGetter, Utils, Common  } from "../../peripherals/priceGetter/CeloPriceGetter.sol";
-// import "hardhat/console.sol";
 
 /**
     * @title FlexpoolFactory
@@ -44,9 +43,10 @@ contract CeloBased is IFactory, CeloPriceGetter {
         address _roleManager,
         address _stateManager, 
         address[] memory supportedAssets, 
-        PriceData[] memory priceData
+        PriceData[] memory priceData,
+        address _safeFactory
     ) 
-        CeloPriceGetter(_roleManager, _stateManager, supportedAssets, priceData)
+        CeloPriceGetter(_roleManager, _stateManager, supportedAssets, priceData, _safeFactory)
     {}
 
     receive() external payable {}
@@ -87,23 +87,25 @@ contract CeloBased is IFactory, CeloPriceGetter {
      * @dev launch a default permissionless pool
      * @param user : Target user
      * @param unit : Unit contribution
-     * @param initialPool : An Initialized pool. Can be an empty pool
+     * @param _providers : A list of external fund providers.
+     * @return pool : Current pool
      * @notice Defaults value are set as
      * - MaxQuorum - 2
      * - Duration - 72 hours i.e 3 days
      * - Collateral coverage - 120
      */
-    function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
+    function _launchDefault(address user, uint unit, Common.Provider[] memory _providers) internal returns(Common.Pool memory pool) {
         address[] memory users = new address[](1);
         users[0] = user;
         address defaultColAsset = _getVariables().assetManager.getDefaultSupportedCollateralAsset();
-        initialPool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
+        pool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
+        ISafe(pool.addrs.safe).registerProvidersTo(_providers, user, pool.big.recordId); 
         _awardPoint(users[0], 0, 5, false);
         unchecked {
             analytics.tvlBase += unit;
             analytics.totalPermissionless += 1;
         }
-        emit Common.PoolCreated(initialPool);
+        emit Common.PoolCreated(pool);
     }
 
     /**
@@ -131,15 +133,15 @@ contract CeloBased is IFactory, CeloPriceGetter {
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool.big.unitId, pool);
+            unchecked {
+                analytics.tvlBase += unit;
+            }
             emit Common.NewContributorAdded(pool);
         } else {
             isNewOrCancel = true;
-            pool = _launchDefault(borrower, unit);
+            pool = _launchDefault(borrower, unit, providers);
         }
         _setProviders(providers, borrower, pool.big.recordId);
-        unchecked {
-            analytics.tvlBase += unit;
-        }
         return true;
     }
 

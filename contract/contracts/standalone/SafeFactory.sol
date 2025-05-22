@@ -27,8 +27,12 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
    * @param _roleManager : Role manager contract
    * @param _feeTo : Fee receiver
    */
-  constructor (address _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
+  constructor (
+    address _roleManager, 
+    address _feeTo
+  ) OnlyRoleBase(_roleManager) {
     feeTo = _feeTo;
+    _createSafe(1e16);
   }
  
   // Not accepting values
@@ -78,14 +82,6 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
    */
   function _updateSafe(uint256 unit, address safe) private {
     safeMap[unit] = safe;
-  }
-
-  /**
-    * Returns then safe for 'unit'
-    * @param unit : Unit amount
-  */
-  function getSafe(uint unit) external view returns(address) { 
-    return _getSafe(unit);
   }
 
   function setFeeTo(address newFeeTo) public onlyRoleBearer {

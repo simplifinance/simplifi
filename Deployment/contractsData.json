@@ -235,7 +235,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x1fB905fcA993f1B8136523f2d532F62a63Dc685A",
+        "contractAddress": "0x424B80b6D7Fa4d6193D813b8564d57a29162174C",
         "inputCounts": 1,
         "inputs": [
           "lostAccount"
@@ -1910,6 +1910,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -4086,6 +4091,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -4157,7 +4175,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -4210,6 +4228,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -6386,6 +6409,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -6457,7 +6493,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -6510,6 +6546,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -8686,6 +8727,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -8757,7 +8811,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 7,
         "inputs": [
           "users",
@@ -8816,6 +8870,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -10992,6 +11051,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -11063,7 +11135,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -11116,6 +11188,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -13292,6 +13369,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -13363,7 +13453,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 2,
         "inputs": [
           "unit",
@@ -13417,6 +13507,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -15593,6 +15688,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -15664,7 +15772,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "getFactoryData",
@@ -15715,6 +15823,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -17891,6 +18004,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -17962,7 +18088,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -18015,6 +18141,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -20191,6 +20322,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -20262,7 +20406,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unitId"
@@ -20315,6 +20459,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -22491,6 +22640,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -22562,7 +22724,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "recordId"
@@ -22615,6 +22777,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -24791,6 +24958,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -24862,7 +25042,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -24915,6 +25095,11 @@
                 "internalType": "struct CeloPriceGetter.PriceData[]",
                 "name": "priceData",
                 "type": "tuple[]"
+              },
+              {
+                "internalType": "address",
+                "name": "_safeFactory",
+                "type": "address"
               }
             ],
             "stateMutability": "nonpayable",
@@ -27091,6 +27276,19 @@
             "type": "function"
           },
           {
+            "inputs": [],
+            "name": "safeFactory",
+            "outputs": [
+              {
+                "internalType": "contract ISafeFactory",
+                "name": "",
+                "type": "address"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          },
+          {
             "inputs": [
               {
                 "internalType": "address",
@@ -27162,7 +27360,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+        "contractAddress": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
         "inputCounts": 1,
         "inputs": [
           "unit"
@@ -27615,7 +27813,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xE3dbDcbb865543374c811390ad642debF223a7eD",
+        "contractAddress": "0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae",
         "inputCounts": 2,
         "inputs": [
           "_routeTo",
@@ -27788,7 +27986,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xE3dbDcbb865543374c811390ad642debF223a7eD",
+        "contractAddress": "0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae",
         "inputCounts": 1,
         "inputs": [
           "amount"
@@ -28081,7 +28279,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x0713c869AC9fe2591e5E3F43bD98C9c342a50129",
+        "contractAddress": "0x129568fe5620790B9A04b0CbE639A675Eb542E76",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "claimTestTokens",
@@ -28372,7 +28570,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x0713c869AC9fe2591e5E3F43bD98C9c342a50129",
+        "contractAddress": "0x129568fe5620790B9A04b0CbE639A675Eb542E76",
         "inputCounts": 1,
         "inputs": [
           "newToken"
@@ -28665,7 +28863,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x0713c869AC9fe2591e5E3F43bD98C9c342a50129",
+        "contractAddress": "0x129568fe5620790B9A04b0CbE639A675Eb542E76",
         "inputCounts": 1,
         "inputs": [
           "newToken"
@@ -29670,7 +29868,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x93d95e2ff9519eD88e5Ebc415777c0D3D8504F67",
+        "contractAddress": "0x00EA5e7F669A7c159C900b631ddA30391c8092C2",
         "inputCounts": 2,
         "inputs": [
           "providersSlots",
@@ -30154,7 +30352,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x93d95e2ff9519eD88e5Ebc415777c0D3D8504F67",
+        "contractAddress": "0x00EA5e7F669A7c159C900b631ddA30391c8092C2",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "getProviders",
@@ -30635,7 +30833,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x93d95e2ff9519eD88e5Ebc415777c0D3D8504F67",
+        "contractAddress": "0x00EA5e7F669A7c159C900b631ddA30391c8092C2",
         "inputCounts": 1,
         "inputs": [
           "rate"
@@ -31118,7 +31316,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0x93d95e2ff9519eD88e5Ebc415777c0D3D8504F67",
+        "contractAddress": "0x00EA5e7F669A7c159C900b631ddA30391c8092C2",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "removeLiquidity",
@@ -31288,7 +31486,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xe403D9BbcF8E575D471eDD172f1DFC592956BF3b",
+        "contractAddress": "0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0",
         "inputCounts": 2,
         "inputs": [
           "_routeTo",
@@ -31461,7 +31659,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xe403D9BbcF8E575D471eDD172f1DFC592956BF3b",
+        "contractAddress": "0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0",
         "inputCounts": 1,
         "inputs": [
           "amount"
@@ -32128,7 +32326,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 2,
         "inputs": [
           "owner",
@@ -32796,7 +32994,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 2,
         "inputs": [
           "spender",
@@ -33464,7 +33662,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 1,
         "inputs": [
           "account"
@@ -34131,7 +34329,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 2,
         "inputs": [
           "_routeTo",
@@ -34799,7 +34997,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 2,
         "inputs": [
           "accountToRetrieve",
@@ -35467,7 +35665,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "symbol",
@@ -36132,7 +36330,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 3,
         "inputs": [
           "from",
@@ -36801,7 +36999,7 @@
             "type": "receive"
           }
         ],
-        "contractAddress": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
+        "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
         "inputCounts": 1,
         "inputs": [
           "amount"
@@ -36948,7 +37146,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xcE76040bF69D22A73630DdB2da6C1Ae5eb4f19a5",
+        "contractAddress": "0x8882a80eBCE2c9968A18384d10a016B7D3402A20",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "getSupportedAssets",
@@ -37061,6 +37259,11 @@
               }
             ],
             "name": "ERC20InvalidSpender",
+            "type": "error"
+          },
+          {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
             "type": "error"
           },
           {
@@ -37331,7 +37534,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 2,
         "inputs": [
           "owner",
@@ -37450,6 +37653,11 @@
             "type": "error"
           },
           {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
+            "type": "error"
+          },
+          {
             "anonymous": false,
             "inputs": [
               {
@@ -37717,7 +37925,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 2,
         "inputs": [
           "spender",
@@ -37836,6 +38044,11 @@
             "type": "error"
           },
           {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
+            "type": "error"
+          },
+          {
             "anonymous": false,
             "inputs": [
               {
@@ -38103,7 +38316,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 1,
         "inputs": [
           "account"
@@ -38221,6 +38434,11 @@
             "type": "error"
           },
           {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
+            "type": "error"
+          },
+          {
             "anonymous": false,
             "inputs": [
               {
@@ -38488,13 +38706,13 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 1,
         "inputs": [
           "to"
         ],
         "functionName": "deposit",
-        "requireArgUpdate": false
+        "requireArgUpdate": true
       },
       {
         "abi": [
@@ -38606,6 +38824,11 @@
             "type": "error"
           },
           {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
+            "type": "error"
+          },
+          {
             "anonymous": false,
             "inputs": [
               {
@@ -38873,7 +39096,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 0,
         "inputs": [],
         "functionName": "symbol",
@@ -38989,6 +39212,11 @@
             "type": "error"
           },
           {
+            "inputs": [],
+            "name": "ReentrancyGuardReentrantCall",
+            "type": "error"
+          },
+          {
             "anonymous": false,
             "inputs": [
               {
@@ -39256,7 +39484,7 @@
             "type": "function"
           }
         ],
-        "contractAddress": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a",
+        "contractAddress": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6",
         "inputCounts": 3,
         "inputs": [
           "from",
@@ -39293,18 +39521,18 @@
   "contracts": [
     {
       "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
-      "Attorney": "0x1fB905fcA993f1B8136523f2d532F62a63Dc685A",
+      "Attorney": "0x424B80b6D7Fa4d6193D813b8564d57a29162174C",
       "BaseAsset": "0x210e77886554170bBa347db97CA64E2B9258124E",
-      "CeloBased": "0x7CE3da7F216Cbc7f09E70aa5290D7c074F289DAb",
+      "CeloBased": "0x8BB51b83C5bAed9FC2E17C54D115E72711E6abA1",
       "CeloSupportedAssetManager": "0xB417BD4eB45A35Dd46f68C9549D4c55F2033E32F",
-      "Escape": "0xE3dbDcbb865543374c811390ad642debF223a7eD",
-      "Faucet": "0x0713c869AC9fe2591e5E3F43bD98C9c342a50129",
+      "Escape": "0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae",
+      "Faucet": "0x129568fe5620790B9A04b0CbE639A675Eb542E76",
       "Points": "0x0A8e93768c85e788A3fC67A4Af0d3C98A974c9D7",
-      "Providers": "0x93d95e2ff9519eD88e5Ebc415777c0D3D8504F67",
-      "Reserve": "0xe403D9BbcF8E575D471eDD172f1DFC592956BF3b",
-      "SimpliToken": "0xAA9946979dfbddEf438b970546955c8C9F6FE3db",
-      "SupportedAssetManager": "0xcE76040bF69D22A73630DdB2da6C1Ae5eb4f19a5",
-      "WrappedNative": "0xdFA25197AC1298AaE3B497484e99e98c72b4419a"
+      "Providers": "0x00EA5e7F669A7c159C900b631ddA30391c8092C2",
+      "Reserve": "0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0",
+      "SimpliToken": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
+      "SupportedAssetManager": "0x8882a80eBCE2c9968A18384d10a016B7D3402A20",
+      "WrappedNative": "0xE5e68558282522a4ad29f3eCE4F9B1EC5791C1c6"
     },
     {
       "stablecoin": "0x0000000000000000000000000000000000000000"

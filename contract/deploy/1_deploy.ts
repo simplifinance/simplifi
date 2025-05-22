@@ -144,7 +144,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     feeTo,
     serviceRate,
     roleManager.address,
-    safeFactory.address,
     supportAssetManger.address,
     baseContributionAsset,
     reward.address
@@ -166,12 +165,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     roleManager.address,
     stateManager.address,
     [wrappedNative.address],
-    priceData
+    priceData,
+    safeFactory.address
   ];
 
   const hardhatArg = [
     roleManager.address,
     stateManager.address,
+    safeFactory.address
   ];
 
   const constructorArgs = isNotHardhat? flexpoolArgs : hardhatArg;

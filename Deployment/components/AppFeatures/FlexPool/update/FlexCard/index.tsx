@@ -14,7 +14,8 @@ import Contribute from "../transactions/Contribute";
 import ClosePool from "../transactions/ClosePool";
 import GetFinance from "../transactions/GetFinance";
 import Payback from "../transactions/Payback";
-import EditPool from "../transactions/EditPool";
+import Liquidate from "../transactions/Liquidate";
+import { zeroAddress } from "viem";
 
 /**
  * Filter the data list for current user
@@ -35,7 +36,7 @@ const filterUser = (
 }
 
 export const FlexCard = (props: ReadDataReturnValue) => {
-    const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
+    // const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
@@ -53,98 +54,81 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         pool: {
             big: { unit, unitId, currentPool },
             low: { userCount, maxQuorum, },
-            addrs: { colAsset, safe},
+            addrs: { colAsset, safe, lastPaid },
             stage,
             isPermissionless,
         }
     } = formattedPoolData;
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
-
-    // A function that when called, renders the action components with packed transaction objects
-    const renderAction = React.useCallback((buttonObject: ButtonObj) => {
-        const { value, disable } = buttonObject;
-        return value.map((functionName) => {
-            let component : React.ReactNode = <></>;
-            switch (functionName) {
-                case 'closePool':
-                    component = <ClosePool unit={unit.big} safe={safe} disabled={disable} />;
-                    break;
-                case 'contribute':
-                    component = <Contribute unit={unit.big} disabled={disable}/>;
-                    break;
-                case 'getFinance':
-                    component = <GetFinance collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={disable}/>;
-                    break;
-                case 'payback':
-                    component = <Payback collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={disable}/>;
-                    break;
-                case 'editPool':
-                    component = <EditPool unit={unit.big} args={[]} disabled={disable}/>;
-                    break;
     
-                default:
-                    break;
-            }
-            return component;
-        })
-    }, []);
-
-    const buttonObj = React.useMemo(() => {
-        let result : ButtonObj = {value: ['contribute'], disable: false};
+    // A function that when called, renders the action components with packed transaction objects
+    const renderAction= React.useCallback(() => {
+        let actionObj : ButtonObj = {value: 'Contribute', disable: false};
+        let component : React.ReactNode = <></>;
         switch (stage.toNum) {
             case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
                         if(userCount === 1) {
-                            result = {value: ['closePool', 'editPool'], disable: false};
+                            actionObj = {value: 'closePool', disable: false};
                         } else {
-                            result = {value: ['Wait'], disable: true};
+                            actionObj = {value: 'Wait', disable: true};
                         }
                     } else {
                         if(isMember && sentQuota){
-                            result = {value: ['Wait'], disable: true};
+                            actionObj = {value: 'Wait', disable: true};
                         } else {
-                            result = {value: ['contribute'], disable: false};
+                            actionObj = {value: 'contribute', disable: false};
                         }
                     }
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} safe={safe} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 } else {
                     if(isAdmin) {
                         if(currentPool.big === unit.big){
-                            result = {value: ['closePool', 'editPool'], disable: false};
+                            actionObj = {value: 'closePool', disable: false};
                         } else {
-                            result = {value: ['Wait'], disable: true};
+                            actionObj = {value: 'Wait', disable: true};
                         }
                     } else if(isMember && !sentQuota){
-                        result = {value: ['contribute'], disable: false};
+                        actionObj = {value: 'contribute', disable: false};
                     } else if(isMember && sentQuota){
-                        result = {value: ['Wait'], disable: true};
+                        actionObj = {value: 'Wait', disable: true};
                     } else {
-                        result = {value: ['Not Allowed'], disable: true};
+                        actionObj = {value: 'Not Allowed', disable: true};
                     }
+
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} safe={safe} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 }
                 break;
     
             case Stage.GET:
                 if(isMember) {
-                    result = {value: ['getFinance'], disable: false};
-                } else result = { value: ['Not Allowed'], disable: true};
+                    actionObj = {value: 'getFinance', disable: false};
+                } else {
+                    actionObj = { value: 'Not Allowed', disable: true};
+                }
+                component = <GetFinance collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 break;
             
             case Stage.PAYBACK:
                 if(isMember){
-                    if(loan.inBN.gt(BigNumber(0))) result = {value : ['payback'], disable: false};
-                    else result = { value: ['Not Allowed'], disable: true};
+                    if(loan.inBN.gt(BigNumber(0))) actionObj = {value : 'payback', disable: false};
+                    else actionObj = { value: 'Not Allowed', disable: true};
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTime.inSec) result = { value: ['liquidate'], disable: false};
-                    else result = { value: ['Not Allowed'], disable: true};
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) actionObj = { value: 'liquidate', disable: false};
+                    else actionObj = { value: 'Not Allowed', disable: true};
                 }
+                if(actionObj.value === 'payback') component = <Payback collateralAddress={colAsset} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
+                else component = <Liquidate lastPaid={lastPaid} collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>
                 break;
             default:
-                result = { value: ['Ended'], disable: true};
+                <Liquidate lastPaid={zeroAddress} collateralAddress={zeroAddress} safe={zeroAddress} unit={0n} disabled={true} overrideButtonContent={'Ended'}/>
                 break;
         } 
-        return result;
+        return component;
     }, [props]);
 
     return(
@@ -202,13 +186,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     >
                         Info
                     </Button>
-                    <div className={`${flexSpread}`}>
-                        {
-                            renderAction(buttonObj).map((component, index) => (
-                                <React.Fragment key={index}>{component}</React.Fragment>
-                            ))
-                        }
-                    </div>
+                    { renderAction() }
                 </div>
             </div>
             <PermissionPopUp
@@ -232,15 +210,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 data={formattedPoolData}
                 popUpDrawer={infoDrawer}
                 toggleDrawer={(arg) => setShowInfo(arg)}
-                actions={
-                    <div className={`${flexSpread}`}>
-                        {
-                            renderAction(buttonObj).map((component, index) => (
-                                <React.Fragment key={index}>{component}</React.Fragment>
-                            ))
-                        }
-                    </div>
-                } 
+                actions={ renderAction() } 
             />
         </React.Fragment>
     )

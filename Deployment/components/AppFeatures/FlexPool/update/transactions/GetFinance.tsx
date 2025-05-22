@@ -5,13 +5,17 @@ import { filterTransactionData, formatAddr } from '@/utilities';
 import type { Address, FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
+import { zeroAddress } from 'viem';
 
-const getSteps = (isWrappedAsset: boolean) :FunctionName[] => {
-    const secondStep = isWrappedAsset? 'deposit' : 'approve';
-    return Array.from(['getCollateralQuote', 'allowance', secondStep, 'getFinance', 'transferFrom']);
+const getSteps = (isWrappedAsset: boolean) : {read: FunctionName[], mutate: FunctionName[]} => {
+    const mutateFirstStep = isWrappedAsset? 'deposit' : 'approve';
+    return {
+        read: Array.from(['getCollateralQuote', 'allowance']),
+        mutate: Array.from([mutateFirstStep, 'getFinance'])
+    };
 }
 
-export default function GetFinance({ unit, collateralAddress, safe, disabled}: GetFinanceProps) {
+export default function GetFinance({ unit, collateralAddress, safe, disabled, overrideButtonContent}: GetFinanceProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
@@ -20,77 +24,75 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, getQuoteArg, flexpoolContract, getFinanceArgs, isCelo, allowanceArg, } = React.useMemo(() => {
+    const {readTxObject, flexpoolContract, getFinanceArgs, mutate } = React.useMemo(() => {
         const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative?.toLowerCase();
         const steps = getSteps(isWrappedAsset);
-        const filtered = filterTransactionData({
+        const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: steps,
+            functionNames: steps.read,
             callback
         });
-        const getQuoteArg = [unit];
+
+        const mutate = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: steps.mutate,
+            callback
+        });
+
+        const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
+        const readArgs = [[unit], [safe, account]];
+        const addresses = [flexpoolContract, ca.stablecoin];
+        const readTxObject = td.map((item, i) => {
+            return{
+                abi: item.abi,
+                functionName: item.functionName,
+                address: formatAddr(addresses[i]),
+                args: readArgs[i]
+            }
+        });
+
         const getFinanceArgs = [unit];
-        const allowanceArg = [safe, account];
-        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased;
-        return { ...filtered, flexpoolContract, getQuoteArg, isWrappedAsset, getFinanceArgs, steps, allowanceArg};
+        return { readTxObject, flexpoolContract, isWrappedAsset, getFinanceArgs, steps, mutate};
     }, [chainId, unit, account]);
 
     const { data, refetch } = useReadContracts(
         {
             config,
-            contracts: [
-                {
-                    abi: td[0].abi,
-                    address: flexpoolContract as Address,
-                    args: getQuoteArg,
-                    functionName: td[0].functionName,
-                },
-                {
-                    abi: td[1].abi,
-                    address: ca.stablecoin as Address,
-                    args: allowanceArg,
-                    functionName: td[1].functionName,
-                },
-            ]
+            contracts: readTxObject.map((item) => { return item})
         }
     );
 
     const getTransactions = React.useCallback(() => {
-        // Remove unnecessary transactions from the list
-        const txObjects = td.filter(({functionName}) => functionName !== 'getCollateralQuote' && functionName !== 'allowance');
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
             let value : bigint = 0n;
+            let proceed = 1;
             await refetch().then((result) => {
                 const collateralQuote = result?.data?.[0].result as bigint;
                 const allowance = result?.data?.[1]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        console.log("collateralQuote", collateralQuote)
+                        if(allowance >= collateralQuote) proceed = 0;
                         args = [flexpoolContract, collateralQuote];
                         break;
                     case 'deposit':
                         args = [flexpoolContract];
                         value = collateralQuote;
                         break;
-                    case 'transferFrom':
-                        console.log("allowance", allowance)
-                        args = [safe, account, allowance];
-                        break;
                     default:
                         break;
                 }
                 
             });
-            return {args, value};
+            return {args, value, proceed};
         };
 
-        // const approvalArgs = [ca.FlexpoolFactory, collateralQuote];
-        const depositArgs = [flexpoolContract];
+        // const approvalArgs = 
         const getArgs = (functionName: FunctionName) => {
             let args : any[] = [];
-            let cAddress = '';
+            let cAddress : Address = zeroAddress;
             let value = 0n;
             switch (functionName) {
                 case 'getFinance':
@@ -98,13 +100,10 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
                     cAddress = flexpoolContract!;
                     break;
                 case 'deposit':
-                    args = depositArgs;
-                    value = data?.[0]?.result as bigint;
-                    cAddress = ca.WrappedNative!;
+                    cAddress = formatAddr(mutate.contractAddresses.WrappedNative);
                     break;
                 case 'approve':
-                    args = [];
-                    cAddress = ca.SimpliToken!;
+                    cAddress = formatAddr(mutate.contractAddresses.SimpliToken);
                     break;
                 default:
                     break;
@@ -112,30 +111,30 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
             return {args, cAddress, value};
         }
 
-        let transactions = txObjects.map((txObject) => {
+        let transactions = mutate.transactionData.map((txObject) => {
             const { args, cAddress, value} = getArgs(txObject.functionName as FunctionName);
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args,
-                contractAddress: formatAddr(cAddress),
+                contractAddress: cAddress,
                 functionName: txObject.functionName as FunctionName,
                 refetchArgs: txObject.requireArgUpdate? refetchArgs : undefined,
                 requireArgUpdate: txObject.requireArgUpdate,
-                value
+                value: txObject.functionName === 'deposit'? value : undefined
             };
             return transaction;
         })
         console.log("transactions", transactions);
 
         return transactions;
-   }, [unit, ca, td]);
+   }, [unit, mutate, flexpoolContract]);
 
     return(
         <React.Fragment>
             <ActionButton 
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
-                buttonContent='GetFinance'
+                buttonContent={overrideButtonContent || 'GetFinance'}
                 widthType='fit-content'
             />
             <Confirmation 
@@ -143,7 +142,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
                 toggleDrawer={toggleDrawer}
                 getTransactions={getTransactions}
                 displayMessage='Request to Getfinance'
-                lastStepInList={'transferFrom'}
+                lastStepInList={'getFinance'}
             />
         </React.Fragment>
     )
@@ -154,4 +153,5 @@ type GetFinanceProps = {
     collateralAddress: Address;
     safe: Address;
     disabled: boolean;
+    overrideButtonContent?: string;
 };

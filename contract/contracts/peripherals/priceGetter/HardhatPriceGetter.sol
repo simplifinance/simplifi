@@ -26,7 +26,7 @@ abstract contract HardhatPriceGetter is Pool {
     // Mapping of collateral assets to their corresponding price data
     mapping (address => PriceData) public priceData;
  
-    constructor(address _roleManager, address _stateManager) Pool(_stateManager, _roleManager) {}
+    constructor(address _roleManager, address _stateManager, address _safeFactory) Pool(_stateManager, _roleManager, _safeFactory) {}
     
     /**
      * @dev A function that retreives the price and the corresponding timestamp

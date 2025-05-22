@@ -190,7 +190,6 @@ export async function deployBaseAsset(deployer: Signer): Promise<BaseAsset> {
  * @param deployer : Deployer.
  * @param feeTo : Fee receiver.
  * @param makerRate : Platform fee
- * @param diaOracleAddress : DiaOracle Address
  * @param roleManager : Role manager contract
  * @param assetManager : Supported asset manager
  * @param baseAsset : Base asset contract
@@ -202,7 +201,6 @@ export async function deployStateManager(
   deployer: Signer,
   feeTo:Address, 
   makerRate: number,
-  safeFactory:Address,
   roleManager:Address,
   assetManager:Address, 
   baseAsset:Address,
@@ -212,7 +210,6 @@ export async function deployStateManager(
   return (await Factory.connect(deployer).deploy(
     feeTo,
     makerRate,
-    safeFactory,
     roleManager,
     assetManager,
     baseAsset,
@@ -236,12 +233,14 @@ export async function deployStateManager(
 export async function deployFlexpool(
   deployer: Signer,
   roleManager: Address, 
-  stateManager: Address
+  stateManager: Address,
+  safeFactory: Address
 ) : Promise<FlexpoolFactory> {
   const Factory = await ethers.getContractFactory("HardhatBased");
   return (await Factory.connect(deployer).deploy(
     roleManager,
-    stateManager
+    stateManager,
+    safeFactory
   )).waitForDeployment();
 }
 
@@ -292,10 +291,10 @@ export async function deployContracts(getSigners_: () => Signers) {
   const supportedAssetMgr = await deploySupportedAssetManager(collateralAssetAddr, roleManagerAddr, deployer);
   const supportedAssetMgrAddr = await supportedAssetMgr.getAddress() as Address;
   
-  const stateManager = await deployStateManager(deployer, feeToAddr as Address, MAKER_RATE, safeFactoryAddr, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr);
+  const stateManager = await deployStateManager(deployer, feeToAddr as Address, MAKER_RATE, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr);
   const stateManagerAddr = await stateManager.getAddress() as Address;
 
-  const flexpool = await deployFlexpool(deployer, roleManagerAddr, stateManagerAddr);
+  const flexpool = await deployFlexpool(deployer, roleManagerAddr, stateManagerAddr, safeFactoryAddr);
   const flexpoolAddr = await flexpool.getAddress() as Address;
   
   const faucet = await deployFaucet(deployer, roleManagerAddr, collateralAssetAddr, baseAssetAddr, UNIT_LIQUIDITY, UNIT_LIQUIDITY * 2n);

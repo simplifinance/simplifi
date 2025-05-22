@@ -30,9 +30,10 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
     */
     constructor(
         address _roleManager,
-        address _stateManager
+        address _stateManager, 
+        address _safeFactory
     ) 
-        HardhatPriceGetter(_roleManager, _stateManager)
+        HardhatPriceGetter(_roleManager, _stateManager, _safeFactory)
     {}
 
     /**
@@ -67,27 +68,29 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
         return true;
     }
 
-    /**
+        /**
      * @dev launch a default permissionless pool
      * @param user : Target user
      * @param unit : Unit contribution
-     * @param initialPool : An Initialized pool. Can be an empty pool
+     * @param _providers : A list of external fund providers.
+     * @return pool : Current pool
      * @notice Defaults value are set as
      * - MaxQuorum - 2
      * - Duration - 72 hours i.e 3 days
      * - Collateral coverage - 120
      */
-    function _launchDefault(address user, uint unit) internal returns(Common.Pool memory initialPool) {
+    function _launchDefault(address user, uint unit, Common.Provider[] memory _providers) internal returns(Common.Pool memory pool) {
         address[] memory users = new address[](1);
         users[0] = user;
         address defaultColAsset = _getVariables().assetManager.getDefaultSupportedCollateralAsset();
-        initialPool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
+        pool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
+        ISafe(pool.addrs.safe).registerProvidersTo(_providers, user, pool.big.recordId); 
         _awardPoint(users[0], 0, 5, false);
         unchecked {
             analytics.tvlBase += unit;
             analytics.totalPermissionless += 1;
         }
-        emit Common.PoolCreated(initialPool);
+        emit Common.PoolCreated(pool);
     }
 
     /**
@@ -118,7 +121,7 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
             emit Common.NewContributorAdded(pool);
         } else {
             isNewOrCancel = true;
-            pool = _launchDefault(borrower, unit);
+            pool = _launchDefault(borrower, unit, providers);
         }
         _setProviders(providers, borrower, pool.big.recordId);
         unchecked {

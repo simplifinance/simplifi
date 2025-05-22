@@ -7,8 +7,8 @@ import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { formatAddr } from "@/utilities";
-import { useAccount, useConfig, useWriteContract } from "wagmi";
-import { WriteContractErrorType } from "wagmi/actions";
+import { useAccount, useConfig, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { WriteContractErrorType, waitForTransactionReceipt } from "wagmi/actions";
 
 export const Confirmation : 
     React.FC<ConfirmationProps> = 
@@ -16,7 +16,7 @@ export const Confirmation :
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
 
-    const { setmessage, setError, setActivepath, refetch } = useAppStorage();
+    const { setActivepath, refetch, callback, setmessage, setError } = useAppStorage();
     const isDark = useTheme().theme === 'dark';
     const { address } = useAccount();
     const account = formatAddr(address);
@@ -37,14 +37,15 @@ export const Confirmation :
             handleCloseDrawer();
             back?.();
             if(functionName === 'createPool') setActivepath('Flexpool');
-        }, 8000);
-        clearTimeout(8000);
+        }, 6000);
+        clearTimeout(6000);
     };
 
     // Call this function when transaction successfully completed
     const onSuccess = (data: Address, variables: any) => {
         if(variables.functionName === lastStepInList){
-            setmessage(`Completed ${variables.functionName} with hash: ${data.substring(0, 16)}...`);
+            const functionName = variables.functionName as string;
+            setmessage(`Completed ${functionName.toWellFormed()} with hash: ${data.substring(0, 16)}...`)
             setCompletion(variables.functionName as FunctionName);
         } else {
             setmessage(`Completed approval request with: ${data.substring(0, 8)}...`);
@@ -55,13 +56,6 @@ export const Confirmation :
     const { writeContractAsync: retry} = useWriteContract({
         config,
         mutation: { 
-            // retry(failureCount, error) {
-            //     return true;
-            // },
-            // retryDelay(failureCount, error) {
-            //     return 1000;
-            // },
-            // gcTime: 3,
             onSuccess, 
             onError : (error, variables) => {
                 setError(error.message);
@@ -70,9 +64,11 @@ export const Confirmation :
         }
     });
 
+    // const { data, refetch } = useWaitForTransactionReceipt();
+
     const onError = async(error: WriteContractErrorType, variables: any) => {
         if(variables.functionName !== lastStepInList){
-            setError('');
+            setError('')
             setmessage(`${variables.functionName.toLocaleUpperCase()} failed!. Retrying ${lastStepInList}...`);
             const transactions = getTransactions();
             const { abi, functionName, args: inArgs, value, requireArgUpdate, refetchArgs, contractAddress,  } = transactions[transactions.length - 1];
@@ -83,14 +79,13 @@ export const Confirmation :
                 args = result?.args || [];
                 value_ = result?.value;
             }
-            console.log("argsreeee", args)
             await retry({
                 abi,
                 functionName,
                 address: contractAddress,
                 account,
                 args,
-                value
+                value: value_
             })
             setCompletion(variables.functionName as FunctionName);
 
@@ -113,19 +108,27 @@ export const Confirmation :
             const {abi, value, functionName, refetchArgs, requireArgUpdate, contractAddress: address, args: inArgs} = transactions[i];
             let args = inArgs;
             let value_ = value;
+            let execute : number | undefined = 1;
             if(requireArgUpdate) {
                 const result = await refetchArgs?.(functionName);
                 args = result?.args || [];
                 value_ = result?.value;
+                execute = result?.proceed;
             }
-            await writeContractAsync({
-                abi,
-                functionName,
-                address,
-                account,
-                args,
-                value: value_
-            });
+            if(execute === 1) {
+                const hash = await writeContractAsync({
+                    abi,
+                    functionName,
+                    address,
+                    account,
+                    args,
+                    value: value_
+                });
+                await waitForTransactionReceipt(
+                    config,
+                    { hash, confirmations: 2 }
+                );
+            }
         }
     }
 
@@ -156,7 +159,7 @@ export type Transaction = {
     requireArgUpdate: boolean;
     abi: any[] | Readonly<any[]>;
     value?: bigint;
-    refetchArgs?: (funcName: FunctionName) => Promise<{args: any[], value: bigint}>;
+    refetchArgs?: (funcName: FunctionName) => Promise<{args: any[], value: bigint, proceed: number}>;
 };
 
 export interface ConfirmationProps {

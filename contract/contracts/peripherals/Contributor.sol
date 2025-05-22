@@ -5,7 +5,7 @@ pragma solidity 0.8.24;
 import { Epoches, Common } from "./Epoches.sol";
 import { Slots } from "./Slots.sol" ;
 import { Utils } from "../libraries/Utils.sol";
-import { AwardPoint } from "./AwardPoint.sol";
+import { PointsAndSafe } from "./PointsAndSafe.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
 import { IERC20 } from "../interfaces/IERC20.sol";
 // import "hardhat/console.sol";
@@ -18,7 +18,7 @@ import { IERC20 } from "../interfaces/IERC20.sol";
  * 11 - No debt
  * 12 - No User
  */
-abstract contract Contributor is Epoches, Slots, AwardPoint {
+abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     using Utils for *;
 
     /**
@@ -35,8 +35,8 @@ abstract contract Contributor is Epoches, Slots, AwardPoint {
     mapping(uint96 => mapping(address => Common.Provider[])) private unitProviders;
 
     // ============= constructor ============
-    constructor(address _stateManager, address _roleManager) 
-       AwardPoint(_stateManager, _roleManager)
+    constructor(address _stateManager, address _roleManager, address _safeFactory) 
+       PointsAndSafe(_stateManager, _roleManager, _safeFactory)
     {} 
 
     /**

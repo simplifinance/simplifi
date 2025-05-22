@@ -26,16 +26,19 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     address public immutable feeTo;
 
     // Mapping of user to record Id to access
-    mapping(address => mapping(uint => bool)) private access;
+    mapping(address => mapping(uint96 => bool)) private access;
 
     // Mapping of users to recordId to Collateral
-    mapping(address => mapping(uint => uint256)) private collateralBalances;
+    mapping(address => mapping(uint96 => uint256)) private collateralBalances;
 
     // Mapping of contributors to amount paid as debt serviced
     mapping(address contributor => uint) public paybacks;
 
+    //mapping showing contributors that borrow from providers to create a pool only 
+    mapping(address => mapping(uint96 => Common.Provider[])) private providers;
+
     ///@dev Only users with access role are allowed
-    modifier hasAccess(address user, uint recordId) {
+    modifier hasAccess(address user, uint96 recordId) {
         if (!access[user][recordId]) 'User does not have access'._throw();
         _;
     }
@@ -54,11 +57,23 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     }
 
     /**
+     * @dev Registers providers to the contributor's profile. This is a list of providers that finance the contributor
+     * @param _providers : A list of providers
+     * @param contributor : Current user
+     * @param recordId : Record Id
+     */
+    function registerProvidersTo(Common.Provider[] memory _providers, address contributor, uint96 recordId) external onlyRoleBearer {
+        for(uint i = 0; i < _providers.length; i++) {
+            providers[contributor][recordId].push(_providers[i]);
+        }
+    }
+
+    /**
      * @dev Registers new user
      * @param user New user
 
     */
-    function _addUser(address user, uint recordId) private {
+    function _addUser(address user, uint96 recordId) private {
         assert(!access[user][recordId]);
         access[user][recordId] = true;
     }
@@ -67,7 +82,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @dev Implementation of ISafe.addUp
      * See ISafe.addUp
      */
-    function addUp(address user, uint recordId) external onlyRoleBearer returns (bool) {
+    function addUp(address user, uint96 recordId) external onlyRoleBearer returns (bool) {
         unchecked {
             userCount++;
         }
@@ -80,7 +95,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param user Existing user
 
     */
-    function _removeUser(address user, uint recordId) private {
+    function _removeUser(address user, uint96 recordId) private {
         assert(access[user][recordId]);
         if(userCount > 0) {
             unchecked {
@@ -153,7 +168,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         uint256 loan,
         uint fee,
         uint256 calculatedCol,
-        uint recordId
+        uint96 recordId
     ) external hasAccess(user, recordId) onlyRoleBearer returns(bool) {
         assert(address(baseAsset) != address(0) && user != address(0));
         collateralBalances[user][recordId] = calculatedCol;
@@ -224,14 +239,14 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         IERC20 baseAsset
     ) internal returns(uint totalPaidOut) {
         uint amtLeft = paybacks[data.id];
-        Common.Provider[] memory providers = IFactory(_msgSender()).getContributorProviders(data.id, recordId);
+        Common.Provider[] memory _providers = IFactory(_msgSender()).getContributorProviders(data.id, recordId);
         unchecked {
-            if(providers.length > 0) {
-                for(uint i = 0; i < providers.length; i++) {
-                    uint providerPay = providers[i].amount + (providers[i].accruals.intPerSec * (data.paybackTime - providers[i].earnStartDate));
+            if(_providers.length > 0) {
+                for(uint i = 0; i < _providers.length; i++) {
+                    uint providerPay = _providers[i].amount + (_providers[i].accruals.intPerSec * (data.paybackTime - _providers[i].earnStartDate));
                     assert(amtLeft >= providerPay);
                     amtLeft -= providerPay;
-                    _setAllowance(providers[i].account, baseAsset, providerPay);
+                    _setAllowance(_providers[i].account, baseAsset, providerPay);
                 }
                 totalPaidOut += amtLeft;
             } else {
@@ -247,14 +262,23 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param baseAsset : Asset base
      * @param unit : Unit contribution
      * @param recordId : Record Id
+     * @notice A contributor cannot with accidentally or intentional withdraw loan given to them by the providers. If they cancel
+     * the pool, the corresponding providers will be refunded immediately.
      */
     function cancel(
         address user,
         IERC20 baseAsset,
         uint unit,
-        uint recordId
+        uint96 recordId
     ) external onlyRoleBearer hasAccess(user, recordId) returns (bool) {
-        _setAllowance(user, baseAsset, unit);
+        Common.Provider[] memory provs = providers[user][recordId];
+        if(provs.length > 0) {
+            for(uint i = 0; i < provs.length; i++) {
+                _setAllowance(provs[i].account, baseAsset, provs[i].amount);
+            }
+        } else {
+            _setAllowance(user, baseAsset, unit);
+        }
         _removeUser(user, recordId);
         return true;
     }
@@ -273,7 +297,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      */
     function getUserData(
         address user,
-        uint recordId
+        uint96 recordId
     ) external view returns (ViewUserData memory) {
         return ViewUserData(access[user][recordId], collateralBalances[user][recordId]);
     }

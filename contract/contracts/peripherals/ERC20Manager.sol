@@ -49,8 +49,6 @@ abstract contract ERC20Manager is Pausable {
         view
         returns(uint allowance) 
     {
-        // assert(address(asset) != address(0));
-        // assert(owner != address(0));
         allowance = IERC20(asset).allowance(owner, address(this));
         require(allowance >= value,  'E3');
     }

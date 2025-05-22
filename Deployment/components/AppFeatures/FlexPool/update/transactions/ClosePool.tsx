@@ -8,7 +8,7 @@ import { ActionButton } from '../ActionButton';
 
 const steps : FunctionName[] = ['allowance', 'closePool', 'transferFrom'];
 
-export default function ClosePool({ unit, safe, disabled }: ClosePoolProps) {
+export default function ClosePool({ unit, safe, disabled, overrideButtonContent }: ClosePoolProps) {
     const [ openDrawer, setDrawerState ] = React.useState<number>(0);
 
     const toggleDrawer = (arg: number) => setDrawerState(arg);
@@ -58,14 +58,15 @@ export default function ClosePool({ unit, safe, disabled }: ClosePoolProps) {
          */
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
+            let proceed = 1;
             if(funcName === 'transferFrom'){
                 await refetch().then((result) => {
                     let allowance : bigint | undefined = result?.data as bigint;
                     args = [safe, account, allowance];
-                    
+                    if(allowance === 0n) proceed = 0;
                 });
             }
-            return {args, value: 0n};
+            return {args, value: 0n, proceed};
         };
         
         const getArgs = (funcName: FunctionName) => {
@@ -104,8 +105,8 @@ export default function ClosePool({ unit, safe, disabled }: ClosePoolProps) {
             <ActionButton 
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer} 
-                buttonContent='Close'
-                widthType='fit-content'
+                buttonContent={overrideButtonContent || 'Remove'}
+                widthType='w-full'
             />
             <Confirmation 
                 openDrawer={openDrawer}
@@ -122,4 +123,5 @@ type ClosePoolProps = {
     unit: bigint;
     safe: Address;
     disabled: boolean;
+    overrideButtonContent?: string;
 };
