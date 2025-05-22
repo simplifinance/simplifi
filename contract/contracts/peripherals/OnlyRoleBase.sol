@@ -8,6 +8,10 @@ import { IRoleBase } from "../interfaces/IRoleBase.sol";
  * @title MsgSender 
  * @author Simplifi (Bobeu)
  * @notice Non-deployable contract simply returning the calling account.
+ * ERROR CODE
+ * ==========
+ * R1 - Role manager is zero address
+ * R2 - User is not permitted
  */
 abstract contract MsgSender {
     function _msgSender() internal view virtual returns(address sender) {
@@ -22,7 +26,7 @@ abstract contract OnlyRoleBase is MsgSender {
     // ============= constructor ============
     constructor(address _roleManager)
     {
-        require(_roleManager != address(0));
+        require(_roleManager != address(0), 'R1');
         roleManager = IRoleBase(_roleManager);
     }
 
@@ -32,14 +36,9 @@ abstract contract OnlyRoleBase is MsgSender {
      * a context e.g function call. 
      */
     modifier onlyRoleBearer {
-        require(_hasRole(_msgSender()));
+        require(_hasRole(_msgSender()), 'R2');
         _;
     }
-
-    // // Allow only account with role access
-    // function _onlyRoleBearer() internal view {
-    //     _onlyRoleBearer();
-    // }
 
     function _hasRole(address target) internal view returns(bool result) {
         result = roleManager.hasRole(target);

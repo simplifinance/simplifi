@@ -1,64 +1,74 @@
 import React from "react";
-import { useAccount, useReadContract } from "wagmi";
-import getReadFunctions from '../update/DrawerWrapper/readContractConfig';
+import { useAccount, useReadContracts } from "wagmi";
 import Grid from "@mui/material/Grid";
 import { Loading, NotFound } from "./Nulls";
 import { FlexCard } from "../update/FlexCard";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
-import { toBN } from "@/utilities";
+import { filterTransactionData, toBN } from "@/utilities";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
+import { Address, ReadDataReturnValue } from "@/interfaces";
 
-const PastPools = (props: { index: number, recordId: bigint, totalPool: number}) => {
-  const { index, recordId, totalPool } = props;
-  const { chainId, isConnected } = useAccount();
-  const { data, isPending, } = useReadContract({
-    ...getReadFunctions({chainId}).readRecordConfig({recordId}),
-    query: {
-      enabled: !!isConnected,
-      refetchInterval: 5000
-      // refetchOnReconnect: 'always', 
-      // refetchOnMount: 'always',
-      // refetchIntervalInBackground: true,
-      // retry: true,
-    },
-  });
-
-  if(!data) {
-    return ( <NotFound />);
-  }
-
-  if(data?.cData.length > 0) {
-    return(
-      <Grid item xs={12} sm={6} md={4} >
-        <MotionDivWrap className='w-full rounded-md' transitionDelay={index/totalPool}>
-          { isPending? <Loading /> : <FlexCard cData={data?.cData} pool={data?.pool} /> }
-        </MotionDivWrap>
-      </Grid>
-    );
-  }
-}
-  
 export const PastEpoches:React.FC = () => {
-    const { recordEpoches } = useAppStorage();
-    const totalPool = toBN(recordEpoches.toString()).toNumber();
-    const unfilteredPools = () => {
-        return [...Array(totalPool).keys()];
-    }
-    return(
-      <MotionDivWrap className="w-full">
-        <Grid container xs={"auto"} spacing={2}>
-        {
-            totalPool > 0? 
-              unfilteredPools().map((recordId) => (
-                  <PastPools 
-                    key={recordId}
-                    index={recordId}
-                    totalPool={totalPool}
-                    recordId={BigInt(recordId)}
-                  />
-              )) : <NotFound />
+  const { isConnected } = useAccount();
+  const { recordEpoches, setError } = useAppStorage();
+  const epoches = toBN(recordEpoches.toString()).toNumber();
+  const unfilteredPools = () => {
+    return [...Array(epoches).keys()];
+  }
+
+  const { chainId } = useAccount();
+  const { transactionData, } = React.useMemo(() => {
+    const filtered = filterTransactionData({
+      chainId,
+      filter: true,
+      functionNames: ['getPoolRecord'],
+      callback: (arg) => {
+        if(arg.errorMessage) setError(arg.errorMessage);
+      } 
+    });
+    return { ...filtered }
+  }, [chainId]);
+
+  const {data, isError, isPending} = useReadContracts(
+    {
+      allowFailure: true,
+      query: {
+        enabled: !!isConnected,
+        refetchInterval: 5000,
+      },
+      contracts: unfilteredPools().map((item) => {
+        const td = transactionData[0];
+        return {
+          abi: td.abi,
+          address: td.contractAddress as Address,
+          functionName: td.functionName,
+          args: [item]
         }
-        </Grid> 
-      </MotionDivWrap>
-    );
+      })
+    }
+  );
+
+  if(isError) {
+    return ( <NotFound errorMessage={'No pool found'} />);
+  } else if(isPending){
+    return (<Loading />);
+  }
+  return(
+    <MotionDivWrap className="w-full">
+      <Grid container xs={"auto"} spacing={2}>
+        {
+          data?.map((item, index) => {
+            const item_ = item?.result as ReadDataReturnValue;
+            return (
+              <Grid item xs={12} sm={6} md={4} key={index}>
+                <MotionDivWrap className='w-full rounded-md' transitionDelay={index / data?.length}>
+                  { (toBN(item_?.pool?.low.maxQuorum.toString()).toNumber() > 0 && toBN(item_.pool.big.unit.toString())) && <FlexCard cData={item_.cData} pool={item_.pool} /> }
+                </MotionDivWrap>
+              </Grid>
+            )
+          })
+        }
+      </Grid> 
+    </MotionDivWrap>
+  );
 }

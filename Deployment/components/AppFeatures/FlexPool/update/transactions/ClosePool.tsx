@@ -2,23 +2,23 @@ import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContract } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import { Address, ButtonObj, FunctionName, TransactionCallback } from '@/interfaces';
+import { Address, FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
 const steps : FunctionName[] = ['allowance', 'closePool', 'transferFrom'];
 
-export default function ClosePool({ unit, safe, disabled}: ClosePoolProps) {
-    const [openDrawer, setDrawer] = React.useState<number>(0);
-    const toggleDrawer = (arg: number) => setDrawer(arg);
-    
+export default function ClosePool({ unit, safe, disabled }: ClosePoolProps) {
+    const [ openDrawer, setDrawerState ] = React.useState<number>(0);
+
+    const toggleDrawer = (arg: number) => setDrawerState(arg);
     const config = useConfig();
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
     // Build transaction data
-    const { contractAddresses: ca, transactionData: td, allowanceArgs, isCelo, closePoolArgs } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, flexpoolContract, allowanceArgs, isCelo, closePoolArgs } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
@@ -27,8 +27,8 @@ export default function ClosePool({ unit, safe, disabled}: ClosePoolProps) {
         });
         const allowanceArgs = [safe, account];
         const closePoolArgs = [unit];
-
-        return { ...filtered, allowanceArgs, closePoolArgs };
+        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased;
+        return { ...filtered, flexpoolContract, allowanceArgs, closePoolArgs };
     }, [chainId, unit, account]);
 
     // Fetch allowance of safe to the user
@@ -58,17 +58,19 @@ export default function ClosePool({ unit, safe, disabled}: ClosePoolProps) {
          */
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
-            await refetch().then((result) => {
-                let allowance : bigint | undefined = result?.data as bigint;
-                args = [safe, account, allowance];
-                
-            });
+            if(funcName === 'transferFrom'){
+                await refetch().then((result) => {
+                    let allowance : bigint | undefined = result?.data as bigint;
+                    args = [safe, account, allowance];
+                    
+                });
+            }
             return {args, value: 0n};
         };
         
         const getArgs = (funcName: FunctionName) => {
             let result: any[] = [];
-            let contractAddress = ca.FlexpoolFactory;
+            let contractAddress = flexpoolContract;
             switch (funcName) {
                 case 'closePool':
                     result = closePoolArgs;
@@ -103,13 +105,14 @@ export default function ClosePool({ unit, safe, disabled}: ClosePoolProps) {
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer} 
                 buttonContent='Close'
+                widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 getTransactions={getTransactions}
-                displayMessage='Request to remove a Flexpool'
-                lastStepInList='transferFrom'
+                displayMessage='Request to remove a pool'
+                lastStepInList='closePool'
             />
         </React.Fragment>
     )

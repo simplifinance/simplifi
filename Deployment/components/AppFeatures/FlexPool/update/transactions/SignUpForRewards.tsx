@@ -2,35 +2,33 @@ import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import { FunctionName, TransactionCallback } from '@/interfaces';
+import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
 const steps : FunctionName[] = ['registerToEarnPoints'];
 
-export default function SignUpForRewards({disabled} : {disabled: boolean}) {
-    const [openDrawer, setDrawer] = React.useState<number>(0);
-    const toggleDrawer = (arg: number) => setDrawer(arg);
-    
+export default function SignUpForRewards({disabled, toggleDrawer, openDrawer, optionalButtonContent} : SignUpProps) {    
     const { chainId } = useAccount();
     const { callback } = useAppStorage();
-    const { contractAddresses: ca, transactionData: td } = React.useMemo(() => {
+
+    const { contractAddresses: ca, transactionData: td, pointsContract } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames:steps,
             callback
         });
-
-        return { ...filtered };
+        const pointsContract = formatAddr(filtered.contractAddresses.Points);
+        return { ...filtered, pointsContract };
     }, [chainId]);
 
     const getTransactions = React.useCallback(() => {
-        let transactions = td.map((txObject) => {
+        let transactions = td.map((txObject) => {openDrawer
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args: [],
-                contractAddress: formatAddr(txObject.contractAddress),
+                contractAddress: pointsContract,
                 functionName: txObject.functionName as FunctionName,
                 requireArgUpdate: txObject.requireArgUpdate
             };
@@ -45,15 +43,24 @@ export default function SignUpForRewards({disabled} : {disabled: boolean}) {
             <ActionButton 
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
-                buttonContent='Sign up' 
+                buttonContent='Get Started'
+                widthType='fit-content'
+                optionalButtonContent={optionalButtonContent}
             />
             <Confirmation 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 getTransactions={getTransactions}
-                displayMessage='Request to contribute to a Flexpool'
+                displayMessage='Request to sign up for reward'
                 lastStepInList='registerToEarnPoints'
             />
         </React.Fragment>
     )
+}
+
+type SignUpProps = {
+    disabled: boolean;
+    openDrawer: number;
+    toggleDrawer: (arg: number) => void;
+    optionalButtonContent?: React.ReactNode;
 }

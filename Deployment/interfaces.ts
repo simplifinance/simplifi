@@ -15,7 +15,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
-export type FunctionName = 'createPool'|'getFinance'|'deposit'| 'getProviders' | 'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | 'symbol' | 'getFactoryData' | 'getPoints' | 'getSupportedAssets' | ButtonText;
+export type FunctionName = 'createPool'|'getFinance'|'deposit'| 'getProviders' | 'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | 'symbol' | 'getFactoryData' | 'getPoints' | 'getSupportedAssets' | 'getPoolData' | 'getPoolRecord' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -28,7 +28,22 @@ export type TrxResult = 'success' | 'reverted';
 export type RenderType = 'Back' | 'Current' | '';
 export type SentQuota = 'Sent' | 'Not Sent';
 export type FormattedProviders = FormattedProvider[];
-export type ABI = AbiItem[];
+
+export type TransactionData = {
+  contractAddress: string;
+  inputCounts: number;
+  inputs: string[];
+  functionName: string;
+  abi: any;
+  requireArgUpdate: boolean;
+};
+
+export type FilterTransactionDataProps = {
+  chainId: number | undefined;
+  functionNames?: FunctionName[];
+  callback?: TransactionCallback;
+  filter: boolean;
+}
 
 export type Contributor = {
   profile: ContributorStruct;
@@ -450,21 +465,6 @@ export type AppState = [
   ProviderResult[], 
   SupportedAsset[]
 ];
-
-type InputsOrOutputs = {
-  "internalType": string,
-  "name": string,
-  "type": string
-};
-
-export type AbiItem = {
-  "inputs": InputsOrOutputs[] | [];
-  "name": string;
-  "outputs": InputsOrOutputs[] | [];
-  "stateMutability": string;
-  "type": string;
-};
-
 
 // MOCK DATA
 

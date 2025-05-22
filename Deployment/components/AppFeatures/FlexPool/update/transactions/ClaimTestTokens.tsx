@@ -4,36 +4,34 @@ import { useAccount } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
 import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
-import assert from 'assert';
 import { ActionButton } from '../ActionButton';
 
-const steps : FunctionName[] = ['editPool'];
+const steps : FunctionName[] = ['claimTestTokens'];
 
-export default function EditPool({ unit, args,disabled }: EditPoolProps) {
+export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
     const { chainId } = useAccount();
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, flexpoolContract, isCelo } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, faucetContract } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames:steps,
             callback
         });
-        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased;
-        return { ...filtered, flexpoolContract };
+        const faucetContract = formatAddr(filtered.contractAddresses.Faucet);
+        return { ...filtered, faucetContract };
     }, [chainId ]);
 
     const getTransactions = React.useCallback(() => {
         let transactions = td.map((txObject) => {
-            assert(args.length === txObject.inputCounts, "Args not fully provided");
             const transaction : Transaction = {
                 abi: txObject.abi,
-                args,
-                contractAddress: formatAddr(flexpoolContract),
+                args: [],
+                contractAddress: faucetContract,
                 functionName: txObject.functionName as FunctionName,
                 requireArgUpdate: txObject.requireArgUpdate
             };
@@ -41,29 +39,29 @@ export default function EditPool({ unit, args,disabled }: EditPoolProps) {
         })
         return transactions;
     
-   }, [unit, ca, td]);
+   }, [ca, td]);
 
     return(
         <React.Fragment>
              <ActionButton 
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
-                buttonContent='Edit'
+                buttonContent='Get Tokens'
                 widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
                 getTransactions={getTransactions}
-                displayMessage='Request to edit a pool'
-                lastStepInList='editPool'
+                displayMessage='Claiming test tokens'
+                lastStepInList='claimTestTokens'
             />
         </React.Fragment>
     )
 }
 
-type EditPoolProps = {
-    unit: bigint;
-    args: any[];
+type ClaimTestTokenProps = {
     disabled: boolean;
+    toggleDrawer: (arg: number) => void;
+    openDrawer: number;
 };

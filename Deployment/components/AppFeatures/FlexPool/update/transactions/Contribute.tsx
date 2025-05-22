@@ -1,34 +1,49 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { FunctionName, } from '@/interfaces';
+import { useAccount, useReadContract } from 'wagmi';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import type { FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-const steps : FunctionName[] = ['approve', 'contribute'];
+const steps : FunctionName[] = ['allowance', 'approve', 'contribute'];
 
 export default function Contribute({ unit, disabled }: ContributeProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
-    const { chainId } = useAccount();
+    const { chainId, address } = useAccount();
+    const account = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, contributeArg, approvalArg } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, allowanceObj, flexpoolContract, contributeArg, approvalArg } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames:steps,
             callback
         });
-        const approvalArg = [filtered.contractAddresses.FlexpoolFactory, unit];
+        const flexpoolContract = formatAddr(filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased);
+        const approvalArg = [flexpoolContract, unit];
         const contributeArg = [unit];
+        const allowanceObj = {
+            abi: filtered.transactionData[0].abi,
+            address: formatAddr(filtered.contractAddresses.stablecoin),
+            args: [account, flexpoolContract],
+            functionName: filtered.transactionData[0].functionName
+        };
 
-        return { ...filtered, approvalArg, contributeArg };
+        return { ...filtered, allowanceObj, approvalArg, flexpoolContract, contributeArg };
     }, [chainId, unit]);
 
+    const { data } = useReadContract({ ...allowanceObj });
+
     const getTransactions = React.useCallback(() => {
+        let filteredTrxn = td.filter((item) => item.functionName !== 'allowance');
+        const prevAllowance = data as bigint || undefined;
+        if(prevAllowance && prevAllowance >= unit){
+            filteredTrxn = filteredTrxn.filter((item) => item.functionName !== 'approve');
+        }
         const getArgs = (txObject: TransactionData) => {
             let result: any[] = [];
             let contractAddress = '';
@@ -39,13 +54,13 @@ export default function Contribute({ unit, disabled }: ContributeProps) {
                     break;
                 default:
                     result = contributeArg;
-                    contractAddress = txObject.contractAddress;
+                    contractAddress = flexpoolContract!;
                     break;
             }
             return {result, contractAddress: formatAddr(contractAddress)};
         };
 
-        let transactions = td.map((txObject) => {
+        let transactions = filteredTrxn.map((txObject) => {
             const { result, contractAddress} = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
@@ -66,6 +81,7 @@ export default function Contribute({ unit, disabled }: ContributeProps) {
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer} 
                 buttonContent='Contribute'
+                widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}

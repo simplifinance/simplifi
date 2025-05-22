@@ -41,7 +41,7 @@ export default function SimplifiApp() {
       functionNames: steps,
       callback
     });
-    const symbol = {abi: filtered.transactionData[0].abi, ca: formatAddr(filtered.transactionData[0].contractAddress)};
+    const symbol = {abi: filtered.transactionData[0].abi, ca: formatAddr(filtered.contractAddresses.WrappedNative)};
     const fData = {abi: filtered.transactionData[1].abi, ca: formatAddr(filtered.transactionData[1].contractAddress)};
     const point = {abi: filtered.transactionData[2].abi, ca: formatAddr(filtered.transactionData[2].contractAddress)};
     const provider = {abi: filtered.transactionData[3].abi, ca: formatAddr(filtered.transactionData[3].contractAddress)};
@@ -78,6 +78,8 @@ export default function SimplifiApp() {
     const sassets = data?.[4]?.result as SupportedAsset[];
     const fdata = data?.[1]?.result as FactoryData;
     const sym= data?.[0]?.result as string;
+
+    console.log("data?.[1]?.result", data?.[1]?.result);
 
     const symbols = notReady? appData[0] : sym || appData[0];
     const factoryData = notReady? appData[1] : fdata || appData[1];

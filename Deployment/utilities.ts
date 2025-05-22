@@ -13,8 +13,8 @@ import type {
   SlotStruct,
   GetAmountToApprove,
   FunctionName,
-  TransactionCallback,
-  ABI, 
+  TransactionData,
+  FilterTransactionDataProps, 
 } from "@/interfaces";
 import getCurrentDebt from "./apis/read/getCurrentDebt";
 import getCollateralQuote from "./apis/read/getCollateralQuote";
@@ -25,22 +25,6 @@ import getAllowanceInCUSD from "./apis/update/cUSD/getAllowanceInCUSD";
 import { approveAbi, approveCUSDAbi } from "./apis/utils/abis";
 import rawData from "@/contractsData.json";
 import assert from "assert";
-
-export type TransactionData = {
-  contractAddress: string;
-  inputCounts: number;
-  inputs: string[];
-  functionName: string;
-  abi: ABI;
-  requireArgUpdate: boolean;
-};
-
-export type FilterTransactionDataProps = {
-  chainId: number | undefined;
-  functionNames?: FunctionName[];
-  callback?: TransactionCallback;
-  filter: boolean;
-}
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -134,7 +118,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
 
   if(filter) {
     assert(functionNames !== undefined, "FunctionNames not provided");
-    functionNames.forEach((functionName) => {
+    functionNames.forEach((functionName: string) => {
       if(!approvedFunctions.includes(functionName)) {
         const errorMessage = `Operation ${functionName} is not supported`;
         callback?.({errorMessage});

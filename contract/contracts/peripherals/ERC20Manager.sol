@@ -8,8 +8,11 @@ import { Pausable } from "./Pausable.sol";
 /**
  * ERROR CODE
  * =========
- * 13 - Not supported
- * 14 - Value exceed allowance
+ * E2 - Not supported
+ * E3 - Value exceed allowance
+ * E4 - Asset transfer failed
+ * E5 - Approval failed
+ * E1 - State manager address is zero
  */
 abstract contract ERC20Manager is Pausable {
     // Storage contract
@@ -18,7 +21,7 @@ abstract contract ERC20Manager is Pausable {
     modifier onlySupportedAsset(address asset) {
         IStateManager.StateVariables memory state = _getVariables();
         if(asset != address(state.baseAsset)){
-            require(state.assetManager.isSupportedAsset(asset), '13');
+            require(state.assetManager.isSupportedAsset(asset), 'E2');
         }
         _;
     }
@@ -26,7 +29,7 @@ abstract contract ERC20Manager is Pausable {
     // ============= Constructor ================
 
     constructor(address _stateManager, address _roleManager) Pausable(_roleManager) {
-        require(_stateManager != address(0));
+        require(_stateManager != address(0), 'E1');
         stateManager = IStateManager(_stateManager);
     }
 
@@ -49,7 +52,7 @@ abstract contract ERC20Manager is Pausable {
         // assert(address(asset) != address(0));
         // assert(owner != address(0));
         allowance = IERC20(asset).allowance(owner, address(this));
-        require(allowance >= value,  '14');
+        require(allowance >= value,  'E3');
     }
 
     /**
@@ -62,10 +65,7 @@ abstract contract ERC20Manager is Pausable {
     function _checkAndWithdrawAllowance(IERC20 asset, address owner, address beneficiary, uint value) internal returns(uint allowance) {
         address _owner = owner == _msgSender()? owner : _msgSender();
         allowance = _validateAllowance(address(asset), _owner, value);
-        IERC20(asset).transferFrom(_owner, beneficiary, allowance);
-        // assert(address(asset) != address(0) && beneficiary != address(0));
-        // if(allowance > 0){
-        // }
+        require(asset.transferFrom(_owner, beneficiary, allowance), 'E4');
     }
 
     /**
@@ -75,11 +75,9 @@ abstract contract ERC20Manager is Pausable {
      * @param value : Amount to approve
     */
     function _setApprovalFor(IERC20 asset, address spender, uint value) internal {
-        // assert(spender != address(0));
-        // assert(address(asset) != address(0));
         uint prevAllowance = IERC20(asset).allowance(address(this), spender);
         unchecked {
-            IERC20(asset).approve(spender, value + prevAllowance);
+            require(IERC20(asset).approve(spender, value + prevAllowance), 'E5');
         }
     }
 

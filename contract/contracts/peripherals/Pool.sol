@@ -13,6 +13,7 @@ import { ISafe } from "../interfaces/ISafe.sol";
  * 6 - Admin not in list
  * 7 - Admin appeared twice
  * 8 - Stage not ready
+ * 8+ - Adding user to safe failied
  */
 
 abstract contract Pool is Contributor {
@@ -31,7 +32,7 @@ abstract contract Pool is Contributor {
      * @param args.colCoverage : Ration of collateral coverage or index required as cover for loan
      * @param args.router : Router : PERMISSIOLESS or PERMISSIONED
      * @param args.sender : msg.sender
-     */
+    */
     function _createPool(Common.CreatePoolParam memory args) internal _checkUnitStatus(args.unit, false) onlySupportedAsset(args.colAsset) returns(Common.Pool memory pool) {
         require(args.durationInHours > 0 && args.durationInHours <= 720, '3');
         if(args.router == Common.Router.PERMISSIONLESS){
@@ -113,7 +114,7 @@ abstract contract Pool is Contributor {
     */
     function _completeAddUser(address user, Common.Pool memory pool) internal {
         _checkAndWithdrawAllowance(IERC20(_getVariables().baseAsset), user, pool.addrs.safe, pool.big.unit);
-        require(ISafe(pool.addrs.safe).addUp(user, pool.big.recordId));
+        require(ISafe(pool.addrs.safe).addUp(user, pool.big.recordId), '8+');
     }
 
     /**

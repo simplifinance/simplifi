@@ -1,46 +1,60 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { Address, FunctionName } from '@/interfaces';
+import { useAccount, useReadContract } from 'wagmi';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import type { FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
-const steps : FunctionName[] = ['approve', 'createPool'];
+const steps : FunctionName[] = ['allowance', 'approve', 'createPool'];
 
 export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optionalDisplay }: CreatePoolProps) {
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
     
-    const { contractAddresses: ca, transactionData: td, approvalArg } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, approvalArg, allowanceObj, flexpoolContract } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames: steps,
             callback
         });
-        const approvalArg = [filtered.contractAddresses.FlexpoolFactory, unit];
-        return { ...filtered, approvalArg };
+        const flexpoolContract = formatAddr(filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased);
+        const approvalArg = [flexpoolContract, unit];
+        const allowanceObj = {
+            abi: filtered.transactionData[0].abi,
+            address: formatAddr(filtered.contractAddresses.stablecoin),
+            args: [account, flexpoolContract],
+            functionName: filtered.transactionData[0].functionName
+        };
+        return { ...filtered, approvalArg, allowanceObj, flexpoolContract };
     }, [chainId, unit, account]);
 
+    const { data } = useReadContract({ ...allowanceObj });
+
     const getTransactions = React.useCallback(() => {
+        let filteredTrxn = td.filter((item) => item.functionName !== 'allowance');
+        const prevAllowance = data as bigint || undefined;
+        if(prevAllowance && prevAllowance >= unit){
+            filteredTrxn = filteredTrxn.filter((item) => item.functionName !== 'approve');
+        }
+        // console.log("prevAllowance trx", prevAllowance);
         const getArgs = (txObject: TransactionData) => {
             let result: any[] = [];
-            let contractAddress = '';
+            let contractAddress = flexpoolContract;
             switch (txObject.functionName) {
                 case 'approve':
                     result = approvalArg;
-                    contractAddress = ca.stablecoin;
+                    contractAddress = formatAddr(ca.stablecoin);
                     break;
                 default:
                     result = args;
-                    contractAddress = txObject.contractAddress;
                     break;
             }
             return {result, contractAddress: formatAddr(contractAddress)};
         }
 
-        let transactions = td.map((txObject) => {
+        let transactions = filteredTrxn.map((txObject) => {
             const { contractAddress, result} = getArgs(txObject)
             const transaction : Transaction = {
                 abi: txObject.abi,

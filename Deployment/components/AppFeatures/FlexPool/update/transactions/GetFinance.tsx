@@ -1,8 +1,8 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContracts } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { Address, FunctionName, TransactionCallback } from '@/interfaces';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import type { Address, FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
@@ -20,8 +20,8 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, getQuoteArg, getFinanceArgs, steps, allowanceArg, isWrappedAsset } = React.useMemo(() => {
-        const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative.toLowerCase();
+    const { contractAddresses: ca, transactionData: td, getQuoteArg, flexpoolContract, getFinanceArgs, isCelo, allowanceArg, } = React.useMemo(() => {
+        const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative?.toLowerCase();
         const steps = getSteps(isWrappedAsset);
         const filtered = filterTransactionData({
             chainId,
@@ -32,7 +32,8 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
         const getQuoteArg = [unit];
         const getFinanceArgs = [unit];
         const allowanceArg = [safe, account];
-        return { ...filtered, getQuoteArg, isWrappedAsset, getFinanceArgs, steps, allowanceArg};
+        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased;
+        return { ...filtered, flexpoolContract, getQuoteArg, isWrappedAsset, getFinanceArgs, steps, allowanceArg};
     }, [chainId, unit, account]);
 
     const { data, refetch } = useReadContracts(
@@ -41,7 +42,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
             contracts: [
                 {
                     abi: td[0].abi,
-                    address: td[0].contractAddress as Address,
+                    address: flexpoolContract as Address,
                     args: getQuoteArg,
                     functionName: td[0].functionName,
                 },
@@ -67,10 +68,10 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
                 switch (funcName) {
                     case 'approve':
                         console.log("collateralQuote", collateralQuote)
-                        args = [ca.FlexpoolFactory, collateralQuote];
+                        args = [flexpoolContract, collateralQuote];
                         break;
                     case 'deposit':
-                        args = [ca.FlexpoolFactory];
+                        args = [flexpoolContract];
                         value = collateralQuote;
                         break;
                     case 'transferFrom':
@@ -86,7 +87,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
         };
 
         // const approvalArgs = [ca.FlexpoolFactory, collateralQuote];
-        const depositArgs = [ca.FlexpoolFactory];
+        const depositArgs = [flexpoolContract];
         const getArgs = (functionName: FunctionName) => {
             let args : any[] = [];
             let cAddress = '';
@@ -94,16 +95,16 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
             switch (functionName) {
                 case 'getFinance':
                     args = getFinanceArgs;
-                    cAddress = ca.FlexpoolFactory;
+                    cAddress = flexpoolContract!;
                     break;
                 case 'deposit':
                     args = depositArgs;
                     value = data?.[0]?.result as bigint;
-                    cAddress = ca.WrappedNative;
+                    cAddress = ca.WrappedNative!;
                     break;
                 case 'approve':
                     args = [];
-                    cAddress = ca.SimpliToken;
+                    cAddress = ca.SimpliToken!;
                     break;
                 default:
                     break;
@@ -135,6 +136,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled}: G
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
                 buttonContent='GetFinance'
+                widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}

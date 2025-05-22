@@ -1,8 +1,8 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContract } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import type { Address, FunctionName, ProviderResult } from '@/interfaces';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import type { Address, FunctionName, ProviderResult, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
@@ -29,17 +29,18 @@ export default function RemoveLiquidity() {
     const account  = formatAddr(address);
     const { callback, providers } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, allowanceArgs, removeLiquidityArgs } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, allowanceArgs, providersContract, removeLiquidityArgs } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames:steps,
             callback
         });
-        const allowanceArgs = [filtered.contractAddresses.Providers, account];
+        const providersContract = formatAddr(filtered.contractAddresses.Providers);
+        const allowanceArgs = [filtered.contractAddresses.Providers as Address, account];
         const removeLiquidityArgs: any[] = [];
 
-        return { ...filtered, allowanceArgs, removeLiquidityArgs };
+        return { ...filtered, allowanceArgs, removeLiquidityArgs, providersContract };
     }, [chainId, account]);
 
     const { refetch  } = useReadContract(
@@ -75,7 +76,7 @@ export default function RemoveLiquidity() {
             let contractAddress = ca.stablecoin;
             switch (txObject.functionName) {
                 case 'removeLiquidity':
-                    contractAddress = ca.Providers;
+                    contractAddress = providersContract;
                     result = removeLiquidityArgs;
                     break;
                 default:
@@ -108,6 +109,7 @@ export default function RemoveLiquidity() {
                 disabled={false} 
                 toggleDrawer={toggleDrawer}
                 buttonContent='Remove liquidity'
+                widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}

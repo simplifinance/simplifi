@@ -1,8 +1,8 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContracts } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { Address, FunctionName, TransactionCallback } from '@/interfaces';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import { Address, FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { zeroAddress } from 'viem';
 import { ActionButton } from '../ActionButton';
@@ -18,7 +18,7 @@ export default function Payback({ unit, safe, collateralAddress, disabled }: Pay
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, allowanceArg, paybackArg, allowanceContract, getDebtArg } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, flexpoolContract, allowanceArg, paybackArg, allowanceContract, getDebtArg } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
@@ -28,10 +28,11 @@ export default function Payback({ unit, safe, collateralAddress, disabled }: Pay
         const getDebtArg = [unit, account];
         const allowanceArg = [safe, account];
         const paybackArg = [unit];
+        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased as Address : filtered.contractAddresses.CeloBased as Address;
         const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
         const allowanceContract = isWrappedAsset? filtered.contractAddresses.WrappedNative as Address : filtered.contractAddresses.SimpliToken as Address;
 
-        return { ...filtered, allowanceArg, paybackArg, getDebtArg, allowanceContract };
+        return { ...filtered, flexpoolContract, allowanceArg, paybackArg, getDebtArg, allowanceContract };
     }, [chainId, unit, account]);
 
     const { refetch  } = useReadContracts(
@@ -63,7 +64,7 @@ export default function Payback({ unit, safe, collateralAddress, disabled }: Pay
                 const allowance = result?.data?.[1]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        args = [ca.FlexpoolFactory, debt];
+                        args = [flexpoolContract, debt];
                         break;
                     case 'transferFrom':
                         args = [safe, account, allowance];
@@ -78,16 +79,17 @@ export default function Payback({ unit, safe, collateralAddress, disabled }: Pay
 
         const getArgs = (txObject: TransactionData) => {
             let args :any[] = [];
-            let contractAddress = zeroAddress as string;
+            let contractAddress = '';
             switch (txObject.functionName) {
                 case 'payback':
                     args = paybackArg;
+                    contractAddress = flexpoolContract;
                     break;
                 case 'transferFrom':
-                    contractAddress = allowanceContract
+                    contractAddress = allowanceContract;
                     break;
                 default:
-                    contractAddress = txObject.contractAddress
+                    contractAddress = txObject.contractAddress;
                     break;
             }
             return {args, contractAddress: formatAddr(contractAddress)};
@@ -115,6 +117,7 @@ export default function Payback({ unit, safe, collateralAddress, disabled }: Pay
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
                 buttonContent='Payback'
+                widthType='fit-content'
             />
             <Confirmation 
                 openDrawer={openDrawer}

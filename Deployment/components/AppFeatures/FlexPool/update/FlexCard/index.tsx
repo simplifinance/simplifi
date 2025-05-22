@@ -61,7 +61,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
 
-    // A function that when called, renders the action components with packed transactions
+    // A function that when called, renders the action components with packed transaction objects
     const renderAction = React.useCallback((buttonObject: ButtonObj) => {
         const { value, disable } = buttonObject;
         return value.map((functionName) => {
@@ -228,23 +228,20 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 toggleDrawer={showProviderDetails}
                 cData={cData}
             />
-            {
-                (!confirmationDrawerOn ) && 
-                    <InfoDisplay 
-                        data={formattedPoolData}
-                        popUpDrawer={infoDrawer}
-                        toggleDrawer={(arg) => setShowInfo(arg)}
-                        actions={
-                            <div className={`${flexSpread}`}>
-                                {
-                                    renderAction(buttonObj).map((component, index) => (
-                                        <React.Fragment key={index}>{component}</React.Fragment>
-                                    ))
-                                }
-                            </div>
-                        } 
-                    />
-            }
+            <InfoDisplay 
+                data={formattedPoolData}
+                popUpDrawer={infoDrawer}
+                toggleDrawer={(arg) => setShowInfo(arg)}
+                actions={
+                    <div className={`${flexSpread}`}>
+                        {
+                            renderAction(buttonObj).map((component, index) => (
+                                <React.Fragment key={index}>{component}</React.Fragment>
+                            ))
+                        }
+                    </div>
+                } 
+            />
         </React.Fragment>
     )
 }

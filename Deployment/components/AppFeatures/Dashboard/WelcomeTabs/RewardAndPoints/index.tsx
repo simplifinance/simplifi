@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,29 +12,16 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table"
-import { ChevronDown } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Address, Point, PointsReturnValue } from "@/interfaces"
-import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage"
-import { useAccount } from "wagmi"
-import { formatAddr } from "@/utilities"
-import SelectComponent from "../SelectComponent"
+} from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Address, Point, PointsReturnValue } from "@/interfaces";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
+import { useAccount } from "wagmi";
+import { formatAddr } from "@/utilities";
+import SelectComponent from "../SelectComponent";
 
 const getColumns = () => {
     const columns: ColumnDef<Point>[] = [

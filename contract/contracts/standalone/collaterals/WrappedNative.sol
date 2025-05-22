@@ -15,7 +15,10 @@ import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
  * XFI coin, we provide a wrapped version of the native coin. 
  */
 contract WrappedNative is ERC20, OnlyRoleBase {
-    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
+    address public immutable deployer;
+    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {
+        deployer = _msgSender();
+    }
 
     /**
      * @dev Deposit collateral
@@ -50,17 +53,18 @@ contract WrappedNative is ERC20, OnlyRoleBase {
      * @param to : Account to withdraw to
      * @param value : Amount to withdraw
      * @notice If 'from' does not have a role with the roleManger, its an indication that the call 
-     * is coming from a user hence withdrawal action, otherwise, its from the Flexpool factory or the Safe contract
+     * is coming from a user hence withdrawal action, otherwise, its from the Flexpool factory or the Safe contract.
+     * Caution:
+     *          An account with a role permission should not participate in a Flexpool except for the deployer
      */
     function transferFrom(address from, address to, uint256 value) public override returns (bool done) {
+        done = super.transferFrom(from, to, value);
         address spender = _msgSender();
-        if(!_hasRole(from)) {
-            _spendAllowance(from, spender, value);
-            _burn(spender, value);
-            (done,) = payable(to).call{value:value}('');
+        if(!_hasRole(spender) || spender == deployer) {
+            done = false;
+            _burn(to, value);
+            (done,) = payable(spender).call{value:value}('');
             require(done, "Failed");
-        } else {
-            done = super.transferFrom(from, to, value);
         }
         return done;
     }

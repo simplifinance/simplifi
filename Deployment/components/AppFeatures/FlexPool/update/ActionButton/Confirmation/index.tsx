@@ -37,8 +37,8 @@ export const Confirmation :
             handleCloseDrawer();
             back?.();
             if(functionName === 'createPool') setActivepath('Flexpool');
-        }, 10000);
-        clearTimeout(10000);
+        }, 8000);
+        clearTimeout(8000);
     };
 
     // Call this function when transaction successfully completed
@@ -55,6 +55,13 @@ export const Confirmation :
     const { writeContractAsync: retry} = useWriteContract({
         config,
         mutation: { 
+            // retry(failureCount, error) {
+            //     return true;
+            // },
+            // retryDelay(failureCount, error) {
+            //     return 1000;
+            // },
+            // gcTime: 3,
             onSuccess, 
             onError : (error, variables) => {
                 setError(error.message);
@@ -99,8 +106,9 @@ export const Confirmation :
     });
 
     const handleSendTransaction = async() => {
+        setLoading(true);
         const transactions = getTransactions();
-        console.log("confirmation transactions", transactions);
+        // console.log("confirmation transactions", transactions);
         for( let i = 0; i < transactions.length; i++) {
             const {abi, value, functionName, refetchArgs, requireArgUpdate, contractAddress: address, args: inArgs} = transactions[i];
             let args = inArgs;
@@ -116,7 +124,7 @@ export const Confirmation :
                 address,
                 account,
                 args,
-                value
+                value: value_
             });
         }
     }

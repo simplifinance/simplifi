@@ -1,27 +1,44 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount } from 'wagmi';
-import { filterTransactionData, formatAddr, TransactionData } from '@/utilities';
-import { FunctionName, VoidFunc } from '@/interfaces';
+import { useAccount, useReadContract } from 'wagmi';
+import { filterTransactionData, formatAddr } from '@/utilities';
+import type { FunctionName, VoidFunc, TransactionData} from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
-const steps : FunctionName[] = ['approve', 'provideLiquidity'];
+const steps : FunctionName[] = ['allowance', 'approve', 'provideLiquidity'];
 
 export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liquidityAmount, openDrawer, toggleDrawer  }: ProvideLiquidityProps) {
-    const { chainId } = useAccount();
+    const { chainId, address } = useAccount();
+    const account  = formatAddr(address);
     const { callback } = useAppStorage();
-    const { contractAddresses: ca, transactionData: td, approvalArg } = React.useMemo(() => {
+    const { contractAddresses: ca, transactionData: td, allowanceObj, approvalArg } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
             functionNames:steps,
             callback
         });
+
+        const providersContract = formatAddr(filtered.contractAddresses.Providers);
         const approvalArg = [filtered.contractAddresses.Providers, liquidityAmount];
-        return { ...filtered, approvalArg };
+        const allowanceObj = {
+            abi: filtered.transactionData[0].abi,
+            address: formatAddr(filtered.contractAddresses.stablecoin),
+            args: [account, providersContract],
+            functionName: filtered.transactionData[0].functionName
+        };
+        return { ...filtered, approvalArg, allowanceObj };
     }, [chainId, liquidityAmount]);
 
+    const { data } = useReadContract({ ...allowanceObj });
+
     const getTransactions = React.useCallback(() => {
+        let filteredTrxn = td.filter((item) => item.functionName !== 'allowance');
+        const prevAllowance = data as bigint || undefined;
+        if(prevAllowance && prevAllowance >= liquidityAmount){
+            filteredTrxn = filteredTrxn.filter((item) => item.functionName !== 'approve');
+        }
+
         const getArgs = (txObject: TransactionData) => {
             let result: any[] = [];
             let contractAddress = txObject.contractAddress;
@@ -37,7 +54,7 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
             return {result, contractAddress: formatAddr(contractAddress)};
         };
 
-        let transactions = td.map((txObject) => {
+        let transactions = filteredTrxn.map((txObject) => {
             const { result, contractAddress } = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
@@ -48,6 +65,7 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
             };
             return transaction;
         })
+        console.log("transactions", transactions);
         return transactions;
     
    }, [provideLiquidityArgs, td, approvalArg]);

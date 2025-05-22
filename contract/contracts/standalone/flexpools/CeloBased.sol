@@ -64,7 +64,7 @@ contract CeloBased is IFactory, CeloPriceGetter {
         * creator being the first on the list. But the list can be empty if it is permissionless.
     */
     function createPool( 
-        address[] calldata users,
+        address[] memory users,
         uint unit,
         uint8 maxQuorum,
         uint16 durationInHours,

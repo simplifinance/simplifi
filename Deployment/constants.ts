@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem';
 import { Address, FunctionName, Path, } from './interfaces';
-import { getContractData } from './apis/utils/getContractData';
+import { filterTransactionData, formatAddr } from './utilities';
 
 export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
 export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }
@@ -56,17 +56,19 @@ export const displayMessages : Record<string, string> = {
 export const approvedFunctions : FunctionName[] = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'editPool', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt'];
 
 // We support only USDC and native platform token for now
-export const getSupportedCollateralAsset = (chainId: number) => {
-  const { token, wrapped } = getContractData(chainId);
+export const getSupportedCollateralAsset = (chainId: number, symbol: string) => {
+  const { contractAddresses: ca } = filterTransactionData({ chainId, filter: false });
   const supportedAsset = [
     {
-      address: wrapped.address,
-      symbol: wrapped.symbol
+      address: formatAddr(ca.WrappedNative),
+      symbol: symbol,
+      disabled: false
     },
     {
-      address: token.address,
-      symbol: token.symbol
-    }
+      address: formatAddr(ca.SimpliToken),
+      symbol: 'SIMPL',
+      disabled: true
+    },
   ] as const;
   return supportedAsset;
 }

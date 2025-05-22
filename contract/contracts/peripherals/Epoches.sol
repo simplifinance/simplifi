@@ -29,7 +29,7 @@ abstract contract Epoches is PastEpoches {
      * @notice When unit is not active, it can be relaunched. 
     */
     modifier _checkUnitStatus(uint unit, bool value){
-        require(_isUnitActive(unit) == value, '1');
+        require(value? _isUnitActive(unit) : !_isUnitActive(unit), '1');
         _;
     }
 

@@ -10,7 +10,7 @@ import UnitLiquidity from "../userInputsComponents/UnitLiquidity";
 import { formatAddr, toBN } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { parseUnits, zeroAddress } from "viem";
-import { useAccount, useConfig } from "wagmi";
+import { useAccount } from "wagmi";
 import CreatePool from "../../../update/transactions/CreatePool";
 
 export const Permissionless = () => {
@@ -49,6 +49,7 @@ export const Permissionless = () => {
     }
 
     const args = React.useMemo(() => { 
+        // console.log("collateralAsset", collateralAsset);
         const isPermissionless = true;
         const args = [[account], parseUnits(unitLiquidity, 18), quorum, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
         return args;
