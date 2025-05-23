@@ -1,79 +1,107 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useConfig, useReadContracts} from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
 import type { FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
-
-const steps : FunctionName[] = ['allowance', 'approve', 'contribute'];
 
 export default function Contribute({ unit, disabled, overrideButtonContent}: ContributeProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
     const { chainId, address } = useAccount();
+    const config = useConfig();
     const account = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, allowanceObj, flexpoolContract, contributeArg, approvalArg } = React.useMemo(() => {
-        const filtered = filterTransactionData({
+    const { readTxObject, flexpoolContract, mutate } = React.useMemo(() => {
+        const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames:steps,
+            functionNames: ['allowance'],
             callback
         });
-        const flexpoolContract = formatAddr(filtered.isCelo? filtered.contractAddresses.CeloBased : filtered.contractAddresses.CeloBased);
-        const approvalArg = [flexpoolContract, unit];
-        const contributeArg = [unit];
-        const allowanceObj = {
-            abi: filtered.transactionData[0].abi,
-            address: formatAddr(filtered.contractAddresses.stablecoin),
-            args: [account, flexpoolContract],
-            functionName: filtered.transactionData[0].functionName
-        };
 
-        return { ...filtered, allowanceObj, approvalArg, flexpoolContract, contributeArg };
-    }, [chainId, unit]);
+        const mutate = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: ['approve', 'contribute'],
+            callback
+        });
 
-    const { data } = useReadContract({ ...allowanceObj });
+        const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
+        const readArgs = [[account, flexpoolContract]];
+        const addresses = [ca.stablecoin];
+        const readTxObject = td.map((item, i) => {
+            return{
+                abi: item.abi,
+                functionName: item.functionName,
+                address: formatAddr(addresses[i]),
+                args: readArgs[i]
+            }
+        });
+
+        return { readTxObject, flexpoolContract, mutate };
+    }, [chainId, account]);
+
+    const { refetch } = useReadContracts(
+        {
+            config,
+            contracts: readTxObject.map((item) => { return item})
+        }
+    );
 
     const getTransactions = React.useCallback(() => {
-        let filteredTrxn = td.filter((item) => item.functionName !== 'allowance');
-        const prevAllowance = data as bigint || undefined;
-        if(prevAllowance && prevAllowance >= unit){
-            filteredTrxn = filteredTrxn.filter((item) => item.functionName !== 'approve');
-        }
-        const getArgs = (txObject: TransactionData) => {
-            let result: any[] = [];
-            let contractAddress = '';
-            switch (txObject.functionName) {
-                case 'approve':
-                    result = approvalArg;
-                    contractAddress = ca.stablecoin;
-                    break;
-                default:
-                    result = contributeArg;
-                    contractAddress = flexpoolContract!;
-                    break;
-            }
-            return {result, contractAddress: formatAddr(contractAddress)};
+        const refetchArgs = async(funcName: FunctionName) => {
+            let args : any[] = [];
+            let value : bigint = 0n;
+            let proceed = 1;
+            await refetch().then((result) => {
+                const allowance = result?.data?.[0]?.result as bigint;
+                switch (funcName) {
+                    case 'approve':
+                        if(allowance >= unit) proceed = 0;
+                        args = [flexpoolContract, allowance];
+                        break;
+                    default:
+                        break;
+                }
+                
+            });
+            return {args, value, proceed};
         };
 
-        let transactions = filteredTrxn.map((txObject) => {
-            const { result, contractAddress} = getArgs(txObject);
+        const getArgs = (txObject: TransactionData) => {
+            let result: any[] = [];
+            let contractAddress = flexpoolContract;
+            switch (txObject.functionName) {
+                case 'approve':
+                    contractAddress = formatAddr(mutate.contractAddresses.stablecoin);
+                    break;
+                default:
+                    result = [unit];
+                    break;
+            }
+            return {args: result, contractAddress};
+        }
+
+        let transactions = mutate.transactionData.map((txObject) => {
+            const { contractAddress, args } = getArgs(txObject);
+            const functionName = txObject.functionName as FunctionName;
             const transaction : Transaction = {
                 abi: txObject.abi,
-                args: result,
-                contractAddress: contractAddress,
+                args,
+                contractAddress,
                 functionName: txObject.functionName as FunctionName,
-                requireArgUpdate: false
+                refetchArgs: functionName === 'approve'? refetchArgs : undefined,
+                requireArgUpdate: txObject.requireArgUpdate
             };
             return transaction;
         })
         return transactions;
-    
-   }, [unit, td]);
+
+    }, [unit, refetch]);
 
     return(
         <React.Fragment>

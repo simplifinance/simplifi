@@ -1,74 +1,104 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useConfig, useReadContracts } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import type { FunctionName, VoidFunc, TransactionData} from '@/interfaces';
+import type { FunctionName, VoidFunc, TransactionData, Address} from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
-
-const steps : FunctionName[] = ['allowance', 'approve', 'provideLiquidity'];
 
 export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liquidityAmount, openDrawer, toggleDrawer  }: ProvideLiquidityProps) {
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
-    const { contractAddresses: ca, transactionData: td, allowanceObj, approvalArg } = React.useMemo(() => {
-        const filtered = filterTransactionData({
+    const config = useConfig();
+
+    const {readTxObject, mutate, providersContract } = React.useMemo(() => {
+        const { contractAddresses: ca, transactionData: td } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames:steps,
+            functionNames: ['allowance'],
             callback
         });
 
-        const providersContract = formatAddr(filtered.contractAddresses.Providers);
-        const approvalArg = [filtered.contractAddresses.Providers, liquidityAmount];
-        const allowanceObj = {
-            abi: filtered.transactionData[0].abi,
-            address: formatAddr(filtered.contractAddresses.stablecoin),
-            args: [account, providersContract],
-            functionName: filtered.transactionData[0].functionName
-        };
-        return { ...filtered, approvalArg, allowanceObj };
-    }, [chainId, liquidityAmount]);
+        const mutate = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: ['approve', 'provideLiquidity'],
+            callback
+        });
 
-    const { data } = useReadContract({ ...allowanceObj });
+        // const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
+        const providersContract = formatAddr(mutate.contractAddresses.Providers);
+        const readArgs = [[account, providersContract]];
+        const addresses = [ca.stablecoin];
+        const readTxObject = td.map((item, i) => {
+            return{
+                abi: item.abi,
+                functionName: item.functionName,
+                address: formatAddr(addresses[i]),
+                args: readArgs[i]
+            }
+        });
+
+        return { readTxObject, mutate, providersContract };
+    }, [chainId, account]);
+
+    const { refetch } = useReadContracts(
+        {
+            config,
+            contracts: readTxObject.map((item) => { return item})
+        }
+    );
+
+    // const allowance = data?.[0].result as bigint;
 
     const getTransactions = React.useCallback(() => {
-        let filteredTrxn = td.filter((item) => item.functionName !== 'allowance');
-        const prevAllowance = data as bigint || undefined;
-        if(prevAllowance && prevAllowance >= liquidityAmount){
-            filteredTrxn = filteredTrxn.filter((item) => item.functionName !== 'approve');
-        }
-
+        const refetchArgs = async(funcName: FunctionName) => {
+            let args : any[] = [];
+            let proceed = 1;
+            await refetch().then((result) => {
+                const allowance_ : bigint | undefined = result?.data?.[0].result as bigint;
+                switch (funcName) {
+                    case 'approve':
+                        if(allowance_ >= liquidityAmount) proceed = 0;
+                        args = [providersContract, allowance_];
+                        break;
+                    default:
+                        break;
+                }
+            });
+            return {args, value: 0n, proceed};
+        };
+        
         const getArgs = (txObject: TransactionData) => {
-            let result: any[] = [];
-            let contractAddress = txObject.contractAddress;
+            let args: any[] = [];
+            let address = '' as Address;
             switch (txObject.functionName) {
-                case 'approve':
-                    result = approvalArg;
-                    contractAddress = ca.stablecoin;
+                case 'provideLiquidity':
+                    address = providersContract;
+                    args = provideLiquidityArgs;
                     break;
                 default:
-                    result = provideLiquidityArgs;
+                    address = formatAddr(mutate.contractAddresses.stablecoin);
                     break;
             }
-            return {result, contractAddress: formatAddr(contractAddress)};
+            return {args, address};
         };
 
-        let transactions = filteredTrxn.map((txObject) => {
-            const { result, contractAddress } = getArgs(txObject);
+        let transactions = mutate.transactionData.map((txObject) => {
+            const { args, address } = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
-                args: result,
-                contractAddress: contractAddress,
+                args,
+                contractAddress: address,
                 functionName: txObject.functionName as FunctionName,
-                requireArgUpdate: false
+                refetchArgs: txObject.requireArgUpdate? refetchArgs : undefined,
+                requireArgUpdate: txObject.requireArgUpdate
             };
             return transaction;
         })
-        console.log("transactions", transactions);
         return transactions;
-    
-   }, [provideLiquidityArgs, td, approvalArg]);
+
+    }, [mutate, providersContract, account, refetch]);
 
     return(
         <Confirmation 

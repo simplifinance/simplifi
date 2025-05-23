@@ -17,60 +17,59 @@ export default function Liquidate({ unit, safe, collateralAddress, disabled, las
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, flexpoolContract, allowanceArg, paybackArg, allowanceContract, getDebtArg } = React.useMemo(() => {
-        const filtered = filterTransactionData({
+    const {readTxObject, flexpoolContract, paybackArgs, mutate } = React.useMemo(() => {
+        const isWrappedAsset = collateralAddress.toLowerCase() === filterTransactionData({chainId, filter: false}).contractAddresses.WrappedNative?.toLowerCase();
+        const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: steps,
+            functionNames: ['getCurrentDebt', 'allowance'],
             callback
         });
-        const getDebtArg = [unit, lastPaid];
-        const allowanceArg = [safe, account];
-        const paybackArg = [unit];
-        const flexpoolContract = filtered.isCelo? filtered.contractAddresses.CeloBased as Address : filtered.contractAddresses.CeloBased as Address;
-        const isWrappedAsset = collateralAddress === filtered.contractAddresses.WrappedNative;
-        const allowanceContract = isWrappedAsset? filtered.contractAddresses.WrappedNative as Address : filtered.contractAddresses.SimpliToken as Address;
 
-        return { ...filtered, flexpoolContract, allowanceArg, paybackArg, getDebtArg, allowanceContract };
-    }, [chainId, unit, account]);
+        const mutate = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: ['approve', 'liquidate'],
+            callback
+        });
 
-    const { refetch  } = useReadContracts(
+        const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
+        const readArgs = [[unit, lastPaid], [account, flexpoolContract]];
+        const addresses = [flexpoolContract, ca.stablecoin];
+        const readTxObject = td.map((item, i) => {
+            return{
+                abi: item.abi,
+                functionName: item.functionName,
+                address: formatAddr(addresses[i]),
+                args: readArgs[i]
+            }
+        });
+
+        const paybackArgs = [unit];
+        return { readTxObject, flexpoolContract, isWrappedAsset, paybackArgs, mutate};
+    }, [chainId, unit, account, collateralAddress, lastPaid]);
+
+    const { refetch } = useReadContracts(
         {
             config,
-            contracts: [
-                {
-                    abi: td[0].abi,
-                    address: td[0].contractAddress as Address,
-                    args: getDebtArg,
-                    functionName: td[0].functionName,
-                },
-                {
-                    abi: td[1].abi,
-                    address: allowanceContract,
-                    args: allowanceArg,
-                    functionName: td[1].functionName,
-                },
-            ]
+            contracts: readTxObject.map((item) => { return item})
         }
     );
 
     const getTransactions = React.useCallback(() => {
-        const txObjects = td.filter(({functionName}) => functionName !== steps[0] && functionName !== steps[1]);
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
-            let proceed= 1;
+            let proceed = 1;
             await refetch().then((result) => {
-                const debt = result?.data?.[1].result as bigint;
-                const allowance = result?.data?.[1]?.result as bigint;
+                const debt_ = result?.data?.[0].result as bigint;
+                const allowance_ = result?.data?.[1]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        args = [flexpoolContract, debt];
-                        if(allowance >= debt) proceed = 0;
-                        break;
-                    case 'transferFrom':
-                        args = [safe, account, allowance];
+                        if(allowance_ >= debt_) proceed = 0;
+                        args = [flexpoolContract, debt_];
                         break;
                     default:
+                        args = paybackArgs;
                         break;
                 }
                 
@@ -82,21 +81,18 @@ export default function Liquidate({ unit, safe, collateralAddress, disabled, las
             let args :any[] = [];
             let contractAddress = '';
             switch (txObject.functionName) {
-                case 'payback':
-                    args = paybackArg;
+                case 'liquidate':
+                    args = paybackArgs;
                     contractAddress = flexpoolContract;
                     break;
-                case 'transferFrom':
-                    contractAddress = allowanceContract;
-                    break;
                 default:
-                    contractAddress = txObject.contractAddress;
+                    contractAddress = mutate.contractAddresses.stablecoin;
                     break;
             }
             return {args, contractAddress: formatAddr(contractAddress)};
         };
 
-        let transactions = txObjects.map((txObject) => {
+        let transactions = mutate.transactionData.map((txObject) => {
             const { args, contractAddress} = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
@@ -108,9 +104,8 @@ export default function Liquidate({ unit, safe, collateralAddress, disabled, las
             };
             return transaction;
         })
-        console.log("transactions", transactions);
         return transactions;
-   }, [unit, ca]);
+    }, [unit, mutate, flexpoolContract, refetch]);
 
     return(
         <React.Fragment>

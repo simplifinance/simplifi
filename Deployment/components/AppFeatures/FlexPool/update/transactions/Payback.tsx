@@ -45,36 +45,26 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
 
         const paybackArgs = [unit];
         return { readTxObject, flexpoolContract, isWrappedAsset, paybackArgs, mutate};
-    }, [chainId, unit, account]);
+    }, [chainId, unit, account, collateralAddress]);
 
-    const { data, refetch } = useReadContracts(
+    const { refetch } = useReadContracts(
         {
             config,
             contracts: readTxObject.map((item) => { return item})
         }
     );
 
-
-    let debt = data?.[0]?.result as bigint;
-    let allowance = data?.[1]?.result as bigint;
-
     const getTransactions = React.useCallback(() => {
-        // const txObjects = td.filter(({functionName}) => functionName !== steps[0] && functionName !== steps[1]);
-        let txns = mutate.transactionData;
-        // if(debt && allowance && allowance > debt) {
-        //     txns = txns.filter((item) => item.functionName !== 'approve');
-        // }
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
             let proceed = 1;
             await refetch().then((result) => {
-                debt = result?.data?.[0].result as bigint;
-                allowance = result?.data?.[1]?.result as bigint;
-            
+                const debt_ = result?.data?.[0].result as bigint;
+                const allowance_ = result?.data?.[1]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        args = [flexpoolContract, debt];
-                        if(allowance >= debt) proceed = 0;
+                        if(allowance_ >= debt_) proceed = 0;
+                        args = [flexpoolContract, debt_];
                         break;
                     default:
                         args = paybackArgs;
@@ -95,13 +85,12 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
                     break;
                 default:
                     contractAddress = mutate.contractAddresses.stablecoin;
-                    args = [flexpoolContract, debt];
                     break;
             }
             return {args, contractAddress: formatAddr(contractAddress)};
         };
 
-        let transactions = txns.map((txObject) => {
+        let transactions = mutate.transactionData.map((txObject) => {
             const { args, contractAddress} = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
@@ -113,9 +102,8 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
             };
             return transaction;
         })
-        // console.log("transactions", transactions);
         return transactions;
-   }, [unit, mutate, flexpoolContract]);
+   }, [unit, mutate, flexpoolContract, refetch]);
 
     return(
         <React.Fragment>

@@ -1,12 +1,11 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount, useConfig, useReadContract } from 'wagmi';
+import { useAccount, useConfig, useReadContracts } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
 import type { Address, FunctionName, ProviderResult, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-const steps : FunctionName[] = ['allowance', 'removeLiquidity', 'transferFrom'];
 const formatProvider = (providers: ProviderResult[] | undefined, user: Address) => {
     let disabled = false;
     let filtered : ProviderResult[] = [];
@@ -29,69 +28,84 @@ export default function RemoveLiquidity() {
     const account  = formatAddr(address);
     const { callback, providers } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, allowanceArgs, providersContract, removeLiquidityArgs } = React.useMemo(() => {
-        const filtered = filterTransactionData({
+    const {readTxObject, mutate, providersContract } = React.useMemo(() => {
+        const { contractAddresses: ca, transactionData: td, } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames:steps,
+            functionNames: ['allowance'],
             callback
         });
-        const providersContract = formatAddr(filtered.contractAddresses.Providers);
-        const allowanceArgs = [filtered.contractAddresses.Providers as Address, account];
-        const removeLiquidityArgs: any[] = [];
 
-        return { ...filtered, allowanceArgs, removeLiquidityArgs, providersContract };
+        const mutate = filterTransactionData({
+            chainId,
+            filter: true,
+            functionNames: ['removeLiquidity', 'transferFrom'],
+            callback
+        });
+
+        const providersContract = formatAddr(mutate.contractAddresses.Providers);
+        const readArgs = [[providersContract, account]];
+        const addresses = [ca.stablecoin];
+        const readTxObject = td.map((item, i) => {
+            return{
+                abi: item.abi,
+                functionName: item.functionName,
+                address: formatAddr(addresses[i]),
+                args: readArgs[i]
+            }
+        });
+
+        return { readTxObject, mutate, providersContract };
     }, [chainId, account]);
 
-    const { refetch  } = useReadContract(
+    const { data, refetch } = useReadContracts(
         {
             config,
-            abi: td[0].abi,
-            address: ca.stablecoin as Address,
-            args: allowanceArgs,
-            functionName: td[0].functionName,
-        },
+            contracts: readTxObject.map((item) => { return item})
+        }
     );
 
+    const allowance = data?.[0].result as bigint;
     const { disabled, } = formatProvider(providers, account);
+
     const getTransactions = React.useCallback(() => {
-        const txObjects = td.filter(({functionName}) => functionName !== steps[0]);
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
+            let proceed = 1;
             await refetch().then((result) => {
-                let allowance : bigint | undefined = result?.data as bigint;
+                const allowance_ : bigint | undefined = result?.data?.[0].result as bigint;
                 switch (funcName) {
                     case 'transferFrom':
-                        args = [ca.Providers, account, allowance];
+                        if(allowance_ === 0n) proceed = 0;
+                        args = [providersContract, account, allowance_];
                         break;
                     default:
                         break;
                 }
             });
-            return {args, value: 0n};
+            return {args, value: 0n, proceed};
         };
         
         const getArgs = (txObject: TransactionData) => {
-            let result: any[] = [];
-            let contractAddress = ca.stablecoin;
+            let args: any[] = [];
+            let address = '' as Address;
             switch (txObject.functionName) {
                 case 'removeLiquidity':
-                    contractAddress = providersContract;
-                    result = removeLiquidityArgs;
+                    address = providersContract;
                     break;
                 default:
-                    contractAddress = ca.stablecoin;
+                    address = formatAddr(mutate.contractAddresses.stablecoin);
                     break;
             }
-            return {result, contractAddress: formatAddr(contractAddress)};
+            return {args, address};
         };
 
-        let transactions = txObjects.map((txObject) => {
-            const { result: args, contractAddress } = getArgs(txObject);
+        let transactions = mutate.transactionData.map((txObject) => {
+            const { args, address } = getArgs(txObject);
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args,
-                contractAddress: contractAddress,
+                contractAddress: address,
                 functionName: txObject.functionName as FunctionName,
                 refetchArgs: txObject.requireArgUpdate? refetchArgs : undefined,
                 requireArgUpdate: txObject.requireArgUpdate
@@ -100,13 +114,12 @@ export default function RemoveLiquidity() {
         })
         return transactions;
     
-   }, [ca, td]);
+   }, [mutate, providersContract, account, refetch]);
 
     return(
         <React.Fragment>
             <ActionButton 
-                // disabled={disabled || providers.length === 0 || !providers } 
-                disabled={false} 
+                disabled={disabled && allowance === 0n } 
                 toggleDrawer={toggleDrawer}
                 buttonContent='Remove liquidity'
                 widthType='fit-content'
