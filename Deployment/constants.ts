@@ -30,27 +30,28 @@ export const baseContracts : Record<string, Address> = {
   4157: zeroAddress,
   4158: zeroAddress
 } as const;
-export const currencies = ['CELO', 'XFI'] as const;
-export const networks = ['ALFAJORES', 'CROSSFI'] as const;
-export const pairs = ['CUSD/CELO', 'USDT/XFI'] as const;
-export const displayMessages : Record<string, string> = {
-  'Approve': "Request to approve spending limit",
-  'WithdrawCollateral': `Request to withdraw collateral`,
-  'WithdrawLoan': `Request to withdraw loan`,
-  'contribute': 'Request to contribute',
-  'createPool': 'Launching a flexPool',
-  'editPool': 'Request to edit pool',
-  'Borrow': 'Finance via providers',
-  'claimTestTokens': 'Claim test tokens',
-  'payback': 'Requesting to payback',
-  'liquidate': 'Requesting liquidation',
-  'closePool': 'Requesting to remove a pool',
-  'registerToEarnPoints' : 'Signing up for reward',
-  'unlockToken': 'Request to unlock SIMPL Token',
-  'lockToken': 'Request to lock Token',
-  'removeLiquidity': 'Request to remove liquidity',
-  'provideLiquidity': 'Request to provide liquidity',
-  'panicUnlock': 'Retrieving your token',
+export const chainIds = [44787, 4157, 42220, 4158];
+export const currencies = ['CELO', 'XFI', 'CELO', 'XFI'] as const;
+export const networks = ['ALFAJORES', 'CROSSFITESTNET', 'CELO', 'CROSSFIMAINNET'] as const;
+export const baseCurrencies = ['CUSD', 'XUSD', 'CUSD', 'XUSD'] as const;
+export const collateralCurrencies = ['TCELO', 'TUSD', 'WCELO', 'WXFI'] as const;
+export const pairs = ['CUSD/TCELO', 'TUSD/XFI', 'CUSD/WCELO', 'XUSD/WXFI'] as const;
+
+export const displayMessages : Record<string, {start: string, end: string}> = {
+  'approve': {start: "Approving spending limit", end: 'Approval completed'},
+  'deposit': {start: "Depositing collateral", end: 'Deposit successful'},
+  'getFinance': {start: "Requesting to get finance", end: 'Get finance successful'},
+  'transferFrom': {start: `Requesting withdrawal`, end: 'Withdrawal completed'},
+  'contribute': {start: 'Contributing to pool', end: 'Successfully contributed'},
+  'createPool': {start: 'Launching a new FlexPool', end: 'Successfully launched a pool'},
+  'borrow': {start: 'Request to access credit from loan providers', end: 'Transaction success'},
+  'claimTestTokens': {start: 'Claiming test tokens', end: 'Claim success'},
+  'payback': {start: 'Returning funds back to pool', end: 'Payback was successful'},
+  'liquidate': {start: 'Liquidation request', end: 'Liquidation was successful'},
+  'closePool': {start: 'Removing a pool', end: 'Successfully removed a pool'},
+  'registerToEarnPoints' : {start: 'Signing up for reward', end: 'Registration was successful'},
+  'removeLiquidity': {start: 'Requesting to remove liquidity', end: 'Successfully removed liquidity'},
+  'provideLiquidity': {start: 'Request to provide liquidity', end: 'You successully provided liquidity '},
 }
 
 export const approvedFunctions : FunctionName[] = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'editPool', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt'];
@@ -71,6 +72,18 @@ export const getSupportedCollateralAsset = (chainId: number, symbol: string) => 
     },
   ] as const;
   return supportedAsset;
+}
+
+export const getChainData = (chainId: number | undefined) => {
+  const chainId_ = chainId? chainId : 44787;
+  const index = chainIds.indexOf(chainId_);
+  const currency = currencies[index];
+  const network = networks[index];
+  const baseCurrency = baseCurrencies[index];
+  const collateralCurrency = collateralCurrencies[index];
+  const pair = pairs[index];
+
+  return { currency, network, baseCurrency, collateralCurrency, pair };
 }
 
 // Assets with USDC pairs

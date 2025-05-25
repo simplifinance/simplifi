@@ -81,16 +81,11 @@ export const Permissioned = () => {
         }
     }
 
-    const { functionName, args, transactionArgs } = React.useMemo(() => {
-        const functionName : FunctionName = 'createPool';
+    const args = React.useMemo(() => {
         const isPermissionless = false;
-        const args = [[account], parseUnits(unitLiquidity, 18), participants.length, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
-        const transactionArgs : HandleTransactionParam = {
-            commonParam: {account, config, unit: parseUnits(unitLiquidity, 18)},
-            router: 'Permissioned',
-        };
-        return { functionName, args, transactionArgs };
-    }, [account, unitLiquidity, participants, colCoverage, collateralAsset]);
+        const args = [participants, parseUnits(unitLiquidity, 18), participants.length, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
+        return args;
+    }, [unitLiquidity, participants, colCoverage, collateralAsset]);
 
     return(
         <div className="space-y-8 mt-6">
@@ -135,7 +130,10 @@ export const Permissioned = () => {
                 <Button
                     variant={'outline'}
                     className="w-full bg-white2/80 dark:bg-green1/90 border border-green1/30 dark:border-white1/30 text-green1/90 dark:text-orange-200 p-6 hover:bg-green1/70"
-                    onClick={() => setDrawerState(1)}
+                    onClick={() => {
+                        setmessage('');
+                        setDrawerState(1)
+                    }}
                 >
                     Submit
                 </Button>

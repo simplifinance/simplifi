@@ -2,6 +2,7 @@
 pragma solidity 0.8.24;
 
 import { IFactory, Common } from "../interfaces/IFactory.sol";
+import { IProviders } from "../interfaces/IProviders.sol";
 import { MinimumLiquidity, ErrorLib } from "../peripherals/MinimumLiquidity.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Utils } from "../libraries/Utils.sol";
@@ -20,13 +21,14 @@ import { Utils } from "../libraries/Utils.sol";
  * - Borrow to finance Flexpool
  * - Get the list of providers
  */
-contract Providers is MinimumLiquidity, ReentrancyGuard {
+contract Providers is MinimumLiquidity, IProviders, ReentrancyGuard {
     using ErrorLib for *;
     using Utils for uint;
 
     event LiquidityProvided(Common.Provider);
     event LiquidityRemoved(Common.Provider);
-    event Borrowed(Common.Provider[] providers, address borrower);
+    event Borrowed(Common.Provider[] providers, address indexed borrower);
+    event Refunded(Common.Provider[]);
 
     struct Data { 
         uint id;
@@ -47,9 +49,6 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
 
     /**
      * ============= Constructor ================
-     * @notice At construction, we initialized the providers array slot 0 with an empty provider data.
-     * This is so we can reuse the slot in the future such as reseting a provider's data or ensuring 
-     * that providers with zero index are restricted from calling certain functions.
      */
     constructor(
         address _stateManager,
@@ -87,6 +86,7 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
                 providers.push(Common.Provider(data.id, liquidity, rate, 0, sender, interest));
             } else {
                 providers[data.id].amount += liquidity;
+                providers[data.id].rate = rate;
             }
         }
 
@@ -166,6 +166,19 @@ contract Providers is MinimumLiquidity, ReentrancyGuard {
         }
         if(amountLeft > 0) 'Loan exceed aggregate providers bal'._throw();
         result = _providers;
+    }
+
+    ///@dev Refund providers
+    function refund(Common.Provider[] memory beneficiaries) external returns(bool){
+        for(uint i = 0; i < beneficiaries.length; i++){
+            uint slot = beneficiaries[i].slot;
+            uint quota = beneficiaries[i].amount;
+            unchecked {
+                providers[slot].amount += quota;
+            }
+        }
+        emit Refunded(beneficiaries);
+        return true;
     }
 
     // ReadOnly function. Return provider's information. 

@@ -49,7 +49,6 @@ export const Permissionless = () => {
     }
 
     const args = React.useMemo(() => { 
-        // console.log("collateralAsset", collateralAsset);
         const isPermissionless = true;
         const args = [[account], parseUnits(unitLiquidity, 18), quorum, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
         return args;

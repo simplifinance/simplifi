@@ -170,7 +170,9 @@ export async function deployProvider(flexpoolFactory: Address, roleManager: Addr
 export async function deploySupportedAssetManager(collateralAsset: Address, roleManager: Address, deployer: Signer) :Promise<SupportedAssetManager> {
   const AssetMgr = await ethers.getContractFactory("SupportedAssetManager");
   return (await AssetMgr.connect(deployer).deploy(
-    [collateralAsset], 
+    [
+      {asset: collateralAsset, isWrappedAsset: false}
+    ], 
     roleManager, 
   )).waitForDeployment();
 }
@@ -276,7 +278,7 @@ export async function deployContracts(getSigners_: () => Signers) {
   const escape = await deployEscape(roleManagerAddr, deployer);
   const escapeAddr = await escape.getAddress() as Address;
   
-  const safeFactory = await deploySafeFactory(deployer, roleManagerAddr, feeToAddr );
+  const safeFactory = await deploySafeFactory(deployer, roleManagerAddr, feeToAddr);
   const safeFactoryAddr = await safeFactory.getAddress() as Address;
 
   const baseAsset = await deployBaseAsset(deployer);
@@ -299,9 +301,11 @@ export async function deployContracts(getSigners_: () => Signers) {
   
   const faucet = await deployFaucet(deployer, roleManagerAddr, collateralAssetAddr, baseAssetAddr, UNIT_LIQUIDITY, UNIT_LIQUIDITY * 2n);
   const faucetAddr = await faucet.getAddress() as Address;
+
   const providers = await deployProvider(flexpoolAddr, roleManagerAddr, stateManagerAddr, deployer);
   const providersAddr = await providers.getAddress() as Address;
   
+  await safeFactory.connect(deployer).setProviderContract(providersAddr);
   await roleManager.connect(deployer).setRole([flexpoolAddr, providersAddr, supportedAssetMgrAddr, deployerAddr, stateManagerAddr]);
   const isSupported = await supportedAssetMgr.isSupportedAsset(collateralAssetAddr);
   const isListed = await supportedAssetMgr.listed(collateralAssetAddr);

@@ -4,6 +4,7 @@ pragma solidity 0.8.24;
 
 import { ReentrancyGuard } from "@thirdweb-dev/contracts/external-deps/openzeppelin/security/ReentrancyGuard.sol";
 import { IERC20 } from "../interfaces/IERC20.sol";
+import { IProviders } from "../interfaces/IProviders.sol";
 import { IFactory } from "../interfaces/IFactory.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
 import { Common } from "../interfaces/Common.sol";
@@ -12,6 +13,8 @@ import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     using ErrorLib for *;
+
+    event ThankYou();
 
     // Number of contributors currently operating this safe
     uint private userCount;
@@ -24,6 +27,8 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
 
     // Fee Receiver
     address public immutable feeTo;
+
+    IProviders public immutable providersContract;
 
     // Mapping of user to record Id to access
     mapping(address => mapping(uint96 => bool)) private access;
@@ -47,13 +52,13 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param _roleManager : RoleBase manager contract
      * @param _feeTo : Fee receiver account
      */
-    constructor(address _roleManager, address _feeTo) OnlyRoleBase(_roleManager) {
+    constructor(address _roleManager, address _feeTo, address _providers) OnlyRoleBase(_roleManager) {
         feeTo = _feeTo;
+        providersContract = IProviders(_providers);
     }
 
     receive() external payable {
-        (bool s, ) = feeTo.call{value: msg.value}("");
-        require(s);
+        emit ThankYou();
     }
 
     /**
@@ -106,20 +111,6 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     }
 
     /**
-     * @dev Approve spender contributor 'to' to spend from contract's balance
-     * @param to : Contributor
-     * @param asset : Currency in use
-     * @param amount : Value
-     * @notice Consideration is given to the previous allowances given to users.
-     */
-    function _setAllowance(address to, IERC20 asset, uint256 amount) private {
-        uint prev = IERC20(asset).allowance(address(this), to);
-        unchecked {
-            IERC20(asset).approve(to, amount + prev);
-        }
-    }
-
-    /**
      * @dev End the current epoch
      * @param baseAsset : AssetBase
      * @param data : Contributors data
@@ -138,14 +129,14 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 if(fees > 0 && erc20Balances > fees) {
                     erc20Balances -= fees;
                     aggregateFee = 0;
-                    if(!IERC20(baseAsset).transfer(feeTo, fees)) 'Fee transfer failed'._throw();
+                    if(!IERC20(baseAsset).transfer(feeTo, fees)) 'S145'._throw();
                 }
                 if(erc20Balances > 0) {
                     for(uint i = 0; i < data.length; i++) {
                         erc20Balances -= _settleAccruals(data[i], unit, recordId, baseAsset);
                     }
                     if(erc20Balances > 0) {
-                        if(!IERC20(baseAsset).transfer(feeTo, erc20Balances)) 'Fee2 transfer failed'._throw();
+                        if(!IERC20(baseAsset).transfer(feeTo, erc20Balances)) 'S153'._throw();
                     }
                 }
             }
@@ -167,7 +158,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         IERC20 baseAsset,
         uint256 loan,
         uint fee,
-        uint256 calculatedCol,
+        uint256 calculatedCol, 
         uint96 recordId
     ) external hasAccess(user, recordId) onlyRoleBearer returns(bool) {
         assert(address(baseAsset) != address(0) && user != address(0));
@@ -176,12 +167,12 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         if (fee > 0) {
             unchecked {
                 aggregateFee += fee;
-                if (loanable > fee) {
+                if(loanable > fee) {
                     loanable -= fee;
                 }
             }
         }
-        _setAllowance(user, baseAsset, loanable);
+        if(!baseAsset.transfer(user, loanable)) 'S188'._throw();
         return true;
     }
 
@@ -219,7 +210,11 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
             totalAmountIn += _p.debt;
         }
         assert(IERC20(_p.baseAsset).balanceOf(address(this)) >= (_p.attestedInitialBal + _p.debt));
-        _setAllowance(_p.user, _p.collateralAsset, col);
+        if(!_p.collateralAsset.transfer(_p.user, col)) 'S226'._throw();
+        // assert(address(this).balance >= col);
+        if(_p.isColWrappedAsset) {
+            if(address(this).balance >= col) payable(_p.user).transfer(col);
+        }
         if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.recordId, _p.cData);
         return col;
     }
@@ -246,12 +241,12 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                     uint providerPay = _providers[i].amount + (_providers[i].accruals.intPerSec * (data.paybackTime - _providers[i].earnStartDate));
                     assert(amtLeft >= providerPay);
                     amtLeft -= providerPay;
-                    _setAllowance(_providers[i].account, baseAsset, providerPay);
+                    if(!baseAsset.transfer(_providers[i].account, unit)) 'S253'._throw();
                 }
                 totalPaidOut += amtLeft;
             } else {
                 totalPaidOut += unit;
-                _setAllowance(data.id, baseAsset, unit);
+                if(!baseAsset.transfer(data.id, unit)) 'S258'._throw();
             }
         }
     }
@@ -273,14 +268,22 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     ) external onlyRoleBearer hasAccess(user, recordId) returns (bool) {
         Common.Provider[] memory provs = providers[user][recordId];
         if(provs.length > 0) {
-            for(uint i = 0; i < provs.length; i++) {
-                _setAllowance(provs[i].account, baseAsset, provs[i].amount);
-            }
+            if(!providersContract.refund(provs)) 'S280'._throw();
+            if(!baseAsset.transfer(address(providersContract), _aggregateBalances(provs))) 'Safe: Cancel Failed'._throw();
         } else {
-            _setAllowance(user, baseAsset, unit);
+            if(!baseAsset.transfer(user, unit)) 'S283'._throw();
         }
         _removeUser(user, recordId);
         return true;
+    }
+
+    // Calculate the total balances in each providers account
+    function _aggregateBalances(Common.Provider[] memory provs) internal pure returns(uint bals) {
+        for(uint i = 0; i < provs.length; i++) {
+            unchecked {
+                bals += provs[i].amount;
+            }
+        }
     }
 
     /**

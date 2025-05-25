@@ -10,7 +10,7 @@ import { zeroAddress } from 'viem';
 const getSteps = (isWrappedAsset: boolean) : {read: FunctionName[], mutate: FunctionName[]} => {
     const mutateFirstStep = isWrappedAsset? 'deposit' : 'approve';
     return {
-        read: Array.from(['getCollateralQuote', 'allowance']),
+        read: Array.from(['getCollateralQuote', 'allowance', 'deposits']),
         mutate: Array.from([mutateFirstStep, 'getFinance'])
     };
 }
@@ -42,8 +42,8 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
         });
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
-        const readArgs = [[unit], [safe, account]];
-        const addresses = [flexpoolContract, ca.stablecoin];
+        const readArgs = [[unit], [safe, account], [account, flexpoolContract]];
+        const addresses = [flexpoolContract, ca.stablecoin, ca.WrappedNative];
         const readTxObject = td.map((item, i) => {
             return{
                 abi: item.abi,
@@ -57,7 +57,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
         return { readTxObject, flexpoolContract, isWrappedAsset, getFinanceArgs, steps, mutate};
     }, [chainId, unit, account]);
 
-    const { data, refetch } = useReadContracts(
+    const { refetch } = useReadContracts(
         {
             config,
             contracts: readTxObject.map((item) => { return item})
@@ -72,12 +72,17 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
             await refetch().then((result) => {
                 const collateralQuote = result?.data?.[0].result as bigint;
                 const allowance = result?.data?.[1]?.result as bigint;
+                const prevDeposit = result?.data?.[2]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
                         if(allowance >= collateralQuote) proceed = 0;
                         args = [flexpoolContract, collateralQuote];
                         break;
                     case 'deposit':
+                        if(prevDeposit >= collateralQuote){
+                            proceed = 0;
+                            value = 0;
+                        }
                         args = [flexpoolContract];
                         value = collateralQuote;
                         break;

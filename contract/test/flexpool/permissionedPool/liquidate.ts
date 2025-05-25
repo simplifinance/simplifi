@@ -83,7 +83,7 @@ describe("Permissioned: Liquidate", function () {
       const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
       const s3BfLiq = await safeContract.getUserData(signer3Addr, create.pool.pool.big.recordId);
       expect(s3BfLiq.access).to.be.false;
-      const { liq: { balances: bal, pool: pl, profile: pr }, baseBalAfterLiq, colBalAfterLiq, colBalB4Liq} = await liquidate({
+      const { liq: {pool: pl, profile: pr }, baseBalAfterLiq, colBalAfterLiq, colBalB4Liq} = await liquidate({
         asset: baseAsset,
         deployer,
         unit: create.pool.pool.big.unit,
@@ -100,16 +100,7 @@ describe("Permissioned: Liquidate", function () {
       expect(pr.colBals).to.be.equal(ZERO);
       expect(bn(pr.paybackTime).gte(bn(gf.profile.paybackTime))).to.be.true;
       expect(bn(baseBalAfterLiq).gte(bn(ZERO))).to.be.true;
-      expect(bn(colBalAfterLiq).eq(bn(colBalB4Liq))).to.be.true;
-      
-      const s3b = await withdraw({
-        asset: baseAsset,
-        factory:flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer3,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
+      expect(colBalAfterLiq > colBalB4Liq).to.be.true;
       
       expect(pl.pool.big.currentPool).to.be.equal(join.pool.pool.big.currentPool);
       const s1 = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
@@ -120,7 +111,6 @@ describe("Permissioned: Liquidate", function () {
       
       expect(s3AfterWit.access).to.be.false;
       expect(s3AfterWit.collateralBalance).to.be.eq(ZERO);
-      expect(bn(s3b.colBalAfter).gt(bn(s3b.colBalB4))).to.be.true;
     });
   })
 })

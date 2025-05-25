@@ -61,12 +61,12 @@ export const CurrentEpoches:React.FC = () => {
         {
           data?.map((item, index) => {
             const item_ = item?.result as ReadDataReturnValue;
-            const hasPool = toBN(item_.pool.big.unit.toString()).gt(0);
+            const hasPool = toBN(item_?.pool?.big?.unit.toString()).gt(0);
             if(hasPool) {
               return (
                 <Grid item xs={12} sm={6} md={4} key={index}>
                   <MotionDivWrap className='w-full rounded-md' transitionDelay={index / data?.length}>
-                    <FlexCard cData={item_.cData} pool={item_.pool} />
+                    <FlexCard cData={item_?.cData} pool={item_?.pool} />
                   </MotionDivWrap>
                 </Grid>
               )

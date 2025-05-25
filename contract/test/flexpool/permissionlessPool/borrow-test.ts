@@ -71,7 +71,7 @@ describe("Permissionless: Borrow", function () {
       expect(gf.balances?.collateral).to.be.equal(quoted);
 
       // ERC20 balances in safe should remain thesame before claim.
-      expect(gf.balances?.base).to.be.eq(join.balances?.base); 
+      expect(bn(gf.balances?.base).lt(bn(join.balances?.base))).to.be.true; 
       expect(gf.pool.pool.low.selector).to.be.eq(BigInt(1));
       expect(bn(gf.pool.pool.low.selector).gt(bn(join.pool.pool.low.selector))).to.be.true;
 
@@ -86,20 +86,6 @@ describe("Permissionless: Borrow", function () {
       expect(bn(aggregateFee).gt(0)).to.be.true;
       expect(userData.access).to.be.true;
       expect(userData.collateralBalance).to.be.eq(quoted);
-
-      const { balances: {base, collateral}, baseBalAfter, baseBalB4 } = await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-      
-      expect(collateral).to.be.equal(quoted);
-      expect(base).to.be.equal(aggregateFee);
-      expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true; 
-      expect(bn(baseBalAfter).lt(bn(gf.profile.loan))).to.be.true;
     });
   })
 })

@@ -26,7 +26,6 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
             callback
         });
 
-        // const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
         const providersContract = formatAddr(mutate.contractAddresses.Providers);
         const readArgs = [[account, providersContract]];
         const addresses = [ca.stablecoin];
@@ -49,8 +48,6 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
         }
     );
 
-    // const allowance = data?.[0].result as bigint;
-
     const getTransactions = React.useCallback(() => {
         const refetchArgs = async(funcName: FunctionName) => {
             let args : any[] = [];
@@ -59,8 +56,10 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
                 const allowance_ : bigint | undefined = result?.data?.[0].result as bigint;
                 switch (funcName) {
                     case 'approve':
+                        // console.log("allowance", allowance_);
+                        // console.log("liquidityAmount", liquidityAmount);
                         if(allowance_ >= liquidityAmount) proceed = 0;
-                        args = [providersContract, allowance_];
+                        args = [providersContract, liquidityAmount];
                         break;
                     default:
                         break;
@@ -72,6 +71,7 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
         const getArgs = (txObject: TransactionData) => {
             let args: any[] = [];
             let address = '' as Address;
+            console.log("provideLiquidityArgs", provideLiquidityArgs);
             switch (txObject.functionName) {
                 case 'provideLiquidity':
                     address = providersContract;
@@ -81,12 +81,13 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
                     address = formatAddr(mutate.contractAddresses.stablecoin);
                     break;
             }
+
             return {args, address};
         };
 
         let transactions = mutate.transactionData.map((txObject) => {
             const { args, address } = getArgs(txObject);
-            const transaction : Transaction = {
+            const transaction : Transaction = {  
                 abi: txObject.abi,
                 args,
                 contractAddress: address,
@@ -96,9 +97,10 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
             };
             return transaction;
         })
+        console.log("Transactions", transactions);
         return transactions;
 
-    }, [mutate, providersContract, account, refetch]);
+    }, [mutate, providersContract, account, provideLiquidityArgs, liquidityAmount]);
 
     return(
         <Confirmation 

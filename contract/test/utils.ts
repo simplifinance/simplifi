@@ -217,14 +217,15 @@ import type {
     const signer = x.signers[0];
     const recipients = await getAddressFromSigners([signer]);
     const signerAddr = await signer.getAddress();
-    let baseBalB4Liq : bigint = 0n;
 
     await transferAsset({
       amount: x.debt!,
       asset: x.asset,
       recipients: recipients,
       sender: x.deployer
-    }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signerAddr));
+    });
+    const baseBalB4Liq = await x.asset.balanceOf(signerAddr);
+    console.log("baseBalB4Liq ", baseBalB4Liq );
     const colBalB4Liq = await x.collateral.balanceOf(signerAddr);
     await approve({
       owner: signer,
@@ -278,7 +279,7 @@ import type {
    */
   
   export const setSupportedToken = async(assetMgr: SupportedAssetManager, asset: Address) => {
-    assetMgr.supportAsset(asset);
+    assetMgr.supportAsset(asset, false);
   }
   
   /**

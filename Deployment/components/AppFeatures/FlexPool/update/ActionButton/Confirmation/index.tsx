@@ -7,8 +7,9 @@ import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { formatAddr } from "@/utilities";
-import { useAccount, useConfig, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
+import { useAccount, useConfig, useWriteContract } from "wagmi";
 import { WriteContractErrorType, waitForTransactionReceipt } from "wagmi/actions";
+import { displayMessages } from "@/constants";
 
 export const Confirmation : 
     React.FC<ConfirmationProps> = 
@@ -16,7 +17,7 @@ export const Confirmation :
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
 
-    const { setActivepath, refetch, callback, setmessage, setError } = useAppStorage();
+    const { setActivepath, refetch, setmessage, setError } = useAppStorage();
     const isDark = useTheme().theme === 'dark';
     const { address } = useAccount();
     const account = formatAddr(address);
@@ -45,10 +46,11 @@ export const Confirmation :
     const onSuccess = (data: Address, variables: any) => {
         if(variables.functionName === lastStepInList){
             const functionName = variables.functionName as string;
-            setmessage(`Completed ${functionName.toWellFormed()} with hash: ${data.substring(0, 16)}...`)
+            setmessage(`${displayMessages[functionName].end}.\n With hash: /n ${data}`);
+            // setmessage(`Completed ${functionName.toWellFormed()} with hash: ${data.substring(0, 16)}...`)
             setCompletion(variables.functionName as FunctionName);
         } else {
-            setmessage(`Completed approval request with: ${data.substring(0, 8)}...`);
+            setmessage(`Completed ${variables.functionName} request with: ${data.substring(0, 8)}...`);
         }
     };
 
@@ -103,7 +105,6 @@ export const Confirmation :
     const handleSendTransaction = async() => {
         setLoading(true);
         const transactions = getTransactions();
-        // console.log("confirmation transactions", transactions);
         for( let i = 0; i < transactions.length; i++) {
             const {abi, value, functionName, refetchArgs, requireArgUpdate, contractAddress: address, args: inArgs} = transactions[i];
             let args = inArgs;
@@ -116,6 +117,7 @@ export const Confirmation :
                 execute = result?.proceed;
             }
             if(execute === 1) {
+                setmessage(`${displayMessages[functionName].start}.none`);
                 const hash = await writeContractAsync({
                     abi,
                     functionName,
@@ -128,6 +130,8 @@ export const Confirmation :
                     config,
                     { hash, confirmations: 2 }
                 );
+            } else {
+                setmessage(functionName === 'approve'? 'Previous approval was detected!' : `${functionName} was completed!`);
             }
         }
     }
@@ -146,7 +150,7 @@ export const Confirmation :
                     isGetFinance && !loading && <SelectComponent data='convertible' callback={setConvertible} label="Asset holding" placeholder="Which asset are you holding?"/>
                 }  */}
                 <Message />
-                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || "Proceed"}</Button>
+                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || 'Proceed'}</Button>
             </div>
         </Drawer>
     );

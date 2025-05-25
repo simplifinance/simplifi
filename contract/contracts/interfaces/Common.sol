@@ -136,6 +136,7 @@ interface Common {
         address defaulted;
         uint96 recordId;
         IERC20 collateralAsset;
+        bool isColWrappedAsset;
     }
 
     struct Slot {

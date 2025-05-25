@@ -1,10 +1,10 @@
 import React from "react";
 import BigNumber from "bignumber.js";
 import { TransactionReceipt, zeroAddress } from "viem";
-import { getContractData } from "./apis/utils/getContractData";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
 import { BigNumberish } from "ethers";
 import { Transaction } from "./components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
+import { filterTransactionData } from "./utilities";
 
 export type Path = 'Yield' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
@@ -15,7 +15,7 @@ export type Address = `0x${string}`;
 export type LiquidityInnerLinkEntry = 'Dashboard' | 'Create' | 'Open' | 'Closed' | string;
 export type InputSelector = 'Quorum' | 'Duration' | 'CCR' | 'CollateralAsset' | 'UnitLiquidity' | 'address' | 'Interest' | 'SelectBaseAssetHolding';
 export type ButtonText = 'Contribute' | 'GetFinance' | 'Payback' | 'Liquidate' | 'Wait' | 'Not Allowed' | 'Create' | 'Ended' | 'Remove' | 'ProvideLiquidity' | 'RemoveLiquidity' | 'Get Tokens' | 'SignUp' | 'Borrow' | 'Withdraw Collateral' | 'Cashout' | 'Rekey' | 'Edit' | 'Approve';
-export type FunctionName = 'createPool'|'getFinance'|'deposit'| 'getProviders' | 'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | 'symbol' | 'getFactoryData' | 'getPoints' | 'getSupportedAssets' | 'getPoolData' | 'getPoolRecord' | ButtonText;
+export type FunctionName = 'createPool'|'getFinance'|'deposit'| 'deposits' | 'getProviders' | 'payback'|'liquidate'|'editPool'|'closePool'|'contribute'|'registerToEarnPoints'|'provideLiquidity'|'removeLiquidity'|'borrow'|'claimTestTokens'|'setBaseToken'|'setCollateralToken'|'panicUnlock'|'unlockToken'|'lockToken'|'transferFrom'|'approve'|'getCollateralQuote'|'getCurrentDebt'|'allowance'|'balanceOf' | 'symbol' | 'getFactoryData' | 'getPoints' | 'getSupportedAssets' | 'getPoolData' | 'getPoolRecord' | ButtonText;
 export type Router = 'Permissioned' | 'Permissionless';
 export type VoidFunc = () => void;
 export type DrawerAnchor = 'permission' | 'confirmation' | 'poolDetails' | 'providers' | '';
@@ -525,7 +525,7 @@ export const emptyMockPoint : Point = {
 }
 
 const mockAsset : SupportedAsset = {
-  id: getContractData(44787).token.address,
+  id: filterTransactionData({chainId: 44787, filter: false,}).contractAddresses.SimpliToken as Address,
   name: "Simplfinance Token",
   symbol: "TSFT"
 }

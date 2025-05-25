@@ -1,21 +1,20 @@
 import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
-import { useAccount, useConfig } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import { Address, FunctionName } from '@/interfaces';
+import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-export default function ClosePool({ unit, safe, disabled, overrideButtonContent }: ClosePoolProps) {
+export default function ClosePool({ unit, disabled, overrideButtonContent }: ClosePoolProps) {
     const [ openDrawer, setDrawerState ] = React.useState<number>(0);
 
     const toggleDrawer = (arg: number) => setDrawerState(arg);
-    const config = useConfig();
     const { chainId, address } = useAccount();
     const account  = formatAddr(address);
     const { callback } = useAppStorage();
  
-    const { ca, flexpoolContract, td } = React.useMemo(() => {
+    const { flexpoolContract, td } = React.useMemo(() => {
         const { isCelo, contractAddresses: ca, transactionData: td} = filterTransactionData({
             chainId,
             filter: true,
@@ -41,7 +40,7 @@ export default function ClosePool({ unit, safe, disabled, overrideButtonContent 
         })
         return transactions;
 
-    }, [unit]);
+    }, [unit, td, flexpoolContract]);
 
     return(
         <React.Fragment>
@@ -64,7 +63,6 @@ export default function ClosePool({ unit, safe, disabled, overrideButtonContent 
 
 type ClosePoolProps = {
     unit: bigint;
-    safe: Address;
     disabled: boolean;
     overrideButtonContent?: string;
 };

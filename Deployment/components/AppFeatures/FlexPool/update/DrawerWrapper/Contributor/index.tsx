@@ -51,15 +51,15 @@ export const Contributor = ({ data }: ProviderProps) => {
                         <h3 className="text-end">{turnStartTime.inDate}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Loan disbursement time</h3>
+                        <h3>Get Finance time</h3>
                         <h3 className="text-end">{getFinanceTime.inDate}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Has Sent Quota</h3>
+                        <h3>Contributed</h3>
                         <h3>{sentQuota? 'Yes' : 'No'}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Loan Bal</h3>
+                        <h3>Gross Debt Bal</h3>
                         <h3>{`${loan.inEther} USD`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>

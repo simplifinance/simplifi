@@ -4,7 +4,7 @@ import { Contributor } from './Contributor';
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import { FormattedCData, FormattedPoolData, } from "@/interfaces";
 import Drawer from "../ActionButton/Confirmation/Drawer";
-import QuoteBalancesAndCollateral from "./QuoteBalancesAndCollateral";
+import BalancesAndCollaterals from "./BalancesAndCollaterals";
 import { zeroAddress } from "viem";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
@@ -76,7 +76,7 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
                     </li>
                 </ul>
 
-                <QuoteBalancesAndCollateral unit={unit.big} safe={safe} collateralAsset={colAsset} />
+                <BalancesAndCollaterals unit={unit.big} safe={safe} collateralAsset={colAsset} />
                 
                 <ul className={`${BOXSTYLING}`}>
                     <li className={`w-full ${flexSpread}`}>

@@ -14,29 +14,25 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
  * @notice Wrapped token denominated in native coin. Contributors can get finance by depositing a native or corresponding
  * stablecoin as cover for the asset they're borrowing. To have more granular control over the deposited
  * XFI coin, we provide a wrapped version of the native coin. 
- */
+*/
 contract WrappedNative is ERC20, OnlyRoleBase, ReentrancyGuard {
-    address public immutable deployer;
-    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {
-        deployer = _msgSender();
-    }
+    mapping(address => uint) public beneficiaries;
+
+    mapping(address => mapping(address => uint)) public deposits;
+
+    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
 
     /**
      * @dev Deposit collateral
-     * @param to : Account to receive the deposit 
-     */
+     * @param to : Account to receive the deposit
+    */
     function deposit(address to) public payable returns(bool) {
         address sender = _msgSender();
+        unchecked {
+            deposits[sender][to] += msg.value;
+        }
         _mint(sender, msg.value);
         _approve(sender, to, msg.value, false);
-        return true;
-    }
-
-    ///@dev Transfer is disbled indefinitely
-    function transfer(address to, uint256 value) public override returns (bool) {
-        if(to != address(0)) to = address(0);
-        address owner = _msgSender();
-        _transfer(owner, to, value);
         return true;
     }
 
@@ -53,10 +49,19 @@ contract WrappedNative is ERC20, OnlyRoleBase, ReentrancyGuard {
     function transferFrom(address from, address to, uint256 value) public override nonReentrant returns (bool) {
         address spender = _msgSender();
         _spendAllowance(from, spender, value);
-        _burn(from, value);
-        if(!_hasRole(spender) || spender == deployer) {
-            payable(to).transfer(value); 
+        _transfer(from, to, value);
+        if(_hasRole(spender)){
+            uint wBalance = deposits[spender][from];
+            require(wBalance >= value, "Deposit is too low");
+            unchecked {
+                deposits[spender][from] = wBalance - value;
+            }
+            require(address(this).balance >= value, "Contract balance too low");
+            _burn(to, value);
+            payable(to).transfer(wBalance);
+            
         }
+       
         return true;
     }
 

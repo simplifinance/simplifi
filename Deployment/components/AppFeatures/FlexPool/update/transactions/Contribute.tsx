@@ -62,7 +62,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
                 switch (funcName) {
                     case 'approve':
                         if(allowance >= unit) proceed = 0;
-                        args = [flexpoolContract, allowance];
+                        args = [flexpoolContract, unit];
                         break;
                     default:
                         break;
@@ -101,7 +101,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
         })
         return transactions;
 
-    }, [unit, refetch]);
+    }, [unit, mutate, flexpoolContract]);
 
     return(
         <React.Fragment>

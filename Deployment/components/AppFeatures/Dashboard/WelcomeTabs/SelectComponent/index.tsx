@@ -15,9 +15,7 @@ export default function SelectComponent({data, placeholder, callback} : SelectPr
     const { chainId } = useAccount();
     const { symbol } = useAppStorage();
 
-    const supportedAssets = React.useCallback(() => {
-        return getSupportedCollateralAsset(chainId || 44787, symbol);
-    }, [chainId, symbol]);
+    const supportedAssets = getSupportedCollateralAsset(chainId || 44787, symbol);
 
     const handleSelectItem = (arg: string, id: Address) => {
         setSelectedAsset(arg);
@@ -40,7 +38,7 @@ export default function SelectComponent({data, placeholder, callback} : SelectPr
                 ))
                 break;
             case 'supported':
-                nodes = supportedAssets().map(({symbol, address, disabled}) => (
+                nodes = supportedAssets.map(({symbol, address, disabled}) => (
                     <Button disabled={selectedAsset === symbol || disabled} variant={'ghost'} className="w-full flex rounded-none bg-white1 hover:bg-white1 justify-start items-center text-green1/70 border-b border-b-green1/30" onClick={() => handleSelectItem(symbol, address)} key={symbol} value={symbol} >{symbol}</Button>
                 ))
 

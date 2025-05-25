@@ -11,19 +11,14 @@ import type {
   ContributorStruct,
   ProviderStruct,
   SlotStruct,
-  GetAmountToApprove,
   FunctionName,
   TransactionData,
   FilterTransactionDataProps, 
 } from "@/interfaces";
-import getCurrentDebt from "./apis/read/getCurrentDebt";
-import getCollateralQuote from "./apis/read/getCollateralQuote";
 import BigNumber from "bignumber.js";
 import { Router, StageStr } from "./constants";
-import { formatEther, zeroAddress } from "viem";
-import getAllowanceInCUSD from "./apis/update/cUSD/getAllowanceInCUSD";
-import { approveAbi, approveCUSDAbi } from "./apis/utils/abis";
-import rawData from "@/contractsData.json";
+import { formatEther } from "viem";
+import rawData from "@/contractsData.json"; 
 import assert from "assert";
 
 /**
@@ -135,104 +130,6 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
     isCelo
   }
 }
-
-/**
- * @dev Check which transaction needs approval first, and approve.
- * @param functionName : Name of the function to execute on the provided Abi reference
- * @param unit : place holder for unit contribution or amount to approve
- * @param account : Current user or connected account
- * @param config : Wagmi config. Can be extracted from useConfig hook from wagmi library
- * @param callback : A callback function
- * @param collateralAsset : Collateral asset contract
- */
-export const getAmountToApprove = async({account, callback, factory, providers, config, collateralContractAddress, functionName, unit} : GetAmountToApprove) => {
-  let requireApproval = true;
-  let args : any[] = [];
-  let abi : Readonly<any[]> = approveCUSDAbi;
-  let contractAddress = collateralContractAddress || zeroAddress;
-  let withdrawBase = false;
-  let runMain = true;
-  let withdrawCollateral = false;
-
-  switch (functionName) {
-    case 'createPool':
-      args = [factory, unit];
-      const result = await getAllowanceInCUSD({config, account, callback, owner: account, spender: factory, });
-      console.log("result.allowance", result.allowance);
-      console.log("unit", unit);
-      contractAddress = result.address;
-      break;
-    case 'payback':
-      const debt = await getCurrentDebt({config, unit});
-      args = [factory, debt];
-      const result1 = await getAllowanceInCUSD({config, account, callback, owner: account, spender: factory,});
-      // requireApproval = result1.allowance < debt;
-      // requireApproval = true;
-      contractAddress = result1.address;
-      
-      break;
-    case 'liquidate':
-      const debt_ = await getCurrentDebt({config, unit});
-      args = [factory, debt_];
-      const result2 = await getAllowanceInCUSD({config, account, callback, owner: account, spender: factory,});
-      // requireApproval = result2.allowance < debt_;
-      // requireApproval = true;
-      contractAddress = result2.address;
-      break;
-    case 'getFinance':
-      abi = approveAbi;
-      const collateral = await getCollateralQuote({config, unit});
-      args = [factory, collateral[0]];
-      // const prevAllowance = await getAllowance({config, account, owner: account, spender: factory, contractAddress: collateralContractAddress, callback});
-      // requireApproval = prevAllowance < collateral[0];
-      // requireApproval = true;
-      withdrawBase = true;
-      break;
-    case 'provideLiquidity':
-      args = [providers, unit];
-      const result3 = await getAllowanceInCUSD({config, account, callback, owner: account, spender: providers});
-      // requireApproval = result3.allowance < unit;
-      contractAddress = result3.address;
-      break;
-    case 'contribute':
-      args = [factory, unit];
-      const result4 = await getAllowanceInCUSD({config, account, callback, owner: account, spender: factory});
-      // requireApproval = result4.allowance < unit;
-      contractAddress = result4.address;
-      break;
-    case 'removeLiquidity':
-      withdrawBase = true;
-      requireApproval = false;
-      break;
-    case 'Cashout':
-      withdrawBase = true;
-      requireApproval = false;
-      runMain = false;
-      // assert(safe !== undefined, 'Safe address not found');
-      // args = [safe, account, unit];
-    case 'closePool':
-      withdrawBase = true;
-      break;
-    case 'payback':
-      withdrawCollateral = true;
-      break;
-    default:
-      requireApproval = false;
-      break;
-  }
-
-  return {
-    requireApproval,
-    abi,
-    args,
-    contractAddress,
-    functionName: 'approve',
-    withdrawBase,
-    runMain,
-    withdrawCollateral
-  };
-}
-
 
 /**
  * Accepts raw blockchain data and converts it to usable data that can be rendered in the DOM, and easily

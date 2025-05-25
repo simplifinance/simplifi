@@ -7,7 +7,7 @@ const { zeroAddress } = require('viem');
 // Configuration - directory files
 const HARDHAT_ARTIFACTS_PATH = './deployments/';
 const REACT_ABI_PATH = '../Deployment';
-const approvedFunctions = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData'];
+const approvedFunctions = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'deposits', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData'];
 const functionsRequireArgUpdate = ['transferFrom', 'approve', 'deposit'];
 const chainName = {44787: 'alfajores', 4157: 'crosstestnet'};
 const chainIds = [44787, 4157]

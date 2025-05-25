@@ -6,7 +6,7 @@ import { Address, FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-export default function Payback({ unit, collateralAddress, disabled, overrideButtonContent}: PaybackProps) {
+export default function Payback({ unit, collateralAddress, widthType, disabled, overrideButtonContent}: PaybackProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
     
@@ -111,7 +111,7 @@ export default function Payback({ unit, collateralAddress, disabled, overrideBut
                 disabled={disabled} 
                 toggleDrawer={toggleDrawer}
                 buttonContent={overrideButtonContent || 'Payback'}
-                widthType='fit-content'
+                widthType={widthType || 'w-full'}
             />
             <Confirmation 
                 openDrawer={openDrawer}
@@ -129,4 +129,5 @@ type PaybackProps = {
     collateralAddress: Address;
     disabled: boolean;
     overrideButtonContent?: string;
+    widthType?: string;
 };

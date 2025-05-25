@@ -8,6 +8,7 @@ import { Utils } from "../libraries/Utils.sol";
 import { PointsAndSafe } from "./PointsAndSafe.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
 import { IERC20 } from "../interfaces/IERC20.sol";
+import { IStateManager } from "../interfaces/IStateManager.sol";
 // import "hardhat/console.sol";
 
 /**
@@ -248,11 +249,11 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
             }
             _setPool(pool.big.unitId, pool);
         }
-        IERC20 baseAsset = _getVariables().baseAsset;
-        uint attestedInitialBal = baseAsset.balanceOf(pool.addrs.safe);
-        _checkAndWithdrawAllowance(baseAsset, payer, pool.addrs.safe, debt);
+        IStateManager.StateVariables memory stm = _getVariables();
+        uint attestedInitialBal = stm.baseAsset.balanceOf(pool.addrs.safe);
+        _checkAndWithdrawAllowance(stm.baseAsset, payer, pool.addrs.safe, debt);
         collateral = ISafe(pool.addrs.safe).payback(
-            Common.Payback_Safe(payer, baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.recordId], isSwapped, defaulter, pool.big.recordId, pool.addrs.colAsset),
+            Common.Payback_Safe(payer, stm.baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.recordId], isSwapped, defaulter, pool.big.recordId, pool.addrs.colAsset, stm.assetManager.isWrappedAsset(address(pool.addrs.colAsset))),
             unit
         );
     }
@@ -343,16 +344,18 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
         pool = _getPool(unit);
         require(currentUser != address(0), '12');
         Common.Contributor[] memory profiles = contributors[pool.big.recordId];
-        if(profiles.length > 0) {
-            for(uint i = 0; i < profiles.length; i++){
-                Common.ContributorReturnValue memory data = _getContributor(profiles[i].id, unit);
-                if(data.profile.id == currentUser) {
-                    debt += data.profile.loan;
-                }
-                if(data.providers.length > 0) {
-                    for(uint j = 0; j < data.providers.length; j++){
-                        unchecked { 
-                            debt += data.providers[j].accruals.fullInterest;
+        if(_getSlot(currentUser, unit).isMember){
+            if(profiles.length > 0) {
+                for(uint i = 0; i < profiles.length; i++){
+                    Common.ContributorReturnValue memory data = _getContributor(profiles[i].id, unit);
+                    if(data.profile.id == currentUser) {
+                        debt += data.profile.loan;
+                    }
+                    if(data.providers.length > 0) {
+                        for(uint j = 0; j < data.providers.length; j++){
+                            unchecked { 
+                                debt += data.providers[j].accruals.fullInterest;
+                            }
                         }
                     }
                 }

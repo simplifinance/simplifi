@@ -6,12 +6,10 @@ import { appData, emptyMockPoint, mockAssets, mockPoint, mockProviders, phases }
 import type { FactoryData, FunctionName, Path, PointsReturnValue, ProviderResult, SupportedAsset, TransactionCallback, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
 import { useAccount, useBlockNumber, useConfig, useReadContracts,} from "wagmi";
-// import getReadFunctions from "@/components/AppFeatures/FlexPool/update/DrawerWrapper/readContractConfig";
 import AppFeatures from "@/components/AppFeatures";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
 
 export default function SimplifiApp() {
-  // const [isMounted, setMount] = React.useState<boolean>(false);
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [messages, setMessage] = React.useState<string[]>([]);
@@ -29,10 +27,10 @@ export default function SimplifiApp() {
     if(arg.message) setmessage(arg.message);
     if(arg.errorMessage) setErrorMessage(arg.errorMessage);
   };
+
   const { isConnected, chainId } = useAccount();
   const config = useConfig();
   const { data: blockNumber} = useBlockNumber({watch: true});
-  // const { getFactoryDataConfig, readSymbolConfig, getPointsConfig, getProvidersConfig, getSupportedAssetConfig, } = getReadFunctions({chainId});
   
   const { symbol, fData, point, provider, sAsset } = React.useMemo(() => {
     const filtered = filterTransactionData({
@@ -64,13 +62,9 @@ export default function SimplifiApp() {
       enabled: !!isConnected,
       refetchOnReconnect: 'always', 
       refetchInterval: 5000,
-      // refetchOnMount: 'always',
-      // refetchIntervalInBackground: true,
-      // retry: true,
     }
   });
 
-  
   const { symbols, factoryData, points, supportedAssets, providers } = React.useMemo(() => {
     const notReady = isPending || !data;
     const pointData = data?.[2]?.result as PointsReturnValue[];
@@ -78,8 +72,6 @@ export default function SimplifiApp() {
     const sassets = data?.[4]?.result as SupportedAsset[];
     const fdata = data?.[1]?.result as FactoryData;
     const sym= data?.[0]?.result as string;
-
-    console.log("data?.[1]?.result", data?.[1]?.result);
 
     const symbols = notReady? appData[0] : sym || appData[0];
     const factoryData = notReady? appData[1] : fdata || appData[1];
@@ -160,16 +152,3 @@ export default function SimplifiApp() {
     </StorageContextProvider>
   );
 }
-
-// data_.fetch()
-//         .then((newData) => {
-//           const symbol = newData[0]?.result || appState[0];
-//           const factoryData = newData[1]?.result || appState[1];
-//           const beta : PointsReturnValue = {key: newData?.[2]?.result?.[0]?.key || phases[0].phase, value: [...newData?.[2]?.result?.[0].value || [mockPoint]]}
-//           const alpha : PointsReturnValue = {key: newData?.[2]?.result?.[1]?.key || phases[1].phase, value: [...newData?.[2]?.result?.[1].value || [emptyMockPoint]]}
-//           const mainnet : PointsReturnValue = {key: newData?.[2]?.result?.[2]?.key || phases[2].phase, value: [...newData?.[2]?.result?.[2].value || [emptyMockPoint]]}
-//           const points : PointsReturnValue[] = [beta, alpha, mainnet];
-//           const supportedAssets : SupportedAsset[] = [...newData?.[4]?.result || mockAssets];
-//           const providers : ProviderResult[] = [...newData?.[3]?.result || mockProviders];
-//           setAppState([symbol, factoryData, points, providers, supportedAssets]);
-//         })

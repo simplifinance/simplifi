@@ -6,8 +6,6 @@ import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 
-const steps : FunctionName[] = ['claimTestTokens'];
-
 export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
     const toggleDrawer = (arg: number) => setDrawer(arg);
@@ -19,7 +17,7 @@ export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
-            functionNames:steps,
+            functionNames: ['claimTestTokens'],
             callback
         });
         const faucetContract = formatAddr(filtered.contractAddresses.Faucet);
@@ -27,7 +25,7 @@ export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
     }, [chainId ]);
 
     const getTransactions = React.useCallback(() => {
-        let transactions = td.map((txObject) => {
+        const transactions = td.map((txObject) => {
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args: [],

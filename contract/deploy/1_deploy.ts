@@ -130,11 +130,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   console.log(`WrappedNative token deployed to: ${wrappedNative.address}`);
-  
+
   // SupportedAsset manager
   const supportAssetManger = await deploy("SupportedAssetManager", {
     from: deployer,
-    args: [[collateralToken.address, wrappedNative.address], roleManager.address],
+    args: [
+      [
+        {asset: collateralToken.address, isWrappedAsset: false}, 
+        {asset: wrappedNative.address, isWrappedAsset: true}, 
+      ], 
+      roleManager.address
+    ],
     log: true,
   });
   console.log(`SupportedAssetManager contract deployed to: ${supportAssetManger.address}`);
@@ -177,7 +183,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const constructorArgs = isNotHardhat? flexpoolArgs : hardhatArg;
   
-  console.log(`Deploying ${flexpool}`);
+  // console.log(`Deploying ${flexpool}`);
   const factory = await deploy(flexpool, {
     from: deployer,
     args: [...constructorArgs],
@@ -196,14 +202,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
+  await execute("SafeFactory", {from: deployer}, 'setProviderContract', providers.address);
   const receipt = await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);
-  console.log("Receipt", receipt.confirmations);
-  await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
+  console.log("Confirmation block", receipt.confirmations);
   
   // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
   if(networkName !== 'hardhat') {
     const result = await read(flexpool, {from: deployer}, "priceData", wrappedNative.address);
     console.log("Quote", result?.any.toString() || result?.[3].toString());
+  } else {
+    const result = await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
+    // console.log("result", result);
   }
 };
 

@@ -10,7 +10,7 @@ import { Confirmation, Transaction } from "../../ActionButton/Confirmation";
 import { ActionButton } from "../../ActionButton";
 import Payback from "../../transactions/Payback";
 
-export default function QuoteBalancesAndCollateral({unit, safe, collateralAsset} : {unit: bigint, safe: Address, collateralAsset: Address}) {
+export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {unit: bigint, safe: Address, collateralAsset: Address}) {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [openColDrawer, setColDrawerState] = React.useState<number>(0);
     const config = useConfig();
@@ -103,67 +103,19 @@ export default function QuoteBalancesAndCollateral({unit, safe, collateralAsset}
 
     return(
         <div className={`bg-white1 dark:bg-transparent border border-b-4 p-4 space-y-4 rounded-lg dark:text-white1`}>
-            <div className={`&{flexSpread}`}>
-                <h1>Collateral Quote</h1>
-                {
-                    isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(quote || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h1>
-                }
+            <div className={`${flexSpread} items-baseline`}>
+                <div className="w-[50%]">
+                    <h1>Collateral Quote { isPending? <Spinner color="#fed7aa" /> : <h3>{`${toBN(formatEther(quote || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h3> }</h1>
+                </div>
+                <div className="w-[50%] flex">
+                    <h3>{`Amount of ${symbol} required to get finance in this pool`}</h3>
+                </div>
             </div>
             <div className={`&{flexSpread}`}>
                 <h1>Total contribution in Safe</h1>
                 {
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(safeBaseBalance || 0n)).decimalPlaces(5).toString()} usd`}</h1>
                 }
-            </div>
-            <div className={`${flexSpread}`}>
-                <div>
-                    <h1>My Collateral balances</h1>
-                    {
-                        isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(myCollateralBalances || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h1>
-                    }
-                </div>
-                <div>
-                    <ActionButton 
-                        buttonContent="Withdraw"
-                        disabled={myCollateralBalances === 0n || !data}
-                        toggleDrawer={toggleColDrawer}
-                        widthType='w-full'
-                    />
-                    <Confirmation 
-                        toggleDrawer={toggleColDrawer}
-                        getTransactions={getTransactions}
-                        lastStepInList="transferFrom"
-                        openDrawer={openColDrawer}
-                        actionButtonText="Withdraw"
-                        displayMessage="Request to withdraw collateral asset"
-                    />
-
-                </div>
-            </div>
-            <div className={`${flexSpread}`}>
-                <div>
-                    <h1>Withdrawable</h1>
-                    {
-                        isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(withdrawables || 0n)).decimalPlaces(5).toString()} usd`}</h1>
-                    }
-                </div>
-                <div>
-                    <ActionButton 
-                        buttonContent="Withdraw"
-                        disabled={withdrawables === 0n || !data}
-                        toggleDrawer={toggleDrawer}
-                        widthType='w-full'
-                    />
-                    <Confirmation 
-                        toggleDrawer={toggleDrawer}
-                        getTransactions={getTransactions}
-                        lastStepInList="transferFrom"
-                        openDrawer={openDrawer}
-                        actionButtonText="Withdraw"
-                        displayMessage="Request to withdraw base asset"
-                    />
-
-                </div>
             </div>
             <div className={`${flexSpread}`}>
                 <div>
@@ -176,8 +128,64 @@ export default function QuoteBalancesAndCollateral({unit, safe, collateralAsset}
                     collateralAddress={collateralAsset}
                     disabled={payables === 0n || !data}
                     unit={unit}
+                    widthType="w-[50%]"
                 />
             </div>
         </div>
     );
 }
+
+
+
+// <div className={`${flexSpread}`}>
+// <div className="w-[50%]">
+//     <h1>Withdrawable</h1>
+//     {
+//         isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(withdrawables || 0n)).decimalPlaces(5).toString()} usd`}</h1>
+//     }
+// </div>
+// <div className="w-[50%]">
+//     <ActionButton 
+//         buttonContent="Withdraw"
+//         disabled={withdrawables === 0n || !data}
+//         toggleDrawer={toggleDrawer}
+//         widthType='w-full'
+//     />
+//     <Confirmation 
+//         toggleDrawer={toggleDrawer}
+//         getTransactions={getTransactions}
+//         lastStepInList="transferFrom"
+//         openDrawer={openDrawer}
+//         actionButtonText="Withdraw"
+//         displayMessage="Request to withdraw base asset"
+//     />
+
+// </div>
+// </div>
+
+
+{/* <div className={`${flexSpread}`}>
+<div className="w-[50%]">
+    <h1>My Collateral balances</h1>
+    {
+        isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(myCollateralBalances || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h1>
+    }
+</div>
+<div className="w-[50%]">
+    <ActionButton 
+        buttonContent="Withdraw"
+        disabled={myCollateralBalances === 0n || !data}
+        toggleDrawer={toggleColDrawer}
+        widthType='w-full'
+    />
+    <Confirmation 
+        toggleDrawer={toggleColDrawer}
+        getTransactions={getTransactions}
+        lastStepInList="transferFrom"
+        openDrawer={openColDrawer}
+        actionButtonText="Withdraw"
+        displayMessage="Request to withdraw collateral asset"
+    />
+
+</div>
+</div> */}

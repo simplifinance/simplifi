@@ -2,12 +2,11 @@ import React from "react";
 
 import { type ButtonObj, type Address, type ReadDataReturnValue, type FormattedCData, formattedMockData } from "@/interfaces";
 import { formatAddr, formatPoolData } from "@/utilities";
-import { flexCenter, flexSpread, Stage } from "@/constants";
+import { flexCenter, flexSpread, getChainData, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
 import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
-import { getContractData } from "@/apis/utils/getContractData";
 import BigNumber from "bignumber.js";
 import { Button } from "@/components/ui/button";
 import Contribute from "../transactions/Contribute";
@@ -41,10 +40,9 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
 
-    const account = formatAddr(useAccount().address);
-    const config = useConfig();
-    const { pair } = getContractData(config.state.chainId || 4157);
-    
+    const { address, chainId } = useAccount();
+    const account = formatAddr(address);
+    const { pair } = getChainData(chainId);
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
 
@@ -82,7 +80,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                             actionObj = {value: 'contribute', disable: false};
                         }
                     }
-                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} safe={safe} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
                     else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 } else {
                     if(isAdmin) {
@@ -93,13 +91,15 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         }
                     } else if(isMember && !sentQuota){
                         actionObj = {value: 'contribute', disable: false};
-                    } else if(isMember && sentQuota){
+                    } else if(isMember && sentQuota && currentPool.big === (unit.big * BigInt(maxQuorum))){
                         actionObj = {value: 'Wait', disable: true};
+                    } else if(isMember && sentQuota && currentPool.big < (unit.big * BigInt(maxQuorum))) {
+                        actionObj = {value: 'contribute', disable: false};
                     } else {
                         actionObj = {value: 'Not Allowed', disable: true};
                     }
 
-                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} safe={safe} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
                     else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 }
                 break;

@@ -2,11 +2,9 @@ import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import { FunctionName, TransactionCallback } from '@/interfaces';
+import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import assert from 'assert';
-
-const steps : FunctionName[] = ['borrow'];
 
 export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowProps) {
     const { chainId } = useAccount();
@@ -16,7 +14,7 @@ export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowP
         const filtered = filterTransactionData({
             chainId,
             filter: true,
-            functionNames:steps,
+            functionNames: ['borrow'],
             callback
         });
 

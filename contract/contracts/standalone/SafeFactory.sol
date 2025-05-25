@@ -9,7 +9,8 @@ import { Safe, OnlyRoleBase } from "../peripherals/Safe.sol";
   deletion, read and write data.
  */
 contract SafeFactory is ISafeFactory, OnlyRoleBase {
-  // using Clones for address;
+  // Peoviders contract
+  address public providers;
 
   // Total safe created to date
   uint public totalSafes;
@@ -32,7 +33,6 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
     address _feeTo
   ) OnlyRoleBase(_roleManager) {
     feeTo = _feeTo;
-    _createSafe(1e16);
   }
  
   // Not accepting values
@@ -70,8 +70,9 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
   * for successful upgrade.
   */
   function _createSafe(uint256 unit) private returns(address safe) {
+    assert(providers != address(0));
     totalSafes ++;
-    safe = address(new Safe(address(roleManager), feeTo));
+    safe = address(new Safe(address(roleManager), feeTo, providers));
     _updateSafe(unit, safe); 
   }
 
@@ -86,5 +87,9 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
 
   function setFeeTo(address newFeeTo) public onlyRoleBearer {
     feeTo = newFeeTo;
+  }
+
+  function setProviderContract(address providerAddr) public onlyRoleBearer {
+    providers = providerAddr;
   }
 }

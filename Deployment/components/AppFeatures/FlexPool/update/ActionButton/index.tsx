@@ -21,5 +21,5 @@ type ActionButtonProps = {
     buttonContent: string;
     toggleDrawer: (arg: number) => void;
     optionalButtonContent?: React.ReactNode;
-    widthType: 'w-full' | 'fit-content'
+    widthType: string;
 }

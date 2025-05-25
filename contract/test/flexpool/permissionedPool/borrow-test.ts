@@ -61,8 +61,10 @@ describe("Permissioned: Borrow", function () {
               asset: baseAsset,
               deployer
             });
+
+            // Checking balances in the Safe
             expect(gf.balances?.collateral).to.be.equal(quoted);
-            expect(gf.balances?.base).to.be.eq(join.balances.base); 
+            expect(bn(gf.balances?.base).lt(bn(join.balances.base))).to.be.true; 
             expect(gf.pool.pool.low.selector).to.be.eq(BigInt(1));
             expect(bn(gf.pool.pool.low.selector).gt(bn(join.pool.pool.low.selector)));
       
@@ -77,19 +79,6 @@ describe("Permissioned: Borrow", function () {
             expect(bn(aggregateFee).gt(0)).to.be.true;
             expect(userData.access).to.be.true;
             expect(userData.collateralBalance).to.be.eq(quoted);
-      
-            const { balances, baseBalB4, baseBalAfter} = await withdraw({
-              asset: baseAsset,
-              factory: flexpool,
-              owner: formatAddr(gf.pool.pool.addrs.safe),
-              spender: signer1,
-              collateral: collateralAsset,
-              unit: UNIT_LIQUIDITY
-            });
-            expect(balances?.collateral).to.be.equal(quoted);
-            expect(balances?.base).to.be.equal(aggregateFee);
-            expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true;
-            expect(bn(baseBalAfter).lte(bn(gf.profile.loan))).to.be.true;
         });
     })
 })
