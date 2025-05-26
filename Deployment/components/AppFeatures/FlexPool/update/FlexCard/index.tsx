@@ -1,23 +1,20 @@
 import React from "react";
-import { 
-    type ButtonObj, 
-    type Address, 
-    type ReadDataReturnValue, 
-    type FormattedCData, 
-    type HandleTransactionParam, 
-    type CommonParam,
-    formattedMockData, 
-} from "@/interfaces";
+
+import { type ButtonObj, type Address, type ReadDataReturnValue, type FormattedCData, formattedMockData } from "@/interfaces";
 import { formatAddr, formatPoolData } from "@/utilities";
-import { flexCenter, flexSpread, Stage } from "@/constants";
+import { flexCenter, flexSpread, getChainData, Stage } from "@/constants";
 import { useAccount, useConfig } from "wagmi";
-import { ActionButton } from "../ActionButton";
 import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
-import { getContractData } from "@/apis/utils/getContractData";
 import BigNumber from "bignumber.js";
 import { Button } from "@/components/ui/button";
+import Contribute from "../transactions/Contribute";
+import ClosePool from "../transactions/ClosePool";
+import GetFinance from "../transactions/GetFinance";
+import Payback from "../transactions/Payback";
+import Liquidate from "../transactions/Liquidate";
+import { zeroAddress } from "viem";
 
 /**
  * Filter the data list for current user
@@ -38,16 +35,14 @@ const filterUser = (
 }
 
 export const FlexCard = (props: ReadDataReturnValue) => {
-    const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
+    // const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
-    const [buttonObj, setButtonObj] = React.useState<ButtonObj>({value: 'Contribute', disable: false});
 
-    const account = formatAddr(useAccount().address);
-    const config = useConfig();
-    const { pair } = getContractData(config.state.chainId || 4157);
-    
+    const { address, chainId } = useAccount();
+    const account = formatAddr(address);
+    const { pair } = getChainData(chainId);
     const showPermissionDetail = (arg:number) => setPermissionDrawer(arg);
     const showProviderDetails = (arg:number) => setProviderDrawer(arg);
 
@@ -57,74 +52,84 @@ export const FlexCard = (props: ReadDataReturnValue) => {
         pool: {
             big: { unit, unitId, currentPool },
             low: { userCount, maxQuorum, },
-            addrs: { colAsset, safe },
+            addrs: { colAsset, safe, lastPaid },
             stage,
             isPermissionless,
         }
     } = formattedPoolData;
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
-    const commonParam : CommonParam = { config, account, unit: unit.big, contractAddress: colAsset,}
-    const transactionArgs: HandleTransactionParam = {
-        txnType: buttonObj.value,
-        commonParam,
-        safe
-    };
-
-    React.useEffect(() => {
+    
+    // A function that when called, renders the action components with packed transaction objects
+    const renderAction= React.useCallback(() => {
+        let actionObj : ButtonObj = {value: 'Contribute', disable: false};
+        let component : React.ReactNode = <></>;
         switch (stage.toNum) {
             case Stage.JOIN:
                 if(isPermissionless){
                     if(isAdmin) {
                         if(userCount === 1) {
-                            setButtonObj({value: 'Remove', disable: false});
+                            actionObj = {value: 'closePool', disable: false};
                         } else {
-                            setButtonObj({value: 'Wait', disable: true});
+                            actionObj = {value: 'Wait', disable: true};
                         }
                     } else {
                         if(isMember && sentQuota){
-                            setButtonObj({value: 'Wait', disable: true});
+                            actionObj = {value: 'Wait', disable: true};
                         } else {
-                            setButtonObj({value: 'Contribute', disable: false});
+                            actionObj = {value: 'contribute', disable: false};
                         }
                     }
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 } else {
                     if(isAdmin) {
                         if(currentPool.big === unit.big){
-                            setButtonObj({value: 'Remove', disable: false});
+                            actionObj = {value: 'closePool', disable: false};
                         } else {
-                            setButtonObj({value: 'Wait', disable: true});
+                            actionObj = {value: 'Wait', disable: true};
                         }
                     } else if(isMember && !sentQuota){
-                        setButtonObj({value: 'Contribute', disable: false});
-                    } else if(isMember && sentQuota){
-                        setButtonObj({value: 'Wait', disable: true});
+                        actionObj = {value: 'contribute', disable: false};
+                    } else if(isMember && sentQuota && currentPool.big === (unit.big * BigInt(maxQuorum))){
+                        actionObj = {value: 'Wait', disable: true};
+                    } else if(isMember && sentQuota && currentPool.big < (unit.big * BigInt(maxQuorum))) {
+                        actionObj = {value: 'contribute', disable: false};
                     } else {
-                        setButtonObj({value: 'Not Allowed', disable: true});
+                        actionObj = {value: 'Not Allowed', disable: true};
                     }
+
+                    if(actionObj.value === 'closePool') component = <ClosePool unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value} />;
+                    else component = <Contribute unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 }
                 break;
     
             case Stage.GET:
                 if(isMember) {
-                    setButtonObj({value: 'GetFinance', disable: false});
-                } else setButtonObj({ value: 'Not Allowed', disable: true});
+                    actionObj = {value: 'getFinance', disable: false};
+                } else {
+                    actionObj = { value: 'Not Allowed', disable: true};
+                }
+                component = <GetFinance collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
                 break;
             
             case Stage.PAYBACK:
                 if(isMember){
-                    if(loan.inBN.gt(BigNumber(0))) setButtonObj({value : 'Payback', disable: false});
-                    else setButtonObj({ value: 'Not Allowed', disable: true});
+                    if(loan.inBN.gt(BigNumber(0))) actionObj = {value : 'payback', disable: false};
+                    else actionObj = { value: 'Not Allowed', disable: true};
                 } else {
-                    if((new Date().getTime() / 1000) >  paybackTime.inSec) setButtonObj({ value: 'Liquidate', disable: false});
-                    else setButtonObj({ value: 'Not Allowed', disable: true});
+                    if((new Date().getTime() / 1000) >  paybackTime.inSec) actionObj = { value: 'liquidate', disable: false};
+                    else actionObj = { value: 'Not Allowed', disable: true};
                 }
+                if(actionObj.value === 'payback') component = <Payback collateralAddress={colAsset} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>;
+                else component = <Liquidate lastPaid={lastPaid} collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>
                 break;
             default:
-                setButtonObj({ value: 'Ended', disable: true});
+                <Liquidate lastPaid={zeroAddress} collateralAddress={zeroAddress} safe={zeroAddress} unit={0n} disabled={true} overrideButtonContent={'Ended'}/>
                 break;
-        }    
-    }, [stage.toNum, currentPool.big, isAdmin, isMember, isPermissionless, loan.inBN, paybackTime.inSec, sentQuota, unit.big, userCount]);
+        } 
+        return component;
+    }, [colAsset, currentPool.big, isAdmin, isMember, isPermissionless, lastPaid, loan.inBN, maxQuorum, paybackTime.inSec, safe, sentQuota, stage.toNum, unit.big, userCount]);
 
     return(
         <React.Fragment>
@@ -181,12 +186,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     >
                         Info
                     </Button>
-                    <ActionButton
-                        buttonObj={buttonObj}
-                        transactionArgs={transactionArgs}
-                        setDrawerState={(arg:number) => setDrawerState(arg)}
-                        confirmationDrawerOn={confirmationDrawerOn}
-                    />
+                    { renderAction() }
                 </div>
             </div>
             <PermissionPopUp
@@ -206,22 +206,12 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 toggleDrawer={showProviderDetails}
                 cData={cData}
             />
-            {
-                (!confirmationDrawerOn ) && 
-                    <InfoDisplay 
-                        data={formattedPoolData}
-                        popUpDrawer={infoDrawer}
-                        toggleDrawer={(arg) => setShowInfo(arg)}
-                        actions={
-                            <ActionButton 
-                                buttonObj={buttonObj}
-                                transactionArgs={transactionArgs}
-                                setDrawerState={(arg:number) => setDrawerState(arg)}
-                                confirmationDrawerOn={confirmationDrawerOn}
-                            />
-                        } 
-                    />
-            }
+            <InfoDisplay 
+                data={formattedPoolData}
+                popUpDrawer={infoDrawer}
+                toggleDrawer={(arg) => setShowInfo(arg)}
+                actions={ renderAction() } 
+            />
         </React.Fragment>
     )
 }

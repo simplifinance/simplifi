@@ -8,39 +8,18 @@ import type {
   FormattedProvider, 
   FormattedProviders,
   FormattedSlot, 
-  HandleTransactionParam, 
-  SendTransactionResult,
-  CheckAndApproveParam,
   ContributorStruct,
   ProviderStruct,
-  SlotStruct, 
+  SlotStruct,
+  FunctionName,
+  TransactionData,
+  FilterTransactionDataProps, 
 } from "@/interfaces";
-import getCurrentDebt from "./apis/read/getCurrentDebt";
-import getAllowance from "./apis/update/collateralToken/getAllowance";
-import getCollateralQuote from "./apis/read/getCollateralQuote";
-import approve from "./apis/update/collateralToken/approve";
-import addToPool from "./apis/update/factory/addToPool";
-import getFinance from "./apis/update/factory/getFinance";
-import liquidate from "./apis/update/factory/liquidate";
-import payback from "./apis/update/factory/payback";
-import createPermissioned from "./apis/update/factory/createPermissioned";
-import createPermissionless from "./apis/update/factory/createPermissionless";
-import assert from "assert";
-import { getContractData } from "./apis/utils/getContractData";
-import removePool from "./apis/update/factory/removePool";
 import BigNumber from "bignumber.js";
-import { Router, StageStr, supportedCeloCollateralAsset } from "./constants";
-import approveToSpendCUSD from "./apis/update/cUSD/approveToSpendCUSD";
-import withdrawLoanInCUSD from "./apis/update/cUSD/withdrawLoanInCUSD";
+import { Router, StageStr } from "./constants";
 import { formatEther } from "viem";
-import getAllowanceInCUSD from "./apis/update/cUSD/getAllowanceInCUSD";
-import borrow from "./apis/update/providers/borrow";
-import claimTestTokens from "./apis/update/faucet/claimTestTokens";
-import provideLiquidity from "./apis/update/providers/providerLiquidity";
-import removeLiquidity from "./apis/update/providers/removeLiquidity";
-import registerToEarnPoints from "./apis/update/points/registerToEarnPoints";
-import withdrawCollateral from "./apis/update/collateralToken/withdrawCollateral";
-import checkAndConvertAssetHolding from "./apis/utils/checkAndConvertAssetHolding";
+import rawData from "@/contractsData.json"; 
+import assert from "assert";
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -109,168 +88,47 @@ export function getTimeFromEpoch(onchainUnixTime: number) {
 }
 
 /**
- * @dev Check which transaction needs approval first, and approve.
- * @param txnType : Incoming transaction type
- * @param unit : place holder for unit contribution or amount to approve
- * @param account : Current user or connected account
- * @param config : Wagmi config. Can be extracted from useConfig hook from wagmi library
- * @param callback : A callback function
- * @param collateralAsset : Collateral asset contract
+ * @dev Filter abi of 'any' type that contains the functionName
+ * @param abi: JSONInterface or abi
+ * @param functionName : Function name to call
+ * @returns : Filtered abi
  */
-export const checkAndApprove = async({account, callback, config, txnType, contractAddress, unit} : CheckAndApproveParam, selectedAsset?: Address) => {
-  let { factory, providers, } = getContractData(config.state.chainId);
-  let amtToApprove : bigint = 0n;
-  let owner = account;
-  let spender = factory;
-  let previousAllowance : bigint = 0n;
-  // let canProceed = true;
-
-  switch (txnType) {
-    case 'Create':
-      amtToApprove = unit;
-      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: unit})).allowance;
-      break;
-    case 'Payback':
-      amtToApprove = await getCurrentDebt({config, unit});
-      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
-      break;
-    case 'Liquidate':
-      amtToApprove = await getCurrentDebt({config, unit});
-      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
-      break;
-    case 'GetFinance':
-      const collateral = await getCollateralQuote({config, unit});
-      amtToApprove = collateral[0];
-      // Expected contractAddress is the collateral asset that was selected during pool creation
-      assert(contractAddress !== undefined, "Collateral asset not provided");
-      if(selectedAsset !== supportedCeloCollateralAsset[1].address && selectedAsset !== supportedCeloCollateralAsset[0].address){
-        assert(selectedAsset !== undefined, "SelectedAsset is undefined");
-        await checkAndConvertAssetHolding({selectedAsset, amountIn: amtToApprove, config: {account, config, callback}});
-
-      }
-      previousAllowance = await getAllowance({config, account, owner, spender, contractAddress, callback});
-      break;
-    case 'ProvideLiquidity':
-      amtToApprove = unit;
-      spender = providers;
-      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
-      break;
-    case 'Contribute':
-      amtToApprove = unit;
-      previousAllowance = (await getAllowanceInCUSD({config, account, callback, owner, spender, requestedAmount: amtToApprove})).allowance;
-      break;
-    default:
-      break;
-    }
-
-    // console.log("contractAddress", contractAddress)
-    if(previousAllowance < amtToApprove) {
-      if(txnType === 'GetFinance'){
-        await approve({account, config, callback, amountToApprove: amtToApprove, contractAddress});
-      } else {
-        await approveToSpendCUSD({ account,  amount: amtToApprove, config, spender, callback,});
-      }
-    }
+export const filterAbi = (abi: any[], functionName: FunctionName) => {
+  const funcName = functionName as string;
+  return abi.filter((item) => item.name === funcName);
 }
 
 /**
- * @dev Utility to run state changing transactions on the blockchain.
- * Arguments are spread in the `param` arg to avoid overloading the function
- * @param param : Contains the different function parameters
+ * @dev Filter transaction data such as abis, contract addresses, inputs etc. If the filter parameter is true, it creates transaction data for 
+ * the parsed function names. Default to false.
+ * @param param0 : Parameters
+ * @returns object containing array of transaction data and approved functions
  */
-export const handleTransact = async(param: HandleTransactionParam) => {
-  const { 
-    safe, 
-    rate,
-    txnType,
-    router, 
-    providersSlots,
-    createPermissionedPoolParam, 
-    createPermissionlessPoolParam,
-    commonParam, 
-    selectedAsset
-  } = param;
-  let result : SendTransactionResult = { errored:false, error: {} };
-  let error : any = {};
-  const {unit, ...rest} = commonParam;
-  const { providers } = getContractData(rest.config.state.chainId);
-  try {
-    await checkAndApprove({txnType, unit, ...rest}, selectedAsset);
-    switch (txnType) {
-      case 'Contribute':
-        await addToPool({unit, ...rest});
-        break;
-      case 'GetFinance':
-        assert(safe !== undefined, "Safe address not provided");
-        assert(rest.callback !== undefined, "Callback function is undefined");
-        const get = await getFinance({unit, ...rest});
-        if(get === 'success') await withdrawLoanInCUSD({owner: safe, ...rest});
-        break;
-      case 'Payback':
-        assert(safe !== undefined, "Safe contract not provided");
-        const pay = await payback({unit, ...rest}); 
-        if(pay === 'success') await withdrawCollateral({...rest, safe});
-        break;
-      case 'Remove':
-        assert(safe !== undefined, "Safe contract not provided");
-        const removedPool = await removePool({unit, ...rest}); 
-        if(removedPool === 'success') await withdrawLoanInCUSD({owner: safe, ...rest});
-        break;
-      case 'Liquidate':
-        assert(safe !== undefined, "Safe contract not provided");
-        const liquidated = await liquidate({unit, ...rest});
-        if(liquidated === 'success') await withdrawCollateral({...rest, safe});
-        break;
-      case 'Borrow':
-        assert(providersSlots !== undefined, "Safe address is undefined");
-        // console.log("providersSlots", providersSlots)
-        await borrow({unit, ...rest, providersSlots});
-        break;
-      case 'Get Tokens':
-        await claimTestTokens({...rest});
-        break;
-      case 'ProvideLiquidity':
-        assert(rate !== undefined, "Safe address is undefined");
-        await provideLiquidity({...rest, rate, unit});
-        break;
-      case 'Withdraw Collateral':
-        assert(safe !== undefined, "Safe address is undefined");
-        await withdrawCollateral({...rest, safe});
-        break;
-      case 'Cashout':
-        assert(safe !== undefined, "Safe address is undefined");
-        assert(rest.callback !== undefined, "Safe address is undefined");
-        await withdrawLoanInCUSD({owner: safe, ...rest});
-        break;
-      case 'RemoveLiquidity':
-        const removed = await removeLiquidity({...rest, unit });
-        if(removed === 'success') await withdrawLoanInCUSD({owner: providers, ...rest});
-        break;
-      case 'SignUp':
-        await registerToEarnPoints({...rest, unit });
-        break;
-      case 'Create':
-        assert(router, "Utilities: Router was not provider");
-        switch (router) {
-          case 'Permissioned':
-            assert(createPermissionedPoolParam, "Utilities: createPermissionedPoolParam: Param not found");
-            await createPermissioned(createPermissionedPoolParam, commonParam);
-            break;
-          case 'Permissionless':
-            assert(createPermissionlessPoolParam, "Utilities: createPermissionless parameters not found");
-            await createPermissionless(createPermissionlessPoolParam, commonParam)
-            break;
-          default:
-            break;
-        }
-        break;
-      default:
-        break;
-    }
-  } catch (error: any) {
-    result = {errored: true, error};
+export function filterTransactionData({chainId, filter, functionNames, callback}: FilterTransactionDataProps) {
+  const { approvedFunctions, chainIds, data, contracts } = rawData;
+  const index = chainIds.indexOf(chainId || chainIds[0]);
+  let transactionData : TransactionData[] = [];
+  const contractAddresses = contracts[index];
+  const isCelo = chainId === chainIds[0];
+
+  if(filter) {
+    assert(functionNames !== undefined, "FunctionNames not provided");
+    functionNames.forEach((functionName: string) => {
+      if(!approvedFunctions.includes(functionName)) {
+        const errorMessage = `Operation ${functionName} is not supported`;
+        callback?.({errorMessage});
+        throw new Error(errorMessage);
+      }
+      const filteredData = data[index].filter(({functionName : fName}) => fName === functionName);
+      transactionData.push(filteredData[0]);
+    });
   }
-  return result;
+  return {
+    transactionData,
+    approvedFunctions,
+    contractAddresses,
+    isCelo
+  }
 }
 
 /**
@@ -316,16 +174,16 @@ export const formatPoolData = (pool: ReadDataReturnValue): FormattedPoolData => 
   return {
     pool: {
       big: { 
-        unit: {big: toBigInt(unit), inEther: formatEther(toBigInt(unit))}, 
-        currentPool: {big: toBigInt(currentPool), inEther: formatEther(toBigInt(currentPool))},
+        unit: {big: toBigInt(unit), inEther: toBN(formatEther(toBigInt(unit) || 0n)).decimalPlaces(5).toString()}, 
+        currentPool: {big: toBigInt(currentPool), inEther: toBN(formatEther(toBigInt(currentPool) || 0n)).decimalPlaces(5).toString()},
         unitId: {big: toBigInt(unitId), str: unitId.toString()}, 
         recordId: {big: toBigInt(recordId), str: recordId.toString()},
       },
-      low: { 
+      low: {
         maxQuorum: toBN(maxQuorum.toString()).toNumber(), 
         allGh: toBN(allGh.toString()).toNumber(),
         userCount: userCountToNumber, 
-        duration: {inSec: durationInSec, inHour: durationInSec / 60}, 
+        duration: {inSec: durationInSec, inHour: durationInSec / 3600}, 
         colCoverage: toBN(colCoverage.toString()).toNumber(),
         selector : toBN(selector.toString()).toNumber()
       },

@@ -2,86 +2,68 @@
 pragma solidity 0.8.24;
 
 // import "hardhat/console.sol";
-import { 
-    Contributor, 
-    Common, 
-    ErrorLib, 
-    Utils, 
-    IRoleBase, 
-    IERC20, 
-    IPoint, 
-    ISupportedAsset,
-    ISafeFactory
-} from "./Contributor.sol";
+import { Contributor, Common, IERC20 } from "./Contributor.sol";
 import { ISafe } from "../interfaces/ISafe.sol";
 
-abstract contract Pool is Contributor {
-    using Utils for *;
-    using ErrorLib for *;
+/**
+ * ERROR CODE
+ * 3 - Invalid duration
+ * 4 - Invalid list
+ * 5 - Minimum of two participants
+ * 6 - Admin not in list
+ * 7 - Admin appeared twice
+ * 8 - Stage not ready
+ * 8+ - Adding user to safe failied
+ */
 
+abstract contract Pool is Contributor {
     // ================ Constructor ==============
-    constructor(
-        address _diaOracleAddress, 
-        ISupportedAsset _assetManager, 
-        IRoleBase _roleManager,
-        IERC20 _baseAsset,
-        IPoint _pointFactory,
-        ISafeFactory _safeFactory
-    ) 
-        Contributor(_diaOracleAddress, _assetManager, _roleManager, _baseAsset, _pointFactory, _safeFactory)
+    constructor(address stateManager, address roleManager, address _safeFactory)
+        Contributor(stateManager, roleManager, _safeFactory)
     {}
 
     /**
      * @dev Create a pool internally
-     * @param users : Participants
-     * @param unit : Unit contribution
-     * @param maxQuorum : Maximum number of contributors that can participate
-     * @param durationInHours : Maximum duration in hours each borrower can retain the loan
-     * @param colCoverage : Ration of collateral coverage or index required as cover for loan
-     * @param router : Router : PERMISSIOLESS or PERMISSIONED
-     */
-    function _createPool(
-        address[] memory users,
-        address sender,
-        uint unit,
-        uint8 maxQuorum,
-        uint16 durationInHours,
-        uint24 colCoverage,
-        Common.Router router,
-        IERC20 colAsset
-    ) internal _onlyIfUnitIsNotActive(unit) onlySupportedAsset(colAsset) returns(Common.Pool memory pool) {
-        if(durationInHours == 0 || durationInHours > 720) 'Invalid duration'._throw();
-        if(router == Common.Router.PERMISSIONLESS){
-            if(users.length > 1 || users.length == 0) 'Expect 1 item in list'._throw();
-            assert(users[0] == sender);
+     * @param args : Parameters
+     * @param args.users : Participants
+     * @param args.unit : Unit contribution
+     * @param args.maxQuorum : Maximum number of contributors that can participate
+     * @param args.durationInHours : Maximum duration in hours each borrower can retain the loan
+     * @param args.colCoverage : Ration of collateral coverage or index required as cover for loan
+     * @param args.router : Router : PERMISSIOLESS or PERMISSIONED
+     * @param args.sender : msg.sender
+    */
+    function _createPool(Common.CreatePoolParam memory args) internal _checkUnitStatus(args.unit, false) onlySupportedAsset(args.colAsset) returns(Common.Pool memory pool) {
+        require(args.durationInHours > 0 && args.durationInHours <= 720, '3');
+        if(args.router == Common.Router.PERMISSIONLESS){
+            require(args.users.length == 1, '4');
         } else {
-            if(users.length < 2) 'List too low for router2'._throw();
-            if(sender != users[0]) 'Sender not in list'._throw();
-        }
-        (uint96 unitId, uint96 recordId) = _generateIds(unit);
-        pool = _updatePool(Common.UpdatePoolData(unit, unitId, recordId, maxQuorum, colCoverage, colAsset, durationInHours, users[0], router));  
-        pool = _addUserToPool(unit, users, pool);
+            require(args.users.length >= 2, '5');
+        } 
+        require(args.sender == args.users[0], '6');
+        (uint96 unitId, uint96 recordId) = _generateIds(args.unit);
+        pool = _updatePool(Common.UpdatePoolData(args.unit, unitId, recordId, args.maxQuorum, args.colCoverage, IERC20(args.colAsset), args.durationInHours, args.users[0], args.router));   
+        pool = _addUserToPool(args.users, pool);
         _setPool(unitId,  pool);
-        _completeAddUser(users[0], pool);
+        _completeAddUser(args.users[0], pool);
     }
 
     /**
      * @dev Add users to newly created pool
-     * @param unit : Unit contribution
      * @param users : List of contributors to add
      * @param pool : Pool data. Must be an existing data relating to the unit contribution
      */
     function _addUserToPool(
-        uint256 unit, 
         address[] memory users,
-        Common.Pool memory pool
+        Common.Pool memory pool 
     ) internal returns(Common.Pool memory _pool) {
         for(uint i = 0; i < users.length; i++) {
             Common.ContributorReturnValue memory data;
-            if(i == 0) data = _initializeContributor(pool, unit, users[i], true, true, true);
-            else {
-                if(users[0] == users[i]) 'Creator spotted twice'._throw();
-                data = _initializeContributor(pool, unit, users[i], false, true, false);
+            if(i == 0) {
+                data = _initializeContributor(pool, users[i], true, true, true);
+            } else {
+                require(users[0] != users[i], '7');
+                data = _initializeContributor(pool, users[i], false, true, false);
             }
             _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         }
@@ -98,20 +80,20 @@ abstract contract Pool is Contributor {
         uint256 unit, 
         address user,
         Common.Pool memory pool
-    ) internal _onlyIfUnitIsActive(unit) returns(Common.Pool memory _pool) {
-        if(pool.stage != Common.Stage.JOIN) 'Invalid stage'._throw();
+    ) internal _checkUnitStatus(unit, true) returns(Common.Pool memory _pool) {
+        require(pool.stage == Common.Stage.JOIN, '8');
         Common.ContributorReturnValue memory data;
         unchecked {
             pool.big.currentPool += pool.big.unit;
             pool.low.userCount += 1;
         }
         if(pool.router == Common.Router.PERMISSIONED) {
-            _onlyContributor(user, unit, false);
+            _checkStatus(user, unit, true);
             data = _getContributor(user, unit);
             data.profile.sentQuota = true;
         } else {
-            _onlyNonContributor(user, unit);
-            data = _initializeContributor(pool, unit, user, false, true, true);
+            _checkStatus(user, unit, false);
+            data = _initializeContributor(pool, user, false, true, true);
         }
         _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         if(_isPoolFilled(pool, pool.router == Common.Router.PERMISSIONED)) {
@@ -128,8 +110,8 @@ abstract contract Pool is Contributor {
         * @param pool : Pool data. Must be an existing data relating to the unit contribution
     */
     function _completeAddUser(address user, Common.Pool memory pool) internal {
-        _checkAndWithdrawAllowance(IERC20(baseAsset), user, pool.addrs.safe, pool.big.unit);
-        if(!ISafe(pool.addrs.safe).addUp(user, pool.big.recordId)) 'Add user failed'._throw();
+        _checkAndWithdrawAllowance(IERC20(_getVariables().baseAsset), user, pool.addrs.safe, pool.big.unit);
+        require(ISafe(pool.addrs.safe).addUp(user, pool.big.recordId), '8+');
     }
 
     /**
@@ -148,23 +130,12 @@ abstract contract Pool is Contributor {
     }
 
     /**
-     * @dev Returns amount of collateral required in a pool.
-     * @param unit : EpochId
-     * @return collateral Collateral
-     * @return colCoverage Collateral coverage
-     */
-    function getCollateralQuote(uint256 unit) public view returns(uint collateral, uint24 colCoverage)
-    {
-       return _getCollateralQuote(unit);
-    }
-
-    /**
      * Returns the current debt of target user.
      * @param unit : Unit contribution
      */
-    function getCurrentDebt(uint256 unit) public view returns(uint256 debt) 
+    function getCurrentDebt(uint256 unit, address target) public view returns(uint256 debt) 
     {
-       (debt,) = _getCurrentDebt(unit);
+       (debt,) = _getCurrentDebt(unit, target);
        return debt;
     }
 

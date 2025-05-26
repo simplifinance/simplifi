@@ -2,12 +2,15 @@
 
 pragma solidity 0.8.24;
 
+/**
+ * ERROR CODE
+ * 1 - Unit is active
+ * 2 - Unit is inactive
+ */
 import { PastEpoches, Common, Counters } from "./PastEpoches.sol";
-import { ErrorLib } from "../libraries/ErrorLib.sol";
 
 abstract contract Epoches is PastEpoches {
     using Counters for Counters.Counter;
-    using ErrorLib for *;
 
     // Past/completed pools
     Counters.Counter private epoches;
@@ -24,17 +27,9 @@ abstract contract Epoches is PastEpoches {
     /**
      * @dev Verify that the contribution unit is not active. 
      * @notice When unit is not active, it can be relaunched. 
-     */
-    modifier _onlyIfUnitIsNotActive(uint unit){
-        if(_isUnitActive(unit)) 'Unit is active'._throw();
-        _;
-    }
-
-    /**
-     * @dev Verify that the contribution unit is 
-     */
-    modifier _onlyIfUnitIsActive(uint unit){
-        if(!_isUnitActive(unit)) 'Unit is inActive'._throw();
+    */
+    modifier _checkUnitStatus(uint unit, bool value){
+        require(value? _isUnitActive(unit) : !_isUnitActive(unit), '1');
         _;
     }
 
@@ -50,7 +45,6 @@ abstract contract Epoches is PastEpoches {
     function _getUnitId(uint unit) internal view returns(uint96 _unitId) {
         _unitId = indexes[unit];
     }
-
     
     /**
      * @dev Return record Id in a pool with unit contribution

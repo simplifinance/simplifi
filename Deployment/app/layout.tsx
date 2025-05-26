@@ -2,13 +2,9 @@ import React from 'react';
 import type { Metadata } from "next";
 import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
-// import { ThemeProvider } from "@/components/contexts/ThemeProvider"
 import AppProvider from '@/components/contexts/AppProvider';
 import ErrorBoundary from '@/components/utilities/ErrorBoundary';
-// import Layout from '@/components/Layout';
 import { Author } from 'next/dist/lib/metadata/types/metadata-types';
-// import { AppProps } from 'next/app';
-// import { Session } from "next-auth";
 
 const authors : Author[] = [
   {

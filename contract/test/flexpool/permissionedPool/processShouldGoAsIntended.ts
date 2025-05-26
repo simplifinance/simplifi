@@ -26,7 +26,7 @@ describe("Permissioned: Go as intended", function () {
         baseAsset,
         flexpool,
         collateralAsset,
-        signers : { signer1, signer2, signer3, deployer, signer2Addr, },
+        signers : { signer1, signer2, signer3, deployer, signer1Addr, signer2Addr, },
         flexpoolAddr 
       } = await loadFixture(deployContractsFixcture);
 
@@ -45,7 +45,6 @@ describe("Permissioned: Go as intended", function () {
       });
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory:flexpool,
@@ -60,7 +59,7 @@ describe("Permissioned: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory:flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -79,7 +78,10 @@ describe("Permissioned: Go as intended", function () {
       const future = BigInt((await time.latest()) + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
       await time.increaseTo(future);
 
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      // Note that Signer1 is the debtor in this case, we're yet to swap the profiles in the contract,
+      // If we use signer3Addr, the debt will read 0, and liquidation will fail.
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
+      
       await liquidate({
         asset: baseAsset,
         deployer,
@@ -104,7 +106,7 @@ describe("Permissioned: Go as intended", function () {
         unit: create.pool.pool.big.unit,
         factory:flexpool,
         signers: [signer2],
-        colQuote: quote2.collateral,
+        colQuote: quote2,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -121,7 +123,7 @@ describe("Permissioned: Go as intended", function () {
 
       const duration = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(duration);
-      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
       const pay_2 = await payback({
         asset: baseAsset,
         deployer,

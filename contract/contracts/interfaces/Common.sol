@@ -21,7 +21,9 @@ interface Common {
         ENDED
     }
 
-    enum Phase { BETA, ALPHA, MAINNET }
+    // enum Network { HARDHAT, CELO, CROSSFI }
+
+    enum Phase { ALPHA, MAINNET }
 
     enum Status { AVAILABLE, TAKEN }
 
@@ -52,6 +54,7 @@ interface Common {
         uint256 currentPool;
         uint96 recordId;
         uint96 unitId;
+        // uint collateralQuote;
     }
 
     struct Point {
@@ -109,7 +112,7 @@ interface Common {
     }
 
     struct Price {
-        uint128 price;
+        uint price;
         uint8 decimals;
     }
 
@@ -133,6 +136,7 @@ interface Common {
         address defaulted;
         uint96 recordId;
         IERC20 collateralAsset;
+        bool isColWrappedAsset;
     }
 
     struct Slot {
@@ -146,10 +150,10 @@ interface Common {
         ContributorReturnValue[] cData;
     }
 
-    struct ReadRecordDataReturnValue {
-        Pool pool;
-        Contributor[] cData;
-    }
+    // struct ReadRecordDataReturnValue {
+    //     Pool pool;
+    //     Contributor[] cData;
+    // }
 
     struct UpdatePoolData {
         uint unit;
@@ -175,12 +179,25 @@ interface Common {
         uint16 makerRate;
         uint currentEpoches;
         uint recordEpoches;
+        // ReadPoolDataReturnValue[] currentPools;
+        // ReadPoolDataReturnValue[] pastPools;
     }
 
     struct ContributorReturnValue {
         Contributor profile;
         Slot slot;
         Common.Provider[] providers;
+    }
+
+    struct CreatePoolParam {
+        address[] users;
+        address sender;
+        uint unit;
+        uint8 maxQuorum;
+        uint16 durationInHours;
+        uint24 colCoverage;
+        Common.Router router;
+        address colAsset;
     }
 
 }

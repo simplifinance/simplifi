@@ -1,5 +1,5 @@
 import React from "react";
-import type { Address, HandleTransactionParam, InputSelector } from '@/interfaces';
+import type { Address, FunctionName, HandleTransactionParam, InputSelector } from '@/interfaces';
 import { ReviewInput } from "../ReviewInput";
 import { formatAddr, toBN } from "@/utilities";
 import { useAccount, useConfig } from "wagmi";
@@ -11,7 +11,7 @@ import CollateralMultiplier from "../userInputsComponents/CollateralMultiplier";
 import Duration from "../userInputsComponents/Duration";
 import Participants from "../userInputsComponents/Participants";
 import { Button } from "@/components/ui/button";
-import { Confirmation } from "../../../update/ActionButton/Confirmation";
+import CreatePool from "../../../update/transactions/CreatePool";
 
 export const Permissioned = () => {
     const [openDrawer, setDrawerState] = React.useState<number>(0);
@@ -23,7 +23,8 @@ export const Permissioned = () => {
 
     // const isLargeScreen = useMediaQuery('(min-width:768px)');
     const { setmessage } = useAppStorage();
-    const account = formatAddr(useAccount().address);
+    const { address, isConnected } = useAccount();
+    const account = formatAddr(address);
     const config = useConfig();
     const toggleDrawer = (arg:number) => setDrawerState(arg);
 
@@ -72,9 +73,6 @@ export const Permissioned = () => {
             case 'CollateralAsset':
                 setCollateralAsset(formatAddr(inputProp));
                 break;
-            // case 'SelectBaseAssetHolding':
-            //     setBaseAsset(formatAddr(inputProp));
-            //     break;
             case 'UnitLiquidity':
                 setUnitLiquidity(inputProp);
                 break;
@@ -83,18 +81,11 @@ export const Permissioned = () => {
         }
     }
 
-    const transactionArgs : HandleTransactionParam = {
-        // commonParam: {account, config, unit: BigInt(toBN(unitLiquidity).times('1e18').toString()), contractAddress: collateralAsset},
-        commonParam: {account, config, unit: parseUnits(unitLiquidity, 18), contractAddress: collateralAsset},
-        createPermissionedPoolParam: {
-            colCoverage: toBN(colCoverage).toNumber(),
-            contributors: participants!,
-            durationInHours: duration,
-            // baseAssetHolding
-        },
-        txnType: 'Create',
-        router: 'Permissioned',
-    }
+    const args = React.useMemo(() => {
+        const isPermissionless = false;
+        const args = [participants, parseUnits(unitLiquidity, 18), participants.length, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
+        return args;
+    }, [unitLiquidity, participants, colCoverage, collateralAsset, duration]);
 
     return(
         <div className="space-y-8 mt-6">
@@ -139,17 +130,20 @@ export const Permissioned = () => {
                 <Button
                     variant={'outline'}
                     className="w-full bg-white2/80 dark:bg-green1/90 border border-green1/30 dark:border-white1/30 text-green1/90 dark:text-orange-200 p-6 hover:bg-green1/70"
-                    onClick={() => setDrawerState(1)}
+                    onClick={() => {
+                        setmessage('');
+                        setDrawerState(1)
+                    }}
                 >
                     Submit
                 </Button>
             </div>
-            <Confirmation 
+            <CreatePool 
+                disabled={!isConnected}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                transactionArgs={transactionArgs}
-                displayMessage="Request to launch a private liquidity pool"
-                actionButtonText="SendTransaction"
+                args={args} 
+                unit={parseUnits(unitLiquidity, 18)}
                 optionalDisplay={
                     <ReviewInput
                         type={'address'}
@@ -175,11 +169,6 @@ export const Permissioned = () => {
                                 value: collateralAsset,
                                 affix: ''
                             },
-                            // {
-                            //     title: 'Base Asset',
-                            //     value: baseAssetHolding,
-                            //     affix: ''
-                            // },
                             {
                                 title: 'Collateral Index',
                                 value: toBN(colCoverage).div(100).toString(),
@@ -192,3 +181,16 @@ export const Permissioned = () => {
         </div>
     );
 }
+    {/* 
+                <Confirmation 
+                    functionName={functionName}
+                    args={args}                
+                    openDrawer={openDrawer}
+                    toggleDrawer={toggleDrawer}
+                    transactionArgs={transactionArgs}
+                    displayMessage="Request to launch a private liquidity pool"
+                    actionButtonText="SendTransaction"
+                    optionalDisplay={
+                        
+                    }
+                /> */}

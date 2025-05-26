@@ -1,7 +1,5 @@
 import React from "react";
 import Image from 'next/image';
-// import SwipeableViews from 'react-swipeable-views';
-// import { autoPlay } from 'react-swipeable-views-utils'
 import { flexSpread, } from '@/constants';
 import { Button } from "@/components/ui/button";
 import { useAccount, } from "wagmi";
@@ -10,7 +8,6 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 
 export default function Dashboard() {
-  // const AutoSwipeableViews = autoPlay(SwipeableViews);
   const { isConnected, } = useAccount();
   const { setActivepath } = useAppStorage();
 
@@ -67,27 +64,3 @@ const swipeableContent = [
     imageComponent: <Image src="/Group32.svg" alt="Invest" height={200} width={200}/>,
   }
 ];
-
-
-
-// <div className="bg-white1 shadow-sm shadow-green1/60 dark:bg-green1 border border-gray1/50 md:border-none p-4 md:p-8 rounded-xl">
-//       <OnboardWrapperDiv overrideClassName="shadow-m">
-//           <AutoSwipeableViews>
-//             {
-//               swipeableContent.map(({imageComponent, title, description}, i) => (
-//                   <div className={`${flexCenter} flex-col place-items-center p-4 space-y-4`} key={i}>
-//                     {imageComponent}
-//                     <div className={`text-md text-green1/80 space-y-2 text-center`}>
-//                       <p className='text-xl md:text-2xl font-bold dark:text-orange-300'>{title}</p>
-//                       <p className='text-md md:text-lg text-center dark:text-orange-100'>{ description }</p>
-//                     </div>
-//                   </div>
-//               ))
-//             }
-//           </AutoSwipeableViews>
-//         <div className={`${flexSpread} gap-4`}>
-//           <Button onClick={handleNavigate} className="w-full">Try AI Assist</Button>
-//           <Button onClick={handleGetStarted} className="w-full">Get Started</Button>
-//         </div>
-//       </OnboardWrapperDiv>
-//     </div>

@@ -1,29 +1,25 @@
 import React from "react";
-import { ActionsButtonProps } from "@/interfaces";
-import { Confirmation } from "./Confirmation";
 import { Button } from "@/components/ui/button";
 
-export const ActionButton = (props: ActionsButtonProps) => {
-    const { buttonObj, confirmationDrawerOn, transactionArgs, back, setDrawerState, } = props;
-    const openDrawer = () => setDrawerState(1);
-    const handleClick = () => openDrawer();
-    
+export const ActionButton = (props: ActionButtonProps) => {
+    const { disabled, buttonContent, widthType, toggleDrawer, optionalButtonContent} = props;
     return(
-        <React.Fragment>
-            <Button
-                variant={'outline'}
-                disabled={buttonObj.disable}
-                onClick={handleClick}
-                className=" bg-green1/90 text-orange-200"
-            >
-                { buttonObj.value }
-            </Button>
-            <Confirmation
-                openDrawer={confirmationDrawerOn}
-                toggleDrawer={(arg: number) => setDrawerState(arg)}
-                transactionArgs={transactionArgs}
-                back={back}           
-            />
-        </React.Fragment>
+        <Button
+            variant={'outline'}
+            disabled={disabled}
+            onClick={() => toggleDrawer(1)}
+            className={`flex justify-center items-center bg-green1/90 text-orange-200 capitalize ${widthType} max-w-sm`}
+        >
+            { optionalButtonContent && optionalButtonContent }
+            { buttonContent }
+        </Button>
     );
+}
+
+type ActionButtonProps = {
+    disabled: boolean;
+    buttonContent: string;
+    toggleDrawer: (arg: number) => void;
+    optionalButtonContent?: React.ReactNode;
+    widthType: string;
 }

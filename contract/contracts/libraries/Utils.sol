@@ -89,10 +89,13 @@ library Utils {
         pure 
         returns(uint256 expCol) 
     {
-        // uint8 minCCR = 100;
-        // if(ccr < minCCR) revert CollateralCoverageCannotGoBelow_100();
-        if(ccr == 0) expCol = 0;
-        else {
+        uint8 minCCR = 100;
+        if(price.price == 0) 'Price is zero'._throw();
+        if(loanReqInDecimals == 0) 'Loan amount is zero'._throw();
+        if(ccr == 0) {
+            expCol = loanReqInDecimals;
+        } else {
+            if(ccr < minCCR) 'Coverage should either be 0 or above 100'._throw();
             unchecked {
                 uint48 _ccr = uint48(ccr * 100);
                 uint totalLoan = (loanReqInDecimals * (10**price.decimals)) / price.price;
@@ -144,7 +147,7 @@ library Utils {
         if(it.fullInterest > 0) {
             unchecked {
                 it.intPerSec = (it.fullInterest * 1) / fullDurationInSec;
-            }
+            } 
         }
     }
 

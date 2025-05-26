@@ -12,6 +12,7 @@ export default function Notification(props: NotificationProp) {
   const { message } = props;
   const [open, setOpen] = React.useState(false);
   const [prev, setPrevious] = React.useState(message);
+  const formattedMessage = message.endsWith('.none')? message.replace('.none', '') : message;
 
   React.useEffect(() => {
     if(message !== '' && message !== prev){
@@ -52,7 +53,7 @@ export default function Notification(props: NotificationProp) {
         open={open}
         autoHideDuration={3000}
         onClose={handleClose}
-        message={message}
+        message={formattedMessage}
         action={action}
       />
     </div>

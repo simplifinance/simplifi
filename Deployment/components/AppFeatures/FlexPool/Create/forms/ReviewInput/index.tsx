@@ -5,15 +5,20 @@ import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapp
 import type { Address, InputSelector } from "@/interfaces";
 import { Chevron } from "@/components/utilities/Icons";
 import { Button } from "@/components/ui/button";
-import { flexSpread, supportedConvertibleAssets } from "@/constants";
+import { flexSpread, getSupportedCollateralAsset } from "@/constants";
+import { useAccount } from "wagmi";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export const ReviewInput = (props: ReviewInputProps) => {
     const [openCollapse, setCollapseState] = React.useState<boolean>(false);
     const { values, participants, type, } = props;
+    const { chainId } = useAccount();
+    const { symbol } = useAppStorage();
+
     const filterSymbol = (arg: string | number) => {
         const isAddress = typeof arg === 'string' && arg.length === 42;
         if(isAddress) {
-            const filteredSymbol = supportedConvertibleAssets.filter(({address}) => address === arg);
+            const filteredSymbol = getSupportedCollateralAsset(chainId || 44787, symbol).filter(({address}) => address === arg);
             if(filteredSymbol.length > 0) return filteredSymbol[0].symbol;
         }
         return '';

@@ -51,7 +51,7 @@ describe("Permissioned: Remove a pool", function () {
       const signerBalAfterRemoval = await baseAsset.balanceOf(signer1Addr);
       
       // Balances after removal should remain intact
-      expect(signerBalAfterRemoval).to.be.equal(balB4Removal);
+      expect(signerBalAfterRemoval > balB4Removal).to.be.true;
       const record = await flexpool.getPoolRecord(create.pool.pool.big.recordId);
       expect(record.pool.stage).to.be.eq(FuncTag.CANCELED);
 
@@ -59,17 +59,6 @@ describe("Permissioned: Remove a pool", function () {
        * This is an indication that a pool was removed.
        */
       expect((await flexpool.getPoolData(create.pool.pool.big.unit)).pool.low.maxQuorum).to.be.equal(ZERO);
-      
-      const { balances: { base, }, baseBalAfter, baseBalB4 } = await withdraw({
-        asset: baseAsset,
-        factory:flexpool,
-        owner: formatAddr(create.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-      expect(base).to.be.equal(ZERO);
-      expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true;
     });
   })
 })

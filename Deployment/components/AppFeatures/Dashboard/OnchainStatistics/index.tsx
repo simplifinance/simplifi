@@ -9,36 +9,36 @@ import {
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { formatEther } from 'viem';
 import { toBigInt, toBN } from '@/utilities';
-import { getContractData } from '@/apis/utils/getContractData';
 import { useAccount } from 'wagmi';
 import { Card, CardContent, } from '@/components/ui/card';
+import { getChainData } from '@/constants';
 
 export default function OnchainStatistics() {
   const { analytics: { totalPermissioned, totalPermissionless, tvlBase, tvlCollateral }, symbol, currentEpoches, recordEpoches, } = useAppStorage();
   const tvlInCollateral = toBN(formatEther(toBigInt(tvlCollateral))).decimalPlaces(3);
   const tvlInBase = toBN(formatEther(toBigInt(tvlBase))).decimalPlaces(3);
-  const { chainId, isConnected } = useAccount();
-  const { currency, network } = getContractData(chainId || 4157);
+  const { chainId } = useAccount();
+  const { collateralCurrency, network, baseCurrency } = getChainData(chainId);
 
   const dashboardInfo = [
     {
-      title: `Tvl - Base currency`,
+      title: `Tvl (in ${baseCurrency})`,
       value: `$${tvlInBase}`,
       icon: tvlIcon
     },
     {
-      title: `Tvl - Collateral`,
+      title: `Tvl (in ${collateralCurrency})`,
       value: `$${tvlInCollateral}`,
       icon: tvlIcon
     },
     {
       title: 'Collateral',
-      value: `${isConnected? currency : 'ERC20'}`,
+      value: `${collateralCurrency}`,
       icon: collateralIcon
     },
     {
       title: 'Network',
-      value: `${isConnected? network : 'Celo'}`,
+      value: `${network}`,
       icon: networkIcon
     },
     {

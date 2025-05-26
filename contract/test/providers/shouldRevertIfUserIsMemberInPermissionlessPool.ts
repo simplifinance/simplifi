@@ -62,8 +62,7 @@ describe("Providers", function () {
           signer: signer2, 
           signerAddr: signer2Addr
         })
-      ).to.be.revertedWithCustomError(providers, "ErrorOccurred")
-      .withArgs("Member not allowed");
+      ).to.be.revertedWith("10")
     });
   })
 })

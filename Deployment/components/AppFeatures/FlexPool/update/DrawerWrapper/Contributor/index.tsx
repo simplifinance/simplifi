@@ -4,10 +4,10 @@ import { flexSpread } from "@/constants";
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import Collapse from "@mui/material/Collapse";
 import { Chevron } from "@/components/utilities/Icons";
-import { getContractData } from "@/apis/utils/getContractData";
 import { useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { Button } from "@/components/ui/button";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export const Contributor = ({ data }: ProviderProps) => {
     const [open, setOpen] = React.useState<boolean>(false);
@@ -15,7 +15,7 @@ export const Contributor = ({ data }: ProviderProps) => {
     const handleCollapse = () => setOpen(!open);
     const toggleShowProviders = () => setShowExternalProviders(!showExternalProviders);
     const { chainId } = useAccount();
-    const { currency } = getContractData(chainId || 4157);
+    const { symbol } = useAppStorage();
 
     const { 
         profile: {
@@ -33,15 +33,15 @@ export const Contributor = ({ data }: ProviderProps) => {
 
     return(
         <div >
-            <Button variant={'ghost'} onClick={handleCollapse} className={`w-full ${flexSpread} text-green1/70 dark:text-orange-200 text-xs hover:text-orange-300 focus:font-semibold`}>
+            <Button variant={'ghost'} onClick={handleCollapse} className={`w-full ${flexSpread} text-green1/70 dark:text-white1 hover:text-orange-200 focus:font-semibold text-lg`}>
                 <h3>{`Contributor. ${value + 1}`}</h3>
                 <Chevron open={open} />
             </Button>
-            <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-geen1/70 p-4 dark:text-orange-200 max-h-[300px] overflow-auto'}>
-                <ul className="w-full space-y-2 text-xs relative">
+            <Collapse in={open} timeout="auto" unmountOnExit className={'w-full bg-geen1/70 p-4 dark:text-white1 max-h-[350px] overflow-auto'}>
+                <ul className="w-full space-y-2 relative">
                     <li className={`${flexSpread} underline underline-offset-4`}>
-                        <h3 className="text-center font-bold text-sm md:text-md">Address</h3>
-                        <AddressWrapper size={3} account={id.toString()} display overrideClassName="text-sm" copyIconSize="4"/>
+                        <h3 className="text-center font-bold md:text-lg ">Identifier</h3>
+                        <AddressWrapper size={3} account={id.toString()} display overrideClassName="md:text-lg" copyIconSize="4"/>
                         <h3 className="absolute right-[40%]">
                             { adminBadge(isAdmin) }
                         </h3>
@@ -51,16 +51,16 @@ export const Contributor = ({ data }: ProviderProps) => {
                         <h3 className="text-end">{turnStartTime.inDate}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Loan disbursement time</h3>
+                        <h3>Get Finance time</h3>
                         <h3 className="text-end">{getFinanceTime.inDate}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Has Sent Quota</h3>
+                        <h3>Contributed</h3>
                         <h3>{sentQuota? 'Yes' : 'No'}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
-                        <h3>Loan Bal</h3>
-                        <h3>{`${loan.inEther} USDT`}</h3>
+                        <h3>Gross Debt Bal</h3>
+                        <h3>{`${loan.inEther} USD`}</h3>
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{'Max. Date To Payback'}</h3>
@@ -68,31 +68,31 @@ export const Contributor = ({ data }: ProviderProps) => {
                     </li>
                     <li className={`${flexSpread}`}>
                         <h3>{"Col-Bal"}</h3>
-                        <h3>{`${parseEther(colBals)} ${currency}`}</h3>
+                        <h3>{`${parseEther(colBals)} ${symbol}`}</h3>
                     </li>
-                    <Button variant={'outline'} onClick={toggleShowProviders} className={`w-full ${flexSpread} dark:text-orange-300 text-xs hover:text-orange-300 focus:font-semibold`}>
+                    <Button variant={'outline'} onClick={toggleShowProviders} className={`w-full ${flexSpread} dark:text-orange-300 p-6 hover:text-orange-300 `}>
                         <h3>{(providers && providers.length > 0)? "External providers" : "No external fund providers"}</h3>
                         <Chevron open={showExternalProviders} />
                     </Button>
-                    <Collapse in={showExternalProviders} timeout="auto" unmountOnExit className={'w-full bg-green1/60 text-orange-200'}>
+                    <Collapse in={showExternalProviders} timeout="auto" unmountOnExit className={'w-full bg-white2/70 dark:bg-green1/50 dakr:text-white1'}>
                         <div className="space-y-4">
                             {
                                 (providers && providers.length > 0) && providers.map((provider, index) => (
                                     <ul className="border p-4 rounded-lg" key={index}>
                                         <li className={`font-bold text-md text-green1/90 dark:text-white1 pb-4`}>
-                                            {index + 1}
+                                            Provider {index + 1}
                                         </li>
                                         <li className={`${flexSpread}`}>
                                             <h3>Loan amount</h3>
-                                            <h3>{parseEther(provider.amount)}</h3>
+                                            <h3>{`${provider.amount} usd`}</h3>
                                         </li>
                                         <li className={`${flexSpread}`}>
                                             <h3>{"Expected interest/sec"}</h3>
-                                            <h3>{parseEther(provider.accruals.intPerSec)}</h3>
+                                            <h3>{`${provider.accruals.intPerSec} usd`}</h3>
                                         </li>
                                         <li className={`${flexSpread}`}>
                                             <h3>{"Expected full interest"}</h3>
-                                            <h3>{parseEther(provider.accruals.fullInterest)}</h3>
+                                            <h3>{`${provider.accruals.fullInterest} usd`}</h3>
                                         </li>
                                         <li className={`${flexSpread}`}>
                                             <h3>{"Start date"}</h3>
@@ -100,10 +100,10 @@ export const Contributor = ({ data }: ProviderProps) => {
                                         </li>
                                         <li className={`${flexSpread}`}>
                                             <h3>{"Provider rate"}</h3>
-                                            <h3>{provider.rate}</h3>
+                                            <h3>{`${provider.rate}%`}</h3>
                                         </li>
                                         <li className={`${flexSpread}`}>
-                                            <h3>{"Provider rate"}</h3>
+                                            <h3>{"Provider Id"}</h3>
                                             <AddressWrapper
                                                 account={provider.account}
                                                 size={4}
@@ -111,7 +111,7 @@ export const Contributor = ({ data }: ProviderProps) => {
                                             />
                                         </li>
                                         <li className={`${flexSpread}`}>
-                                            <h3>{"Provider slot"}</h3>
+                                            <h3>{"Provider' slot"}</h3>
                                             <h3>{provider.slot}</h3>
                                         </li>
                                     </ul>

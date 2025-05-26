@@ -6,7 +6,6 @@ import {
   UNIT_LIQUIDITY,
   COLLATER_COVERAGE_RATIO,
   DURATION_IN_HOURS,
-  ZERO,
   INTEREST_RATE,
   formatAddr,
 } from "../../utilities";
@@ -69,12 +68,11 @@ describe("Permissioned: Reverts", function () {
         unit: create.pool.pool.big.unit,
         factory:flexpool,
         signers: [signer2],
-        colQuote: quoted_2.collateral,
+        colQuote: quoted_2,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
-      })).to.be.revertedWithCustomError(flexpool, "ErrorOccurred")
-      .withArgs("Borrow not ready");
+      })).to.be.revertedWith("14")
 
       /**
        * This is an indication that a pool was removed.

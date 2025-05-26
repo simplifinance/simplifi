@@ -42,7 +42,6 @@ describe("Permissioned: Borrow", function () {
             });
 
             const join = await joinEpoch({
-              contribution: create.pool.pool.big.unit,
               deployer,
               unit: create.pool.pool.big.unit,
               factory: flexpool,
@@ -57,17 +56,19 @@ describe("Permissioned: Borrow", function () {
               unit: create.pool.pool.big.unit,
               factory: flexpool,
               signers: [signer1],
-              colQuote: quoted.collateral,
+              colQuote: quoted,
               collateral: collateralAsset,
               asset: baseAsset,
               deployer
             });
-            expect(gf.balances?.collateral).to.be.equal(quoted.collateral);
-            expect(gf.balances?.base).to.be.eq(join.balances.base); 
+
+            // Checking balances in the Safe
+            expect(gf.balances?.collateral).to.be.equal(quoted);
+            expect(bn(gf.balances?.base).lt(bn(join.balances.base))).to.be.true; 
             expect(gf.pool.pool.low.selector).to.be.eq(BigInt(1));
             expect(bn(gf.pool.pool.low.selector).gt(bn(join.pool.pool.low.selector)));
       
-            expect(bn(gf.profile.colBals).gte(bn((quoted.colCoverage)))).to.be.true;
+            expect(bn(gf.profile.colBals).gte(bn((quoted )))).to.be.true;
             expect(bn(gf.profile.turnStartTime).toNumber()).to.be.gte(turnTime);
             expect(bn(gf.profile.paybackTime).toNumber()).to.be.gte(turnTime + DURATION_IN_SECS);
             expect(gf.pool.pool.big.currentPool).to.be.equal(ZERO);
@@ -77,20 +78,7 @@ describe("Permissioned: Borrow", function () {
             const userData = await safeContract.getUserData(signer1Addr, gf.pool.pool.big.recordId);
             expect(bn(aggregateFee).gt(0)).to.be.true;
             expect(userData.access).to.be.true;
-            expect(userData.collateralBalance).to.be.eq(quoted.collateral);
-      
-            const { balances, baseBalB4, baseBalAfter} = await withdraw({
-              asset: baseAsset,
-              factory: flexpool,
-              owner: formatAddr(gf.pool.pool.addrs.safe),
-              spender: signer1,
-              collateral: collateralAsset,
-              unit: UNIT_LIQUIDITY
-            });
-            expect(balances?.collateral).to.be.equal(quoted.collateral);
-            expect(balances?.base).to.be.equal(aggregateFee);
-            expect(bn(baseBalAfter).gt(bn(baseBalB4))).to.be.true;
-            expect(bn(baseBalAfter).lte(bn(gf.profile.loan))).to.be.true;
+            expect(userData.collateralBalance).to.be.eq(quoted);
         });
     })
 })

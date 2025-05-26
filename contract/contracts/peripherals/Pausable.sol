@@ -43,7 +43,7 @@ abstract contract Pausable is OnlyRoleBase {
      * @dev Initializes the contract in unpaused state.
      */
     constructor(
-        IRoleBase _roleManager
+        address _roleManager
     ) OnlyRoleBase(_roleManager) {
         _paused = false;
     }
@@ -98,34 +98,18 @@ abstract contract Pausable is OnlyRoleBase {
     }
 
     /**
-     * @dev Triggers stopped state.
+     * @dev Triggers stopped or return to normal state.
      *
      * Requirements:
      * Only owner role can call.
      * - The contract must not be paused.
      */
-    function pause() 
+    function togglePause() 
         public 
         onlyRoleBearer
-        whenNotPaused 
     {
-        _paused = true; 
-        emit Paused(_msgSender());
+        _paused = paused()? false : true;
+        if(paused()) emit Paused(_msgSender()); else emit Unpaused(_msgSender());
     }
 
-    /**
-     * @dev Returns to normal state.
-     *
-     * Requirements:
-     * - Only owner role can call.
-     * - The contract must be paused.
-     */
-    function unpause() 
-        public 
-        onlyRoleBearer 
-        whenPaused 
-    {
-        _paused = false;
-        emit Unpaused(_msgSender());
-    }
 }

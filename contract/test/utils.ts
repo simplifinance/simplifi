@@ -63,7 +63,7 @@ import type {
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId);
     return { pool, balances, profile, slot};
   }
   
@@ -109,7 +109,7 @@ import type {
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
+    const slot = await x.factory.getSlot(signerAddr,pool[0].big.recordId);
   
     return { pool, balances, profile, slot };
   }
@@ -132,7 +132,7 @@ import type {
       recipients: recipients,
       sender: x.deployer
     });
-
+    // console.log("x.colQuote", x.colQuote)
     await approve({
       owner: signer,
       amount: x.colQuote,
@@ -146,7 +146,7 @@ import type {
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unit);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId);
   
     return { balances, pool, profile, slot };
   }
@@ -169,7 +169,7 @@ import type {
     const signer = x.signers[0];
     const signerAddr = await signer.getAddress();
     const recipients = await getAddressFromSigners([signer]);
-    await x.factory.getCurrentDebt(x.unit);
+    await x.factory.getCurrentDebt(x.unit, signerAddr);
     const bal = await x.asset.balanceOf(signerAddr);
     if(bn(x.debt).gt(bn(bal))){
       await transferAsset({
@@ -217,14 +217,15 @@ import type {
     const signer = x.signers[0];
     const recipients = await getAddressFromSigners([signer]);
     const signerAddr = await signer.getAddress();
-    let baseBalB4Liq : bigint = 0n;
 
     await transferAsset({
       amount: x.debt!,
       asset: x.asset,
       recipients: recipients,
       sender: x.deployer
-    }).then(async() => baseBalB4Liq = await x.asset.balanceOf(signerAddr));
+    });
+    const baseBalB4Liq = await x.asset.balanceOf(signerAddr);
+    console.log("baseBalB4Liq ", baseBalB4Liq );
     const colBalB4Liq = await x.collateral.balanceOf(signerAddr);
     await approve({
       owner: signer,
@@ -239,7 +240,7 @@ import type {
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unit);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId); 
     const baseBalAfterLiq = await x.asset.balanceOf(signerAddr);
     const colBalAfterLiq = await x.collateral.balanceOf(signerAddr);
   
@@ -278,7 +279,7 @@ import type {
    */
   
   export const setSupportedToken = async(assetMgr: SupportedAssetManager, asset: Address) => {
-    assetMgr.supportAsset(asset);
+    assetMgr.supportAsset(asset, false);
   }
   
   /**
@@ -365,7 +366,7 @@ import type {
     // const testAssetAddr = formatAddr(await x.testAsset.getAddress());
     const recipients = await getAddressFromSigners(x.signers);
     await transferAsset({
-      amount: x.contribution,
+      amount: x.unit,
       asset: x.testAsset,
       recipients: recipients,
       sender: x.deployer
@@ -374,7 +375,7 @@ import type {
     for(let i= 0; i < x.signers.length; i++) {
       const signer = x.signers[i];
       await approve({
-        amount: x.contribution,
+        amount: x.unit,
         owner: signer,
         spender: x.factoryAddr,
         testAsset: x.testAsset

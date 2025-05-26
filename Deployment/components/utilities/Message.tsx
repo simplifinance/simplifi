@@ -8,6 +8,7 @@ export default function Message() {
     const { messages, errorMessage } = useAppStorage();
     const isError = errorMessage.length > 0;
     const display = messages.length > 0 || errorMessage.length > 0;
+    const inclusiveNone = (message: string) => message.endsWith('.none');
     return(
         <React.Fragment>
             {
@@ -16,11 +17,16 @@ export default function Message() {
                         {
                             messages.length > 0 && messages.map((message, index) => (
                                 <MotionDivWrap key={index} className={`w-full ${flexStart} gap-2`}>
-                                    <Checkbox 
-                                        checked
-                                        color="warning"
-                                    />
-                                    <h1>{ message }</h1>
+                                    {
+                                        inclusiveNone(message)? <Checkbox 
+                                                checked
+                                                color="info"
+                                            /> : <Checkbox 
+                                            checked
+                                            color="warning"
+                                        />
+                                    }
+                                    <h1 className="max-w-sm overflow-auto">{ inclusiveNone(message)? message.replace('.none', '') : message }</h1>
                                 </MotionDivWrap>
                             ))
                         }
@@ -30,7 +36,7 @@ export default function Message() {
                                         checked
                                         color="error"
                                     />
-                                    <h1>{ errorMessage }</h1>
+                                    <h1 className="max-w-sm overflow-auto">{ errorMessage }</h1>
                             </MotionDivWrap>
                         }
                     </MotionDivWrap>

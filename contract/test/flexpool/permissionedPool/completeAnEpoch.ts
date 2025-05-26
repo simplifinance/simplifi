@@ -44,7 +44,6 @@ describe("Permissioned: Complete An Epoch", function () {
       });
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,
@@ -59,7 +58,7 @@ describe("Permissioned: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -82,7 +81,7 @@ describe("Permissioned: Complete An Epoch", function () {
        */
       const duration = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(duration);
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
       const pay = await payback({
         asset: baseAsset,
         deployer,
@@ -100,7 +99,7 @@ describe("Permissioned: Complete An Epoch", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer2],
-        colQuote: quoted.collateral,
+        colQuote: quoted,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -117,7 +116,7 @@ describe("Permissioned: Complete An Epoch", function () {
 
       const duratonInSec = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(duratonInSec);
-      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec

@@ -46,7 +46,6 @@ describe("Permissionless: Enquire Liquidation", function () {
       );
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,
@@ -61,7 +60,7 @@ describe("Permissionless: Enquire Liquidation", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted,
         asset: baseAsset,
         collateral: collateralAsset,
         deployer

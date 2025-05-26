@@ -3,13 +3,20 @@ import { type Address, phases } from "@/interfaces";
 import { formatAddr } from "@/utilities";
 import { Button } from "@/components/ui/button";
 import { Chevron } from "@/components/utilities/Icons";
-import { flexSpread, supportedCeloCollateralAsset, supportedConvertibleAssets } from "@/constants";
+import { flexSpread, getSupportedCollateralAsset, } from "@/constants";
+import { useAccount } from "wagmi";
+import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
 export default function SelectComponent({data, placeholder, callback} : SelectProps) {
     const [selectedAsset, setSelectedAsset] = React.useState<string>('');
     const [selectedPhase, setPhase] = React.useState<string>('beta');
     const [showDropDown, setShowDropdown] = React.useState<boolean>(false);
     const toggleShow = () => setShowDropdown(!showDropDown);
+    const { chainId } = useAccount();
+    const { symbol } = useAppStorage();
+
+    const supportedAssets = getSupportedCollateralAsset(chainId || 44787, symbol);
+
     const handleSelectItem = (arg: string, id: Address) => {
         setSelectedAsset(arg);
         callback?.(formatAddr(id.toString()));
@@ -31,15 +38,10 @@ export default function SelectComponent({data, placeholder, callback} : SelectPr
                 ))
                 break;
             case 'supported':
-                nodes = supportedCeloCollateralAsset.map(({symbol, address}) => (
-                    <Button disabled={selectedAsset === symbol} variant={'ghost'} className="w-full flex rounded-none bg-white1 hover:bg-white1 justify-start items-center text-green1/70 border-b border-b-green1/30" onClick={() => handleSelectItem(symbol, address)} key={symbol} value={symbol} >{symbol}</Button>
+                nodes = supportedAssets.map(({symbol, address, disabled}) => (
+                    <Button disabled={selectedAsset === symbol || disabled} variant={'ghost'} className="w-full flex rounded-none bg-white1 hover:bg-white1 justify-start items-center text-green1/70 border-b border-b-green1/30" onClick={() => handleSelectItem(symbol, address)} key={symbol} value={symbol} >{symbol}</Button>
                 ))
 
-            case 'convertible':
-                nodes = supportedConvertibleAssets.map(({symbol, address}) => (
-                    <Button disabled={selectedAsset === symbol} variant={'ghost'} className="w-full flex rounded-none bg-white1 hover:bg-white1 justify-start items-center text-green1/70 border-b border-b-green1/30" onClick={() => handleSelectItem(symbol, formatAddr(address))} key={symbol} value={symbol} >{symbol}</Button>
-                ))
-        
             default:
                 break;
         }

@@ -48,7 +48,6 @@ describe("Permissionless: Payback", function () {
       );
 
       const join = await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,
@@ -64,7 +63,7 @@ describe("Permissionless: Payback", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted,
         asset: baseAsset,
         collateral: collateralAsset,
         deployer
@@ -90,7 +89,7 @@ describe("Permissionless: Payback", function () {
        */
       const durOfChoiceInSec = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(durOfChoiceInSec);
-      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit);
+      const debtToDate = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer1Addr);
 
       /**
        * We increase the time to give 3 sec for execution which is why we multiply interest per sec
@@ -118,25 +117,14 @@ describe("Permissionless: Payback", function () {
       const { access, collateralBalance} = await bankContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       expect(access).to.be.false;
       expect(collateralBalance).to.be.eq(0n);
+      expect(bn(pay.balances?.collateral).lt(bn(gf.balances?.collateral))).to.be.true;
 
-      expect(pay.balances?.collateral).to.be.equal(gf.balances?.collateral);
-
-      // Withdraw collateral from the bank and test
-      const { colBalAfter, colBalB4 } = await withdraw({
-        owner: create.pool.pool.addrs.safe as Address,
-        asset: baseAsset,
-        collateral: collateralAsset,
-        factory: flexpool,
-        spender: signer1,
-        unit: create.pool.pool.big.unit
-      });
       const rs = await bankContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       expect(rs.collateralBalance).to.be.eq(0n);
       
       const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
       expect(await signer1.provider?.getBalance(pay.pool.pool.addrs.safe)).to.be.equal(ZERO);
-      expect(bn(colBalAfter).gt(bn(colBalB4))).to.be.true;
     });
   })
 })

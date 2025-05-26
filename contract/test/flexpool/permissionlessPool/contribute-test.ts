@@ -49,7 +49,6 @@ describe("Permissionless: Contribute", function () {
             pool: { pool: {big: { currentPool,}}},
             profiles: [s1, s2]
           } = await joinEpoch({
-            contribution: create.pool.pool.big.unit,
             deployer,
             unit: create.pool.pool.big.unit,
             factory: flexpool,

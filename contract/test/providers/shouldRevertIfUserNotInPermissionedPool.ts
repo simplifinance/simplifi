@@ -51,8 +51,7 @@ describe("Providers", function () {
           signer: alc1, 
           signerAddr: alc1Addr
         })
-      ).to.be.revertedWithCustomError(providers, "ErrorOccurred")
-      .withArgs("Not a member");
+      ).to.be.revertedWith("9")
     });
   })
 })

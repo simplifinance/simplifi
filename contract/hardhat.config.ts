@@ -14,11 +14,17 @@ const API_KEY = process.env.ALCHEMY_API_KEY;
 const config: HardhatUserConfig = {
   
   networks: {
-    crossTest: {
+    crosstestnet: {
       // url: "https://rpc.testnet.ms",  // Not working
       url: `https://crossfi-testnet.g.alchemy.com/v2/${API_KEY}`, // Good
       accounts: [`${PRIVATE_KEY}`],
       chainId: 4157,
+    },
+    crossfimainnet: {
+      // url: "https://rpc.testnet.ms",  // Not working
+      url: `https://crossfi-mainnet.g.alchemy.com/v2/${API_KEY}`, // Good
+      accounts: [`${PRIVATE_KEY}`],
+      chainId: 4158,
     },
     alfajores: {
       url: "https://alfajores-forno.celo-testnet.org",
@@ -61,22 +67,35 @@ const config: HardhatUserConfig = {
     deployer: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
+      4158: `privatekey://${PRIVATE_KEY}`,
       44787: `privatekey://${PRIVATE_KEY}`,
+      42220: `privatekey://${PRIVATE_KEY}`,
     },
     feeTo: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
+      4158: zeroAddress,
       44787: `privatekey://${PRIVATE_KEY}`,
+      42220: zeroAddress
     },
-    cUSDAddr: {
-      default: 0,
+    // cUSD || xUSD
+    baseContributionAsset: {
+      default: zeroAddress,
       4157: zeroAddress,
+      4158: zeroAddress,
       44787: "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
       42220: "0x765de816845861e75a25fca122bb6898b8b1282a"
+    },
+    linkToken: {
+      4157: zeroAddress,
+      4158: zeroAddress,
+      44787: '0x32E08557B14FaD8908025619797221281D439071',
+      42220: '0xd07294e6E917e07dfDcee882dd1e2565085C2ae0',
     },
     oracle: {
       default: zeroAddress,
       4157: '0x859e221ada7cebdf5d4040bf6a2b8959c05a4233',
+      4158: '',
       44787: zeroAddress // For testing only, we set to zeroAddress so the contract could switch to using local value.
       // 44787: '0x022F9dCC73C5Fb43F2b4eF2EF9ad3eDD1D853946'  // Chainlink oracle on Celo alfajores
     }
@@ -89,7 +108,7 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
-      evmVersion: "constantinople",
+      evmVersion: 'constantinople',
       // viaIR: true
       }
     },

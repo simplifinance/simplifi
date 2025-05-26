@@ -2,66 +2,141 @@ import React from "react";
 import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
-import { errorMessage, } from "@/apis/update/formatError";
 import Message from "../../../../../utilities/Message";
-import { Address, ButtonText, HandleTransactionParam, TransactionCallback, VoidFunc } from "@/interfaces";
+import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { formatAddr, handleTransact } from "@/utilities";
-import SelectComponent from "@/components/AppFeatures/Dashboard/WelcomeTabs/SelectComponent";
+import { formatAddr } from "@/utilities";
+import { useAccount, useConfig, useWriteContract } from "wagmi";
+import { WriteContractErrorType, waitForTransactionReceipt } from "wagmi/actions";
+import { displayMessages } from "@/constants";
 
 export const Confirmation : 
-    React.FC<{
-        transactionArgs: HandleTransactionParam
-        toggleDrawer: (arg: number) => void
-        openDrawer: number,
-        back?: VoidFunc,
-        optionalDisplay?: React.ReactNode,
-        displayMessage?: string,
-        actionButtonText?: string;
-    }> = 
-        ({transactionArgs, back, toggleDrawer, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
+    React.FC<ConfirmationProps> = 
+        ({ getTransactions, back, toggleDrawer, lastStepInList, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
-    const [assetHolding, setAssetHolding] = React.useState<Address | string>('');
-    const { setmessage, setError, setActivepath } = useAppStorage();
-    let isGetFinance = false;
-    if(transactionArgs !== null && transactionArgs?.txnType){
-        isGetFinance = transactionArgs.txnType === 'GetFinance';
-    }
 
+    const { setActivepath, refetch, setmessage, setError } = useAppStorage();
+    const isDark = useTheme().theme === 'dark';
+    const { address } = useAccount();
+    const account = formatAddr(address);
+    const config = useConfig();
+
+    // Reset the messages and error messages in state, and close the drawer when transaction is completed
     const handleCloseDrawer = () => {
         setmessage('');
         setError('');
         toggleDrawer(0);
     };
 
-    const setConvertible = (arg: Address | string) => setAssetHolding(arg);
-    const callback : TransactionCallback = (arg) => {
-        if(arg.message) setmessage(arg.message);
-        if(arg.errorMessage) setError(arg.errorMessage);
-        // if(arg.status === 'success') handleCloseDrawer();
-    }
-    const isDark = useTheme().theme === 'dark';
-    const callback_after = (errored: boolean, txnType: ButtonText, error?: any) => {
-        errored && setError(errorMessage(error));
+    // Wait for sometime before resetting the state after completing a transaction
+    const setCompletion = async(functionName: FunctionName) => {
+        await refetch();
         setLoading(false);
         setTimeout(() => {
             handleCloseDrawer();
             back?.();
-            if(txnType === 'Create') setActivepath('Flexpool');
+            if(functionName === 'createPool') setActivepath('Flexpool');
         }, 6000);
         clearTimeout(6000);
+    };
+
+    // Call this function when transaction successfully completed
+    const onSuccess = (data: Address, variables: any) => {
+        if(variables.functionName === lastStepInList){
+            const functionName = variables.functionName as string;
+            setmessage(`${displayMessages[functionName].end}.\n With hash: /n ${data}`);
+            // setmessage(`Completed ${functionName.toWellFormed()} with hash: ${data.substring(0, 16)}...`)
+            setCompletion(variables.functionName as FunctionName);
+        } else {
+            setmessage(`Completed ${variables.functionName} request with: ${data.substring(0, 8)}...`);
+        }
+    };
+
+    
+    const { writeContractAsync: retry} = useWriteContract({
+        config,
+        mutation: { 
+            onSuccess, 
+            onError : (error, variables) => {
+                setError(error.message);
+                setCompletion(variables.functionName as FunctionName);
+            }
+        }
+    });
+
+    // const { data, refetch } = useWaitForTransactionReceipt();
+
+    const onError = async(error: WriteContractErrorType, variables: any) => {
+        if(variables.functionName !== lastStepInList){
+            setError('')
+            setmessage(`${variables.functionName.toLocaleUpperCase()} failed!. Retrying ${lastStepInList}...`);
+            const transactions = getTransactions();
+            const { abi, functionName, args: inArgs, value, requireArgUpdate, refetchArgs, contractAddress,  } = transactions[transactions.length - 1];
+            let args = inArgs;
+            let value_ = value;
+            if(requireArgUpdate) {
+                const result = await refetchArgs?.(functionName);
+                args = result?.args || [];
+                value_ = result?.value;
+            }
+            await retry({
+                abi,
+                functionName,
+                address: contractAddress,
+                account,
+                args,
+                value: value_
+            })
+            setCompletion(variables.functionName as FunctionName);
+
+        } else {
+            setError(error.message);
+            setCompletion(variables.functionName as FunctionName);
+        }
     }
 
+    const { writeContractAsync, } = useWriteContract({
+        config, 
+        mutation: { onError, onSuccess }
+    });
+
     const handleSendTransaction = async() => {
-        console.log("transactionArgs", transactionArgs)
-        transactionArgs.commonParam.callback = callback;
-        if(isGetFinance && assetHolding === '') return alert("Please select the asset you wish to use as collateral");
-        transactionArgs.selectedAsset = formatAddr(assetHolding);
         setLoading(true);
-        await handleTransact(transactionArgs)
-        .then(({error, errored}) => callback_after(errored, transactionArgs.txnType, error))
+        const transactions = getTransactions();
+        for( let i = 0; i < transactions.length; i++) {
+            const {abi, value, functionName, refetchArgs, requireArgUpdate, contractAddress: address, args: inArgs} = transactions[i];
+            let args = inArgs;
+            let value_ = value;
+            let execute : number | undefined = 1;
+            if(requireArgUpdate) {
+                const result = await refetchArgs?.(functionName);
+                args = result?.args || [];
+                value_ = result?.value;
+                execute = result?.proceed;
+            }
+            console.log("FuncName", functionName);
+            console.log("address", address);
+            console.log("Args", args);
+            if(execute === 1) {
+                setmessage(`${displayMessages[functionName].start}.none`);
+                const hash = await writeContractAsync({
+                    abi,
+                    functionName,
+                    address,
+                    account,
+                    args,
+                    value: value_
+                });
+                await waitForTransactionReceipt(
+                    config,
+                    { hash, confirmations: 2 }
+                );
+            } else {
+                setmessage(functionName === 'approve'? 'Previous approval was detected!' : `${functionName} was completed!`);
+            }
+        }
     }
 
     return (
@@ -74,12 +149,33 @@ export const Confirmation :
         >
             <div className="bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
                 { optionalDisplay && optionalDisplay }
-                {
+                {/* {
                     isGetFinance && !loading && <SelectComponent data='convertible' callback={setConvertible} label="Asset holding" placeholder="Which asset are you holding?"/>
-                } 
+                }  */}
                 <Message />
-                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || "Proceed"}</Button>
+                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || 'Proceed'}</Button>
             </div>
         </Drawer>
     );
+}
+
+export type Transaction = {
+    functionName: FunctionName,
+    contractAddress: Address,
+    args: any[] | [],
+    requireArgUpdate: boolean;
+    abi: any[] | Readonly<any[]>;
+    value?: bigint;
+    refetchArgs?: (funcName: FunctionName) => Promise<{args: any[], value: bigint, proceed: number}>;
+};
+
+export interface ConfirmationProps {
+    toggleDrawer: (arg: number) => void;
+    openDrawer: number;
+    back?: VoidFunc;
+    optionalDisplay?: React.ReactNode;
+    displayMessage?: string;
+    actionButtonText?: string;
+    getTransactions: () => Transaction[];
+    lastStepInList: FunctionName;
 }

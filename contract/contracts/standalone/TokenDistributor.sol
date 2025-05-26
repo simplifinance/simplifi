@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Lib } from "../peripherals/token/ERC20Abstract.sol";
 import { SafeERC20, IERC20 } from "../peripherals/token/SafeERC20.sol";
@@ -132,7 +132,7 @@ contract TokenDistributor is
     }
 
     constructor(
-        IRoleBase _roleManager,
+        address _roleManager, 
         address[] memory _signers, 
         uint8 _quorum
     ) 

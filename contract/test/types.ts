@@ -3,13 +3,14 @@ import { Hex, Address as ContractAddress } from "viem";
 import type { 
   Points as Point, 
   RoleManager as RoleMgr, 
-  SupportedAssetManager as SupportedAssetMgr, 
-  FlexpoolFactory as Flex, 
+  HardhatBased as Flex, 
   Providers as ProviderContract, 
   SimpliToken as Collateral, 
   BaseAsset as Base,
+  SupportedAssetManager as SupportedAssetMgr,
   SafeFactory as SafeFactry,
   Safe,
+  StateManager as State,
   Faucet as Fct,
   Reserve as Rsv,
   Escape as Esc,
@@ -161,8 +162,9 @@ export interface JoinABandParam {
   signers: SignersArr;
   deployer: Signer;
   unit: bigint;
-  contribution: bigint;
+  // contribution: bigint;
   collateral: SimpliToken;
+  // unitId: bigint;
 }
 
 export interface LiquidateParam extends BandParam {
@@ -268,5 +270,9 @@ export type Attorney = Attn & {
 };
 
 export type Faucet = Fct & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+
+export type StateManager = State & {
   deploymentTransaction(): ContractTransactionResponse;
 };

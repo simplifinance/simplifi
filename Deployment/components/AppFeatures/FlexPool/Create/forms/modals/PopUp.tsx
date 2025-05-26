@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Backdrop from '@mui/material/Backdrop';
-import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import Modal from '@mui/material/Modal';
 import Fade from '@mui/material/Fade';
 
@@ -21,12 +21,14 @@ export const PopUp = (props: PopUpProps) => {
                 },
             }}
             hidden={!modalOpen}
-            // className="relative"
+            sx={{p: 4}}
         >
             <Fade in={modalOpen}>
-                <Box className="absolute top-[50%] left-0 w-full translate-[-50%] translate-y-[-50%]">
-                    {children}
-                </Box>
+                <Container maxWidth={'md'}>
+                    <div className="">
+                        {children}
+                    </div>
+                </Container>
             </Fade>
         </Modal>
     );

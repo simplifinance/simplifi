@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.24;
 
-import { OnlyRoleBase, IRoleBase } from "../peripherals/OnlyRoleBase.sol";
+import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol"; 
 import { IERC20 } from "../interfaces/IERC20.sol"; 
 import { ErrorLib } from "../libraries/ErrorLib.sol";
@@ -10,10 +10,14 @@ import { ErrorLib } from "../libraries/ErrorLib.sol";
 contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   using ErrorLib for *;
 
-  struct SupportedAsset {
-    address id;
-    string name;
-    string symbol;
+  struct Asset {
+    bool isWrappedAsset;
+    bool isSupported;
+  }
+
+  struct ConstructorArg {
+    address asset;
+    bool isWrappedAsset;
   }
 
   // Supported assets
@@ -23,77 +27,76 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
    * @dev Mapping assets address to bool i.e Assets must be contract account
    * and must be supported
    */
-  mapping(address => bool) private supportedAssets;
+  mapping(address => Asset) public supportedAssets;
+
 
   mapping(address => bool) public listed;
 
   /**
-   * @dev Asset must be supported before they can be used.
-   */
-  modifier onlySupportedAsset(address _asset) {
-    if(!supportedAssets[_asset]) 'Unsupported asset'._throw();
-    _;
-  }
-
-  /**
-   * @dev Initialize state variables
-   * @param _assets : Initial supported asset
-   */
+   * 
+   * @param _assets : Supported assets
+   * @param _roleManager : Role manager contract
+  */
   constructor(
-    address[] memory _assets,
-    IRoleBase _roleManager
-  ) 
+    ConstructorArg[] memory _assets,
+    address _roleManager
+  )
     OnlyRoleBase(_roleManager) 
   {
     for(uint i = 0; i < _assets.length; i++) {
-      if(_assets[i] != address(0)) _supportAsset(_assets[i]);
+      address asset = _assets[i].asset;
+      if(asset != address(0)) _supportAsset(Asset(_assets[i].isWrappedAsset, true), asset);
     }
   }
 
-  /**
+  /** 
    * @dev Support a new asset
    * Note: OnlyRoleBase action
-   * @param _asset : Asset to add to list of supported asset
-   */
-  function supportAsset(
-    address _asset
-  ) 
+   * @param assetAddr : Asset to add to list of supported asset
+   * @param _isWrappedAsset : Whether asset is Wrapped or not
+   */ 
+  function supportAsset(address assetAddr, bool _isWrappedAsset) 
     public 
     onlyRoleBearer
   {
-    _supportAsset(_asset); 
+    if(supportedAssets[assetAddr].isSupported) 'Already supported'._throw();
+    _supportAsset(Asset(_isWrappedAsset, true), assetAddr); 
   }
 
-  function _supportAsset(address _asset) private {
-    if(!listed[_asset]){
-      listed[_asset] = true;
+  // Support an asset
+  function _supportAsset(Asset memory _asset, address assetAddr) private {
+    if(!listed[assetAddr]){
+      listed[assetAddr] = true;
       assets.push(SupportedAsset(
-        _asset, 
-        IERC20(_asset).name(), 
-        IERC20(_asset).symbol()
+        assetAddr, 
+        IERC20(assetAddr).name(), 
+        IERC20(assetAddr).symbol(),
+        _asset.isWrappedAsset
       ));
     }
-    if(!_isAssetSupported(_asset)){
-      supportedAssets[_asset] = true;
+    if(!_asset.isSupported){
+      _asset.isSupported = true;
     }
+    supportedAssets[assetAddr] = _asset;
   }
 
   /**
    * @dev Unsupports an asset
    * Note: Only-owner action
-   * @param newAsset : Removes an asset from the list of supported asset
+   * @param assetAddr : Removes an asset from the list of supported asset
    */
   function unsupportAsset(
-    address newAsset
+    address assetAddr
   ) 
     public 
     onlyRoleBearer
   {
-    supportedAssets[newAsset] = false;
+    if(!supportedAssets[assetAddr].isSupported) 'Already unsupported'._throw();
+    supportedAssets[assetAddr].isSupported = false;
   }
 
   function _isAssetSupported(address _asset) internal view returns(bool) {
-    return supportedAssets[_asset];
+    return supportedAssets[_asset].isSupported;
   }
 
   /**
@@ -104,6 +107,13 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
   }
 
   /**
+   * @dev Check if an asset is supported
+   */
+  function isWrappedAsset(address assetAddr) external view returns(bool) {
+    return supportedAssets[assetAddr].isWrappedAsset;
+  }
+
+  /**
    * @dev Returns a list of supported assets
    */
   function getSupportedAssets() public view returns(SupportedAsset[] memory _assets) {
@@ -111,11 +121,9 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
     return _assets;
   }
 
-  /// @dev Returns the default supported asset
-  function getDefaultSupportedCollateralAsset() external view returns(address _default) {
-    _default = assets[0].id;
-    assert(_default != address(0));
-    return _default;
+  function getDefaultSupportedCollateralAsset(uint index) external view returns(address){
+    require(index < assets.length, "Index out of bound"); 
+    return assets[index].id;
   }
 
 }

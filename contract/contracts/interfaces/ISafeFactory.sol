@@ -6,14 +6,6 @@ pragma solidity 0.8.24;
  * @author : Simplifinance (Written by Bobeu)
  */
 interface ISafeFactory {  
-  /**
-   * Query safe for user
-   * @param unit : Address to get safe for
-   * @return A safe if none was found, it returns address(0).
-   */
-  function getSafe(uint256 unit) external view returns(address);
-  // function getSafe(address user) external view returns(address);
-
 /**
  * Clones and return a new safe 
  * @param unit : Target address for whom to create safe

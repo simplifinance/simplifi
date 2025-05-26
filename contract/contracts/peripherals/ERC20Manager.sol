@@ -2,38 +2,35 @@
 pragma solidity 0.8.24;
 
 import { IERC20 } from "../interfaces/IERC20.sol";
-import { ISupportedAsset } from "../interfaces/ISupportedAsset.sol";
-import { ErrorLib } from "../libraries/ErrorLib.sol";
-import { SafeGetter, IRoleBase, ISafeFactory } from "./SafeGetter.sol";
+import { IStateManager } from "../interfaces/IStateManager.sol";
+import { Pausable } from "./Pausable.sol";
 
-abstract contract ERC20Manager is SafeGetter {
-    using ErrorLib for *;
+/**
+ * ERROR CODE
+ * =========
+ * E2 - Not supported
+ * E3 - Value exceed allowance
+ * E4 - Asset transfer failed
+ * E5 - Approval failed
+ * E1 - State manager address is zero
+ */
+abstract contract ERC20Manager is Pausable {
+    // Storage contract
+    IStateManager public stateManager;
 
-    // Supportasset manager contract
-    ISupportedAsset public immutable assetManager;
-
-    // Base asset contract e.g cUSD
-    IERC20 public immutable baseAsset;
-
-    modifier onlySupportedAsset(IERC20 asset) {
-        if(asset != baseAsset){
-            if(!ISupportedAsset(assetManager).isSupportedAsset(address(asset))) 'Unsupported Asset'._throw();
+    modifier onlySupportedAsset(address asset) {
+        IStateManager.StateVariables memory state = _getVariables();
+        if(asset != address(state.baseAsset)){
+            require(state.assetManager.isSupportedAsset(asset), 'E2');
         }
         _;
     }
 
     // ============= Constructor ================
 
-    constructor(
-        ISupportedAsset _assetManager, 
-        IERC20 _baseAsset, 
-        IRoleBase _roleManager, 
-        ISafeFactory _safeFactory
-    ) SafeGetter(_safeFactory, _roleManager) {
-        if(_assetManager == assetManager) "_assetManager is zero"._throw();
-        if(_baseAsset == baseAsset) "_baseAsset is zero"._throw();
-        assetManager = _assetManager;
-        baseAsset = _baseAsset;
+    constructor(address _stateManager, address _roleManager) Pausable(_roleManager) {
+        require(_stateManager != address(0), 'E1');
+        stateManager = IStateManager(_stateManager);
     }
 
     /**
@@ -43,7 +40,7 @@ abstract contract ERC20Manager is SafeGetter {
      * @param value : Value to compare allowance to
      */
     function _validateAllowance(
-        IERC20 asset, 
+        address asset, 
         address owner, 
         uint value
     ) 
@@ -52,10 +49,8 @@ abstract contract ERC20Manager is SafeGetter {
         view
         returns(uint allowance) 
     {
-        assert(address(asset) != address(0));
-        assert(owner != address(0));
         allowance = IERC20(asset).allowance(owner, address(this));
-        if(allowance < value) 'Value exceed allowance'._throw();
+        require(allowance >= value,  'E3');
     }
 
     /**
@@ -67,11 +62,8 @@ abstract contract ERC20Manager is SafeGetter {
     */
     function _checkAndWithdrawAllowance(IERC20 asset, address owner, address beneficiary, uint value) internal returns(uint allowance) {
         address _owner = owner == _msgSender()? owner : _msgSender();
-        allowance = _validateAllowance(asset, _owner, value);
-        assert(address(asset) != address(0) && beneficiary != address(0));
-        if(allowance > 0){
-            if(!IERC20(asset).transferFrom(_owner, beneficiary, allowance)) 'TrxFer failed'._throw();
-        }
+        allowance = _validateAllowance(address(asset), _owner, value);
+        require(asset.transferFrom(_owner, beneficiary, allowance), 'E4');
     }
 
     /**
@@ -81,9 +73,15 @@ abstract contract ERC20Manager is SafeGetter {
      * @param value : Amount to approve
     */
     function _setApprovalFor(IERC20 asset, address spender, uint value) internal {
-        assert(spender != address(0));
-        assert(address(asset) != address(0));
-        if(!IERC20(asset).approve(spender, value)) 'Approval Failed'._throw();
+        uint prevAllowance = IERC20(asset).allowance(address(this), spender);
+        unchecked {
+            require(IERC20(asset).approve(spender, value + prevAllowance), 'E5');
+        }
+    }
+
+    // Get all state variables internally from the state manager
+    function _getVariables() internal view returns(IStateManager.StateVariables memory result) {
+        result = stateManager.getStateVariables();
     }
 
 }

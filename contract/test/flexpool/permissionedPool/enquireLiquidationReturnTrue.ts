@@ -7,7 +7,6 @@ import {
   UNIT_LIQUIDITY,
   COLLATER_COVERAGE_RATIO,
   DURATION_IN_HOURS,
-  ZERO,
   INTEREST_RATE,
   formatAddr,
   DURATION_IN_SECS,
@@ -45,7 +44,6 @@ describe("Permissioned: Enquire Liquidation Success", function () {
       });
 
       await joinEpoch({
-        contribution: create.pool.pool.big.unit,
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,
@@ -60,7 +58,7 @@ describe("Permissioned: Enquire Liquidation Success", function () {
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
-        colQuote: quoted.collateral,
+        colQuote: quoted ,
         collateral: collateralAsset,
         asset: baseAsset,
         deployer
@@ -83,7 +81,6 @@ describe("Permissioned: Enquire Liquidation Success", function () {
       /**
        * When the paydate has passed, enquiry should return defaulter's profile.
       */
-      await flexpool.getCurrentDebt(create.pool.pool.big.unit);
       const [prof, defaulted, val] = await enquireLiquidation({
         unit: create.pool.pool.big.unit,
         factory: flexpool,
