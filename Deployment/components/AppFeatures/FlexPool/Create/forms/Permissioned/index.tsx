@@ -85,7 +85,7 @@ export const Permissioned = () => {
         const isPermissionless = false;
         const args = [participants, parseUnits(unitLiquidity, 18), participants.length, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
         return args;
-    }, [unitLiquidity, participants, colCoverage, collateralAsset]);
+    }, [unitLiquidity, participants, colCoverage, collateralAsset, duration]);
 
     return(
         <div className="space-y-8 mt-6">

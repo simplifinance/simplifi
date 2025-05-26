@@ -52,7 +52,7 @@ export const Permissionless = () => {
         const isPermissionless = true;
         const args = [[account], parseUnits(unitLiquidity, 18), quorum, duration, toBN(colCoverage).toNumber(), isPermissionless, collateralAsset];
         return args;
-    }, [account, unitLiquidity, quorum, colCoverage, collateralAsset]);
+    }, [account, unitLiquidity, quorum, colCoverage, collateralAsset, duration]);
 
     return(
         <Stack className="space-y-8 mt-6">

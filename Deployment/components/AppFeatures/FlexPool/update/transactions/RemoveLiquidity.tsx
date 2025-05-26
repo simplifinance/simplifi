@@ -56,7 +56,7 @@ export default function RemoveLiquidity() {
         });
 
         return { readTxObject, mutate, providersContract };
-    }, [chainId, account]);
+    }, [chainId, account, callback]);
 
     const { data, refetch } = useReadContracts(
         {

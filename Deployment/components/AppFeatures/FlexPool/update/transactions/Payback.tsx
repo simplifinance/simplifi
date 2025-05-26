@@ -45,7 +45,7 @@ export default function Payback({ unit, collateralAddress, widthType, disabled, 
 
         const paybackArgs = [unit];
         return { readTxObject, flexpoolContract, isWrappedAsset, paybackArgs, mutate};
-    }, [chainId, unit, account, collateralAddress]);
+    }, [chainId, unit, account, collateralAddress, callback]);
 
     const { refetch } = useReadContracts(
         {
@@ -103,7 +103,7 @@ export default function Payback({ unit, collateralAddress, widthType, disabled, 
             return transaction;
         })
         return transactions;
-   }, [unit, mutate, flexpoolContract, refetch]);
+   }, [mutate, flexpoolContract, refetch, paybackArgs]);
 
     return(
         <React.Fragment>

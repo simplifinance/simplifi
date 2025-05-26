@@ -31,7 +31,7 @@ export default function Providers() {
             if(totalLiquidity > amount) setTotalLiquidity((prev) => prev - amount);
         }
         toggleProviders(slot);
-    }, []);
+    }, [toggleProviders, totalLiquidity]);
 
     const toggleDrawer = (arg: number) => setOpenDrawer(arg);
     const args = [providersIds, unit];

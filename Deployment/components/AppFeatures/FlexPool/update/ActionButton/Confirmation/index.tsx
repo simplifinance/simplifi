@@ -116,6 +116,9 @@ export const Confirmation :
                 value_ = result?.value;
                 execute = result?.proceed;
             }
+            console.log("FuncName", functionName);
+            console.log("address", address);
+            console.log("Args", args);
             if(execute === 1) {
                 setmessage(`${displayMessages[functionName].start}.none`);
                 const hash = await writeContractAsync({

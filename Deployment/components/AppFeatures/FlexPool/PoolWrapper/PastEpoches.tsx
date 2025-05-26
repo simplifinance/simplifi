@@ -27,7 +27,7 @@ export const PastEpoches:React.FC = () => {
       } 
     });
     return { ...filtered }
-  }, [chainId]);
+  }, [chainId, setError]);
 
   const {data, isError, isPending} = useReadContracts(
     {

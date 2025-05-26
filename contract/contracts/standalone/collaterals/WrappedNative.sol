@@ -51,17 +51,23 @@ contract WrappedNative is ERC20, OnlyRoleBase, ReentrancyGuard {
         _spendAllowance(from, spender, value);
         _transfer(from, to, value);
         if(_hasRole(spender)){
-            uint wBalance = deposits[spender][from];
-            require(wBalance >= value, "Deposit is too low");
+            uint wBalance = deposits[from][spender];
+            require(wBalance >= value && address(this).balance >= value, "Deposit or balance too low");
             unchecked {
-                deposits[spender][from] = wBalance - value;
-            }
-            require(address(this).balance >= value, "Contract balance too low");
-            _burn(to, value);
-            payable(to).transfer(wBalance);
+                deposits[from][spender] = wBalance - value;
+            } 
+            (bool s,) = to.call{value: value}('');
+            require(s, "Failed");
             
         }
        
+        return true;
+    }
+
+    function transfer(address to, uint amount) public override returns(bool) {
+        _transfer(_msgSender(), to, amount);
+        _burn(to, amount);
+
         return true;
     }
 

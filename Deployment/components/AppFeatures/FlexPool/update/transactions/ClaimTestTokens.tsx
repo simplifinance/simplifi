@@ -22,7 +22,7 @@ export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
         });
         const faucetContract = formatAddr(filtered.contractAddresses.Faucet);
         return { ...filtered, faucetContract };
-    }, [chainId ]);
+    }, [chainId, callback]);
 
     const getTransactions = React.useCallback(() => {
         const transactions = td.map((txObject) => {
@@ -37,7 +37,7 @@ export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
         })
         return transactions;
     
-   }, [ca, td]);
+   }, [td, faucetContract]);
 
     return(
         <React.Fragment>

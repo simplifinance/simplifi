@@ -129,7 +129,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 break;
         } 
         return component;
-    }, [props]);
+    }, [colAsset, currentPool.big, isAdmin, isMember, isPermissionless, lastPaid, loan.inBN, maxQuorum, paybackTime.inSec, safe, sentQuota, stage.toNum, unit.big, userCount]);
 
     return(
         <React.Fragment>

@@ -63,7 +63,7 @@ import type {
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId);
     return { pool, balances, profile, slot};
   }
   
@@ -109,7 +109,7 @@ import type {
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unitLiquidity);
+    const slot = await x.factory.getSlot(signerAddr,pool[0].big.recordId);
   
     return { pool, balances, profile, slot };
   }
@@ -146,7 +146,7 @@ import type {
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unit);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId);
   
     return { balances, pool, profile, slot };
   }
@@ -240,7 +240,7 @@ import type {
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, x.unit);
+    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId); 
     const baseBalAfterLiq = await x.asset.balanceOf(signerAddr);
     const colBalAfterLiq = await x.collateral.balanceOf(signerAddr);
   

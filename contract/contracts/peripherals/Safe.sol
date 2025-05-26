@@ -14,8 +14,6 @@ import { ErrorLib } from "../libraries/ErrorLib.sol";
 contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     using ErrorLib for *;
 
-    event ThankYou();
-
     // Number of contributors currently operating this safe
     uint private userCount;
 
@@ -57,9 +55,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         providersContract = IProviders(_providers);
     }
 
-    receive() external payable {
-        emit ThankYou();
-    }
+    receive() external payable {}
 
     /**
      * @dev Registers providers to the contributor's profile. This is a list of providers that finance the contributor
@@ -79,7 +75,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
 
     */
     function _addUser(address user, uint96 recordId) private {
-        assert(!access[user][recordId]);
+        require(!access[user][recordId], 'Has access');
         access[user][recordId] = true;
     }
 
@@ -172,8 +168,8 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 }
             }
         }
-        if(!baseAsset.transfer(user, loanable)) 'S188'._throw();
-        return true;
+       
+        return baseAsset.transfer(user, loanable);
     }
 
     /**
@@ -194,6 +190,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         external 
         onlyRoleBearer 
         hasAccess(_p.isSwapped? _p.defaulted : _p.user, _p.recordId) 
+        nonReentrant
         returns (uint col) 
     {
         col = collateralBalances[_p.user][_p.recordId];
@@ -211,9 +208,11 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         }
         assert(IERC20(_p.baseAsset).balanceOf(address(this)) >= (_p.attestedInitialBal + _p.debt));
         if(!_p.collateralAsset.transfer(_p.user, col)) 'S226'._throw();
-        // assert(address(this).balance >= col);
         if(_p.isColWrappedAsset) {
-            if(address(this).balance >= col) payable(_p.user).transfer(col);
+            if(address(this).balance >= col) {
+                (bool done, )= _p.user.call{value: col}('');
+                require(done, 'Failed');
+            }
         }
         if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.recordId, _p.cData);
         return col;

@@ -21,10 +21,10 @@ export default function SignUpForRewards({disabled, toggleDrawer, openDrawer, op
         });
         const pointsContract = formatAddr(filtered.contractAddresses.Points);
         return { ...filtered, pointsContract };
-    }, [chainId]);
+    }, [chainId, callback]);
 
     const getTransactions = React.useCallback(() => {
-        let transactions = td.map((txObject) => {openDrawer
+        let transactions = td.map((txObject) => {
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args: [],
@@ -36,7 +36,7 @@ export default function SignUpForRewards({disabled, toggleDrawer, openDrawer, op
         })
         return transactions;
     
-   }, [ca, td]);
+   }, [td, pointsContract]);
 
     return(
         <React.Fragment>

@@ -12,6 +12,6 @@ interface ISupportedAsset {
     bool isWrappedAsset;
   }
   function isSupportedAsset(address _asset) external view returns(bool);
-  function getDefaultSupportedCollateralAsset() external view returns(address);
+  function getDefaultSupportedCollateralAsset(uint index) external view returns(address);
   function isWrappedAsset(address assetAddr) external view returns(bool);
-} 
+}  

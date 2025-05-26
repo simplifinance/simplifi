@@ -15,6 +15,7 @@ import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
  * ERROR CODE
  * =========
  * A1 - Safe factory address parsed to the constructor is zero
+ * A2 - Safe creation failed
  */
 abstract contract PointsAndSafe is ERC20Manager {
     // Whether to award point to users or not
@@ -55,7 +56,7 @@ abstract contract PointsAndSafe is ERC20Manager {
     */
     function _getSafe(uint256 unit) internal returns(address safe) {
         safe = safeFactory.pingSafe(unit);
-        assert(safe != address(0));
+        require(safe != address(0), 'A2');
     }
  
 }

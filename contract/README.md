@@ -168,3 +168,92 @@ Quote 36153132
 🔄 Syncing contracts data to Next App...
 ✅ Data synchronization completed!
 Done in 41.10s. -->
+
+
+<!-- C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-alfa
+yarn run v1.22.22
+$ hardhat deploy --network alfajores --export deployments/contracts.json && node sync-abis.js
+Nothing to compile
+No need to generate any newer typings.
+reusing "RoleManager" at 0xB255A1e088Dffb63155a8B4baDA12e5572e11376
+RoleManager deployed to: 0xB255A1e088Dffb63155a8B4baDA12e5572e11376
+reusing "BaseAsset" at 0x210e77886554170bBa347db97CA64E2B9258124E
+BaseAsset contract deployed to: 0x210e77886554170bBa347db97CA64E2B9258124E
+reusing "Escape" at 0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae
+Escape contract deployed to: 0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae
+reusing "Reserve" at 0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0
+Reserve contract deployed to: 0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0
+reusing "TokenDistributor" at 0xa952784B6d93ddB16C9b7b1DedE28efe39D14e2f
+TokenDistributor deployed to: 0xa952784B6d93ddB16C9b7b1DedE28efe39D14e2f
+reusing "Attorney" at 0x424B80b6D7Fa4d6193D813b8564d57a29162174C
+Attorney contract deployed to: 0x424B80b6D7Fa4d6193D813b8564d57a29162174C
+reusing "SimpliToken" at 0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C
+SimpliToken deployed to: 0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C
+reusing "Faucet" at 0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D
+Faucet contract deployed to: 0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D
+reusing "Points" at 0xcef62f6c3B044527b571b96256F3Af82C65d23E3
+Points contract deployed to: 0xcef62f6c3B044527b571b96256F3Af82C65d23E3
+deploying "SafeFactory" (tx: 0xd8356b2884026dd89420a8e17c12a2c2ab1b720bcca4aede4d37b88c958f84cd)...: deployed at 0x7A14212e66EfCdd795881f35a152b47B50F25c42 with 2076318 gas
+SafeFactory deployed to: 0x7A14212e66EfCdd795881f35a152b47B50F25c42
+NetworkName: alfajores
+deploying "WrappedNative" (tx: 0x75f7578942b8f96972993a7e24bedd978c8e72eca99140daa698e43c854813d4)...: deployed at 0xF577bB524dB0EE6E50fd4A7BF927f0c46D6bFbb2 with 781185 gas
+WrappedNative token deployed to: 0xF577bB524dB0EE6E50fd4A7BF927f0c46D6bFbb2
+deploying "SupportedAssetManager" (tx: 0x0346b8aea16eeb9049c8f647ea98d52290e844fa637a8b7c7726f1cceb6ecd8b)...: deployed at 0x5C9CF0Bd159317750e3f344E6fC7C8858b1c0ba4 with 1077737 gas
+SupportedAssetManager contract deployed to: 0x5C9CF0Bd159317750e3f344E6fC7C8858b1c0ba4
+Deploying StateManager
+deploying "StateManager" (tx: 0xf20520858ed7b91904498f3dcf5c0e4ec4f6389a6c0a5bffaca8660439caa264)...: deployed at 0xE5aBDD485A8D78A5ee94b2fF53663E94F47d6294 with 473944 gas
+Factory deployed to: 0xE5aBDD485A8D78A5ee94b2fF53663E94F47d6294
+deploying "CeloBased" (tx: 0x1f60294238854897fc4a7decf6ce678d64fee420d7122c667b3ba88a37d97498)...: deployed at 0x15C837ef329Aed8724766E5f73bbc27910C67DDd with 5327322 gas
+Factory deployed to: 0x15C837ef329Aed8724766E5f73bbc27910C67DDd
+deploying "Providers" (tx: 0xb4ff294246c5274b200adce7b186503b2053527d1425db7e3da45cc780a97d0b)...: deployed at 0xE0e8c09080B4E306acc5D148Bcc4689cdd4af6D1 with 1781102 gas
+Providers deployed to: 0xE0e8c09080B4E306acc5D148Bcc4689cdd4af6D1
+Confirmation block 4
+Quote 37398344
+🔄 Syncing contracts data to Next App...
+✅ Data synchronization completed!
+Done in 166.78s. -->
+
+<!-- 
+C:\Users\Bobman\Desktop\web3\simplifi\contract>yarn deploy-alfa
+yarn run v1.22.22
+$ hardhat deploy --network alfajores --export deployments/contracts.json && node sync-abis.js
+Generating typings for: 11 artifacts in dir: typechain-types for target: ethers-v6
+Successfully generated 80 typings!
+Compiled 11 Solidity files successfully (evm target: constantinople).
+reusing "RoleManager" at 0xB255A1e088Dffb63155a8B4baDA12e5572e11376
+RoleManager deployed to: 0xB255A1e088Dffb63155a8B4baDA12e5572e11376
+reusing "BaseAsset" at 0x210e77886554170bBa347db97CA64E2B9258124E
+BaseAsset contract deployed to: 0x210e77886554170bBa347db97CA64E2B9258124E
+reusing "Escape" at 0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae
+Escape contract deployed to: 0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae
+reusing "Reserve" at 0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0
+Reserve contract deployed to: 0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0
+reusing "TokenDistributor" at 0xa952784B6d93ddB16C9b7b1DedE28efe39D14e2f
+TokenDistributor deployed to: 0xa952784B6d93ddB16C9b7b1DedE28efe39D14e2f
+reusing "Attorney" at 0x424B80b6D7Fa4d6193D813b8564d57a29162174C
+Attorney contract deployed to: 0x424B80b6D7Fa4d6193D813b8564d57a29162174C
+reusing "SimpliToken" at 0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C
+SimpliToken deployed to: 0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C
+reusing "Faucet" at 0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D
+Faucet contract deployed to: 0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D
+reusing "Points" at 0xcef62f6c3B044527b571b96256F3Af82C65d23E3
+Points contract deployed to: 0xcef62f6c3B044527b571b96256F3Af82C65d23E3
+deploying "SafeFactory" (tx: 0xae31e2acc0450d5f75d0d3b0e0536fa5e798ead004914f8282be059185d51e8f)...: deployed at 0x9eAb8740Bc4c0F389eFf9c51870F27cb2eD22F52 with 2086026 gas
+SafeFactory deployed to: 0x9eAb8740Bc4c0F389eFf9c51870F27cb2eD22F52
+NetworkName: alfajores
+reusing "WrappedNative" at 0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6
+WrappedNative token deployed to: 0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6
+reusing "SupportedAssetManager" at 0xbCa26704Ed56A8F63346a5cdb5F18Cc8439e60c8
+SupportedAssetManager contract deployed to: 0xbCa26704Ed56A8F63346a5cdb5F18Cc8439e60c8
+Deploying StateManager
+reusing "StateManager" at 0x3548E655176A3ad90e60F0ca37Ad2aFE95848739
+Factory deployed to: 0x3548E655176A3ad90e60F0ca37Ad2aFE95848739
+deploying "CeloBased" (tx: 0xf35e6544118cbaa97ebf17cc3c1f769ea135ad3da682510815f654dbf9335f9a)...: deployed at 0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9 with 5335325 gas
+Factory deployed to: 0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9
+deploying "Providers" (tx: 0xefadb0c909779ddb3f47839d5f8c2bf9682ed9ef8ca6ef21b7d1d982de4bca28)...: deployed at 0xc561c9FC136a783dc3C28800c7BA94706344DC4E with 1781102 gas
+Providers deployed to: 0xc561c9FC136a783dc3C28800c7BA94706344DC4E
+Confirmation block 4
+Quote 37353132
+🔄 Syncing contracts data to Next App...
+✅ Data synchronization completed!
+Done in 166.99s. -->

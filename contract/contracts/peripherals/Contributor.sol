@@ -46,7 +46,8 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
      * @param unit : Unit Contribution
     */
     function _checkStatus(address target, uint256 unit, bool value) internal view {
-        value? require(_getSlot(target, unit).isMember, '9') : require(!_getSlot(target, unit).isMember, '10');
+        bool isMember = _getSlot(target, _getRecordId(unit)).isMember;
+        value? require(isMember, '9') : require(!isMember, '10');
     }
 
     /**
@@ -58,8 +59,8 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
         address target, 
         uint unit
     ) internal view returns(Common.ContributorReturnValue memory result) {
-        uint96 recordId = _getRecordId(unit);
-        result.slot = _getSlot(target, unit);
+        uint96 recordId = _getRecordId(unit); 
+        result.slot = _getSlot(target, recordId); 
         result.profile = contributors[recordId][result.slot.value];
         result.providers = _getContributorProviders(target, recordId);
     }
@@ -110,7 +111,7 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
             position = _getPool(unit).low.selector;
             user = _getExpected(unit, uint8(position)).id;
         } else {
-            position = _getSlot(user, unit).value;
+            position = _getSlot(user, _getRecordId(unit)).value;
         }
         contributors[_getRecordId(unit)][position].turnStartTime = date;
      }
@@ -129,24 +130,22 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     /**
      * @dev Add contributor data to storage
      * @param pool : Pool struct
-     * @param unit : Unit contribution
      * @param target : Target user
      * @param isAdmin : Whether user is the creator or not
      * @param isMember : Whether user is a member or not
      * @param sentQuota : Whether user have sent their quota of the contribution or not
      */
     function _initializeContributor(
-        Common.Pool memory pool,
-        uint256 unit,
+        Common.Pool memory pool, 
         address target,
         bool isAdmin,
         bool isMember,
         bool sentQuota            
     ) internal returns(Common.ContributorReturnValue memory data) {
         data.slot.value = contributors[pool.big.recordId].length;
-        _createSlot(target, unit, uint8(data.slot.value), isAdmin, isMember);
+        _createSlot(target, pool.big.recordId, uint8(data.slot.value), isAdmin, isMember);
         contributors[pool.big.recordId].push(); 
-        data.profile.id = target;
+        data.profile.id = target; 
         data.profile.sentQuota = sentQuota;
     }
 
@@ -157,10 +156,11 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
      * @notice Parsing true to _setSlot as the last argument with set the slot to empty
      */
     function _removeContributor(address target, uint256 unit) internal {
-        Common.Slot memory slot = _getSlot(target, unit);
-        _setSlot(target, unit, slot, true);
+        uint96 recordId = _getRecordId(unit);
+        Common.Slot memory slot = _getSlot(target, recordId);
+        _setSlot(target, recordId, slot, true);
     }
-
+ 
     /**
      * @dev Swaps contributors data if the expected caller is not the same as the actual caller
      * and the grace period has elapsed.
@@ -180,11 +180,11 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     {
         _checkStatus(actual, unit, true);
         uint96 recordId = _getRecordId(unit);
-        Common.Slot memory actualSlot = _getSlot(actual, unit);
+        Common.Slot memory actualSlot = _getSlot(actual, recordId);
         actualData = _getContributor(actual, unit).profile;
-        _setSlot(actual, unit, expectedSlot, false);
-        _setSlot(expectedData.id, unit, actualSlot, false);
-        expectedData.id = actual;
+        _setSlot(actual, recordId, expectedSlot, false);
+        _setSlot(expectedData.id, recordId, actualSlot, false);
+        expectedData.id = actual; 
         actualData.id = expectedData.id;
         _setContributor(expectedData, recordId, uint8(expectedSlot.value), false);
         _setContributor(actualData, recordId, uint8(actualSlot.value), false);
@@ -233,7 +233,7 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     {
         (debt, pool) = _getCurrentDebt(unit, payer);
         require(debt > 0, '11');
-        uint slot = _getSlot(pool.addrs.lastPaid, unit).value;
+        uint slot = _getSlot(pool.addrs.lastPaid, pool.big.recordId).value;
         contributors[pool.big.recordId][slot].loan = 0;
         contributors[pool.big.recordId][slot].colBals = 0;
         contributors[pool.big.recordId][slot].paybackTime = _now();
@@ -321,15 +321,15 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
         return _getContributor(target, unit);
     }
 
-    function _replaceContributor(address liquidator, uint96 recordId, Common.Slot memory slot, address _defaulter, uint unit) internal {
+    function _replaceContributor(address liquidator, uint96 recordId, Common.Slot memory slot, address _defaulter) internal {
         Common.Provider[] memory providers = unitProviders[recordId][_defaulter];
         if(providers.length > 0) {
             unitProviders[recordId][liquidator] = unitProviders[recordId][_defaulter];
             delete unitProviders[recordId][_defaulter];
         }
         contributors[recordId][slot.value].id = liquidator;
-        _setSlot(liquidator, unit, slot, false);
-        _setSlot(_defaulter, unit, slot, true);
+        _setSlot(liquidator, recordId, slot, false);
+        _setSlot(_defaulter, recordId, slot, true);
     }
 
     /**
@@ -344,7 +344,7 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
         pool = _getPool(unit);
         require(currentUser != address(0), '12');
         Common.Contributor[] memory profiles = contributors[pool.big.recordId];
-        if(_getSlot(currentUser, unit).isMember){
+        if(_getSlot(currentUser, pool.big.recordId).isMember){
             if(profiles.length > 0) {
                 for(uint i = 0; i < profiles.length; i++){
                     Common.ContributorReturnValue memory data = _getContributor(profiles[i].id, unit);

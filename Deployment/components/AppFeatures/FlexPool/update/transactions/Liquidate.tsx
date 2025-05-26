@@ -139,7 +139,7 @@ export default function Liquidate({ unit, disabled, lastPaid, overrideButtonCont
 
         const liquidateArgs = [unit];
         return { readTxObject, flexpoolContract, liquidateArgs, mutate};
-    }, [chainId, unit, account, lastPaid]);
+    }, [chainId, unit, account, lastPaid, callback]);
 
     const { refetch } = useReadContracts(
         {
@@ -201,7 +201,7 @@ export default function Liquidate({ unit, disabled, lastPaid, overrideButtonCont
             return transaction;
         })
         return transactions;
-    }, [unit, mutate, flexpoolContract, liquidateArgs]);
+    }, [mutate, flexpoolContract, liquidateArgs, refetch]);
 
     return(
         <React.Fragment>

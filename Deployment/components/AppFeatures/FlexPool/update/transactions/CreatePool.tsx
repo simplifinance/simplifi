@@ -44,7 +44,7 @@ export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optio
         });
 
         return { readTxObject, flexpoolContract, usd, mutate, supportedColAssets};
-        }, [chainId, account]);
+        }, [chainId, account, callback]);
 
         const { refetch } = useReadContracts(
         {
@@ -108,7 +108,7 @@ export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optio
         })
 
         return transactions;
-    }, [unit, mutate, usd, args, flexpoolContract]);
+    }, [mutate, unit, usd, args, flexpoolContract, refetch, supportedColAssets]);
 
     return(
         <Confirmation 

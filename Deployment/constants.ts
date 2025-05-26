@@ -2,8 +2,8 @@ import { zeroAddress } from 'viem';
 import { Address, FunctionName, Path, } from './interfaces';
 import { filterTransactionData, formatAddr } from './utilities';
 
-export enum Stage { JOIN, GET, PAYBACK, WITHDRAW, CANCELED, ENDED }
-export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'WITHDRAW', 'CANCELED', 'ENDED' }
+export enum Stage { JOIN, GET, PAYBACK, CANCELED, ENDED }
+export enum StageStr { 'JOIN', 'GET', 'PAYBACK', 'CANCELED', 'ENDED' }
 export enum Router { NONE, PERMISSIONLESS, PERMISSIONED }
 
 // 3 block confirmation

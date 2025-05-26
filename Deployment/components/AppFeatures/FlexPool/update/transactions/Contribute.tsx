@@ -43,7 +43,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
         });
 
         return { readTxObject, flexpoolContract, mutate };
-    }, [chainId, account]);
+    }, [chainId, account, callback]);
 
     const { refetch } = useReadContracts(
         {
@@ -101,7 +101,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
         })
         return transactions;
 
-    }, [unit, mutate, flexpoolContract]);
+    }, [unit, mutate, flexpoolContract, refetch]);
 
     return(
         <React.Fragment>

@@ -82,7 +82,7 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
     function _launchDefault(address user, uint unit, Common.Provider[] memory _providers) internal returns(Common.Pool memory pool) {
         address[] memory users = new address[](1);
         users[0] = user;
-        address defaultColAsset = _getVariables().assetManager.getDefaultSupportedCollateralAsset();
+        address defaultColAsset = _getVariables().assetManager.getDefaultSupportedCollateralAsset(0);
         pool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
         ISafe(pool.addrs.safe).registerProvidersTo(_providers, user, pool.big.recordId); 
         _awardPoint(users[0], 0, 5, false);
@@ -164,7 +164,7 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
             require(pool.big.currentPool >= (pool.big.unit * pool.low.maxQuorum), '15');
             if(_now() > profile.turnStartTime + 1 hours){
                 if(_msgSender() != profile.id) {
-                    profile = _swapContributors(unit, _msgSender(), _getSlot(_msgSender(), unit), profile);
+                    profile = _swapContributors(unit, _msgSender(), _getSlot(_msgSender(), pool.big.unitId), profile);
                 }
             } else {
                 require(_msgSender() == profile.id, '16');
@@ -180,7 +180,7 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
         ISafe(pool.addrs.safe).getFinance(profile.id, vars.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(vars.makerRate)), collateral, pool.big.recordId);
         (pool, profile) = _completeGetFinance(pool, collateral, profile);
-        _setContributor(profile, pool.big.recordId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unit).value), false);
+        _setContributor(profile, pool.big.recordId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unitId).value), false);
         _setPool(pool.big.unitId, pool);
 
         emit Common.GetFinanced(pool);
@@ -217,7 +217,7 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
         require(isDefaulted, '17');
         address liquidator = _msgSender() ;
         _checkStatus(liquidator, unit, false);
-        _replaceContributor(liquidator, _getPool(unit).big.recordId, slot, _defaulter.id, unit);
+        _replaceContributor(liquidator, _getPool(unit).big.recordId, slot, _defaulter.id);
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);

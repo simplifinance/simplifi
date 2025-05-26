@@ -43,28 +43,27 @@ abstract contract Pool is Contributor {
         require(args.sender == args.users[0], '6');
         (uint96 unitId, uint96 recordId) = _generateIds(args.unit);
         pool = _updatePool(Common.UpdatePoolData(args.unit, unitId, recordId, args.maxQuorum, args.colCoverage, IERC20(args.colAsset), args.durationInHours, args.users[0], args.router));   
-        pool = _addUserToPool(args.unit, args.users, pool);
+        pool = _addUserToPool(args.users, pool);
         _setPool(unitId,  pool);
         _completeAddUser(args.users[0], pool);
     }
 
     /**
      * @dev Add users to newly created pool
-     * @param unit : Unit contribution
      * @param users : List of contributors to add
      * @param pool : Pool data. Must be an existing data relating to the unit contribution
      */
     function _addUserToPool(
-        uint256 unit, 
         address[] memory users,
-        Common.Pool memory pool
+        Common.Pool memory pool 
     ) internal returns(Common.Pool memory _pool) {
         for(uint i = 0; i < users.length; i++) {
             Common.ContributorReturnValue memory data;
-            if(i == 0) data = _initializeContributor(pool, unit, users[i], true, true, true);
-            else {
+            if(i == 0) {
+                data = _initializeContributor(pool, users[i], true, true, true);
+            } else {
                 require(users[0] != users[i], '7');
-                data = _initializeContributor(pool, unit, users[i], false, true, false);
+                data = _initializeContributor(pool, users[i], false, true, false);
             }
             _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         }
@@ -94,7 +93,7 @@ abstract contract Pool is Contributor {
             data.profile.sentQuota = true;
         } else {
             _checkStatus(user, unit, false);
-            data = _initializeContributor(pool, unit, user, false, true, true);
+            data = _initializeContributor(pool, user, false, true, true);
         }
         _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
         if(_isPoolFilled(pool, pool.router == Common.Router.PERMISSIONED)) {

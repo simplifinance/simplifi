@@ -19,7 +19,7 @@ export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowP
         });
 
         return { ...filtered };
-    }, [chainId ]);
+    }, [chainId, callback]);
 
     const getTransactions = React.useCallback(() => {
         let transactions = td.map((txObject) => {
@@ -35,7 +35,7 @@ export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowP
         })
         return transactions;
     
-   }, [unit, ca, td]);
+   }, [td, args]);
 
     return(
         <Confirmation 

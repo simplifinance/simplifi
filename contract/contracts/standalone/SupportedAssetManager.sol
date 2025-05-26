@@ -121,8 +121,9 @@ contract SupportedAssetManager is ISupportedAsset, OnlyRoleBase {
     return _assets;
   }
 
-  function getDefaultSupportedCollateralAsset() external view returns(address){
-    return assets[1].id;
+  function getDefaultSupportedCollateralAsset(uint index) external view returns(address){
+    require(index < assets.length, "Index out of bound"); 
+    return assets[index].id;
   }
 
 }

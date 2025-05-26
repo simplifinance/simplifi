@@ -6,19 +6,15 @@ import { Spinner } from "@/components/utilities/Spinner";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { Address, FunctionName } from "@/interfaces";
-import { Confirmation, Transaction } from "../../ActionButton/Confirmation";
-import { ActionButton } from "../../ActionButton";
+import { Transaction } from "../../ActionButton/Confirmation";
 import Payback from "../../transactions/Payback";
 
 export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {unit: bigint, safe: Address, collateralAsset: Address}) {
-    const [openDrawer, setDrawerState] = React.useState<number>(0);
     const [openColDrawer, setColDrawerState] = React.useState<number>(0);
     const config = useConfig();
     const { isConnected, chainId, address } = useAccount();
     const account = formatAddr(address);
     const { symbol, callback} = useAppStorage();
-    const toggleDrawer = (arg: number) => setDrawerState(arg);
-    const toggleColDrawer = (arg: number) => setColDrawerState(arg);
 
     const { txObject } = React.useMemo(() => {
         const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
@@ -39,7 +35,7 @@ export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {
             }
         });
         return { txObject, }
-    }, [chainId, account, safe, unit]);
+    }, [chainId, account, safe, unit, callback]);
 
     const {data, isPending, refetch} = useReadContracts(
         {
@@ -62,11 +58,10 @@ export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {
 
     const quote = data?.[0]?.result as bigint;
     const safeBaseBalance = data?.[1]?.result as bigint;
-    const myCollateralBalances = data?.[2]?.result as bigint;
-    let withdrawables = data?.[3]?.result as bigint;
     let payables = data?.[4]?.result as bigint;
 
     const getTransactions = React.useCallback(() => {
+        let withdrawables : bigint = 0n;
         const { contractAddresses: ca, transactionData: td } = filterTransactionData({
             chainId,
             filter: true,
@@ -96,10 +91,9 @@ export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {
             };
             return transaction;
         })
-        console.log("transactions", transactions);
 
         return transactions;
-    }, [unit, chainId, account, withdrawables]);
+    }, [chainId, account, callback, openColDrawer, refetch, safe]);
 
     return(
         <div className={`bg-white1 dark:bg-transparent border border-b-4 p-4 space-y-4 rounded-lg dark:text-white1`}>

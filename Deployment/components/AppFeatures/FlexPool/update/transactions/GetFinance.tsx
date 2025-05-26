@@ -11,6 +11,7 @@ const getSteps = (isWrappedAsset: boolean) : {read: FunctionName[], mutate: Func
     const mutateFirstStep = isWrappedAsset? 'deposit' : 'approve';
     return {
         read: Array.from(['getCollateralQuote', 'allowance', 'deposits']),
+        // read: Array.from(['getCollateralQuote', 'allowance']),
         mutate: Array.from([mutateFirstStep, 'getFinance'])
     };
 }
@@ -55,7 +56,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
 
         const getFinanceArgs = [unit];
         return { readTxObject, flexpoolContract, isWrappedAsset, getFinanceArgs, steps, mutate};
-    }, [chainId, unit, account]);
+    }, [chainId, unit, account, callback, collateralAddress, safe]);
 
     const { refetch } = useReadContracts(
         {
@@ -81,7 +82,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
                     case 'deposit':
                         if(prevDeposit >= collateralQuote){
                             proceed = 0;
-                            value = 0;
+                            value = 0n;
                         }
                         args = [flexpoolContract];
                         value = collateralQuote;
@@ -132,7 +133,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
         console.log("transactions", transactions);
 
         return transactions;
-   }, [unit, mutate, flexpoolContract]);
+   }, [mutate, flexpoolContract, getFinanceArgs, refetch]);
 
     return(
         <React.Fragment>

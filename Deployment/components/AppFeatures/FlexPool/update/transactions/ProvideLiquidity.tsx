@@ -39,7 +39,7 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
         });
 
         return { readTxObject, mutate, providersContract };
-    }, [chainId, account]);
+    }, [chainId, account, callback]);
 
     const { refetch } = useReadContracts(
         {
@@ -100,7 +100,7 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
         console.log("Transactions", transactions);
         return transactions;
 
-    }, [mutate, providersContract, account, provideLiquidityArgs, liquidityAmount]);
+    }, [mutate, providersContract, account, provideLiquidityArgs, liquidityAmount, refetch]);
 
     return(
         <Confirmation 

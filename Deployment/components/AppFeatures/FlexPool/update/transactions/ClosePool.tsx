@@ -24,7 +24,7 @@ export default function ClosePool({ unit, disabled, overrideButtonContent }: Clo
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
         return { flexpoolContract, td, ca };
-    }, [chainId, account]);
+    }, [chainId, callback]);
 
     const getTransactions = React.useCallback(() => {
         let transactions = td.map((txObject) => {
