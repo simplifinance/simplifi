@@ -16,7 +16,6 @@ export const flexSpread = "flex justify-between items-center";
 export const flexEven = "flex justify-evenly items-center";
 
 export const routeEnum : Record<string, Path> = {
-  DASHBOARD: 'Dashboard',
   FLEXPOOL: 'Flexpool',
   YIELD: 'Yield',
   CREATE: 'CreateFlexpool',

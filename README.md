@@ -78,6 +78,9 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
 ### Providers 
 - Contract addresses
     - __[0xf3226E5bc32Ad476916C808198cFEBc5a154dD97]()__ (current)
+    - __[0x813F94222a056B3548bD8C332550d3F79EeA280C]()__ (v6)
+    - __[0xf3226E5bc32Ad476916C808198cFEBc5a154dD97]()__ (v5)
+    -  __[0x727ED1dF4421f45456aC04A67275895ED13905E9]()__ (v4)
     -  __[0x2DcAD71e4487c32c6F6763C59088E4b61fF0af3a]()__ (v3)
     - __[0x74C073D9d460458f2703cc27e6eD39fe3270a602]()__ (v2)
     - __[0x3252e2F4097936f078213937a356b65619341E3b]()__ (v1)
@@ -102,7 +105,10 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
 
 ### FlexPoolFactory (main) 
 - Contract addresses
-    - __[0x0A04Bc2e7eba58F9b60E9baBb7d6d2A9B8DF6B49]()__ (current)
+    - __[0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9]()__ (current)
+    - __[0x8635ba601A3a519d540a14d773EE09486E584606]()__ (V5)
+    - __[0x4a5bBda280D38644b08bcBdD413E80ED07faD60d]()__ (v4)
+    - __[0x0A04Bc2e7eba58F9b60E9baBb7d6d2A9B8DF6B49]()__ (v3)
     -  __[0x66ECA3234F0Aec3D69252B3c3CEA27916cfF0511]()__ (v2)
     - __[0x16f0512caA28DA6a890589819Fb70815DFd1206E]()__ (v1)
 
@@ -116,28 +122,3 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
 - __[Testnet site](https://testnet.simplifinance.xyz)__
 - __[Documentation](https://simplifinance.gitbook.io/docs/)__
 
-
-<!-- 
-Dscription
-==========
-BuyForMe is an AI-powered property finance protocol that lets users access their desired tangible items while protecting them from inflation. 
-
-Problem:
-========
-The rising cost of goods across economies has greatly prevented many from accessing desired goods depriving them of a good living. For example, in most African economies and other parts of the world, the prices of luxury goods have constantly increased so that the common man cannot afford them instantly e.g. cars, bikes, watches, designer clothing, country houses, etc. In Nigeria, for instance, the price of a Toyota Camry midsize sedan 2008 model was sold for about NGN2.5M approximately $1,600 today as of May 2025 is being sold for a whooping NGN9M to NGN13M. The prices of other items as well have skyrocketed.
-As a victim of this dare-devil inflation, I sold my car about a year ago for a ridiculous amount of $1250, only to find out 3 weeks later I needed at least $3400 to buy a similar car with the same standard. Up to this moment, even as I struggle to save, I cannot purchase it. Many others are facing the same problem.
-
-
-Solution:
-========
-Since we don't have the power to influence the economies, we can combat the problem from a simple perspective. Our solution is to protect people (perhaps our users) from the ever-increasing prices of goods while still being able to possess their desired luxuries. We deal only in stablecoins. Here is how it works:
-
-- User finds items they like. These are tangible and the kinds listed in our paper.
-- User registers the item details with us such as the cost, item type, brand, etc.
-- The user selects the payment plan and makes the initial deposit. They can choose to make the full payment or in parts.
-- We extract the necessary details and finalize an agreement.
-- The Item is then purchased on behalf of the user and securely kept. This ensures that the user is protected even if the cost of the item rises above the purchase price. 
-- The user gets their item after fully complying with the payment structure. -->
-
-<!-- Mission
-Our mission is to create an atmosphere where people feel fulfilled even in the face of uncertainty. -->

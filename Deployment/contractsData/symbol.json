@@ -1,0 +1,21 @@
+{
+  "contractAddress": "0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6",
+  "functionName": "symbol",
+  "inputCount": 0,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

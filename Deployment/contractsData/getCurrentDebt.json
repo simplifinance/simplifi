@@ -1,0 +1,32 @@
+{
+  "contractAddress": "0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9",
+  "functionName": "getCurrentDebt",
+  "inputCount": 2,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "unit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "target",
+          "type": "address"
+        }
+      ],
+      "name": "getCurrentDebt",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "debt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

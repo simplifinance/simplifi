@@ -1,4 +1,4 @@
-import { WelcomeTabs } from "@/components/AppFeatures/Dashboard/WelcomeTabs";
+import { WelcomeTabs } from "@/components/AppFeatures/WelcomeTabs";
 import Providers from "@/components/AppFeatures/Providers";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import { Button } from "@/components/ui/button";

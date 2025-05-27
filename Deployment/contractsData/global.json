@@ -1,0 +1,84 @@
+{
+  "approvedFunctions": [
+    "createPool",
+    "getFinance",
+    "deposit",
+    "payback",
+    "liquidate",
+    "deposits",
+    "closePool",
+    "contribute",
+    "registerToEarnPoints",
+    "provideLiquidity",
+    "removeLiquidity",
+    "borrow",
+    "claimTestTokens",
+    "setBaseToken",
+    "setCollateralToken",
+    "panicUnlock",
+    "unlockToken",
+    "lockToken",
+    "transferFrom",
+    "approve",
+    "getCollateralQuote",
+    "getCurrentDebt",
+    "allowance",
+    "balanceOf",
+    "getProviders",
+    "symbol",
+    "getFactoryData",
+    "getPoolRecord",
+    "getPoints",
+    "getSupportedAssets",
+    "getPoolData"
+  ],
+  "chainName": {
+    "4157": "crosstestnet",
+    "44787": "alfajores"
+  },
+  "chainIds": [
+    44787,
+    4157
+  ],
+  "paths": {
+    "4157": [],
+    "44787": [
+      "deployments\\alfajores\\Attorney.json",
+      "deployments\\alfajores\\BaseAsset.json",
+      "deployments\\alfajores\\CeloBased.json",
+      "deployments\\alfajores\\CeloSupportedAssetManager.json",
+      "deployments\\alfajores\\Escape.json",
+      "deployments\\alfajores\\Faucet.json",
+      "deployments\\alfajores\\Points.json",
+      "deployments\\alfajores\\Providers.json",
+      "deployments\\alfajores\\Reserve.json",
+      "deployments\\alfajores\\RoleManager.json",
+      "deployments\\alfajores\\SafeFactory.json",
+      "deployments\\alfajores\\SimpliToken.json",
+      "deployments\\alfajores\\StateManager.json",
+      "deployments\\alfajores\\SupportedAssetManager.json",
+      "deployments\\alfajores\\TokenDistributor.json",
+      "deployments\\alfajores\\WrappedNative.json"
+    ]
+  },
+  "contractAddresses": [
+    {
+      "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
+      "Attorney": "0x424B80b6D7Fa4d6193D813b8564d57a29162174C",
+      "BaseAsset": "0x210e77886554170bBa347db97CA64E2B9258124E",
+      "CeloBased": "0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9",
+      "CeloSupportedAssetManager": "0xB417BD4eB45A35Dd46f68C9549D4c55F2033E32F",
+      "Escape": "0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae",
+      "Faucet": "0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D",
+      "Points": "0xcef62f6c3B044527b571b96256F3Af82C65d23E3",
+      "Providers": "0xc561c9FC136a783dc3C28800c7BA94706344DC4E",
+      "Reserve": "0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0",
+      "SimpliToken": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
+      "SupportedAssetManager": "0xbCa26704Ed56A8F63346a5cdb5F18Cc8439e60c8",
+      "WrappedNative": "0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6"
+    },
+    {
+      "stablecoin": "0x0000000000000000000000000000000000000000"
+    }
+  ]
+}

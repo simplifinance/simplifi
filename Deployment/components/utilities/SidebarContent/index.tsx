@@ -9,8 +9,8 @@ export const SidebarContent = ({ path, title, icon }: CollapsibleProps) => {
   
   const handleClick = () => {
     setActivepath(path);
-    setTimeout(() => toggleSidebar(false), 500);
-    clearTimeout(500);
+    const timeoutObj = setTimeout(() => toggleSidebar(false), 500);
+    clearTimeout(timeoutObj);
   }
   
   return (
@@ -35,5 +35,4 @@ interface CollapsibleProps {
   path: Path;
   title: string;
   icon: React.JSX.Element;
-  // disabled: boolean;
 }

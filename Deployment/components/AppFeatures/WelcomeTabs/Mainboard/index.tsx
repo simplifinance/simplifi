@@ -7,7 +7,7 @@ import useAppStorage from "@/components/contexts/StateContextProvider/useAppStor
 import SignUp from "./SignUp";
 import GetTestTokens from "./GetTestTokens";
 
-export default function Dashboard() {
+export default function Mainboard() {
     const { isConnected } = useAccount();
     const { setActivepath } = useAppStorage();
     const { connectModalOpen, openConnectModal } = useConnectModal();

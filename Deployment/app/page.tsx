@@ -8,6 +8,7 @@ import { StorageContextProvider } from "@/components/contexts/StateContextProvid
 import { useAccount, useBlockNumber, useConfig, useReadContracts,} from "wagmi";
 import AppFeatures from "@/components/AppFeatures";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
+import InitialPopUp from "@/components/AppFeatures/InitialPopUp";
 
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
@@ -17,7 +18,7 @@ export default function SimplifiApp() {
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
-  const [activePath, setActivePath] = React.useState<Path>('Dashboard');
+  const [activePath, setActivePath] = React.useState<Path>('Flexpool');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
 
   const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets'];
@@ -149,6 +150,7 @@ export default function SimplifiApp() {
     >
       <AppFeatures currentPath={activePath} />
       <Notification message={messages[messages.length - 1] || ''} resetMessage={() => setmessage('')} />
+      <InitialPopUp />
     </StorageContextProvider>
   );
 }

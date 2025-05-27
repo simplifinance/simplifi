@@ -32,7 +32,6 @@ export type FormattedProviders = FormattedProvider[];
 export type TransactionData = {
   contractAddress: string;
   inputCounts: number;
-  inputs: string[];
   functionName: string;
   abi: any;
   requireArgUpdate: boolean;

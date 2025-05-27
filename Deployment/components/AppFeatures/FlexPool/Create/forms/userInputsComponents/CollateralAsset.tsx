@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Address, InputCategoryProp } from '@/interfaces';
-import SelectComponent from '@/components/AppFeatures/Dashboard/WelcomeTabs/SelectComponent';
+import SelectComponent from '@/components/AppFeatures/WelcomeTabs/SelectComponent';
 import { Label } from '@/components/ui/label';
 // import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 
