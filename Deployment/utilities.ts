@@ -20,6 +20,7 @@ import { Router, StageStr } from "./constants";
 import { formatEther } from "viem";
 import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
+import { getStepData } from "./stepsData";
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -98,19 +99,6 @@ export const filterAbi = (abi: any[], functionName: FunctionName) => {
   return abi.filter((item) => item.name === funcName);
 }
 
-export const lazyImport = (path: string) => {
-  let returnValue: TransactionData = {
-    contractAddress: "",
-    functionName: "",
-    inputCounts: 0,
-    requireArgUpdate: false,
-    abi: []
-  };
-  import(path).then((result: TransactionData) => returnValue = result);
-  console.log("returnValue", returnValue);
-  return returnValue;
-}
-
 /**
  * @dev Filter transaction data such as abis, contract addresses, inputs etc. If the filter parameter is true, it creates transaction data for 
  * the parsed function names. Default to false.
@@ -130,8 +118,8 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
         callback?.({errorMessage});
         throw new Error(errorMessage);
       }
-      const stepData = lazyImport(`@/contractsData/${functionName}.json`);
-      transactionData.push(stepData);
+      const data = getStepData(functionName);
+      transactionData.push(data);
     })
   }
 
@@ -139,7 +127,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
     transactionData,
     approvedFunctions,
     contractAddresses: contractAddresses[index],
-    isCelo 
+    isCelo  
   }
 }
 
