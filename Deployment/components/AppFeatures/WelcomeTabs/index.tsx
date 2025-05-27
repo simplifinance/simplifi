@@ -1,5 +1,5 @@
 import { Tabs, TabsContent as Content, TabsList, TabsTrigger,} from "@/components/ui/tabs";
-import Dashboard from "./Dashboard";
+import Dashboard from "./Mainboard";
 import Leaderboard from "./Leaderboard";
 import RewardAndPoints from "./RewardAndPoints";
 import React from "react";

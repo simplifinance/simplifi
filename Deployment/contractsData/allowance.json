@@ -1,0 +1,32 @@
+{
+  "contractAddress": "0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6",
+  "functionName": "allowance",
+  "inputCount": 2,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "spender",
+          "type": "address"
+        }
+      ],
+      "name": "allowance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

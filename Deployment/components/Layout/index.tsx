@@ -8,11 +8,9 @@ import ErrorBoundary from "../utilities/ErrorBoundary";
 import Navbar from "./Navbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSideBar from "./RightSidebar";
-// import Footer from "./Footer";
 
 const Layout = ({children} : {children: React.ReactNode}) => {
   const [loading, setLoading] = React.useState(true);
-  // const [isMounted, setMount] = React.useState(false);
   const windowIsDefined = typeof window !== "undefined"
   
   React.useEffect(() => {

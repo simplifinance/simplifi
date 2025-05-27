@@ -1,0 +1,43 @@
+{
+  "contractAddress": "0xbCa26704Ed56A8F63346a5cdb5F18Cc8439e60c8",
+  "functionName": "getSupportedAssets",
+  "inputCount": 0,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getSupportedAssets",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "id",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "bool",
+              "name": "isWrappedAsset",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct ISupportedAsset.SupportedAsset[]",
+          "name": "_assets",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

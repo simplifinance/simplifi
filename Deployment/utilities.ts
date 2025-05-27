@@ -13,12 +13,12 @@ import type {
   SlotStruct,
   FunctionName,
   TransactionData,
-  FilterTransactionDataProps, 
+  FilterTransactionDataProps,
 } from "@/interfaces";
 import BigNumber from "bignumber.js";
 import { Router, StageStr } from "./constants";
 import { formatEther } from "viem";
-import rawData from "@/contractsData.json"; 
+import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
 
 /**
@@ -98,6 +98,19 @@ export const filterAbi = (abi: any[], functionName: FunctionName) => {
   return abi.filter((item) => item.name === funcName);
 }
 
+export const lazyImport = (path: string) => {
+  let returnValue: TransactionData = {
+    contractAddress: "",
+    functionName: "",
+    inputCounts: 0,
+    requireArgUpdate: false,
+    abi: []
+  };
+  import(path).then((result: TransactionData) => returnValue = result);
+  console.log("returnValue", returnValue);
+  return returnValue;
+}
+
 /**
  * @dev Filter transaction data such as abis, contract addresses, inputs etc. If the filter parameter is true, it creates transaction data for 
  * the parsed function names. Default to false.
@@ -105,29 +118,28 @@ export const filterAbi = (abi: any[], functionName: FunctionName) => {
  * @returns object containing array of transaction data and approved functions
  */
 export function filterTransactionData({chainId, filter, functionNames, callback}: FilterTransactionDataProps) {
-  const { approvedFunctions, chainIds, data, contracts } = rawData;
-  const index = chainIds.indexOf(chainId || chainIds[0]);
+  const { approvedFunctions, chainIds, contractAddresses } = globalContractData;
   let transactionData : TransactionData[] = [];
-  const contractAddresses = contracts[index];
+  const index = chainIds.indexOf(chainId || chainIds[0]);
   const isCelo = chainId === chainIds[0];
-
   if(filter) {
     assert(functionNames !== undefined, "FunctionNames not provided");
-    functionNames.forEach((functionName: string) => {
+    functionNames.forEach((functionName) => {
       if(!approvedFunctions.includes(functionName)) {
         const errorMessage = `Operation ${functionName} is not supported`;
         callback?.({errorMessage});
         throw new Error(errorMessage);
       }
-      const filteredData = data[index].filter(({functionName : fName}) => fName === functionName);
-      transactionData.push(filteredData[0]);
-    });
+      const stepData = lazyImport(`@/contractsData/${functionName}.json`);
+      transactionData.push(stepData);
+    })
   }
+
   return {
     transactionData,
     approvedFunctions,
-    contractAddresses,
-    isCelo
+    contractAddresses: contractAddresses[index],
+    isCelo 
   }
 }
 

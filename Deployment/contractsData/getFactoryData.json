@@ -1,0 +1,65 @@
+{
+  "contractAddress": "0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9",
+  "functionName": "getFactoryData",
+  "inputCount": 0,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getFactoryData",
+      "outputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "tvlCollateral",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "tvlBase",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "totalPermissioned",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "totalPermissionless",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Common.Analytics",
+              "name": "analytics",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint16",
+              "name": "makerRate",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint256",
+              "name": "currentEpoches",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "recordEpoches",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct Common.ViewFactoryData",
+          "name": "data",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
