@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D",
+  "contractAddress": "0xE28D8Da2919Ee43dd3f5EC0420B079fDd215C0F1",
   "functionName": "setCollateralToken",
   "inputCount": 1,
   "requireArgUpdate": false,
@@ -112,6 +112,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getRoleManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address[]",
@@ -128,19 +141,6 @@
         }
       ],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "roleManager",
-      "outputs": [
-        {
-          "internalType": "contract IRoleBase",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {

@@ -172,11 +172,12 @@ export interface LiquidateParam extends BandParam {
   asset: BaseAsset;
   deployer: Signer;
   collateral: SimpliToken;
+  pool?: Common.PoolStructOutput;
 }
 
 export interface GetFinanceParam extends BandParam {
   colQuote: bigint;
-  asset: BaseAsset;
+  asset: BaseAsset; 
   collateral: SimpliToken;
   deployer: Signer;
 }

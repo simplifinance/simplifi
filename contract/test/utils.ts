@@ -57,13 +57,14 @@ import type {
       testAsset: x.asset
     }) 
     await x.factory.connect(x.signer).createPool( users, x.unitLiquidity, x.quorum, x.durationInHours, x.colCoverage, isPermissionless, x.collateralToken);
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await x.factory.getPoolData(unitId);
+    const { currentPools, recordEpoches} = (await x.factory.getFactoryData());
+    const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unitLiquidity);
+    const pool = filtered?.[0];
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr, pool[0].big.recordId);
+    const slot = await x.factory.getSlot(signerAddr, pool.pool.big.unitId);
     return { pool, balances, profile, slot};
   }
   
@@ -103,13 +104,14 @@ import type {
       isPermissionless,
       x.collateralToken
     );
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await x.factory.getPoolData(unitId);
+    const { currentPools } = (await x.factory.getFactoryData());
+    const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unitLiquidity);
+    const pool = filtered?.[0];
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateralToken.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unitLiquidity, signerAddr)).profile;
-    const slot = await x.factory.getSlot(signerAddr,pool[0].big.recordId);
+    const slot = await x.factory.getSlot(signerAddr, pool.pool.big.unitId);
   
     return { pool, balances, profile, slot };
   }
@@ -140,8 +142,9 @@ import type {
       testAsset: x.collateral
     });
     await x.factory.connect(signer).getFinance(x.unit);
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await x.factory.getPoolData(unitId);
+    const { currentPools } = (await x.factory.getFactoryData());
+    const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unit);
+    const pool = filtered?.[0];
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -185,15 +188,23 @@ import type {
       spender: factoryAddr,
       testAsset: x.asset
     });
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
+  
     await x.factory.connect(signer).payback(x.unit);
-    const pool = await x.factory.getPoolData(unitId);
-    const base = await x.asset.balanceOf(pool.pool.addrs.safe);
-    const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
+    let pool: Common.PoolStructOutput | undefined = undefined;
+    let currentPools : Common.ReadPoolDataReturnValueStructOutput[] = (await x.factory.getFactoryData()).currentPools;
+
+    if(!x.pool) {
+      currentPools = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unit);
+      pool = currentPools?.[0].pool;
+    } else {
+      pool = x.pool;
+    }
+    const base = await x.asset.balanceOf(pool.addrs.safe);
+    const collateral = await x.collateral.balanceOf(pool.addrs.safe);
     const balances : Balances = { base, collateral };
     const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
     return {
-      pool,
+      pool: currentPools?.[0],
       balances,
       profile
     }
@@ -234,8 +245,9 @@ import type {
       testAsset: x.asset
     });
     await x.factory.connect(signer).liquidate(x.unit);
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await x.factory.getPoolData(unitId);
+    const { currentPools } = (await x.factory.getFactoryData());
+    const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unit);
+    const pool = filtered?.[0];
     const base = await x.asset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -305,13 +317,12 @@ import type {
     {
       owner: Address,
       asset: BaseAsset,
-      factory: FlexpoolFactory,
+      safeAddr: Address,
       spender: Signer,
-      collateral: SimpliToken,
-      unit: bigint
+      collateral: SimpliToken
     }
   ){
-    const { asset, owner, collateral: collateralToken, unit, factory, spender} = x;
+    const { asset, owner, collateral: collateralToken, safeAddr, spender} = x;
     const spenderAddr = await spender.getAddress();
     const baseBalB4 = await asset.balanceOf(spender);
     const colBalB4 = await collateralToken.balanceOf(spender);
@@ -322,10 +333,8 @@ import type {
     const baseBalAfter = await asset.balanceOf(spender);
     const colBalAfter = await collateralToken.balanceOf(spender);
 
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await factory.getPoolData(unitId);
-    const base = await asset.balanceOf(pool.pool.addrs.safe);
-    const collateral = await collateralToken.balanceOf(pool.pool.addrs.safe);
+    const base = await asset.balanceOf(safeAddr);
+    const collateral = await collateralToken.balanceOf(safeAddr);
     const balances : Balances = { base, collateral };
     return { balances, baseBalB4, colBalB4, colBalAfter, baseBalAfter };
   }
@@ -385,8 +394,9 @@ import type {
       const profile = (await x.factory.getProfile(x.unit, signerAddr)).profile;
       profiles.push(profile);
     }
-    const unitId = (await x.factory.getFactoryData()).currentEpoches;
-    const pool = await x.factory.getPoolData(unitId);
+    const { currentPools } = (await x.factory.getFactoryData());
+    const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === x.unit);
+    const pool = filtered?.[0];
     const base = await x.testAsset.balanceOf(pool.pool.addrs.safe);
     const collateral = await x.collateral.balanceOf(pool.pool.addrs.safe);
     const balances : Balances = { base, collateral };
@@ -479,13 +489,13 @@ export async function borrow(args: BorrowArg) {
   const { signer, contract, signerAddr, providersSlots, amount, flexpool } = args;
   await contract.connect(signer).borrow(providersSlots, amount);
   const profile = await flexpool.getProfile(amount, signerAddr);
-  const unitId = (await flexpool.getFactoryData()).currentEpoches;
-  const pool = await flexpool.getPoolData(unitId);
+  const { currentPools } = (await flexpool.getFactoryData());
+  const filtered = currentPools.filter(({pool: {big: { unit}}}) => unit === amount);
+  const pool = filtered?.[0];
   return {
     size: profile.length,
     profile,
     pool
-
   }
 }
 

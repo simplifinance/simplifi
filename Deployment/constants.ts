@@ -53,8 +53,6 @@ export const displayMessages : Record<string, {start: string, end: string}> = {
   'provideLiquidity': {start: 'Request to provide liquidity', end: 'You successully provided liquidity '},
 }
 
-export const approvedFunctions : FunctionName[] = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'editPool', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt'];
-
 // We support only USDC and native platform token for now
 export const getSupportedCollateralAsset = (chainId: number, symbol: string) => {
   const { contractAddresses: ca } = filterTransactionData({ chainId, filter: false });

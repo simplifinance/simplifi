@@ -81,7 +81,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
                         break;
                     case 'deposit':
                         if(prevDeposit >= collateralQuote){
-                            proceed = 0;
+                            // proceed = 0;
                             value = 0n;
                         }
                         args = [flexpoolContract];

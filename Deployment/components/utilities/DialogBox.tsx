@@ -20,7 +20,9 @@ export default function DialogBox({ title, description, footerContent, children 
                 </DialogHeader>
                 { children }
                 <div className={`flex justify-center md:justify-end gap-4`}>
-                    { footerContent && <DialogFooter>{ footerContent }</DialogFooter>}
+                    { footerContent && <DialogFooter>
+                            <DialogClose>{ footerContent }</DialogClose>
+                        </DialogFooter>}
                     <DialogClose>
                         <Button className="w-[110px]">Exit</Button>
                     </DialogClose>

@@ -11,11 +11,13 @@ const GLOBAL_OUTPUT_PATH = '../Deployment/contractsData/global.json';
 const approvedFunctions = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'deposits', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData'];
 const readFunctions = ['getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData'];
 const functionsRequireArgUpdate = ['transferFrom', 'approve', 'deposit'];
-const chainName = {44787: 'alfajores', 4157: 'crosstestnet'};
-const chainIds = [44787, 4157]
+const chainName = {44787: 'alfajores', 4157: 'crossstestnet', 42220: 'celo', 4158: 'crossmainnet'};
+const chainIds = [44787, 4157, 42220, 4158]
 let workBuild = {
     44787: [],
-    4157: [],
+    42220: [],
+    4157:[],
+    4158: []
 };
 
 let globalOutput = {
@@ -75,11 +77,7 @@ try {
         workBuild[chainId].forEach(filepath => {
             const artifact = JSON.parse(fs.readFileSync(filepath, 'utf8'));
             const basename = path.basename(filepath).replace('.json', '');
-            
-            // if (!fs.existsSync(stdItemOutPath)) {
-            //     fs.mkdirSync(stdItemOutPath, { recursive: true });
-            // }
-            // console.log("BaseName: ", basename);
+
             // Extract and save all the required data such as the ABI, contractAddress, inputs etc
             artifact.abi.forEach((item) => {
                 if(item.type === 'function' && approvedFunctions.includes(item.name)) {

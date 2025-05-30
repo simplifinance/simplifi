@@ -9,7 +9,7 @@ export const PermissionPopUp : React.FC<{popUpDrawer: number, toggleDrawer: (arg
             setDrawerState={toggleDrawer} 
             onClickAction={() => toggleDrawer(0)}
         >
-            <div className={`p-4 text-center md:text-xl text-orange-200`}>
+            <div className={`p-4 md:text-xl dark:text-orange-200 text-green1/80 font-semibold border rounded-lg text-md`}>
                 <h1>{ children }</h1>
             </div>
         </Drawer>

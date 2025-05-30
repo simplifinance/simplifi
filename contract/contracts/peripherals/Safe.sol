@@ -113,10 +113,10 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param unit : Unit contribution
      */
     function _tryRoundUp(
-        IERC20 baseAsset,
+        IERC20 baseAsset, 
         uint unit,
-        uint96 recordId,
-        Common.Contributor[] memory data
+        Common.Contributor[] memory data,
+        Common.Provider[] memory _providers
     ) internal {
         uint erc20Balances = IERC20(baseAsset).balanceOf(address(this));
         uint fees = aggregateFee;
@@ -129,7 +129,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 }
                 if(erc20Balances > 0) {
                     for(uint i = 0; i < data.length; i++) {
-                        erc20Balances -= _settleAccruals(data[i], unit, recordId, baseAsset);
+                        erc20Balances -= _settleAccruals(data[i], unit, baseAsset, _providers);
                     }
                     if(erc20Balances > 0) {
                         if(!IERC20(baseAsset).transfer(feeTo, erc20Balances)) 'S153'._throw();
@@ -214,7 +214,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
                 require(done, 'Failed');
             }
         }
-        if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.recordId, _p.cData);
+        if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.cData, _p.providers);
         return col;
     }
 
@@ -229,11 +229,10 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     function _settleAccruals(
         Common.Contributor memory data, 
         uint unit, 
-        uint96 recordId,
-        IERC20 baseAsset
+        IERC20 baseAsset,
+        Common.Provider[] memory _providers
     ) internal returns(uint totalPaidOut) {
         uint amtLeft = paybacks[data.id];
-        Common.Provider[] memory _providers = IFactory(_msgSender()).getContributorProviders(data.id, recordId);
         unchecked {
             if(_providers.length > 0) {
                 for(uint i = 0; i < _providers.length; i++) {

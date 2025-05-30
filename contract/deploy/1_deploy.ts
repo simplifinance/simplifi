@@ -208,11 +208,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   
   // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
   if(networkName !== 'hardhat') {
-    const result = await read(flexpool, {from: deployer}, "priceData", wrappedNative.address);
+    const result = await read(flexpool, {from: deployer}, "getPriceData", wrappedNative.address);
     console.log("Quote", result?.any.toString() || result?.[3].toString());
   } else {
-    const result = await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
-    // console.log("result", result);
+    await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
   }
 };
 

@@ -64,15 +64,6 @@ describe("Permissioned: Enquire Liquidation Success", function () {
         deployer
       });
       
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-
       // Increase the duration
       const currentTime = await time.latest();
       const duration = currentTime + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE;

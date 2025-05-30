@@ -3,33 +3,64 @@
 pragma solidity 0.8.24;
 
 /**
+ * @title : Epoches contract
+ * @author : Bobeu - Simplifinance - https://github.com/bobeu
+ * @notice It is a base contract manages push and retrieval actions on pools in storage.
+ * 
  * ERROR CODE
+ * =========
  * 1 - Unit is active
  * 2 - Unit is inactive
  */
-import { PastEpoches, Common, Counters } from "./PastEpoches.sol";
 
-abstract contract Epoches is PastEpoches {
+import { Common } from "../interfaces/Common.sol";
+import { Counters } from "@thirdweb-dev/contracts/external-deps/openzeppelin/utils/Counters.sol";
+
+abstract contract Epoches {
     using Counters for Counters.Counter;
 
-    // Past/completed pools
-    Counters.Counter private epoches;
+    // Current pool counter
+    Counters.Counter private currentCounter;
 
-    // Mapping of unitId to current Pool
-    mapping(uint96 => Common.Pool) private pools; 
+    // Past pool counter
+    Counters.Counter private recordCounter;
 
     /**
-     * @dev Mapping of unit contribution to unitId
-     * For every unit amount of contribution, there is a corresponding index for retrieving data from the storage.
+     * Mapping holding two storage branches. Common.Branch.CURRENT => unitId returns a mapped value of type Common.Pool while
+     * Common.Branch.RECORD => recordId returns a mapped value of type Pool. The difference is that one is a past pool while the 
+     * other returns a active pool 
+    */ 
+    mapping(Common.Branch => mapping(uint96 unitOrRecordId => Common.Pool)) private pools;
+ 
+    /**
+     * @dev Mapping of unit contribution to unit Ids
+     * For every unit amount of contribution, there is a corresponding index for retrieving the pool object from the storage.
      */
-    mapping(uint256 => uint96) private indexes; 
+    mapping(uint256 unitContribution => uint96) private ids; 
+
+    /**
+     * @dev Ensure the contribution unit is active. 
+     * @notice When unit is not active, it can be relaunched. 
+    */
+    modifier _requireUnitIsActive(uint unit){
+        require(_isUnitActive(unit), '2');
+        _;
+    }
+
+    /**
+     *  @dev Add a completed pool to history 
+     * @param pool : Pool object to push to storage
+    */
+    function _setRecord(Common.Pool memory pool) internal {
+        pools[Common.Branch.RECORD][pool.big.recordId] = pool;
+    }
 
     /**
      * @dev Verify that the contribution unit is not active. 
      * @notice When unit is not active, it can be relaunched. 
     */
-    modifier _checkUnitStatus(uint unit, bool value){
-        require(value? _isUnitActive(unit) : !_isUnitActive(unit), '1');
+    modifier _requireUnitIsNotActive(uint unit){
+        require(!_isUnitActive(unit), '1');
         _;
     }
 
@@ -39,27 +70,38 @@ abstract contract Epoches is PastEpoches {
         * When a unitId equals zero mean it is not active
     */
     function _isUnitActive(uint unit) internal view returns(bool result){
-        result = pools[_getUnitId(unit)].status == Common.Status.TAKEN;
+        result = pools[Common.Branch.CURRENT][_getUnitId(unit)].status == Common.Status.TAKEN; 
     }
 
-    function _getUnitId(uint unit) internal view returns(uint96 _unitId) {
-        _unitId = indexes[unit];
-    }
-    
     /**
-     * @dev Return record Id in a pool with unit contribution
+     * @dev Fetch unit id/index
      * @param unit : Unit contribution
-    */
-    function _getRecordId(uint unit) internal view returns(uint96 _recordId) {
-        _recordId = _getPool(unit).big.recordId;
+     */
+    function _getUnitId(uint unit) internal view returns(uint96 _unitId) {
+        _unitId = ids[unit];
     }
 
-    // Generate unit Id and record Id
+    /** 
+     * @dev Generate a new unit Id
+     * @param unit : Unit contribution
+     * @notice When a pool is created, we generate a unitId and a recordId. Unit Id can be used to access the pool directly
+     * from the activePools storage reference while recordId can be used to retrieve the past pool. Since every unit contribution can 
+     * have a unique id assigned to them, to avoid collision and data loss, we generate a slot stored in each pool object ahead before the epoch is
+     * completed. So at any point in time, a completed pool can be retrieved using its corresponding recordId while an active pool maintains a 
+     * unique unit Id
+     */
     function _generateIds(uint unit) internal returns(uint96 unitId, uint96 recordId) {
-        epoches.increment();
-        unitId = uint96(epoches.current());
-        indexes[unit] = unitId;
-        recordId = _generateRecordId();
+        currentCounter.increment(); 
+        (unitId, recordId) = _getCounters();
+        recordCounter.increment();
+        ids[unit] = unitId;
+    }
+
+    /**
+     * @dev Return both the current and past pool counters
+     */
+    function _getCounters() internal view returns(uint96 activePoolCounter, uint96 pastPoolCounter) {
+        (activePoolCounter, pastPoolCounter) = (uint96(currentCounter.current()), uint96(recordCounter.current()));
     }
 
     /**
@@ -71,21 +113,28 @@ abstract contract Epoches is PastEpoches {
     }
 
     /**
+     * @dev Update pool in storage
+     * @param pool : Pool object
+     * @param unitId : Unit Id
+     */    
+    function _setPool(Common.Pool memory pool, uint96 unitId) internal {
+        pools[Common.Branch.CURRENT][unitId] = pool;
+    }
+
+    /**
      * @dev Fetch Current pool with unitId
      * @param unitId : Unit Id
      */
     function _getPoolWithUnitId(uint96 unitId) internal view returns(Common.Pool memory result){
-        result = pools[unitId];
+        result = pools[Common.Branch.CURRENT][unitId];
     }
 
-    // Return past pool counter
-    function _getEpoches() internal view returns(uint96 _epoches) {
-        _epoches = uint96(epoches.current());
-    }
-
-    /// @dev Update pool in storage 
-    function _setPool(uint96 unitId, Common.Pool memory pool) internal {
-        pools[unitId] = pool;
+    /**
+     * @dev Fetch Current pool with unitId
+     * @param recordId : Unit Id
+     */
+    function _getPoolWithRecordId(uint96 recordId) internal view returns(Common.Pool memory result){
+        result = pools[Common.Branch.RECORD][recordId];
     }
 
     /**
@@ -93,9 +142,9 @@ abstract contract Epoches is PastEpoches {
      * @param pool : Current pool
      */ 
     function _shufflePool(Common.Pool memory pool) internal {
-        Common.Pool memory empty = pools[0];
-        _setPool(pool.big.unitId, empty);
-        _setRecord(pool.big.recordId, pool);
+        Common.Pool memory empty = pools[Common.Branch.CURRENT][0];
+        _setPool(empty, pool.big.unitId);
+        _setRecord(pool);
     }
 
     /**@dev Check if pool is filled
@@ -115,7 +164,7 @@ abstract contract Epoches is PastEpoches {
 
     /**@dev Sets new last paid */
     function _setLastPaid(address to, uint unit) internal {
-        pools[_getPool(unit).big.unitId].addrs.lastPaid = to;
+        pools[Common.Branch.CURRENT][_getUnitId(unit)].addrs.lastPaid = to; 
     }
 
 

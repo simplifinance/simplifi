@@ -64,16 +64,6 @@ describe("Permissioned: Payback", function () {
         deployer
       });
 
-      expect(gf.pool.pool.big.currentPool).to.be.equal(ZERO);
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-      
       /**
        * We need to fastrack the block time to near the duration of choice of the borrower
        * to avoid being liquidated.

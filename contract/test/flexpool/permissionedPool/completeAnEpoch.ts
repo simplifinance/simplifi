@@ -13,6 +13,7 @@ import {
   DURATION_IN_SECS,
 } from "../../utilities";
 import { createPermissionedPool, getFinance, joinEpoch, payback, withdraw } from "../../utils";
+import { Address } from "../../types";
 
 describe("Permissioned: Complete An Epoch", function () {
   async function deployContractsFixcture() {
@@ -66,11 +67,10 @@ describe("Permissioned: Complete An Epoch", function () {
       
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf.pool.pool.addrs.safe),
         spender: signer1,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       /**
@@ -107,11 +107,10 @@ describe("Permissioned: Complete An Epoch", function () {
       
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer2,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       const duratonInSec = BigInt((await time.latest()) + (DURATION_IN_SECS));
@@ -130,11 +129,15 @@ describe("Permissioned: Complete An Epoch", function () {
         factory: flexpool,
         debt: debtToDate_2,
         signers: [signer2],
-        collateral: collateralAsset
+        collateral: collateralAsset,
+        pool: create.pool.pool
       }); 
 
+      const { pastPools } = await flexpool.getFactoryData();
+      const filtered = pastPools.filter(({pool: {big: { unit}}}) => unit === create.pool.pool.big.unit);
+      const pool = filtered?.[0].pool;
       expect(pay_2.profile.colBals).to.be.equal(ZERO);
-      expect(pay_2.pool.pool.big.currentPool).to.be.equal(ZERO);
+      expect(pool.big.currentPool).to.be.equal(ZERO);
 
       const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
       const s1 = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
@@ -146,20 +149,18 @@ describe("Permissioned: Complete An Epoch", function () {
 
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer1,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
+        safeAddr: create.pool.pool.addrs.safe as Address,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer2,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        collateral: collateralAsset
       });
 
       const s1After = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
@@ -180,20 +181,18 @@ describe("Permissioned: Complete An Epoch", function () {
       // Participants withdraw from the safe
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer1,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address,
       });
 
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer2,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       const data = await safeContract.getData();

@@ -43,7 +43,6 @@ describe("Providers", function () {
       );
 
       await joinEpoch({
-        contribution: amount,
         deployer,
         unit: amount,
         factory: flexpool,

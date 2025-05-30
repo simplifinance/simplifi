@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6",
+  "contractAddress": "0x12671270d6207786E58B9cE62fAc5814c8684056",
   "functionName": "approve",
   "inputCount": 2,
   "requireArgUpdate": true,
@@ -310,12 +310,12 @@
     },
     {
       "inputs": [],
-      "name": "name",
+      "name": "getRoleManager",
       "outputs": [
         {
-          "internalType": "string",
+          "internalType": "address",
           "name": "",
-          "type": "string"
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -323,12 +323,12 @@
     },
     {
       "inputs": [],
-      "name": "roleManager",
+      "name": "name",
       "outputs": [
         {
-          "internalType": "contract IRoleBase",
+          "internalType": "string",
           "name": "",
-          "type": "address"
+          "type": "string"
         }
       ],
       "stateMutability": "view",

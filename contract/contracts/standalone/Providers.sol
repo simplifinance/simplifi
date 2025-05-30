@@ -77,7 +77,7 @@ contract Providers is MinimumLiquidity, IProviders, ReentrancyGuard {
         address sender = _msgSender();
         Data memory data = slots[sender];
         Common.Interest memory interest;
-        uint liquidity = _checkAndWithdrawAllowance(_getVariables().baseAsset, sender, address(this), minimumLiquidity);
+        uint liquidity = _checkAndWithdrawAllowance(_getVariables().baseAsset, sender, address(this), getMinimumLiquidity());
         unchecked {
             if(!data.hasIndex){
                 data.id = providers.length;

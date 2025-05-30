@@ -56,7 +56,7 @@ describe("Permissionless: Enquire Liquidation", function () {
       });
 
       const quoted = await flexpool.connect(signer1).getCollateralQuote(create.pool.pool.big.unit);
-      const gf = await getFinance({
+      await getFinance({
         unit: create.pool.pool.big.unit,
         factory: flexpool,
         signers: [signer1],
@@ -64,15 +64,6 @@ describe("Permissionless: Enquire Liquidation", function () {
         asset: baseAsset,
         collateral: collateralAsset,
         deployer
-      });
-      
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
       });
 
       // Decrease the duration

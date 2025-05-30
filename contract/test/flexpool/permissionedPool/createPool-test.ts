@@ -36,7 +36,7 @@ describe("Permissioned: CreatePool test", function () {
                 pool: {
                     addrs: { colAsset, safe, lastPaid, admin }, 
                     low: { colCoverage, duration, selector, allGh, }, 
-                    big: { currentPool, unit},
+                    big: { currentPool, unit, unitId},
                     router
                 },
                 cData: members
@@ -58,8 +58,8 @@ describe("Permissioned: CreatePool test", function () {
             }
         );
 
-        const slot2 = await flexpool.getSlot(signer2Addr, unit);
-        const slot3 = await flexpool.getSlot(signer3Addr, unit);
+        const slot2 = await flexpool.getSlot(signer2Addr, unitId);
+        const slot3 = await flexpool.getSlot(signer3Addr, unitId);
         const safeContract = await retrieveSafeContract(formatAddr(safe));
         const safeData = await safeContract.getData();
 

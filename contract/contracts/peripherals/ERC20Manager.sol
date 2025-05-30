@@ -16,7 +16,7 @@ import { Pausable } from "./Pausable.sol";
  */
 abstract contract ERC20Manager is Pausable {
     // Storage contract
-    IStateManager public stateManager;
+    IStateManager private stateManager;
 
     modifier onlySupportedAsset(address asset) {
         IStateManager.StateVariables memory state = _getVariables();
@@ -82,6 +82,10 @@ abstract contract ERC20Manager is Pausable {
     // Get all state variables internally from the state manager
     function _getVariables() internal view returns(IStateManager.StateVariables memory result) {
         result = stateManager.getStateVariables();
+    }
+
+    function getStateManager() public view returns(address) {
+        return address(stateManager); 
     }
 
 }

@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
+  "contractAddress": "0xA198dBa0baaBCDb67C2c1aCD8546d7a7bd9e6faF",
   "functionName": "panicUnlock",
   "inputCount": 2,
   "requireArgUpdate": false,
@@ -404,6 +404,19 @@
       "type": "function"
     },
     {
+      "inputs": [],
+      "name": "getRoleManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -520,19 +533,6 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "roleManager",
-      "outputs": [
-        {
-          "internalType": "contract IRoleBase",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",

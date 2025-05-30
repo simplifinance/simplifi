@@ -4,7 +4,7 @@ pragma solidity 0.8.24;
 
 import { ERC20, Context } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
-import { OnlyRoleBase, MsgSender } from "../../peripherals/OnlyRoleBase.sol";
+import { Pausable } from "../../peripherals/Pausable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
@@ -15,18 +15,18 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.s
  * stablecoin as cover for the asset they're borrowing. To have more granular control over the deposited
  * XFI coin, we provide a wrapped version of the native coin. 
 */
-contract WrappedNative is ERC20, OnlyRoleBase, ReentrancyGuard {
+contract WrappedNative is ERC20, Pausable, ReentrancyGuard {
     mapping(address => uint) public beneficiaries;
 
     mapping(address => mapping(address => uint)) public deposits;
 
-    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) OnlyRoleBase(_roleManager) {}
+    constructor(address _roleManager, string memory _name, string memory _symbol) ERC20(_name, _symbol) Pausable(_roleManager) {}
 
     /**
      * @dev Deposit collateral
      * @param to : Account to receive the deposit
     */
-    function deposit(address to) public payable returns(bool) {
+    function deposit(address to) public payable whenNotPaused returns(bool) {
         address sender = _msgSender();
         unchecked {
             deposits[sender][to] += msg.value;

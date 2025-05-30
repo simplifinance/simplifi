@@ -36,7 +36,6 @@ describe("Permissionless: CreatePool test", function () {
                 pool: { 
                     pool: {
                         addrs: { colAsset, safe, lastPaid, admin }, 
-                        stage, 
                         low: { colCoverage, duration, selector, allGh, }, 
                         big: { currentPool, unit},
                         router

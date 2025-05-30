@@ -71,11 +71,10 @@ describe("Permissionless: Complete An Epoch", function () {
       
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf.pool.pool.addrs.safe),
         spender: signer1,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       /**
@@ -105,11 +104,10 @@ describe("Permissionless: Complete An Epoch", function () {
 
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(pay.pool.pool.addrs.safe),
         spender: signer1,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       expect(bn(pay.profile.colBals).lt(bn(gf.profile.colBals))).to.be.true;
@@ -131,11 +129,10 @@ describe("Permissionless: Complete An Epoch", function () {
       
       await withdraw({
         asset: baseAsset,
-        factory: flexpool,
         owner: formatAddr(gf_2.pool.pool.addrs.safe),
         spender: signer2,
         collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       const durOfChoiceInSec_2 = await time.latest() + DURATION_IN_SECS;
@@ -154,21 +151,24 @@ describe("Permissionless: Complete An Epoch", function () {
         factory: flexpool,
         debt: debtToDate_2,
         signers: [signer2],
-        collateral: collateralAsset
+        collateral: collateralAsset,
+        pool: create.pool.pool
       }); 
 
       await withdraw({
         owner: create.pool.pool.addrs.safe as Address,
         asset: baseAsset,
         collateral: collateralAsset,
-        factory: flexpool,
         spender: signer2,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
 
       // When the last participant GF, the epoch is finalized, and th whole pool is wiped out. So collateral balances should read zero.
+      const { pastPools } = await flexpool.getFactoryData();
+      const filtered = pastPools.filter(({pool: {big: { unit}}}) => unit === create.pool.pool.big.unit);
+      const pool = filtered?.[0].pool;
       expect(pay_2.profile.colBals).to.be.equal(ZERO);
-      expect(pay_2.pool.pool.big.currentPool).to.be.equal(ZERO);
+      expect(pool.big.currentPool).to.be.equal(ZERO);
 
       // We check the user's collateral balances with the safe are intact
       const safeContract = await retrieveSafeContract(formatAddr(gf.pool.pool.addrs.safe));
@@ -184,9 +184,8 @@ describe("Permissionless: Complete An Epoch", function () {
         owner: create.pool.pool.addrs.safe as Address,
         asset: baseAsset,
         collateral: collateralAsset,
-        factory: flexpool,
         spender: signer1,
-        unit: create.pool.pool.big.unit
+        safeAddr: create.pool.pool.addrs.safe as Address
       });
       const s1After = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       const s2After = await safeContract.getUserData(signer2Addr, create.pool.pool.big.recordId);

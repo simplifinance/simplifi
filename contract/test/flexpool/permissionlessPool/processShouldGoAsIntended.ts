@@ -64,15 +64,6 @@ describe("Permissionless: Go as intended", function () {
         deployer,
         asset: baseAsset
       });
-      
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
 
       // Fastrack block time
       const future = BigInt((await time.latest()) + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
@@ -89,14 +80,6 @@ describe("Permissionless: Go as intended", function () {
         collateral: collateralAsset
       });
 
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(create.pool.pool.addrs.safe),
-        spender: signer3,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });  
       const quote2 = await flexpool.getCollateralQuote(create.pool.pool.big.unit);
       const gf_2 = await getFinance({
         unit: create.pool.pool.big.unit,
@@ -108,15 +91,6 @@ describe("Permissionless: Go as intended", function () {
         asset: baseAsset
       });
       
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf_2.pool.pool.addrs.safe),
-        spender: signer2,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-
       const durOfChoiceInSec_2 = await time.latest() + DURATION_IN_SECS;
       await time.increaseTo(durOfChoiceInSec_2);
       const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
@@ -128,6 +102,7 @@ describe("Permissionless: Go as intended", function () {
         debt: debtToDate_2,
         signers: [signer2],
         collateral: collateralAsset,
+        pool: create.pool.pool
       }); 
 
       // Before withdrawing collateral, the balance should be intact.
@@ -136,10 +111,9 @@ describe("Permissionless: Go as intended", function () {
 
       // Before withdrawing collateral, the balance should be intact.
       expect(prof_2.colBals).to.be.equal(ZERO);
-      expect(pay_2.pool.pool.big.currentPool).to.be.equal(ZERO);
 
       // Checking that the slot for the just-concluded epoch is empty
-      const _p = await flexpool.getPoolData(pay_2.pool.pool.big.unitId);
+      const _p = await flexpool.getPoolData(create.pool.pool.big.unitId);
       expect(_p.pool.low.allGh).to.be.eq(ZERO);
       expect(_p.pool.low.colCoverage).to.be.eq(ZERO);
       expect(_p.pool.low.duration).to.be.eq(ZERO);
@@ -150,7 +124,9 @@ describe("Permissionless: Go as intended", function () {
       // Checking record
       const recordEpoches = (await flexpool.getFactoryData()).currentEpoches;
       expect(recordEpoches).to.be.eq(1n);
-      const record = await flexpool.getPoolRecord(create.pool.pool.big.recordId);
+      const { pastPools } = (await flexpool.getFactoryData());
+      const filteredRecord = pastPools.filter(({pool: {big}}) => big.unit === create.pool.pool.big.unit);
+      const record = filteredRecord?.[0];
       expect(record.pool.big.unit).to.be.eq(gf_2.pool.pool.big.unit);
       expect(record.cData.length).to.be.eq(2n);
       

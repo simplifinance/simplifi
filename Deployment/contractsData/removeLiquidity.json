@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xc561c9FC136a783dc3C28800c7BA94706344DC4E",
+  "contractAddress": "0x5f8747c595B7Ff7A83F1d8ec987499c80282621c",
   "functionName": "removeLiquidity",
   "inputCount": 0,
   "requireArgUpdate": false,
@@ -350,6 +350,19 @@
     },
     {
       "inputs": [],
+      "name": "getMinimumLiquidity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "getProviders",
       "outputs": [
         {
@@ -407,12 +420,25 @@
     },
     {
       "inputs": [],
-      "name": "minimumLiquidity",
+      "name": "getRoleManager",
       "outputs": [
         {
-          "internalType": "uint256",
+          "internalType": "address",
           "name": "",
-          "type": "uint256"
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getStateManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
       "stateMutability": "view",
@@ -527,19 +553,6 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "roleManager",
-      "outputs": [
-        {
-          "internalType": "contract IRoleBase",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "uint256",
@@ -571,19 +584,6 @@
           "internalType": "bool",
           "name": "hasIndex",
           "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "stateManager",
-      "outputs": [
-        {
-          "internalType": "contract IStateManager",
-          "name": "",
-          "type": "address"
         }
       ],
       "stateMutability": "view",

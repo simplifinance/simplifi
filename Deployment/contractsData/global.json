@@ -33,15 +33,21 @@
     "getPoolData"
   ],
   "chainName": {
-    "4157": "crosstestnet",
+    "4157": "crossstestnet",
+    "4158": "crossmainnet",
+    "42220": "celo",
     "44787": "alfajores"
   },
   "chainIds": [
     44787,
-    4157
+    4157,
+    42220,
+    4158
   ],
   "paths": {
     "4157": [],
+    "4158": [],
+    "42220": [],
     "44787": [
       "deployments\\alfajores\\Attorney.json",
       "deployments\\alfajores\\BaseAsset.json",
@@ -64,18 +70,18 @@
   "contractAddresses": [
     {
       "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
-      "Attorney": "0x424B80b6D7Fa4d6193D813b8564d57a29162174C",
+      "Attorney": "0xb64c918d764348dc2D31A764db9F66c368B7A61d",
       "BaseAsset": "0x210e77886554170bBa347db97CA64E2B9258124E",
-      "CeloBased": "0x75884011edb2fD48C8f38d4e0EC0868f6b986aa9",
+      "CeloBased": "0x78c8575077fbEf2E0eF96d37c0C9f49b8ebd5881",
       "CeloSupportedAssetManager": "0xB417BD4eB45A35Dd46f68C9549D4c55F2033E32F",
-      "Escape": "0xd7d9d1A748B7f4E1b6146554cA9FA846d400fDae",
-      "Faucet": "0x02ac9244bDe73DD1324d19F376DDF6fA67Af2b9D",
-      "Points": "0xcef62f6c3B044527b571b96256F3Af82C65d23E3",
-      "Providers": "0xc561c9FC136a783dc3C28800c7BA94706344DC4E",
-      "Reserve": "0x855cf61d408B9c7A94d20324d83ac12e28f3c5E0",
-      "SimpliToken": "0x152f0E7dD92F01E66295ED2214c4B5A6b3737D6C",
-      "SupportedAssetManager": "0xbCa26704Ed56A8F63346a5cdb5F18Cc8439e60c8",
-      "WrappedNative": "0xbB13dE76bD3903b5D547e3e34A3fD3359dE542b6"
+      "Escape": "0xB2E930356D20dfC7BB51d7E9cfdB317004278B40",
+      "Faucet": "0xE28D8Da2919Ee43dd3f5EC0420B079fDd215C0F1",
+      "Points": "0xdB05EC3035D38D0f1eCcF463Fd65eEF751ae284D",
+      "Providers": "0x5f8747c595B7Ff7A83F1d8ec987499c80282621c",
+      "Reserve": "0x93ff269b57128B83C92Faf09D210b858ce4D004E",
+      "SimpliToken": "0xA198dBa0baaBCDb67C2c1aCD8546d7a7bd9e6faF",
+      "SupportedAssetManager": "0x475b964bd393F8aAbA00FBE817d1F155ea2AF4a6",
+      "WrappedNative": "0x12671270d6207786E58B9cE62fAc5814c8684056"
     },
     {
       "stablecoin": "0x0000000000000000000000000000000000000000"
