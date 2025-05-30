@@ -49,7 +49,7 @@ export default function Flexpool() {
     }
 
     return { myPools, renderedPools }
-  }, [pools, poolType]);
+  }, [pools, poolType, account]);
 
   // Handles user's search input
   const onchange = (e: React.ChangeEvent<HTMLInputElement>) => {
