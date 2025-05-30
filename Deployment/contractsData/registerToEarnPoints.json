@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xcef62f6c3B044527b571b96256F3Af82C65d23E3",
+  "contractAddress": "0xdB05EC3035D38D0f1eCcF463Fd65eEF751ae284D",
   "functionName": "registerToEarnPoints",
   "inputCount": 0,
   "requireArgUpdate": false,
@@ -178,6 +178,19 @@
     },
     {
       "inputs": [],
+      "name": "getRoleManager",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
       "name": "phase",
       "outputs": [
         {
@@ -194,19 +207,6 @@
       "name": "registerToEarnPoints",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "roleManager",
-      "outputs": [
-        {
-          "internalType": "contract IRoleBase",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {

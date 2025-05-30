@@ -152,11 +152,11 @@ export default function DataTable({providerSlots, onCheckboxClicked} : DataTable
                     className="max-w-sm"
                 />
                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            Columns <ChevronDown />
-                        </Button>
-                    </DropdownMenuTrigger>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-auto">
+                      Columns <ChevronDown />
+                    </Button>
+                  </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {
                             table

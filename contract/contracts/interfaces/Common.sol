@@ -137,6 +137,7 @@ interface Common {
         uint96 recordId;
         IERC20 collateralAsset;
         bool isColWrappedAsset;
+        Common.Provider[] providers; 
     }
 
     struct Slot {
@@ -177,10 +178,10 @@ interface Common {
     struct ViewFactoryData {
         Analytics analytics;
         uint16 makerRate;
+        ReadPoolDataReturnValue[] currentPools;
+        ReadPoolDataReturnValue[] pastPools;
         uint currentEpoches;
         uint recordEpoches;
-        // ReadPoolDataReturnValue[] currentPools;
-        // ReadPoolDataReturnValue[] pastPools;
     }
 
     struct ContributorReturnValue {

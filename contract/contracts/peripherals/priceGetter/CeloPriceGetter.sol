@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.24;
  
 import { Utils } from "../../libraries/Utils.sol";
 import { Pool, Common } from "../Pool.sol";
@@ -11,6 +11,10 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
  * function to set a new asset pair to fetch price for.
  * @author Written by Bobeu,inspired by the Chainlink team
  * @notice Each asset has a priceFeed Id that ae parsed either during construction or using designated function. 
+ * 
+ * ERROR CODE
+ * ==========
+ * C1 - Data.feedAddr is zero
  */ 
 abstract contract CeloPriceGetter is Pool {
     using Utils for *;
@@ -23,8 +27,8 @@ abstract contract CeloPriceGetter is Pool {
     }
 
     // Mapping of collateral assets to their corresponding price data
-    mapping (address => PriceData) public priceData;
- 
+    mapping (address => PriceData) private priceData;
+
     /**
      * @param _priceData Price retrieval info
     */  
@@ -50,7 +54,7 @@ abstract contract CeloPriceGetter is Pool {
     function _getPrice(address asset) internal view returns(uint price, uint8 decimals) {
         assert(asset != address(0));
         PriceData memory data = priceData[asset];
-        require(data.feedAddr != address(0), 'data.feedAddr is zero');
+        require(data.feedAddr != address(0), 'C1');
         decimals = data.decimals;
         (,int answer,,,) = AggregatorV3Interface(data.feedAddr).latestRoundData();
         price = uint(answer);
@@ -93,5 +97,15 @@ abstract contract CeloPriceGetter is Pool {
             }
         }
     }
+
+    /**
+     * @dev return price data object. 
+     * @param collateralAsset : Collateral asset
+     * @notice The key to parse is the mapped collateral asset
+     */
+    function getPriceData(address collateralAsset) public view returns(PriceData memory) {
+        return priceData[collateralAsset];
+    } 
+ 
 
 }

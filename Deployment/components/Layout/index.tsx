@@ -23,9 +23,9 @@ const Layout = ({children} : {children: React.ReactNode}) => {
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
+      defaultTheme="light"
+      enableSystem={true}
+      // disableTransitionOnChange
     >
       <ErrorBoundary fallback={<p>Something went wrong</p>}>
         <section

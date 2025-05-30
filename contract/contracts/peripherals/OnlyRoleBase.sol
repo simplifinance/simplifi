@@ -21,7 +21,7 @@ abstract contract MsgSender {
 
 abstract contract OnlyRoleBase is MsgSender {
     // Role manager address
-    IRoleBase public roleManager;
+    IRoleBase private roleManager;
 
     // ============= constructor ============
     constructor(address _roleManager)
@@ -42,6 +42,10 @@ abstract contract OnlyRoleBase is MsgSender {
 
     function _hasRole(address target) internal view returns(bool result) {
         result = roleManager.hasRole(target);
-    }  
+    }
+    
+    function getRoleManager() public view returns(address) {
+        return address(roleManager);
+    }
 
 }

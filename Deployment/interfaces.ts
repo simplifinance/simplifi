@@ -2,7 +2,7 @@ import React from "react";
 import BigNumber from "bignumber.js";
 import { TransactionReceipt, zeroAddress } from "viem";
 import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
-import { BigNumberish } from "ethers";
+// import { BigNumberish } from "ethers";
 import { Transaction } from "./components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
 import { filterTransactionData } from "./utilities";
 
@@ -51,29 +51,29 @@ export type Contributor = {
 }
 
 export type ContributorStruct = {
-  paybackTime: BigNumberish;
-  turnStartTime: BigNumberish;
-  getFinanceTime: BigNumberish;
-  loan: BigNumberish;
-  colBals: BigNumberish;
+  paybackTime: bigint;
+  turnStartTime: bigint;
+  getFinanceTime: bigint;
+  loan: bigint;
+  colBals: bigint;
   id: Address;
   sentQuota: boolean;
 }
 
 export type LowStruct = {
-  maxQuorum: BigNumberish;
-  selector: BigNumberish;
-  colCoverage: BigNumberish;
-  duration: BigNumberish;
-  allGh: BigNumberish;
-  userCount: BigNumberish;
+  maxQuorum: bigint;
+  selector: bigint;
+  colCoverage: bigint;
+  duration: bigint;
+  allGh: bigint;
+  userCount: bigint;
 }
 
 export type BigStruct = {
-  unit: BigNumberish;
-  currentPool: BigNumberish;
-  recordId: BigNumberish;
-  unitId: BigNumberish;
+  unit: bigint;
+  currentPool: bigint;
+  recordId: bigint;
+  unitId: bigint;
 }
 
 export type AddressesStruct = {
@@ -87,27 +87,27 @@ export type Pool = {
   low: LowStruct;
   big: BigStruct;
   addrs: AddressesStruct;
-  router: BigNumberish;
-  stage: BigNumberish;
-  status: BigNumberish;
+  router: number;
+  stage: number;
+  status: number;
 }
 
 export type SlotStruct = {
-  value: BigNumberish;
+  value: bigint;
   isMember: boolean;
   isAdmin: boolean;
 }
 
 export type CommonInterestStruct = {
-  fullInterest: BigNumberish;
-  intPerSec: BigNumberish;
+  fullInterest: bigint;
+  intPerSec: bigint;
 }
 
 export type ProviderStruct = {
-  slot: BigNumberish;
-  amount: BigNumberish;
-  rate: BigNumberish;
-  earnStartDate: BigNumberish;
+  slot: bigint;
+  amount: bigint;
+  rate: bigint;
+  earnStartDate: bigint;
   account: Address;
   accruals: CommonInterestStruct;
 }
@@ -119,10 +119,10 @@ export type Profile = {
 }
 
 export type Analytics = {
-  tvlCollateral: BigNumberish;
-  tvlBase: BigNumberish;
-  totalPermissioned: BigNumberish;
-  totalPermissionless: BigNumberish;
+  tvlCollateral: bigint;
+  tvlBase: bigint;
+  totalPermissioned: bigint;
+  totalPermissionless: bigint;
 }
 
 export type DataTableProps = {
@@ -224,22 +224,10 @@ export interface ReadDataReturnValue  {
   cData: Readonly<CData[]>;
 }
 
-export interface CreatePermissionedPoolParams {
-  // contributors: Address[];
-  // durationInHours: number;
-  // colCoverage: number;
-  // collateralAsset: Address;
-  // baseAssetHolding: Address;
-}
-
 export interface EditPoolParam {
   durationInHours: number;
   colCoverage: number;
   quorum: number;
-}
-
-export interface CreatePermissionlessPoolParams extends CreatePermissionedPoolParams {
-  // quorum: number;
 }
 
 export interface GetProfileParam {
@@ -269,20 +257,10 @@ export interface ScreenUserResult{
 }
 
 export interface HandleTransactionParam { 
-  // createPermissionlessPoolParam?: CreatePermissionlessPoolParams;
-  // createPermissionedPoolParam?: CreatePermissionedPoolParams;
   commonParam: CommonParam;
   router?: Router;
   safe?: Address;
-  // allowance?: bigint;
-  // txnType: FunctionName;
   collateralAsset?: Address;
-  // rate?: number;
-  // routeTo?: Address;
-  // lostAccount?: Address;
-  // providersSlots?: bigint[];
-  // contractAddress?: Address;
-  // args: any[];
 }
 
 export interface DrawerState {
@@ -388,10 +366,6 @@ export type ProviderResult = {
   accruals: InterestStruct;
 }
 
-// export interface CheckAndApproveParam extends Config {
-//   txnType: ButtonText,
-//   unit: bigint,
-// }
 export interface GetAmountToApprove extends Config {
   functionName: FunctionName,
   unit: bigint,
@@ -437,6 +411,8 @@ export type FactoryData = {
   makerRate: number;
   currentEpoches: bigint;
   recordEpoches: bigint;
+  currentPools: Readonly<ReadDataReturnValue[]>;
+  pastPools: Readonly<ReadDataReturnValue[]>;
 }
 
 export interface ExecuteSwapParam {
@@ -475,27 +451,29 @@ export const mockFactoryData : FactoryData = {
   },
   makerRate: 0,
   currentEpoches: 0n,
-  recordEpoches: 0n
+  recordEpoches: 0n,
+  currentPools: [],
+  pastPools: []
 }
 
 export const profileMock : Profile = {
   profile: {
-    paybackTime: '0',
-    turnStartTime: '0',
-    getFinanceTime: '0',
-    loan: '0',
-    colBals: '0',
+    paybackTime: 0n,
+    turnStartTime: 0n,
+    getFinanceTime: 0n,
+    loan: 0n,
+    colBals: 0n,
     id: zeroAddress,
     sentQuota: false
   },
-  slot: {isAdmin: false, isMember: false, value: '0'},
+  slot: {isAdmin: false, isMember: false, value: 0n},
   providers: [{
     account: zeroAddress,
-    accruals: {intPerSec: '0', fullInterest: '0'},
-    earnStartDate: '0',
-    amount: '0',
-    rate: '0',
-    slot: '0'
+    accruals: {intPerSec: 0n, fullInterest: 0n},
+    earnStartDate: 0n,
+    amount: 0n,
+    rate: 0n,
+    slot: 0n
   }]
 };
 
@@ -561,7 +539,7 @@ export const appData : AppState = [
 
 export const poolMock : Pool = {
   big: { unit: 0n, currentPool: 0n, unitId: 0n, recordId: 0n },
-  stage: 0n,
+  stage: 0,
   low: {
     maxQuorum: 0n,
     selector: 0n,
@@ -571,8 +549,8 @@ export const poolMock : Pool = {
     userCount: 0n
   },
   addrs: { lastPaid: zeroAddress, admin: zeroAddress, colAsset: zeroAddress, safe: zeroAddress, },
-  router: 'PERMISSIONLESS',
-  status: 0n
+  router: 0,
+  status: 0
 }
 
 export const formattedMockData : FormattedCData = {

@@ -16,7 +16,7 @@ import type {
   FilterTransactionDataProps,
 } from "@/interfaces";
 import BigNumber from "bignumber.js";
-import { Router, StageStr } from "./constants";
+import { Router, Stage, StageStr } from "./constants";
 import { formatEther } from "viem";
 import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
@@ -288,3 +288,28 @@ export const formatProviders = (providers: Readonly<ProviderStruct[]>): Formatte
   return (formattedProviders);
 }
 
+/**
+ * @dev Search all the pools that the current connected account is participating or has participated
+ * @param pools : Total concatenated pools i.e a list of current and past pools.
+ * @param account : Connected user.
+ * @returns Found pools
+ */
+export function filterPoolForCurrentUser(pools: ReadDataReturnValue[], account: Address) {
+  return pools.filter(({cData}) => {
+    const filteredProfile = cData.filter(({profile}) => profile.id.toLowerCase() === account.toLowerCase());
+    return filteredProfile && filteredProfile.length > 0;
+  })
+}
+
+/**
+ * @dev Search for all past pools
+ * @param pools : Total concatenated pools i.e a list of current and past pools.
+ * @returns Found pools
+ */
+export function filterPools(pools: ReadDataReturnValue[]) {
+  const pastPools = pools.filter(({pool}) => pool.stage === Stage.ENDED || pool.stage === Stage.CANCELED);
+  const currentPools = pools.filter(({pool}) => pool.stage !== Stage.ENDED && pool.stage !== Stage.CANCELED);
+  const permissioned = pools.filter(({pool}) => pool.router === Router.PERMISSIONED);
+  const permissionless = pools.filter(({pool}) => pool.router === Router.PERMISSIONLESS);
+  return { pastPools, currentPools, permissioned, permissionless }
+}

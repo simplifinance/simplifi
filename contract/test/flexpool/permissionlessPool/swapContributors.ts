@@ -13,7 +13,7 @@ import {
   ONE_HOUR_ONE_MINUTE,
   QUORUM,
 } from "../../utilities";
-import { createPermissionlessPool, getFinance, joinEpoch, payback, withdraw } from "../../utils";
+import { createPermissionlessPool, getFinance, joinEpoch, payback } from "../../utils";
 
 describe("Permissionless: Swap contributors", function () {
   async function deployContractsFixcture() {
@@ -96,15 +96,6 @@ describe("Permissionless: Swap contributors", function () {
         asset: baseAsset
       });
       
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer3,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-
       /**
        * We need to fastrack the block time to near the duration of choice of the borrower
        * to avoid being liquidated.
@@ -131,15 +122,6 @@ describe("Permissionless: Swap contributors", function () {
         collateral: collateralAsset,
       }); 
 
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(create.pool.pool.addrs.safe),
-        spender: signer3,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });  
-
       expect(pay.profile.colBals).to.be.equal(ZERO);
       const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer3Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
@@ -157,15 +139,6 @@ describe("Permissionless: Swap contributors", function () {
         asset: baseAsset
       });
       
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf_2.pool.pool.addrs.safe),
-        spender: signer2,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
-
       const durOfChoiceInSec_2 = BigInt((await time.latest()) + (DURATION_IN_SECS));
       await time.increaseTo(durOfChoiceInSec_2);
       const debtToDate_2 = await flexpool.getCurrentDebt(create.pool.pool.big.unit, signer2Addr);
@@ -184,14 +157,6 @@ describe("Permissionless: Swap contributors", function () {
         signers: [signer2],
         collateral: collateralAsset,
       }); 
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(create.pool.pool.addrs.safe),
-        spender: signer2,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });  
 
       expect(pay_2.profile.colBals).to.be.equal(ZERO);
       expect(pay_2.pool.pool.big.currentPool).to.be.equal(pay.pool.pool.big.currentPool);

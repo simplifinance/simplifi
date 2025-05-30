@@ -6,6 +6,7 @@ import { IStateManager } from '../../interfaces/IStateManager.sol';
 import { ISafe } from "../../interfaces/ISafe.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { CrossfiPriceGetter, Utils, Common } from "../../peripherals/priceGetter/CrossfiPriceGetter.sol";
+import { Analytics } from "../../peripherals/Analytics.sol";
 
 /**
     * @title FlexpoolFactory
@@ -29,12 +30,9 @@ import { CrossfiPriceGetter, Utils, Common } from "../../peripherals/priceGetter
     19 - Closing pool time elapsed
     20 - Epoch ended
 */
-contract CrossFiBased is IFactory, CrossfiPriceGetter {
+contract CrossFiBased is IFactory, CrossfiPriceGetter, Analytics {
     using Utils for *;
-
-    // Analytics
-    Common.Analytics public analytics;
-
+ 
     /** 
      * ================ Constructor ==============
     */
@@ -49,6 +47,8 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         CrossfiPriceGetter(_roleManager, _stateManager, oracle, supportedAssets, priceData, _safeFactory)
     {}
 
+    receive() external payable {}
+
     /**
         * @dev Create a pool internally
         * @param users : List of participating accounts
@@ -62,7 +62,7 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         * creator being the first on the list. But the list can be empty if it is permissionless.
     */
     function createPool( 
-        address[] calldata users,
+        address[] memory users,
         uint unit,
         uint8 maxQuorum,
         uint16 durationInHours,
@@ -72,10 +72,7 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
     ) public whenNotPaused returns(bool) {
         Common.Pool memory pool = _createPool(Common.CreatePoolParam(users, _msgSender(), unit, maxQuorum, durationInHours, colCoverage, isPermissionless? Common.Router.PERMISSIONLESS : Common.Router.PERMISSIONED, colAsset));
         _awardPoint(users[0], 0, 5, false);
-        unchecked {
-            analytics.tvlBase += unit;
-            isPermissionless? analytics.totalPermissionless += 1 : analytics.totalPermissioned += 1;
-        }
+        _updateAnalytics(0, unit, 0, isPermissionless);
         emit Common.PoolCreated(pool);
       
         return true;
@@ -99,10 +96,8 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         pool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
         ISafe(pool.addrs.safe).registerProvidersTo(_providers, user, pool.big.recordId); 
         _awardPoint(users[0], 0, 5, false);
-        unchecked {
-            analytics.tvlBase += unit;
-            analytics.totalPermissionless += 1;
-        }
+        _updateAnalytics(0, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
+
         emit Common.PoolCreated(pool);
     }
 
@@ -126,20 +121,16 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
     ) external onlyRoleBearer whenNotPaused returns(bool)
     {
         Common.Pool memory pool; 
-        bool isNewOrCancel = false;
         if(_getPool(unit).status == Common.Status.TAKEN){
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
-            _setPool(pool.big.unitId, pool);
+            _setPool(pool, pool.big.unitId);
+            _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
             emit Common.NewContributorAdded(pool);
         } else {
-            isNewOrCancel = true;
             pool = _launchDefault(borrower, unit, providers);
         }
-        _setProviders(providers, borrower, pool.big.recordId);
-        unchecked {
-            analytics.tvlBase += unit;
-        }
+        _setProviders(providers, borrower, pool.big.unitId);
         return true;
     }
 
@@ -150,10 +141,8 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
     function contribute(uint unit) public whenNotPaused returns(bool) {
         Common.Pool memory pool = _getPool(unit);
         pool = _joinAPool(unit, _msgSender(), pool);
-        _setPool(pool.big.unitId, pool);
-        unchecked {
-            analytics.tvlBase += unit;
-        }
+        _setPool(pool, pool.big.unitId);
+        _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.NewContributorAdded(pool);
 
         return true;
@@ -166,7 +155,7 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
      * @notice : To get finance, the unit contribution must be active. In the event the expected contributor failed to 
      * call, we swap their profile for the current msg.sender provided the grace period of 1hr has passed.
     */
-    function getFinance(uint256 unit) public _checkUnitStatus(unit, true) whenNotPaused returns(bool) {
+    function getFinance(uint256 unit) public payable _requireUnitIsActive(unit) whenNotPaused returns(bool) {
         _checkStatus(_msgSender(), unit, true);
         Common.Pool memory pool = _getPool(unit);
         uint collateral = _getCollateralQuote(unit);
@@ -182,19 +171,16 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
             } else {
                 require(_msgSender() == profile.id, '16');
             }
-            pool.low.allGh += 1;
+            pool.low.allGh += 1; 
         }
         pool.addrs.lastPaid = profile.id;
-        unchecked {
-            if(analytics.tvlBase >= pool.big.currentPool) analytics.tvlBase -= pool.big.currentPool;
-            analytics.tvlCollateral += collateral;
-        }
+        _updateAnalytics(2, pool.big.currentPool, collateral, pool.router == Common.Router.PERMISSIONLESS);
         IStateManager.StateVariables memory vars = _getVariables();
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
         ISafe(pool.addrs.safe).getFinance(profile.id, vars.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(vars.makerRate)), collateral, pool.big.recordId);
         (pool, profile) = _completeGetFinance(pool, collateral, profile);
-        _setContributor(profile, pool.big.recordId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unitId).value), false);
-        _setPool(pool.big.unitId, pool);
+        _setContributor(profile, pool.big.unitId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unitId).value), false);
+        _setPool(pool, pool.big.unitId);
 
         emit Common.GetFinanced(pool);
 
@@ -207,10 +193,7 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        unchecked {
-            analytics.tvlBase += debt;
-            if(analytics.tvlCollateral >= collateral) analytics.tvlCollateral -= collateral;
-        }
+        _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
 
         return true;
@@ -230,14 +213,11 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         require(isDefaulted, '17');
         address liquidator = _msgSender() ;
         _checkStatus(liquidator, unit, false);
-        _replaceContributor(liquidator, _getPool(unit).big.recordId, slot, _defaulter.id);
+        _replaceContributor(liquidator, _getPool(unit).big.unitId, slot, _defaulter.id);
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        unchecked {
-            analytics.tvlBase += debt;
-            if(analytics.tvlCollateral >= collateral) analytics.tvlCollateral -= collateral;
-        }
+        _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
         return true;
     }
@@ -247,37 +227,20 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
         @param unit : Unit contribution.
         @notice : Only the creator of a pool can close it provided the number of contributors does not exceed one.
     */
-    function closePool(uint256 unit) public whenNotPaused _checkUnitStatus(unit, true) returns(bool){
+    function closePool(uint256 unit) public whenNotPaused _requireUnitIsActive(unit) returns(bool){
         Common.Pool memory pool = _getPool(unit);
         address creator = _msgSender();
-        require(creator == pool.addrs.admin, '18'); 
+        require(creator == pool.addrs.admin, '18');
         bool isPermissionLess = pool.router == Common.Router.PERMISSIONLESS;
-        unchecked {
-            if(isPermissionLess) {
-                require(pool.low.userCount == 1, '19');
-                if(analytics.totalPermissionless > 0) analytics.totalPermissionless -= 1;
-            } else {
-                require(pool.big.currentPool == pool.big.unit, '19');
-                if(analytics.totalPermissioned > 0) analytics.totalPermissioned -= 1;
-            }
-            if(analytics.tvlBase >= pool.big.unit) analytics.tvlBase -= pool.big.unit;
-        }
+        isPermissionLess? require(pool.low.userCount == 1, '19') : require(pool.big.currentPool == pool.big.unit, '19');
+        _updateAnalytics(4, pool.big.unit, 0, isPermissionLess);
         _awardPoint(creator, 0, 5, true);
         pool.stage = Common.Stage.CANCELED;
-        _shufflePool(pool);
+        _shufflePool(pool); 
         ISafe(pool.addrs.safe).cancel(creator, _getVariables().baseAsset, pool.big.unit, pool.big.recordId);
 
         emit Common.Cancellation(unit);
         return true;
-    }
-
-    /**
-        * @dev Return providers associated with the target account
-        * @param target : Target account
-        * @param recordId : Record id
-    */
-    function getContributorProviders(address target, uint96 recordId) external view returns(Common.Provider[] memory result){
-        return  _getContributorProviders(target, recordId);
     }
    
     /**
@@ -288,13 +251,19 @@ contract CrossFiBased is IFactory, CrossfiPriceGetter {
        return _getPool(unit);
     }
 
-    /**@dev Return contract data. At any point in time, currentEpoches will always equal pastEpoches*/
+     /**@dev Return contract data. At any point in time, currentEpoches will always equal pastEpoches*/
     function getFactoryData() public view returns(Common.ViewFactoryData memory data) {
-        data.analytics = analytics;
+        data.analytics = _getAnalytics();
         data.makerRate = uint16(_getVariables().makerRate);
-        data.currentEpoches = _getEpoches();
-        data.recordEpoches = _getPastEpoches();
-
+        data.pastPools = getRecords();
+        (uint96 currentEpoches, uint96 pastEpoches) = _getCounters();
+        data.currentEpoches = currentEpoches;
+        data.recordEpoches = pastEpoches;
+        Common.ReadPoolDataReturnValue[] memory rdrs = new Common.ReadPoolDataReturnValue[](currentEpoches);
+        for(uint96 i = 0; i < currentEpoches; i++){
+            rdrs[i] = _getPoolData(_getPoolWithUnitId(i + 1)); 
+        }
+        data.currentPools = rdrs;
         return data;
     }
 

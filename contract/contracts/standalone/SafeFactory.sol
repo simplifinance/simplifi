@@ -10,13 +10,13 @@ import { Safe, OnlyRoleBase } from "../peripherals/Safe.sol";
  */
 contract SafeFactory is ISafeFactory, OnlyRoleBase {
   // Peoviders contract
-  address public providers;
+  address private providers;
 
   // Total safe created to date
-  uint public totalSafes;
+  uint private totalSafes;
 
   // Fee receiver account
-  address public feeTo;
+  address private feeTo;
 
  /**
  * @dev Mapping of unit contribution to safe.
@@ -72,7 +72,7 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
   function _createSafe(uint256 unit) private returns(address safe) {
     assert(providers != address(0));
     totalSafes ++;
-    safe = address(new Safe(address(roleManager), feeTo, providers));
+    safe = address(new Safe(getRoleManager(), feeTo, providers));
     _updateSafe(unit, safe); 
   }
 
@@ -91,5 +91,9 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
 
   function setProviderContract(address providerAddr) public onlyRoleBearer {
     providers = providerAddr;
+  }
+
+  function getStorage() public view returns(address, uint, address) {
+    return (providers, totalSafes, feeTo); 
   }
 }

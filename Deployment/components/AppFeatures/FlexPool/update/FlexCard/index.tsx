@@ -59,6 +59,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     } = formattedPoolData;
 
     const { profile:{ sentQuota, loan, paybackTime }, slot: { isAdmin, isMember } } = filterUser(cData, account);
+    const endedOrCancelled = stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED;
     
     // A function that when called, renders the action components with packed transaction objects
     const renderAction= React.useCallback(() => {
@@ -125,7 +126,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                 else component = <Liquidate lastPaid={lastPaid} collateralAddress={colAsset} safe={safe} unit={unit.big} disabled={actionObj.disable} overrideButtonContent={actionObj.value}/>
                 break;
             default:
-                <Liquidate lastPaid={zeroAddress} collateralAddress={zeroAddress} safe={zeroAddress} unit={0n} disabled={true} overrideButtonContent={'Ended'}/>
+                component = <Liquidate lastPaid={zeroAddress} collateralAddress={zeroAddress} safe={zeroAddress} unit={0n} disabled={true} overrideButtonContent={'Ended'}/>
                 break;
         } 
         return component;
@@ -133,7 +134,8 @@ export const FlexCard = (props: ReadDataReturnValue) => {
 
     return(
         <React.Fragment>
-            <div className={`relative ${stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED ? 'bg-gray1/70' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
+            <div className={`relative ${endedOrCancelled ? 'bg-gray1/10' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
+                <h1 className={`${endedOrCancelled? 'block' : 'hidden'} absolute top-[50%] right-[50%] translate-x-[50%] -translate-y-[50%] text-3xl font-bold text-green1/50  rotate-45  `}>ENDED</h1>
                 <div className="relative flex justify-between items-center">
                     <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black dark:text-orange-200 border-r border-r-green1 w-fit">
                         {`$${unit.inEther}`}
@@ -195,9 +197,9 @@ export const FlexCard = (props: ReadDataReturnValue) => {
             >
                 {
                     isPermissionless? 
-                        "A permissionless pool is public, and open to anyone. To operate a permissionless Flexpool, simply provide the required parameters. Other providers are free to participate." 
+                        "A permissionless pool is public, and open to anyone. To operate a this type of pool, you only need to provide other required parameters. Anyone is free to contribute." 
                             : 
-                        "A permissioned pool is private by nature. To operate this type of FlexPool, you should have the addresses of other providers that wish to join you in the contribution. Only predefined addresses are free to participate." 
+                        "A permissioned pool is private by design. It is designed for people who are familiar with one another such as friends, families, peer groups, etc. You will need to provide the addresses of the contributors aside of yours. These addresses only can participate." 
                 }
             </PermissionPopUp>
             <Contributors

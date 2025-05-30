@@ -33,7 +33,14 @@ abstract contract Pool is Contributor {
      * @param args.router : Router : PERMISSIOLESS or PERMISSIONED
      * @param args.sender : msg.sender
     */
-    function _createPool(Common.CreatePoolParam memory args) internal _checkUnitStatus(args.unit, false) onlySupportedAsset(args.colAsset) returns(Common.Pool memory pool) {
+    function _createPool(
+        Common.CreatePoolParam memory args
+    ) 
+        internal
+        _requireUnitIsNotActive(args.unit) 
+        onlySupportedAsset(args.colAsset) 
+        returns(Common.Pool memory pool) 
+    {
         require(args.durationInHours > 0 && args.durationInHours <= 720, '3');
         if(args.router == Common.Router.PERMISSIONLESS){
             require(args.users.length == 1, '4');
@@ -44,7 +51,7 @@ abstract contract Pool is Contributor {
         (uint96 unitId, uint96 recordId) = _generateIds(args.unit);
         pool = _updatePool(Common.UpdatePoolData(args.unit, unitId, recordId, args.maxQuorum, args.colCoverage, IERC20(args.colAsset), args.durationInHours, args.users[0], args.router));   
         pool = _addUserToPool(args.users, pool);
-        _setPool(unitId,  pool);
+        _setPool(pool, unitId);
         _completeAddUser(args.users[0], pool);
     }
 
@@ -65,7 +72,7 @@ abstract contract Pool is Contributor {
                 require(users[0] != users[i], '7');
                 data = _initializeContributor(pool, users[i], false, true, false);
             }
-            _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
+            _setContributor(data.profile, pool.big.unitId, uint8(data.slot.value), false);
         }
         _pool = pool;
     }
@@ -80,7 +87,7 @@ abstract contract Pool is Contributor {
         uint256 unit, 
         address user,
         Common.Pool memory pool
-    ) internal _checkUnitStatus(unit, true) returns(Common.Pool memory _pool) {
+    ) internal _requireUnitIsActive(unit) returns(Common.Pool memory _pool) {
         require(pool.stage == Common.Stage.JOIN, '8');
         Common.ContributorReturnValue memory data;
         unchecked {
@@ -95,7 +102,7 @@ abstract contract Pool is Contributor {
             _checkStatus(user, unit, false);
             data = _initializeContributor(pool, user, false, true, true);
         }
-        _setContributor(data.profile, pool.big.recordId, uint8(data.slot.value), false);
+        _setContributor(data.profile, pool.big.unitId, uint8(data.slot.value), false);
         if(_isPoolFilled(pool, pool.router == Common.Router.PERMISSIONED)) {
             _setTurnStartTime(address(0), unit, _now());
             pool.stage = Common.Stage.GET;
@@ -111,7 +118,7 @@ abstract contract Pool is Contributor {
     */
     function _completeAddUser(address user, Common.Pool memory pool) internal {
         _checkAndWithdrawAllowance(IERC20(_getVariables().baseAsset), user, pool.addrs.safe, pool.big.unit);
-        require(ISafe(pool.addrs.safe).addUp(user, pool.big.recordId), '8+');
+        require(ISafe(pool.addrs.safe).addUp(user, pool.big.recordId), '8+'); 
     }
 
     /**

@@ -9,7 +9,6 @@ import {
   DURATION_IN_HOURS,
   ZERO,
   INTEREST_RATE,
-  formatAddr,
   FuncTag,
 } from "../../utilities";
 import { createPermissionedPool, removeLiquidityPool, withdraw } from "../../utils";
@@ -52,7 +51,9 @@ describe("Permissioned: Remove a pool", function () {
       
       // Balances after removal should remain intact
       expect(signerBalAfterRemoval > balB4Removal).to.be.true;
-      const record = await flexpool.getPoolRecord(create.pool.pool.big.recordId);
+      const { pastPools } = (await flexpool.getFactoryData());
+      const filteredRecord = pastPools.filter(({pool: {big}}) => big.unit === create.pool.pool.big.unit);
+      const record = filteredRecord?.[0];
       expect(record.pool.stage).to.be.eq(FuncTag.CANCELED);
 
       /**

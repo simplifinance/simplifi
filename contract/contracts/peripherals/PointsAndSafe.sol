@@ -19,10 +19,10 @@ import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
  */
 abstract contract PointsAndSafe is ERC20Manager {
     // Whether to award point to users or not
-    bool public awardPoint;
+    bool private awardPoint;
     
     // Safe factory contract
-    ISafeFactory public immutable safeFactory;
+    ISafeFactory private safeFactory;
 
     /**
      * ================ Constructor ==============
@@ -57,6 +57,10 @@ abstract contract PointsAndSafe is ERC20Manager {
     function _getSafe(uint256 unit) internal returns(address safe) {
         safe = safeFactory.pingSafe(unit);
         require(safe != address(0), 'A2');
+    }
+
+    function getAwardPointStatus() public view returns(bool result) {
+        result = awardPoint;
     }
  
 }

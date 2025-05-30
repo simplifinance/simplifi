@@ -66,7 +66,7 @@ export default function SimplifiApp() {
     }
   });
 
-  const { symbols, factoryData, points, supportedAssets, providers } = React.useMemo(() => {
+  const { symbols, factoryData, points, supportedAssets, providers, pools } = React.useMemo(() => {
     const notReady = isPending || !data;
     const pointData = data?.[2]?.result as PointsReturnValue[];
     const provs = data?.[3]?.result as ProviderResult[];
@@ -76,13 +76,16 @@ export default function SimplifiApp() {
 
     const symbols = notReady? appData[0] : sym || appData[0];
     const factoryData = notReady? appData[1] : fdata || appData[1];
+    const pastPools = [...factoryData.pastPools ];
+    const currentPools = [ ...factoryData.currentPools ];
+    const pools = currentPools.concat(pastPools);
     const beta : PointsReturnValue = notReady? {key: phases[0].phase, value: [mockPoint]} : {key: pointData?.[0]?.key || phases[0].phase, value: [...pointData?.[0].value || [mockPoint]]}
     const alpha : PointsReturnValue = notReady? {key: phases[1].phase, value: [emptyMockPoint]} : {key: pointData?.[1]?.key || phases[1].phase, value: [...pointData?.[1].value || [emptyMockPoint]]}
     const mainnet : PointsReturnValue = notReady? {key: phases[2].phase, value: [emptyMockPoint]} : {key: pointData?.[2]?.key || phases[2].phase, value: [...pointData?.[2].value || [emptyMockPoint]]}
     const points : PointsReturnValue[] = [beta, alpha, mainnet];
     const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
     const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
-    return { notReady, symbols, factoryData, points, supportedAssets, providers };
+    return { notReady, symbols, factoryData, points, supportedAssets, providers, pools };
   }, [data]);
 
   const toggleProviders = (arg: bigint) => {
@@ -122,6 +125,7 @@ export default function SimplifiApp() {
           currentEpoches: factoryData.currentEpoches,
           recordEpoches: factoryData.recordEpoches, 
           analytics: factoryData.analytics,
+          pools, 
           points,
           providers,
           supportedAssets,

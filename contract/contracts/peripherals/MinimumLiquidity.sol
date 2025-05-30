@@ -8,7 +8,7 @@ abstract contract MinimumLiquidity is ERC20Manager {
     using ErrorLib for *;
 
     // Minimum liquidity a provider can make
-    uint public minimumLiquidity;
+    uint private minimumLiquidity;
 
     // ============= Constructor ================
     constructor(address _statetManager, address _roleManager) ERC20Manager(_statetManager, _roleManager){}
@@ -21,5 +21,9 @@ abstract contract MinimumLiquidity is ERC20Manager {
     function setMinimumLiquidity(uint _minLiquidity) public onlyRoleBearer {
         if(_minLiquidity == minimumLiquidity) 'Same param'._throw();
         minimumLiquidity = _minLiquidity;
+    }
+
+    function getMinimumLiquidity() public view returns(uint) {
+        return minimumLiquidity;
     }
 }

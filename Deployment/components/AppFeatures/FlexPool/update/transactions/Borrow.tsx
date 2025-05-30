@@ -23,7 +23,7 @@ export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowP
 
     const getTransactions = React.useCallback(() => {
         let transactions = td.map((txObject) => {
-            assert(args.length === txObject.inputCounts, "Args not fully provided");
+            assert(args.length === txObject.inputCount, "Args not fully provided");
             const transaction : Transaction = {
                 abi: txObject.abi,
                 args,

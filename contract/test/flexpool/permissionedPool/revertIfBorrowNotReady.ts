@@ -78,15 +78,6 @@ describe("Permissioned: Reverts", function () {
        * This is an indication that a pool was removed.
        */
       expect((await flexpool.getPoolData(create.pool.pool.big.unitId)).pool.low.maxQuorum).to.be.equal(signers.length);
-      
-      await withdraw({
-        asset: baseAsset,
-        factory:flexpool,
-        owner: formatAddr(create.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
     });
   })
 })

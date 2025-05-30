@@ -64,15 +64,6 @@ describe("Permissionless: Enquire Liquidation Success", function () {
         asset: baseAsset,
         deployer
       });
-      
-      await withdraw({
-        asset: baseAsset,
-        factory: flexpool,
-        owner: formatAddr(gf.pool.pool.addrs.safe),
-        spender: signer1,
-        collateral: collateralAsset,
-        unit: create.pool.pool.big.unit
-      });
 
       // Increase the duration
       const duration = BigInt((await time.latest()) + DURATION_IN_SECS + ONE_HOUR_ONE_MINUTE);
