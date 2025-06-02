@@ -11,13 +11,13 @@ export default function CollateralAsset({handleChange} : InputCategoryProp) {
         handleChange(arg.toString(), 'CollateralAsset');
     };
     return (
-        <div>
-            <Label className='font-black text-green1/90 dark:text-orange-200 pb-2'>Collateral asset</Label>
+        <div className='space-y-3'>
+            <Label className='font-bold text-green1/80 dark:text-orange-200'>Collateral asset</Label>
             <SelectComponent 
                 callback={callback}
                 data='supported'
                 label='Collateral asset'
-                placeholder='Pick your collateral asset'
+                placeholder='Options'
             />
         </div>
     );

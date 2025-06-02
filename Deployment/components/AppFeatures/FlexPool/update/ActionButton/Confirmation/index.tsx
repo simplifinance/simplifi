@@ -19,7 +19,7 @@ export const Confirmation :
 
     const { setActivepath, refetch, setmessage, setError } = useAppStorage();
     const isDark = useTheme().theme === 'dark';
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
     const account = formatAddr(address);
     const config = useConfig();
 
@@ -103,6 +103,7 @@ export const Confirmation :
     });
 
     const handleSendTransaction = async() => {
+        if(!isConnected) return setError('Please connect wallet');
         setLoading(true);
         const transactions = getTransactions();
         for( let i = 0; i < transactions.length; i++) {

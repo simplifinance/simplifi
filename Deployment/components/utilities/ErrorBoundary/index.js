@@ -24,11 +24,11 @@ class ErrorBoundary extends React.Component {
         if(this.state.hasError) {
             return ( 
                 <Container maxWidth="sm" className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                    <Box className="bg-green1/90 shadow-sm shadow-green1/90 text-xl font-bold flex flex-col justify-center items-center p-6 rounded-3xl space-y-4">
+                    <Box className="bg-green1/90 shadow-sm shadow-green1/90 text-xl font-bold flex flex-col justify-center gap-4 items-center p-6 rounded-3xl ">
                         <NotFound 
                             errorMessage="An Error Occurred"
-                            position="relative"
                             textColor="text-white1"
+                            className="p-4"
                         />
                        <Button
                             variant={'outline'}

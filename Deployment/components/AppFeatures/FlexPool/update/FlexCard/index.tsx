@@ -3,7 +3,7 @@ import React from "react";
 import { type ButtonObj, type Address, type ReadDataReturnValue, type FormattedCData, formattedMockData } from "@/interfaces";
 import { formatAddr, formatPoolData } from "@/utilities";
 import { flexCenter, flexSpread, getChainData, Stage } from "@/constants";
-import { useAccount, useConfig } from "wagmi";
+import { useAccount, } from "wagmi";
 import { InfoDisplay, Contributors } from '../DrawerWrapper';
 import { renderIcon } from '../Icons';
 import { PermissionPopUp } from '../PermissionPopUp';
@@ -35,7 +35,6 @@ const filterUser = (
 }
 
 export const FlexCard = (props: ReadDataReturnValue) => {
-    // const [confirmationDrawerOn, setDrawerState] = React.useState<number>(0);
     const [infoDrawer, setShowInfo]= React.useState<number>(0);
     const [providerDrawer, setProviderDrawer]= React.useState<number>(0);
     const [permissionDrawer, setPermissionDrawer]= React.useState<number>(0);
@@ -62,7 +61,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
     const endedOrCancelled = stage.toNum === Stage.ENDED || stage.toNum === Stage.CANCELED;
     
     // A function that when called, renders the action components with packed transaction objects
-    const renderAction= React.useCallback(() => {
+    const renderAction = React.useCallback(() => {
         let actionObj : ButtonObj = {value: 'Contribute', disable: false};
         let component : React.ReactNode = <></>;
         switch (stage.toNum) {
@@ -134,10 +133,10 @@ export const FlexCard = (props: ReadDataReturnValue) => {
 
     return(
         <React.Fragment>
-            <div className={`relative ${endedOrCancelled ? 'bg-gray1/10' : 'dark:bg-green1'} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
-                <h1 className={`${endedOrCancelled? 'block' : 'hidden'} absolute top-[50%] right-[50%] translate-x-[50%] -translate-y-[50%] text-3xl font-bold text-green1/50  rotate-45  `}>ENDED</h1>
+            <div className={`relative bg-white1 dark:bg-green1 ${endedOrCancelled ? 'opacity-80 dark:opacity-70' : ''} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-4 rounded-xl space-y-3`}>
+                <h1 className={`${endedOrCancelled? 'block' : 'hidden'} absolute right-2 top-2 text-xs font-semibold text-red-400 `}>ENDED</h1>
                 <div className="relative flex justify-between items-center">
-                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl p-2 font-black dark:text-orange-200 border-r border-r-green1 w-fit">
+                    <h2 className="absolute right-0 top-8 max-w-sm text-lg md:text-xl font-black dark:text-orange-200">
                         {`$${unit.inEther}`}
                     </h2>
                     <div className="flex justify-between items-center gap-2 ">
@@ -162,7 +161,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                         </div>
                     </div>
                 </div>
-                <div className="text-xs font-bold dark:text-orange-200 pt-8">
+                <div className="text-xs font-medium dark:text-orange-200 pt-8">
                     <span className={`${flexSpread}`}>
                         <h1>{'Unit Id:'}</h1>
                         <h1 className="lowercase">{unitId.str}</h1>
@@ -184,7 +183,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
                     <Button
                         variant={'outline'}
                         onClick={() => setShowInfo(1)}
-                        className="bg-green1/90 text-white1/30"
+                        className="dark:text-white1/30 border border-green1/20 dark:border-gray1/70"
                     >
                         Info
                     </Button>

@@ -8,6 +8,7 @@ import Yield from "./Yield";
 import Faq from "./Faq";
 import AiAssist from "./AiAssist";
 import CreateFlexpool from "./FlexPool/Create";
+import Providers from "./Providers";
 
 export default function AppFeatures({currentPath}:{currentPath: Path}) {
   return(
@@ -19,7 +20,7 @@ export default function AppFeatures({currentPath}:{currentPath: Path}) {
               {
                 location: 0,
                 element: ( <FlexPool /> ),
-                path: 'Flexpool' 
+                path: 'Dashboard' 
               },
               {
                 location: 1,
@@ -40,6 +41,11 @@ export default function AppFeatures({currentPath}:{currentPath: Path}) {
                 location: 4,
                 element: ( <Faq /> ),
                 path: 'Faq' 
+              },
+              {
+                location: 5,
+                element: ( <Providers /> ),
+                path: 'Providers' 
               },
             ] as const
           ).filter(({path}) => path === currentPath)

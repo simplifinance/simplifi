@@ -183,7 +183,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const constructorArgs = isNotHardhat? flexpoolArgs : hardhatArg;
   
-  // console.log(`Deploying ${flexpool}`);
   const factory = await deploy(flexpool, {
     from: deployer,
     args: [...constructorArgs],

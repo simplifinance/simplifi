@@ -10,6 +10,8 @@ import AppFeatures from "@/components/AppFeatures";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
 import InitialPopUp from "@/components/AppFeatures/InitialPopUp";
 
+const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets'];
+
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
   const [showSidebar, setShowSidebar] = React.useState(false);
@@ -18,10 +20,9 @@ export default function SimplifiApp() {
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
-  const [activePath, setActivePath] = React.useState<Path>('Flexpool');
+  const [activePath, setActivePath] = React.useState<Path>('Dashboard');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
 
-  const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets'];
 
   const setmessage = (arg: string) => arg === ''? setMessage([]): setMessage((prev) => [...prev, arg]);
   const callback : TransactionCallback = (arg) => {

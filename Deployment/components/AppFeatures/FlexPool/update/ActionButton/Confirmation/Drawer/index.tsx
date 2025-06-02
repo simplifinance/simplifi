@@ -1,9 +1,9 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
+// import Box from '@mui/material/Box';
 import { Drawer as MuiDrawer, } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import type { ToggleDrawer, VoidFunc } from '@/interfaces';
-import { useTheme } from 'next-themes';
+// import { useTheme } from 'next-themes';
 import DrawerHeader from '@/components/utilities/DrawerHeader';
 
 const toggleDrawer : ToggleDrawer =
@@ -22,7 +22,7 @@ const toggleDrawer : ToggleDrawer =
 
 export default function Drawer({ openDrawer, styles, setDrawerState, title, onClickAction, children } : DrawerProps) {
     const isLargeScreen = useMediaQuery('(min-width:768px)');
-    const isDark = useTheme().theme === 'dark';
+    // const isDark = useTheme().theme === 'dark';
     const entry = openDrawer === 0? false : true;
     return (
         <MuiDrawer

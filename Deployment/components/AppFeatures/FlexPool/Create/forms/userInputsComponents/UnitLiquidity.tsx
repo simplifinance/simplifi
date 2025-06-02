@@ -15,8 +15,8 @@ export default function UnitLiquidity({selected, handleChange,} : InputCategoryP
             toolTipTitle="Liquidity amount per contributor (In base asset e.g cUSD)"
             type='number'
             inputValue={selected}
-            label='Unit Liquidity'
-            placeholder="Unit Liquidity"
+            label='Amount'
+            placeholder="Enter contribution amount"
         />
     ); 
 }
