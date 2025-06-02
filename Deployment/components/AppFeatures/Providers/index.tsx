@@ -64,7 +64,7 @@ export default function Providers() {
                                     </div>
                                     <div className="space-y-2">
                                         <h3 className="font-bold dark:text-orange-300">{'Are you a contributors?'}</h3>
-                                        <p>Don't have enough stablecoin to contribute to a pool, select a provider, enter an amount, and you will be funded. For large amount, you can select multiple providers</p>
+                                        <p>{`Don't have enough stablecoin to contribute to a pool, select a provider, enter an amount, and you will be funded. For large amount, you can select multiple providers`}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
