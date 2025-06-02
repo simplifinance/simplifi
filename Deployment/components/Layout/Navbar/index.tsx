@@ -1,17 +1,18 @@
 import React from 'react';
 import { flexSpread } from '@/constants';
 import Link from 'next/link';
-import Typed from 'react-typed';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ConnectWallet } from '@/components/utilities/ConnectWallet';
 import { ModeToggler } from '@/components/utilities/ModeToggler';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+import { topBarContent } from '../LeftSidebar';
 
 export default function Navbar() {
-  const { showSidebar, toggleSidebar } = useAppStorage();
+  const { showSidebar, toggleSidebar, setActivepath, activePath } = useAppStorage();
   return(
-    <nav className={`${flexSpread} relativ dark:bg-green1 md:border-b  border-b-green1/30 dark:border-b-white1/20 p-4 z-50 bg-white1`}>
-      <div className='hidden w-full md:flex justify-between items-center'>
+    <nav className={`${flexSpread} dark:bg-green1 md:border-b  border-b-green1/20 dark:border-b-white1/20 p-4 z-50 bg-white1`}>
+      <div className='hidden md:block w-2/4'>
         <Link href="/" passHref>
           <Image 
             src="/logoSimplifi.png"
@@ -20,13 +21,18 @@ export default function Navbar() {
             height={100}
           />
         </Link>
-        <div className='hidden md:block absolute left-[20%] bg-green1 border border-green1/30 min-w-[500px] text-white1 dark:bg-white1 px-3 py-2 rounded-xl dark:text-green1 font-bold'>
-          <Typed 
-            strings={['Warning! This is testnet version', 'Warning! Coins and/or Tokens used are not real', 'Warning! Do not send or use real token']}
-            className='text-md'
-            typeSpeed={100} backSpeed={100} loop showCursor={false}              
-          />                     
-        </div>
+      </div>
+      <div className='hidden md:flex gap-3 items-center'>
+        {
+          topBarContent.map(({path, title}) => (
+            <Button variant={'ghost'} key={path} onClick={() => setActivepath(path)} className={`uppercase font-semibold text-green1/60 dark:text-white2 ${activePath === path? 'border-b-4 border-b-green1/50 dark:border-b-orange-200' : ''} text-xs opacity-80`}>
+              { title }
+            </Button>
+          ))
+        }
+        <Link href={'https://simplifinance.gitbook.io/docs'} className='uppercase font-semibold text-green1/60 text-xs dark:text-white2 opacity-80'>
+          Doc
+        </Link>
       </div>
       <div className={`flex justify-between md:w-full md:justify-end w-full md:px-4 lg:gap-4`}>
         <button className='md:hidden hover:text-orange-400' onClick={() => toggleSidebar(!showSidebar)}>
@@ -47,3 +53,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

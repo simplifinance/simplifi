@@ -88,7 +88,7 @@ export const Permissioned = () => {
     }, [unitLiquidity, participants, colCoverage, collateralAsset, duration]);
 
     return(
-        <div className="space-y-8 mt-6">
+        <div className="space-y-6 mt-2 bg-white1 dark:bg-transparent p-8 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {
                     (
@@ -129,7 +129,7 @@ export const Permissioned = () => {
             <div>
                 <Button
                     variant={'outline'}
-                    className="w-full bg-white2/80 dark:bg-green1/90 border border-green1/30 dark:border-white1/30 text-green1/90 dark:text-orange-200 p-6 hover:bg-green1/70"
+                    className="text-green1/90 dark:text-orange-200 p-6 hover:bg-green1/70"
                     onClick={() => {
                         setmessage('');
                         setDrawerState(1)

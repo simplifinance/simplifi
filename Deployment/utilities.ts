@@ -42,7 +42,7 @@ export const num = (arg: number | undefined) => Number(arg);
  * @returns Formatted value.
  */
 export const formatValue = (arg: string | number | ethers.BigNumberish | bigint | undefined) => {
-  const valueInBigNumber = toBN(formatEther(toBigInt(arg))).decimalPlaces(4)
+  const valueInBigNumber = toBN(formatEther(toBigInt(arg))).decimalPlaces(6)
   return {
     toStr: valueInBigNumber.toString(),
     toNum: valueInBigNumber.toNumber()

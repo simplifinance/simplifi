@@ -58,10 +58,10 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
             let value : bigint = 0n;
             let proceed = 1;
             await refetch().then((result) => {
-                const allowance = result?.data?.[0]?.result as bigint;
+                // const allowance = result?.data?.[0]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        if(allowance >= unit) proceed = 0;
+                        // if(allowance >= unit) proceed = 0;
                         args = [flexpoolContract, unit];
                         break;
                     default:

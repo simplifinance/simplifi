@@ -15,7 +15,7 @@ export default function Duration({selected, handleChange} : InputCategoryProp) {
             type='number'
             toolTipTitle="The period to which a borrower can retain the fund"
             inputValue={selected}
-            label='Duration'
+            label='How long should the fund be used? (hrs - Max 720hrs)'
             placeholder="Duration (In hrs)"
         />
     );

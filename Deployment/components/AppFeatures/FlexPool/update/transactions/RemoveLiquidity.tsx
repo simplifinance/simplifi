@@ -121,7 +121,7 @@ export default function RemoveLiquidity() {
             <ActionButton 
                 disabled={disabled && allowance === 0n } 
                 toggleDrawer={toggleDrawer}
-                buttonContent='Remove liquidity'
+                buttonContent='Remove'
                 widthType='fit-content'
             />
             <Confirmation 

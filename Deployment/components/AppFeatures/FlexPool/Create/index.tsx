@@ -26,7 +26,7 @@ export default function CreateFlexpool() {
 
   return (
     <MotionDivWrap>
-      <div className={`${flexSpread} pb-4 border-b-4 border-b-green1/90 dark:border-b-2`}>
+      <div className={`${flexSpread} p-4 w-full`}>
         <div className={`md:hidden w-[fit-content] ${flexStart}`}>
           <Button disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`${flexSpread} gap-2 ${!disablebutton? 'bg-gray1 animate-pulse' : 'bg-green1'} p-3 rounded-full ${!disablebutton && 'hover:shadow-sm hover:shadow-orange-200'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4 text-orange-300">
@@ -48,7 +48,7 @@ export default function CreateFlexpool() {
           </Button>
         </div>
       </div>
-      <MotionDivWrap className="p-4 border dark:border-none rounded-b-xl">{ renderForm() }</MotionDivWrap>
+      <div className="p-4">{ renderForm() }</div>
     </MotionDivWrap>
   );
 }

@@ -8,6 +8,7 @@ import ErrorBoundary from "../utilities/ErrorBoundary";
 import Navbar from "./Navbar";
 import LeftSidebar from "./LeftSidebar";
 import RightSideBar from "./RightSidebar";
+import { MotionDivWrap } from "../utilities/MotionDivWrap";
 
 const Layout = ({children} : {children: React.ReactNode}) => {
   const [loading, setLoading] = React.useState(true);
@@ -42,10 +43,10 @@ const Layout = ({children} : {children: React.ReactNode}) => {
           <Navbar />
           <LeftSidebar />
           <ScrollButton windowIsDefined={windowIsDefined} />
-          <main className='relative md:py-4 md:pr-4 bg-gray1 md:bg-transparent'>
-            <div className="p-4 bg-white1 dark:bg-gray1 border-t border-t-green1/30 md:dark:border-gray1 md:rounded-xl">
+          <main className='relative bg-white2 dark:bg-gray1'>
+            <MotionDivWrap>
               {children}
-            </div>
+            </MotionDivWrap>
           </main>
           <RightSideBar />
         </div>

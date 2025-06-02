@@ -37,17 +37,19 @@ body {
 
 .appContainer {
   display: grid;
-  grid-template-columns: 300px calc(100% - 700px) 400px;
+  grid-template-columns: 400px 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas: 
-  "navbar navbar navbar"
-  "leftsidebar main rightbar"
+  "navbar navbar"
+  "rightbar main"
 }
 
 nav{
   grid-area: navbar;
   top: 0;
   position: sticky;
+  height: 78px;
+  /* z-index: 100; */
 }
 
 aside{
@@ -61,54 +63,22 @@ aside{
 }
 
 .rightsidebar{
-  top: 72px;
+  /* top: 60px; */
   grid-area: rightbar;
-  height: calc(100vh - 72px);
+  height: calc(100vh - 78px);
   position: fixed;
   width: 400px;
   align-self: start;
   overflow: auto;
 }
-
-/* .appContainer {
-  display: grid;
-  grid-template-columns: 300px calc(100% - 700px) 400px;
-  grid-template-rows: auto 1fr;
-  grid-template-areas: 
-  "navbar navbar navbar"
-  "leftsidebar main rightsidebar"
-}
-
-nav{
-  grid-area: navbar;
-  top: 0;
-  position: sticky;
-} */
-
-/* aside{
-  top: 72px; 
-  grid-area: leftsidebar;
-  height: calc(100vh - 72px);
-  position: fixed;
-  width: 300px;
-  align-self: start;
-  overflow: auto;
-}
-
-.main2{
-  top: 72px;
-  grid-area: rightsidebar;
-  height: calc(100vh - 72px);
-  position: fixed;
-  width: 400px;
-  align-self: start;
-  overflow: auto;
-} */
-
 
 main{ 
+  /* top: 72px; */
   grid-area: main;
-  height: 100%;
+  height: calc(100vh - 78px);
+  align-self: start;
+  position: fixed;
+  overflow: auto;
 }
 
 .minHeight{ min-height: 100vh; }

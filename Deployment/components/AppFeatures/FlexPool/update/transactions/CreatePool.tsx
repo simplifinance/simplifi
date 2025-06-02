@@ -44,7 +44,7 @@ export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optio
         });
 
         return { readTxObject, flexpoolContract, usd, mutate, supportedColAssets};
-        }, [chainId, account, callback]);
+    }, [chainId, account, callback]);
 
         const { refetch } = useReadContracts(
         {
@@ -62,7 +62,7 @@ export default function CreatePool({ unit, args, toggleDrawer, openDrawer, optio
                 const allowance = result?.data?.[0]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        if(allowance >= unit) proceed = 0;
+                        // if(allowance >= unit) proceed = 0;
                         args_ = [flexpoolContract, unit];
                         break;
                     default:

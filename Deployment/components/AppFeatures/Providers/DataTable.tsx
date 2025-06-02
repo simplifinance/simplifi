@@ -53,7 +53,7 @@ const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
         ),
         cell: ({ row }) => (
           <Checkbox
-            checked={providerSlots.includes(toBigInt(row.getValue('slot')?.toString()))}
+            checked={row.getIsSelected() || providerSlots.includes(toBigInt(row.getValue('slot')?.toString()))}
             // checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
             aria-label="Select row"
@@ -64,9 +64,9 @@ const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
       },
       {
         accessorKey: "slot",
-        header: "Slot",
+        header: () => <div className="text-center">Slot</div>,
         cell: ({ row }) => (
-            <div className="font-bold text-white1">{row.getValue("slot")?.toString()}</div>
+            <div className="text-green1/80 dark:text-white1 font-bold text-center">{row.getValue("slot")?.toString()}</div>
         ),
       },
       {
@@ -75,6 +75,7 @@ const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
           return (
             <Button
               variant="ghost"
+              className="w-full place-items-center"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
               Address
@@ -82,7 +83,7 @@ const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
             </Button>
           )
         },
-        cell: ({ row }) => <div>
+        cell: ({ row }) => <div className="flex justify-center items-center">
             <AddressWrapper 
                 account={row.getValue("account")}
                 display
@@ -210,7 +211,7 @@ export default function DataTable({providerSlots, onCheckboxClicked} : DataTable
                                   const amount = toBigInt(row.getValue('amount')?.toString());
                                   onCheckboxClicked(slot, amount, row.getIsSelected());
                                 }}
-                                className={`${row.getIsSelected()? 'bg-gray1 bg-opacity-60' : ''} cursor-pointer checked:bg-red-300`}
+                                className={`${row.getIsSelected()? 'bg-gray1 bg-opacity-70' : ''} cursor-pointer checked:bg-red-300`}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell 

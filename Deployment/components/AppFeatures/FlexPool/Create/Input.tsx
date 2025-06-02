@@ -23,7 +23,7 @@ export const Input = (props: InputProps) => {
     return(
         <div className="flex w-full max-w-sm items-center space-x-2">
             <div className="grid w-full max-w-sm items-center gap-1.5">
-                { label && <Tooltip title={toolTipTitle}><Label className="text-green1/90 dark:text-orange-200 font-black">{label}</Label></Tooltip>}
+                { label && <Tooltip title={toolTipTitle}><Label className="text-green1/90 dark:text-orange-200">{label}</Label></Tooltip>}
                 <div className={`${flexSpread} gap-2`}>
                     <InputComponent 
                         type={type}

@@ -15,7 +15,7 @@ export default function Quorum({selected, handleChange,} : InputCategoryProp) {
             toolTipTitle="Expected number of contributors"
             type='number'
             inputValue={selected} 
-            label='Quorum'
+            label='Number of contributors'
             placeholder="Max participants"
         />
     ); 

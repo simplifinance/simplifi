@@ -6,11 +6,11 @@ export default function DrawerHeader({title, onClickAction} : {title: string, on
 
     return(
         <header className={`${flexSpread} p-4 border rounded-lg font-bold md:text-xl text-green1/70 dark:text-orange-300`}>
-            <h3>{title}</h3>
-            <Button variant={'outline'} className="dark:bg-gray1 dark:text-orange-300 text-lg font-normal" onClick={onClickAction}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-8 dark:text-orange-200">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
+            <h3 className="w-[80%] max-w-sm">{title}</h3>
+            <Button variant={'ghost'} className="w-[20%] dark:text-orangec" onClick={onClickAction}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
             </Button>
         </header>
     );
