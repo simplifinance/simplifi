@@ -9,7 +9,7 @@ import { VoidFunc } from "@/interfaces";
 import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 import ProvideLiquidity from "../FlexPool/update/transactions/ProvideLiquidity";
 
-export default function AddLiquidity({back} : {back: VoidFunc}) {
+export default function AddLiquidity() {
     const [ unitLiquidity, setUnitLiquidity ] = React.useState<string>('0');
     const [ rate, setRate ] = React.useState<string>('0');
     const [ openDrawer, setOpenDrawer ] = React.useState<number>(0);
@@ -21,16 +21,13 @@ export default function AddLiquidity({back} : {back: VoidFunc}) {
         <MotionDivWrap className="space-y-4">
             <Interest handleChange={(arg) => setRate(arg)} selected={rate}/>
             <UnitLiquidity handleChange={(arg) => setUnitLiquidity(arg)} selected={unitLiquidity}/>
-            <div className={`${flexStart} gap-2`}>
-                <Button variant={'outline'} onClick={back} className="">Cancel</Button>
-                <Button onClick={() => setOpenDrawer(1)}>Submit</Button>
-            </div>
+            <Button onClick={() => setOpenDrawer(1)}>Submit</Button>
             <ProvideLiquidity 
                 args={args}
                 liquidityAmount={parseEther(unitLiquidity)}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                back={back}
+                // back={back}
             />
         </MotionDivWrap>
     )

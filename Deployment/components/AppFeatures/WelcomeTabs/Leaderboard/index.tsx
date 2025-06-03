@@ -184,7 +184,7 @@ export default function Leaderboard() {
                             <TableRow
                                 key={row.id}
                                 data-state={row.getIsSelected() && "selected"}
-                                className={`${formatAddr(row.getValue('user')?.toString()) === currentUser && 'bg-gray1/30'} hover:bg-none`}
+                                className={`${formatAddr(row.getValue('user')?.toString()) === currentUser && 'bg-white2 dark:bg-green1/20'} hover:bg-white2/50 dark:hover:bg-green1/40 cursor-pointer`}
                             >
                                 {row.getVisibleCells().map((cell) => (
                                     <TableCell key={cell.id} className="text-center ">

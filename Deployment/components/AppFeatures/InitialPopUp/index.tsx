@@ -7,6 +7,7 @@ import DialogBox from "@/components/utilities/DialogBox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import { flexCenter } from "@/constants";
 
 export default function InitialPopUp() {
   const { setActivepath } = useAppStorage();
@@ -19,22 +20,24 @@ export default function InitialPopUp() {
         <Button variant={'default'} onClick={handleNavigate} className="w-full">Try AI Assist</Button>
       }
     >
-      <MotionDivWrap className="">
+      <MotionDivWrap>
         <Carousel 
           opts={{align: "start"}}
           orientation={'horizontal' }
         >
-          <CarouselContent className="-mt-1 h-[300px] max-w-xs ">
+          <CarouselContent className="h-[300px] max-w-xs ">
             {
               swipeableContent.map(({title, description, imageComponent}) => (
                 <CarouselItem key={title} className="pt-1 md:basis-3/3">
                   <div className="p-1">
                     <Card className="border-none">
                       <CardHeader>
-                        <CardTitle className="text-center text-orangec dark:text-orange-300">{title}</CardTitle>
+                        <CardTitle className="text-center text-2xl font-black text-orange-700 dark:text-orange-300">{title}</CardTitle>
                       </CardHeader>
                       <CardContent className="aspect-square place-items-center space-y-4">
-                        { imageComponent }
+                        <div className={`${flexCenter}`}>
+                          { imageComponent }
+                        </div>
                         <h1 className="font-semibold text-center dark:text-orange-100">{description}</h1>
                       </CardContent>
                     </Card>

@@ -12,22 +12,23 @@ export default function LeftSidebar() {
     
   const handleClick = (path: Path) => {
     setActivepath(path);
-    const timeoutObj = setTimeout(() => toggleSidebar(false), 500);
-    clearTimeout(timeoutObj);
+    toggleSidebar(false);
+    // const timeoutObj = setTimeout(() => toggleSidebar(false), 500);
+    // clearTimeout(timeoutObj);
   };
  
   return(
     <aside className={`${!showSidebar? 'hidden' : 'flex max-w-xs'} z-50`}>
-      <div className={`flex flex-col justify-start items-start text-start bg-white1 dark:bg-green1/90 border-r border-r-green1/30 dark:border-r-gray1 place-items-center space-y-4 pt-4`}>
+      <div className={`flex flex-col justify-start items-start text-start bg-white1 dark:bg-green1 border-r border-r-green1/30 dark:border-r-gray1 place-items-center space-y-4 p-4`}>
         {
           topBarContent.map(({path, title }) => (
-            <Button variant={'ghost'} key={title} onClick={() => handleClick(path)} className={`uppercase font-semibold text-green1/60 dark:text-white2 ${activePath === path? 'border-b-4 border-b-green1/50 dark:border-b-orange-200' : ''} text-xs opacity-80`}>
+            <Button variant={'ghost'} key={title} onClick={() => handleClick(path)} className={`uppercase font-semibold text-green1/80 dark:text-orange-300 ${activePath === path? 'border-b-4 border-b-green1/50 dark:border-b-orange-200' : ''} text-xs opacity-90`}>
               { title }
             </Button>
             )
           )
         }
-        <Link href={'https://simplifinance.gitbook.io/docs'} className='uppercase font-semibold text-green1/40 text-xs pl-4'>
+        <Link href={'https://simplifinance.gitbook.io/docs'} className='uppercase font-semibold text-green1/80 dark:text-orange-300 text-xs pl-4 opacity-90'>
           Doc
         </Link>
       </div>
@@ -39,6 +40,10 @@ export const topBarContent : {
   title: string, 
   path: Path
 }[] = Array.from([
+  {
+    title: 'Home',
+    path: routeEnum.HOME
+  },
   {
     title: 'Dashboard',
     path: routeEnum.DASHBOARD

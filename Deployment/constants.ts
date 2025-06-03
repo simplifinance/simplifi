@@ -20,7 +20,8 @@ export const routeEnum : Record<string, Path> = {
   PROVIDERS: 'Providers',
   CREATE: 'CreateFlexpool',
   FAQ: 'Faq',
-  AIASSIST: 'AiAssist'
+  AIASSIST: 'AiAssist',
+  HOME: 'Home'
 }
 
 export const baseContracts : Record<string, Address> = {

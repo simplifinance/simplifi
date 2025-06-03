@@ -3,6 +3,7 @@ import { flexSpread } from "@/constants";
 import Collapse from "@mui/material/Collapse";
 import { faqContent } from "./content";
 import { PlusMinusIcons } from "@/components/utilities/Icons";
+import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 
 const Content = ({title, content, subparagraph} : {title: React.ReactNode, content: React.ReactNode, subparagraph: React.ReactNode}) => {
   const [open, setOpen] = React.useState<boolean>(false);
@@ -24,12 +25,12 @@ const Content = ({title, content, subparagraph} : {title: React.ReactNode, conte
 
 export default function Faq(){
   return (
-    <div className="w-full md:p-4">
+    <MotionDivWrap className="p-4">
       {
         faqContent.map(({title, content, subparagraph}, i) => (
           <Content {...{title, content, subparagraph}} key={i} />            
         ))
       }
-    </div>
+    </MotionDivWrap>
   )
 }

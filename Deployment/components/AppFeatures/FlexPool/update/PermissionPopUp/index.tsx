@@ -4,7 +4,7 @@ import Drawer from "../ActionButton/Confirmation/Drawer";
 export const PermissionPopUp : React.FC<{popUpDrawer: number, toggleDrawer: (arg: number) => void, children: React.ReactNode;}> = ({popUpDrawer, toggleDrawer, children}) => {
     return (
         <Drawer 
-            title="Router type"
+            title="Info"
             openDrawer={popUpDrawer} 
             setDrawerState={toggleDrawer} 
             onClickAction={() => toggleDrawer(0)}

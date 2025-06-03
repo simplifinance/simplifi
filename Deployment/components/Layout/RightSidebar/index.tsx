@@ -1,3 +1,4 @@
+import OnchainStatistics from "@/components/AppFeatures/OnchainStatistics";
 import { WelcomeTabs } from "@/components/AppFeatures/WelcomeTabs";
 import { Button } from "@/components/ui/button";
 import { flexSpread } from "@/constants";
@@ -9,8 +10,8 @@ export default function RightSideBar() {
         <div className="rightsidebar">
             {
                 <div className='p-4 bg-white1 dark:bg-gray1 space-y-2'>
-                    <div className={`${flexSpread} dark:bg-green1 p-4 rounded-xl`}>
-                        <h1 className='text-xl text-green1 dark:text-orange-300 md:text-2xl font-bold'>Welcome to Simplifi!</h1>
+                    <div className={`${flexSpread} dark:bg-green1 border border-green1/20 p-4 rounded-xl`}>
+                        <h1 className='text-xl text-green1/90 dark:text-orange-300 md:text-2xl font-black'>Welcome to Simplifi!</h1>
                         <Button className={`${flexSpread}`}>
                             <Link href={'https://simplifinance.gitbook.io/docs'}>How it works</Link>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -25,9 +26,9 @@ export default function RightSideBar() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
                             </svg>
                             </span>
-                            Simplifi Phase 1 is live
+                            {`Simplifi is live!`}
                         </h3>
-                        <p>Participate in testnet activities and social tasks to earn reward</p>
+                        <p>Participate in onchain activities and social tasks to earn points which are convertible to SIMPL Token on mainnet</p>
                     </div>
                     <WelcomeTabs />
                 </div> 

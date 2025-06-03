@@ -20,7 +20,7 @@ export default function SimplifiApp() {
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
-  const [activePath, setActivePath] = React.useState<Path>('Dashboard');
+  const [activePath, setActivePath] = React.useState<Path>('Home');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
 
 
