@@ -81,7 +81,7 @@ export default function OnchainStatistics() {
                   <h3 className='text-2xl'>{totalLiquidatablePool}</h3>
                 </div>
               </div>
-              <div className='grid grid-cols-3 gap-2'>
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
                 <div className={className}>
                   <h3 className=''>Total paid out</h3>
                   <h3 className='text-2xl'>{`$${totalPayout}`}</h3>
@@ -100,8 +100,8 @@ export default function OnchainStatistics() {
             {/* Providers */}
             <div className={`space-y-4 font-black`}>
               <h1 className='text-lg text-green1/90 dark:text-orange-300'>Providers</h1> 
-              <div className='grid grid-cols-3 gap-2'>
-                <div>
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
+                <div className='hidden md:block'>
                 </div>
                 <div className={className}>
                   <h3>Tvl</h3>
@@ -115,7 +115,7 @@ export default function OnchainStatistics() {
               <div className='grid grid-cols-2 gap-2'>
                 <div className={className}>
                   <h3 className=''>{`Avg. rate`}</h3>
-                  <h3 className='text-2xl'>{`%${averageRate}`}</h3>
+                  <h3 className='text-2xl'>{`${averageRate}%`}</h3>
                 </div>
                 <div className={className}>
                   <h3>{`Total borrowed`}</h3>

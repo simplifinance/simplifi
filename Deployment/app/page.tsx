@@ -47,7 +47,7 @@ export default function SimplifiApp() {
     const provider = {abi: filtered.transactionData[3].abi, ca: formatAddr(filtered.transactionData[3].contractAddress)};
     const sAsset = {abi: filtered.transactionData[4].abi, ca: formatAddr(filtered.transactionData[4].contractAddress)};
     return { symbol, fData, point, provider, sAsset }
-  }, [chainId, callback]);
+  }, [chainId]);
 
   // Read contract data from the blockchain
   const { refetch, data, isPending } = useReadContracts({
@@ -87,7 +87,7 @@ export default function SimplifiApp() {
     const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
     const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
     return { notReady, symbols, factoryData, points, supportedAssets, providers, pools };
-  }, [data, isPending]);
+  }, [data]);
 
   const toggleProviders = (arg: bigint) => {
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);

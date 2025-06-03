@@ -354,7 +354,8 @@ export function getAnalytics(providers: ProviderResult[], pools: ReadDataReturnV
     activeUsers += cData.length;
     isPermissionless? totalPermissionless += 1 : totalPermissioned += 1;
     cData.forEach(({providers, profile: {colBals, loan, paybackTime}}) => {
-      const onchainPaybackTime = new Date(toBN(BigInt(paybackTime * 1000n).toString()).toNumber()).getTime();
+      const paybackTime_ = toBN(paybackTime.toString()).times(toBN(1000)).toNumber();
+      const onchainPaybackTime = new Date(paybackTime_).getTime();
       const currentTime = new Date().getTime();
       if(currentTime > onchainPaybackTime) totalLiquidatablePool += 1;
       totalPayout += loan;
@@ -364,13 +365,13 @@ export function getAnalytics(providers: ProviderResult[], pools: ReadDataReturnV
         totalBorrowedFromProviders += amount;
         totalAccruedInterest += accruals.fullInterest;
       });
-      
     })
   });
+
   return {
     tvlProviders: formatValue(totalProvidedLiquidity).toStr,
     unpaidInterest: formatValue(totalAccruedInterest).toStr,
-    averageRate: BigInt(averageRate / BigInt(providers.length)).toString(),
+    averageRate: BigInt((averageRate / BigInt(providers.length)/100n)).toString(),
     totalPermissioned,
     totalPermissionless,
     tvlInBase: formatValue(tvlInContribution).toStr,
