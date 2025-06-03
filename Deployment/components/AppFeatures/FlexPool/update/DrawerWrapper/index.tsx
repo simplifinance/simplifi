@@ -8,7 +8,7 @@ import BalancesAndCollaterals from "./BalancesAndCollaterals";
 import { zeroAddress } from "viem";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 
-const BOXSTYLING = "w-full rounded-lg border border-b-4 p-4 space-y-2 dark:text-white1";
+const BOXSTYLING = "w-full rounded-lg border border-b-4 p-4 space-y-2 dark:text-orange-200";
 
 export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoDisplayProps) => {
     const { symbol } = useAppStorage();
@@ -44,8 +44,8 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
             setDrawerState={toggleDrawer} 
         >
             <div className={`space-y-4 md:space-y-4`}>
-                { actions }
-                <ul className={`bg-white1 dark:bg-transparent border border-b-4 p-4 rounded-lg dark:text-white1  `}>
+                <div className="w-fit">{ actions }</div>
+                <ul className={`bg-white1 dark:bg-transparent border border-b-4 p-4 rounded-lg dark:text-orange-300 space-y-2 font-medium `}>
                     <li className={`${flexSpread}`}>
                         <h3>{`Collateral denom : ${symbol}`}</h3>
                         <AddressWrapper
@@ -78,36 +78,40 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
 
                 <BalancesAndCollaterals unit={unit.big} safe={safe} collateralAsset={colAsset} />
                 
-                <ul className={`${BOXSTYLING}`}>
-                    <li className={`w-full ${flexSpread}`}>
+                <ul className={`${BOXSTYLING} text-sm font-medium `}>
+                    <li className={`w-full max-w-sm  ${flexSpread}`}>
+                        <h1>{'Unit Id:'}</h1>
+                        <p>{unitId.str}</p>
+                    </li>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Contribution per user</h3>
                         <p>{`$${unit.inEther}`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Total contributed</h3>
                         <p>{`$${currentPool.inEther}`}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Pool Id</h3>
                         <p>{unitId.str}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Record Id</h3>
                         <p>{recordId.str}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Last Paid</h3>
                         <AddressWrapper size={3} account={lastPaid} display />
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Stage</h3>
                         <p>{stage.inStr}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Collateral Coverage Ratio</h3>
                         <p>{colCoverage}</p>
                     </li>
-                    <li className={`w-full ${flexSpread}`}>
+                    <li className={`w-full max-w-sm ${flexSpread}`}>
                         <h3>Duration</h3>
                         <p>{`${duration.inHour} ${duration.inHour > 1? 'hrs' : 'hr'}`}</p>
                     </li>

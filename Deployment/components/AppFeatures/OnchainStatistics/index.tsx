@@ -1,87 +1,135 @@
 import React from 'react'
-import { 
-  permissionedIcon,
-  permissionlessIcon,
-  tvlIcon,
-  collateralIcon,
-  networkIcon,
-} from '@/components/assets';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
-import { formatEther } from 'viem';
-import { toBigInt, toBN } from '@/utilities';
-import { useAccount } from 'wagmi';
-import { Card, CardContent, } from '@/components/ui/card';
-import { getChainData } from '@/constants';
+import { getAnalytics } from '@/utilities';
+import FlexPool from '../FlexPool';
+import { MotionDivWrap } from '@/components/utilities/MotionDivWrap';
+
+const className = 'flex flex-col justify-between items-center gap-2 border border-green1/80 dark:border-white2/20 text-green1/80 dark:text-white2/80 rounded-lg p-4 text-sm w-full text-center dark:bg-green1/90';
 
 export default function OnchainStatistics() {
-  const { analytics: { totalPermissioned, totalPermissionless, tvlBase, tvlCollateral }, symbol, currentEpoches, recordEpoches, } = useAppStorage();
-  const tvlInCollateral = toBN(formatEther(toBigInt(tvlCollateral))).decimalPlaces(3);
-  const tvlInBase = toBN(formatEther(toBigInt(tvlBase))).decimalPlaces(3);
-  const { chainId } = useAccount();
-  const { collateralCurrency, network, baseCurrency } = getChainData(chainId);
+  const { providers, pools, currentEpoches, recordEpoches, } = useAppStorage();
 
-  const dashboardInfo = [
-    {
-      title: `Tvl (in ${baseCurrency})`,
-      value: `$${tvlInBase}`,
-      icon: tvlIcon
-    },
-    {
-      title: `Tvl (in ${collateralCurrency})`,
-      value: `$${tvlInCollateral}`,
-      icon: tvlIcon
-    },
-    {
-      title: 'Collateral',
-      value: `${collateralCurrency}`,
-      icon: collateralIcon
-    },
-    {
-      title: 'Network',
-      value: `${network}`,
-      icon: networkIcon
-    },
-    {
-      title: 'Permissionless',
-      value: totalPermissionless?.toString(),
-      icon: permissionlessIcon
-    },
-    {
-      title: 'Permissioned',
-      value: totalPermissioned?.toString(),
-      icon: permissionedIcon
-    },
-  ];
+  const {
+    activeUsers,
+    averageRate,
+    totalBorrowedFromProviders,
+    totalLiquidatablePool,
+    totalPayout,
+    totalPermissioned,
+    totalPermissionless,
+    totalProviders,
+    tvlInBase,
+    tvlInCollateral,
+    tvlProviders,
+    unpaidInterest
+  } = React.useMemo(() => {
+    return getAnalytics(providers, pools);
+  }, [providers, pools]);
 
   return(
-    <div className='space-y-4'>
-        <h1 className='text-lg text-green1/90 font-bold dark:text-white1 md:text-2xl'>Onchain Stats</h1>
-        <div className='grid grid-cols-2 gap-4 '>
-            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-gray1 md:border-green1 text-green1/90 dark:bg-green1/90 dark:text-white1 font-bold text-center'>
-                <CardContent>
-                    <h3 className='text-xs text-start text-orangec dark:text-orange-300'>Active Epoches</h3>
-                    <h3 className='text-2xl font-black'>{currentEpoches.toString() || '0'}</h3>
-                </CardContent>
-            </Card>
-            <Card className='dark:bg-gray1 border-b-8 border-r-8 border-gray1 md:border-green1 text-green1/90 dark:bg-green1/90 dark:text-white1 font-bold text-center'>
-                <CardContent>
-                    <h3 className='text-xs text-start text-orangec dark:text-orange-300'>Past Epoches</h3>
-                    <h3 className='text-2xl font-black'>{recordEpoches.toString() || '0'}</h3>
-                </CardContent>
-            </Card>
-        </div>
-        <div className='grid grid-cols-2 gap-2'>
-            {
-                dashboardInfo.map(({title, value}, i) => (
-                    <Card key={i} className='md:dark:bg-gray1 text-green1/90 border border-green1/70 dark:text-current font-bold text-center p-2'>
-                        <CardContent>
-                            <h3 className='text-[10px] text-start  dark:text-orange-300'>{title}</h3>
-                            <h3 className=' text-center font-black'>{value}</h3>
-                        </CardContent>
-                    </Card>
-                ))
-            }
-        </div>
-    </div>
+    <MotionDivWrap>
+      <div className='space-y-4 p-4 relative font-bold'>
+          <h1 className='text-lg text-green1/90 opacity-90 dark:text-orange-300 font-black md:text-2xl pb-2 underline '>Onchain Stats</h1>
+          
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+            {/* Epoches */}
+            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-orange-300 p-4 rounded-lg `}>
+              <h1 className='font-black text-green1/80 dark:text-orange-300'>Epoches</h1>
+              <div className='flex justify-start gap-2'>
+                <div className={`flex justify-around text-white1 items-center dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
+                  <h3 className=''>Active</h3>
+                  <h3 className='text-2xl dark:text-green1/80'>{currentEpoches.toString() || '0'}</h3>
+                </div>
+                <div className={`flex justify-around items-center text-white1  dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
+                  <h3>Past</h3>
+                  <h3 className='text-2xl'>{recordEpoches.toString() || '0'}</h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Users */}
+            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-orange-300 p-4 rounded-lg `}>
+              <h1 className='font-black text-green1/80 dark:text-orange-300'>Active users</h1>
+              <div className='flex justify-start gap-2'>
+                <div className={`flex justify-around items-center text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
+                  <h3 className=''>Flexpools</h3>
+                  <h3 className='text-2xl dark:text-green1/80'>{activeUsers}</h3>
+                </div>
+                <div className={`flex justify-around items-center text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
+                  <h3>Providers</h3>
+                  <h3 className='text-2xl'>{totalProviders}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className={`relative grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-green1/50 w-full border dark:border-white2/20 p-4 rounded-lg `}>
+            {/* Flexpools */}
+            <div className={`space-y-4 font-black`}>
+              <h1 className='text-lg text-green1/90 dark:text-orange-300'>Flexpools</h1> 
+              <div className='grid grid-cols-3 gap-2'>
+                <div className={className}>
+                  <h3 className=''>Public</h3>
+                  <h3 className='text-2xl'>{totalPermissionless}</h3>
+                </div>
+                <div className={className}>
+                  <h3>Private</h3>
+                  <h3 className='text-2xl'>{totalPermissioned}</h3>
+                </div>
+                <div className={className}>
+                  <h3>Open to liquidate</h3>
+                  <h3 className='text-2xl'>{totalLiquidatablePool}</h3>
+                </div>
+              </div>
+              <div className='grid grid-cols-3 gap-2'>
+                <div className={className}>
+                  <h3 className=''>Total paid out</h3>
+                  <h3 className='text-2xl'>{`$${totalPayout}`}</h3>
+                </div>
+                <div className={className}>
+                  <h3>{`Tvl (Base)`}</h3>
+                  <h3 className='text-2xl'>{`$${tvlInBase}`}</h3>
+                </div>
+                <div className={className}>
+                  <h3>{`Tvl (Collateral)`}</h3>
+                  <h3 className='text-2xl'>{`$${tvlInCollateral}`}</h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Providers */}
+            <div className={`space-y-4 font-black`}>
+              <h1 className='text-lg text-green1/90 dark:text-orange-300'>Providers</h1> 
+              <div className='grid grid-cols-3 gap-2'>
+                <div>
+                </div>
+                <div className={className}>
+                  <h3>Tvl</h3>
+                  <h3 className='text-2xl'>{`$${tvlProviders}`}</h3>
+                </div>
+                <div className={className}>
+                  <h3>Unpaid interests</h3>
+                  <h3 className='text-2xl'>{`$${unpaidInterest}`}</h3>
+                </div>
+              </div>
+              <div className='grid grid-cols-2 gap-2'>
+                <div className={className}>
+                  <h3 className=''>{`Avg. rate`}</h3>
+                  <h3 className='text-2xl'>{`%${averageRate}`}</h3>
+                </div>
+                <div className={className}>
+                  <h3>{`Total borrowed`}</h3>
+                  <h3 className='text-2xl'>{`$${totalBorrowedFromProviders}`}</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <FlexPool 
+            showMyPool={false}
+            allPools={true}
+          />
+      </div>
+    </MotionDivWrap>
   )
 }

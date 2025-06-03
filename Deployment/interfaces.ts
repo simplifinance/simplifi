@@ -6,7 +6,7 @@ import { Mento, TradablePair } from "@mento-protocol/mento-sdk";
 import { Transaction } from "./components/AppFeatures/FlexPool/update/ActionButton/Confirmation";
 import { filterTransactionData } from "./utilities";
 
-export type Path = 'Providers' | 'Flexpool' | 'CreateFlexpool' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
+export type Path = 'Providers' | 'Flexpool' | 'CreateFlexpool' | 'Home' | 'AiAssist' | 'Faq' | 'Dashboard' | '';
 export type WagmiConfig = import("wagmi").Config;
 export type ViemClient = import('viem').Client;
 export type TxnStatus = "Pending" | "Confirming" | "Confirmed" | "Reverted" | "Failed";

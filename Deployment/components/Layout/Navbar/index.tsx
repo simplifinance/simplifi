@@ -25,12 +25,12 @@ export default function Navbar() {
       <div className='hidden md:flex gap-3 items-center'>
         {
           topBarContent.map(({path, title}) => (
-            <Button variant={'ghost'} key={path} onClick={() => setActivepath(path)} className={`uppercase font-semibold text-green1/60 dark:text-white2 ${activePath === path? 'border-b-4 border-b-green1/50 dark:border-b-orange-200' : ''} text-xs opacity-80`}>
+            <Button variant={'ghost'} key={path} onClick={() => setActivepath(path)} className={`uppercase font-semibold text-green1/80 dark:text-orange-300 ${activePath === path? 'border-b-4 border-b-green1/50 dark:border-b-orange-200' : ''} text-xs opacity-90`}>
               { title }
             </Button>
           ))
         }
-        <Link href={'https://simplifinance.gitbook.io/docs'} className='uppercase font-semibold text-green1/60 text-xs dark:text-white2 opacity-80'>
+        <Link href={'https://simplifinance.gitbook.io/docs'} className='uppercase font-semibold text-green1/80 text-xs dark:text-orange-300 opacity-90'>
           Doc
         </Link>
       </div>

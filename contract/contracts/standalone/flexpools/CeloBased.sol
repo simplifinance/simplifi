@@ -6,7 +6,7 @@ import { IStateManager } from '../../interfaces/IStateManager.sol';
 import { ISafe } from "../../interfaces/ISafe.sol";
 import { IERC20 } from "../../interfaces/IERC20.sol";
 import { CeloPriceGetter, Utils, Common  } from "../../peripherals/priceGetter/CeloPriceGetter.sol";
-import { Analytics } from "../../peripherals/Analytics.sol";
+// import { Analytics } from "../../peripherals/Analytics.sol";
 
 /**
     * @title FlexpoolFactory
@@ -31,7 +31,7 @@ import { Analytics } from "../../peripherals/Analytics.sol";
     20 - Epoch ended
 
 */
-contract CeloBased is IFactory, CeloPriceGetter, Analytics {
+contract CeloBased is IFactory, CeloPriceGetter {
     using Utils for *;
 
     /** 
@@ -72,7 +72,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
     ) public whenNotPaused returns(bool) {
         Common.Pool memory pool = _createPool(Common.CreatePoolParam(users, _msgSender(), unit, maxQuorum, durationInHours, colCoverage, isPermissionless? Common.Router.PERMISSIONLESS : Common.Router.PERMISSIONED, colAsset));
         _awardPoint(users[0], 0, 5, false);
-        _updateAnalytics(0, unit, 0, isPermissionless);
+        // _updateAnalytics(0, unit, 0, isPermissionless);
         emit Common.PoolCreated(pool);
       
         return true;
@@ -96,7 +96,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
         pool = _createPool(Common.CreatePoolParam(users, user, unit, 2, 72, 120, Common.Router.PERMISSIONLESS, defaultColAsset));
         ISafe(pool.addrs.safe).registerProvidersTo(_providers, user, pool.big.recordId); 
         _awardPoint(users[0], 0, 5, false);
-        _updateAnalytics(0, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
+        // _updateAnalytics(0, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
 
         emit Common.PoolCreated(pool);
     }
@@ -125,7 +125,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
             pool = _getPool(unit);
             pool = _joinAPool(unit, borrower, pool);
             _setPool(pool, pool.big.unitId);
-            _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
+            // _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
             emit Common.NewContributorAdded(pool);
         } else {
             pool = _launchDefault(borrower, unit, providers);
@@ -142,7 +142,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
         Common.Pool memory pool = _getPool(unit);
         pool = _joinAPool(unit, _msgSender(), pool);
         _setPool(pool, pool.big.unitId);
-        _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
+        // _updateAnalytics(1, unit, 0, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.NewContributorAdded(pool);
 
         return true;
@@ -174,7 +174,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
             pool.low.allGh += 1;
         }
         pool.addrs.lastPaid = profile.id;
-        _updateAnalytics(2, pool.big.currentPool, collateral, pool.router == Common.Router.PERMISSIONLESS);
+        // _updateAnalytics(2, pool.big.currentPool, collateral, pool.router == Common.Router.PERMISSIONLESS);
         IStateManager.StateVariables memory vars = _getVariables();
         _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
         ISafe(pool.addrs.safe).getFinance(profile.id, vars.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(vars.makerRate)), collateral, pool.big.recordId);
@@ -193,7 +193,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
+        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
 
         return true;
@@ -217,7 +217,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
         (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
+        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
         emit Common.Payback(pool);
         return true;
     }
@@ -233,7 +233,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
         require(creator == pool.addrs.admin, '18');
         bool isPermissionLess = pool.router == Common.Router.PERMISSIONLESS;
         isPermissionLess? require(pool.low.userCount == 1, '19') : require(pool.big.currentPool == pool.big.unit, '19');
-        _updateAnalytics(4, pool.big.unit, 0, isPermissionLess);
+        // _updateAnalytics(4, pool.big.unit, 0, isPermissionLess);
         _awardPoint(creator, 0, 5, true);
         pool.stage = Common.Stage.CANCELED;
         _shufflePool(pool); 
@@ -253,7 +253,7 @@ contract CeloBased is IFactory, CeloPriceGetter, Analytics {
 
     /**@dev Return contract data. At any point in time, currentEpoches will always equal pastEpoches*/
     function getFactoryData() public view returns(Common.ViewFactoryData memory data) {
-        data.analytics = _getAnalytics();
+        // data.analytics = _getAnalytics();
         data.makerRate = uint16(_getVariables().makerRate);
         data.pastPools = getRecords();
         (uint96 currentEpoches, uint96 pastEpoches) = _getCounters();

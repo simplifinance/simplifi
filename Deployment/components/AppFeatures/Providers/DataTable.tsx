@@ -103,15 +103,15 @@ const getColumns = ({providerSlots} : {providerSlots: bigint[]}) => {
         accessorKey: "amount",
         header: () => <div className="text-right">Amount</div>,
         cell: ({ row }) => {
-          const amount = formatValue(row.getValue("amount")).toNum
+          const amount = formatValue(row.getValue("amount")).toStr
     
           // Format the amount as a dollar amount
-          const formatted = new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-          }).format(amount)
+          // const formatted = new Intl.NumberFormat("en-US", {
+          //   style: "currency",
+          //   currency: "USD",
+          // }).format(amount)
     
-          return <div className="text-right font-medium">{formatted}</div>
+          return <div className="text-right font-medium">{amount}</div>
         },
       },
     ];

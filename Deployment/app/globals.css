@@ -223,22 +223,20 @@ main{
     position: relative;
     width: 100%;
     align-self: start;
-    /* overflow: auto; */
+    overflow: auto;
   }
 
-  aside{
+  /* aside{
     height: 100%;
     overflow: hidden;
-  }
+  } */
 
-  .main {
-    padding-left: 40px;
+  main {
+    height: 100%;
   }
 
   .rightsidebar{
     height: 100%;
-    align-self: middle;
-    overflow: hidden;
   }
 
 }

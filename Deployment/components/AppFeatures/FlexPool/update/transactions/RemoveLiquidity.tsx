@@ -119,9 +119,9 @@ export default function RemoveLiquidity() {
     return(
         <React.Fragment>
             <ActionButton 
-                disabled={disabled && allowance === 0n } 
+                disabled={disabled} 
                 toggleDrawer={toggleDrawer}
-                buttonContent='Remove'
+                buttonContent='Remove liquidity'
                 widthType='fit-content'
             />
             <Confirmation 

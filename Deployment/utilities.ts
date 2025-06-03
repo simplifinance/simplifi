@@ -14,6 +14,7 @@ import type {
   FunctionName,
   TransactionData,
   FilterTransactionDataProps,
+  ProviderResult,
 } from "@/interfaces";
 import BigNumber from "bignumber.js";
 import { Router, Stage, StageStr } from "./constants";
@@ -291,14 +292,21 @@ export const formatProviders = (providers: Readonly<ProviderStruct[]>): Formatte
 /**
  * @dev Search all the pools that the current connected account is participating or has participated
  * @param pools : Total concatenated pools i.e a list of current and past pools.
- * @param account : Connected user.
+ * @param currentUser : Connected user.
+ * @param providers : Array of all providers.
  * @returns Found pools
  */
-export function filterPoolForCurrentUser(pools: ReadDataReturnValue[], account: Address) {
-  return pools.filter(({cData}) => {
-    const filteredProfile = cData.filter(({profile}) => profile.id.toLowerCase() === account.toLowerCase());
+export function filterPoolForCurrentUser(pools: ReadDataReturnValue[], providers: ProviderResult[], currentUser: Address) {
+  const filteredPools = pools.filter(({cData}) => {
+    const filteredProfile = cData.filter(({profile}) => profile.id.toLowerCase() === currentUser.toLowerCase());
     return filteredProfile && filteredProfile.length > 0;
-  })
+  });
+
+  const filteredProviders = providers.filter(({account}) => account.toLowerCase() === currentUser.toLowerCase());
+  return {
+    filteredPools,
+    filteredProviders
+  }  
 }
 
 /**
@@ -312,4 +320,65 @@ export function filterPools(pools: ReadDataReturnValue[]) {
   const permissioned = pools.filter(({pool}) => pool.router === Router.PERMISSIONED);
   const permissionless = pools.filter(({pool}) => pool.router === Router.PERMISSIONLESS);
   return { pastPools, currentPools, permissioned, permissionless }
+}
+
+/**
+ * @dev Return the total liquidity in the providers smart contract
+ * @param providers : Array of providers data fetched from the blockchain
+ * @param pools: Array of onchain pools data fetched from the blockchain 
+ * @returns : Object containing extracted and formatted values
+ */
+export function getAnalytics(providers: ProviderResult[], pools: ReadDataReturnValue[]){
+  let totalProvidedLiquidity = 0n;
+  let totalAccruedInterest = 0n;
+  let averageRate = 0n;
+  let totalPermissioned = 0;
+  let totalPermissionless = 0;
+  let tvlInContribution = 0n;
+  let tvlInCollateral = 0n;
+  let activeUsers = 0;
+  let totalPayout = 0n;
+  let totalLiquidatablePool = 0;
+  let totalBorrowedFromProviders = 0n;
+  const allProviders = providers.length;
+
+  providers.forEach(({amount, accruals, rate}) => {
+    totalProvidedLiquidity += amount;
+    totalAccruedInterest += accruals.fullInterest;
+    averageRate += rate;
+  });
+
+  pools.forEach(({pool: {big: {currentPool}, router}, cData}) => {
+    const isPermissionless = router === Router.PERMISSIONLESS;
+    tvlInContribution += currentPool;
+    activeUsers += cData.length;
+    isPermissionless? totalPermissionless += 1 : totalPermissioned += 1;
+    cData.forEach(({providers, profile: {colBals, loan, paybackTime}}) => {
+      const onchainPaybackTime = new Date(toBN(BigInt(paybackTime * 1000n).toString()).toNumber()).getTime();
+      const currentTime = new Date().getTime();
+      if(currentTime > onchainPaybackTime) totalLiquidatablePool += 1;
+      totalPayout += loan;
+      tvlInCollateral += colBals;
+      
+      providers.forEach(({amount, accruals}) => {
+        totalBorrowedFromProviders += amount;
+        totalAccruedInterest += accruals.fullInterest;
+      });
+      
+    })
+  });
+  return {
+    tvlProviders: formatValue(totalProvidedLiquidity).toStr,
+    unpaidInterest: formatValue(totalAccruedInterest).toStr,
+    averageRate: BigInt(averageRate / BigInt(providers.length)).toString(),
+    totalPermissioned,
+    totalPermissionless,
+    tvlInBase: formatValue(tvlInContribution).toStr,
+    tvlInCollateral: formatValue(tvlInCollateral).toStr,
+    activeUsers,
+    totalPayout: formatValue(totalPayout).toStr,
+    totalLiquidatablePool,
+    totalBorrowedFromProviders: formatValue(totalBorrowedFromProviders).toStr,
+    totalProviders: allProviders
+  };
 }

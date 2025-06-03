@@ -9,6 +9,7 @@ import Faq from "./Faq";
 import AiAssist from "./AiAssist";
 import CreateFlexpool from "./FlexPool/Create";
 import Providers from "./Providers";
+import OnchainStatistics from "./OnchainStatistics";
 
 export default function AppFeatures({currentPath}:{currentPath: Path}) {
   return(
@@ -19,7 +20,7 @@ export default function AppFeatures({currentPath}:{currentPath: Path}) {
             [
               {
                 location: 0,
-                element: ( <FlexPool /> ),
+                element: ( <FlexPool showMyPool={true} allPools={false} padding="p-4" /> ),
                 path: 'Dashboard' 
               },
               {
@@ -47,6 +48,11 @@ export default function AppFeatures({currentPath}:{currentPath: Path}) {
                 element: ( <Providers /> ),
                 path: 'Providers' 
               },
+              {
+                location: 6,
+                element: ( <OnchainStatistics /> ),
+                path: 'Home' 
+              },
             ] as const
           ).filter(({path}) => path === currentPath)
           .map(({location, element}) => (
@@ -59,10 +65,3 @@ export default function AppFeatures({currentPath}:{currentPath: Path}) {
     </Layout>
   );
 }
-
-
-// {
-//   location: 0,
-//   element: ( <Dashboard /> ),
-//   path: 'Dashboard' 
-// },

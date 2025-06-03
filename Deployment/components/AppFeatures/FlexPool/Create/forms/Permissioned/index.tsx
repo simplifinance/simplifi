@@ -88,7 +88,7 @@ export const Permissioned = () => {
     }, [unitLiquidity, participants, colCoverage, collateralAsset, duration]);
 
     return(
-        <div className="space-y-6 mt-2 bg-white1 dark:bg-transparent p-8 rounded-lg">
+        <div className="space-y-6 md:mt-2 bg-white2 dark:bg-transparent p-4 rounded-lg">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {
                     (
@@ -113,10 +113,6 @@ export const Permissioned = () => {
                                 id: "Collateral asset",
                                 element: (<CollateralAsset selected={collateralAsset} handleChange={onChange}/>),
                             },
-                            // {
-                            //     id: "Select base asset",
-                            //     element: (<SelectBaseAssetHolding selected={baseAssetHolding} handleChange={onChange}/>),
-                            // },
                         ] as const
                     ).map(({ id, element }) => (
                         <div key={id}>
@@ -181,16 +177,3 @@ export const Permissioned = () => {
         </div>
     );
 }
-    {/* 
-                <Confirmation 
-                    functionName={functionName}
-                    args={args}                
-                    openDrawer={openDrawer}
-                    toggleDrawer={toggleDrawer}
-                    transactionArgs={transactionArgs}
-                    displayMessage="Request to launch a private liquidity pool"
-                    actionButtonText="SendTransaction"
-                    optionalDisplay={
-                        
-                    }
-                /> */}

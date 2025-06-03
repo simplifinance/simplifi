@@ -7,6 +7,7 @@ import Collapse from "@mui/material/Collapse";
 import AddressWrapper from "@/components/utilities/AddressFormatter/AddressWrapper";
 import { formatAddr } from "@/utilities";
 import { Button } from "@/components/ui/button";
+import { flexSpread } from "@/constants";
 
 export default function Participants({addToList, participants, handleDelete} : {participants: Address[], addToList: (arg: string) => void, handleDelete: (arg: number) => void} ) {
     const [address, setAddress] = React.useState<string>(zeroAddress);
@@ -23,7 +24,7 @@ export default function Participants({addToList, participants, handleDelete} : {
 
     return(
         <div className="relative">
-            <div>
+            <div className="relative">
                 <Input 
                     id="Participants"
                     onChange={(e) => {
@@ -38,7 +39,7 @@ export default function Participants({addToList, participants, handleDelete} : {
                     label="Contributors"
                     placeholder="Paste one address at a time"
                 />
-                <div className={`flex justify-between absolute -top-6 right-0 md:right-8`}>
+                <div className={` ${flexSpread} absolute -top-6 right-0 md:right-[15%]`}>
                     {
                         (address !== zeroAddress && !participants.includes(formatAddr(address))) && <Button variant={'ghost'} disabled={address === ''} onClick={addUp} className="">Add</Button>
                     }

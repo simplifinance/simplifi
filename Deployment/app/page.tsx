@@ -20,7 +20,7 @@ export default function SimplifiApp() {
   const [displayOnboardUser, setDisplayOnboardUser] = React.useState<boolean>(false);
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
-  const [activePath, setActivePath] = React.useState<Path>('Dashboard');
+  const [activePath, setActivePath] = React.useState<Path>('Home');
   const [displayForm, setDisplayForm] = React.useState<boolean>(false);
 
 
@@ -47,7 +47,7 @@ export default function SimplifiApp() {
     const provider = {abi: filtered.transactionData[3].abi, ca: formatAddr(filtered.transactionData[3].contractAddress)};
     const sAsset = {abi: filtered.transactionData[4].abi, ca: formatAddr(filtered.transactionData[4].contractAddress)};
     return { symbol, fData, point, provider, sAsset }
-  }, [chainId]);
+  }, [chainId, callback]);
 
   // Read contract data from the blockchain
   const { refetch, data, isPending } = useReadContracts({
@@ -87,7 +87,7 @@ export default function SimplifiApp() {
     const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
     const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
     return { notReady, symbols, factoryData, points, supportedAssets, providers, pools };
-  }, [data]);
+  }, [data, isPending]);
 
   const toggleProviders = (arg: bigint) => {
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);

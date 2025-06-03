@@ -176,7 +176,7 @@ interface Common {
     }
 
     struct ViewFactoryData {
-        Analytics analytics;
+        // Analytics analytics;
         uint16 makerRate;
         ReadPoolDataReturnValue[] currentPools;
         ReadPoolDataReturnValue[] pastPools;
