@@ -10,8 +10,7 @@ import { zeroAddress } from 'viem';
 const getSteps = (isWrappedAsset: boolean) : {read: FunctionName[], mutate: FunctionName[]} => {
     const mutateFirstStep = isWrappedAsset? 'deposit' : 'approve';
     return {
-        read: Array.from(['getCollateralQuote', 'allowance', 'deposits']),
-        // read: Array.from(['getCollateralQuote', 'allowance']),
+        read: Array.from(['getCollateralQuote', 'allowance', 'getDeposit']),
         mutate: Array.from([mutateFirstStep, 'getFinance'])
     };
 }
@@ -43,7 +42,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
         });
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
-        const readArgs = [[unit], [safe, account], [account, flexpoolContract]];
+        const readArgs = [[unit], [safe, account], [unit, account]];
         const addresses = [flexpoolContract, ca.stablecoin, ca.WrappedNative];
         const readTxObject = td.map((item, i) => {
             return{
@@ -71,25 +70,41 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
             let value : bigint = 0n;
             let proceed = 1;
             await refetch().then((result) => {
-                const collateralQuote = result?.data?.[0].result as bigint;
+                let collateralQuote = result?.data?.[0].result as bigint;
+                console.log("collateralQuoteOld", collateralQuote);
+
+                /**
+                 * We need to prepare for price flunctuation in case the oracle price in 
+                 * the smart contract increases before the getFinance function is invoked.
+                 * So we make provision for 5% descrepancy in the collateralQuote. Not to worry,
+                 * the Safe contract will definitely refund the balances after the correct collateral
+                 *  has been extracted.
+                */
                 const allowance = result?.data?.[1]?.result as bigint;
                 const prevDeposit = result?.data?.[2]?.result as bigint;
                 switch (funcName) {
                     case 'approve':
-                        if(allowance >= collateralQuote) proceed = 0;
+                        if(allowance >= collateralQuote){
+                            proceed = 0;
+                        } else {
+                            collateralQuote = collateralQuote + ((collateralQuote * 5n) / 100n);
+                        }
                         args = [flexpoolContract, collateralQuote];
                         break;
                     case 'deposit':
                         if(prevDeposit >= collateralQuote){
-                            // proceed = 0;
+                            proceed = 0;
                             value = 0n;
+                        } else {
+                            collateralQuote = collateralQuote + ((collateralQuote * 5n) / 100n);
                         }
-                        args = [flexpoolContract];
+                        args = [flexpoolContract, unit, safe];
                         value = collateralQuote;
                         break;
                     default:
                         break;
                 }
+                console.log("collateralQuoteNew", collateralQuote);
                 
             });
             return {args, value, proceed};
@@ -133,7 +148,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
         console.log("transactions", transactions);
 
         return transactions;
-   }, [mutate, flexpoolContract, getFinanceArgs, refetch]);
+   }, [mutate, flexpoolContract, getFinanceArgs, unit, safe, refetch]);
 
     return(
         <React.Fragment>

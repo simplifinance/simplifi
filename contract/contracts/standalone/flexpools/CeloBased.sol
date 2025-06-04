@@ -42,9 +42,17 @@ contract CeloBased is IFactory, CeloPriceGetter {
         address _stateManager, 
         address[] memory supportedAssets, 
         PriceData[] memory priceData,
-        address _safeFactory
+        address _safeFactory,
+        uint _minmumLiquidity
     ) 
-        CeloPriceGetter(_roleManager, _stateManager, supportedAssets, priceData, _safeFactory)
+        CeloPriceGetter(
+            _roleManager, 
+            _stateManager, 
+            supportedAssets, 
+            priceData, 
+            _safeFactory,
+            _minmumLiquidity
+        )
     {}
 
     receive() external payable {}
@@ -175,9 +183,9 @@ contract CeloBased is IFactory, CeloPriceGetter {
         }
         pool.addrs.lastPaid = profile.id;
         // _updateAnalytics(2, pool.big.currentPool, collateral, pool.router == Common.Router.PERMISSIONLESS);
-        IStateManager.StateVariables memory vars = _getVariables();
-        _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, collateral);
-        ISafe(pool.addrs.safe).getFinance(profile.id, vars.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(vars.makerRate)), collateral, pool.big.recordId);
+        IStateManager.StateVariables memory stm = _getVariables();
+        _checkAndWithdrawAllowance(IERC20(pool.addrs.colAsset), profile.id, pool.addrs.safe, stm.assetManager.isWrappedAsset(address(pool.addrs.colAsset))? unit : collateral);
+        ISafe(pool.addrs.safe).getFinance(profile.id, stm.baseAsset, pool.big.currentPool, pool.big.currentPool.computeFee(uint16(stm.makerRate)), collateral, pool.big.recordId);
         (pool, profile) = _completeGetFinance(pool, collateral, profile);
         _setContributor(profile, pool.big.unitId, uint8(_getSlot(pool.addrs.lastPaid, pool.big.unitId).value), false);
         _setPool(pool, pool.big.unitId);
@@ -192,9 +200,9 @@ contract CeloBased is IFactory, CeloPriceGetter {
      * @param unit : Unit contribution
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
-        (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
-        emit Common.Payback(pool);
+        emit Common.Payback(
+            _payback(unit, _msgSender(), false, address(0))
+        );
 
         return true;
     }
@@ -216,9 +224,9 @@ contract CeloBased is IFactory, CeloPriceGetter {
         _replaceContributor(liquidator, _getPool(unit).big.unitId, slot, _defaulter.id);
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
-        (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
-        emit Common.Payback(pool);
+        emit Common.Payback(
+            _payback(unit, liquidator, true, _defaulter.id)
+        );
         return true;
     }
 

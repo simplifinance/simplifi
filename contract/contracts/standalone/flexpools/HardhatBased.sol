@@ -179,9 +179,9 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
      * @param unit : Unit contribution
      */
     function payback(uint unit) public whenNotPaused returns(bool) {
-        (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, _msgSender(), false, address(0));
-        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
-        emit Common.Payback(pool);
+        emit Common.Payback(
+            _payback(unit, _msgSender(), false, address(0))
+        );
 
         return true;
     }
@@ -203,9 +203,9 @@ contract HardhatBased is IFactory, HardhatPriceGetter {
         _replaceContributor(liquidator, _getPool(unit).big.unitId, slot, _defaulter.id);
         assert(liquidator != _defaulter.id);
         _setLastPaid(liquidator, unit); 
-        (Common.Pool memory pool, uint debt, uint collateral) = _payback(unit, liquidator, true, _defaulter.id);
-        // _updateAnalytics(3, debt, collateral, pool.router == Common.Router.PERMISSIONLESS);
-        emit Common.Payback(pool);
+        emit Common.Payback(
+            _payback(unit, liquidator, true, _defaulter.id)
+        );
         return true;
     }
 

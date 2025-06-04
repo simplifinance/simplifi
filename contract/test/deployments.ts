@@ -156,7 +156,7 @@ export async function deployPointsContract(deployer: Signer, roleManager: Addres
  */
 export async function deployProvider(flexpoolFactory: Address, roleManager: Address, stateManagerAddr: Address, deployer: Signer) : Promise<Providers> {
   const BankFactory = await ethers.getContractFactory("Providers");
-  return (await BankFactory.connect(deployer).deploy(stateManagerAddr, flexpoolFactory, roleManager)).waitForDeployment();
+  return (await BankFactory.connect(deployer).deploy(stateManagerAddr, flexpoolFactory, roleManager, 0)).waitForDeployment();
 }
 
 /**

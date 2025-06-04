@@ -18,7 +18,7 @@ interface ISafe {
     external 
     returns(bool);
 
-  function payback(Common.Payback_Safe memory, uint unit) external returns(uint collateral);
+  function payback(Common.Payback_Safe memory, uint unit) external returns(bool);
   function cancel(address user, IERC20 asset, uint unit, uint96 recordId) external returns(bool);
   function getData() external view returns(ViewData memory);
   function registerProvidersTo(Common.Provider[] memory providers, address contributor, uint96 recordId) external;

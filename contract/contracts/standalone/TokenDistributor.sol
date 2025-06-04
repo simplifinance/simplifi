@@ -46,10 +46,8 @@ contract TokenDistributor is
 
     /**
      * @notice Transaction type
-     * Transaction can be ERC20 or Native.
+     * Transaction can be any of the following enum type.
      * By default, they're ERC20 type.
-     * We also use other type from 2 and above to denote the 
-     * type of transaction that can be performed by the owner account
      */
     enum Type {ERC20, NATIVE, ADDSIGNER, REMOVESIGNER, SETQUORUM}
 
@@ -302,7 +300,7 @@ contract TokenDistributor is
                 // req = requests[reqId];
                 _removeSigner(req.recipient, req.executors, reqId);
             } else if(req.txType == Type.SETQUORUM) {
-                require(req.amount <= validExecutors, "await signTransaction({signer: deployer, requestId: id, contract: distributor});");
+                require(req.amount <= validExecutors, "Quorum exceeds valid executors");
                 quorum = req.amount;
             }
         }

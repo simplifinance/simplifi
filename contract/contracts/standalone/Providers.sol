@@ -53,9 +53,10 @@ contract Providers is MinimumLiquidity, IProviders, ReentrancyGuard {
     constructor(
         address _stateManager,
         address _flexpoolFactory,
-        address _roleManager
+        address _roleManager,
+        uint _minimumLiquidity
     )
-        MinimumLiquidity(_stateManager, _roleManager)
+        MinimumLiquidity(_stateManager, _roleManager, _minimumLiquidity) 
     {
         if(_flexpoolFactory == address(0)) '_flexpoolFactory is zero'._throw();
         flexpoolFactory = IFactory(_flexpoolFactory);

@@ -191,9 +191,9 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         onlyRoleBearer 
         hasAccess(_p.isSwapped? _p.defaulted : _p.user, _p.recordId) 
         nonReentrant
-        returns (uint col) 
+        returns (bool) 
     {
-        col = collateralBalances[_p.user][_p.recordId];
+        uint col = collateralBalances[_p.user][_p.recordId];
         if (_p.isSwapped) {
             col = collateralBalances[_p.defaulted][_p.recordId];
             collateralBalances[_p.defaulted][_p.recordId] = 0;
@@ -215,7 +215,7 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
             }
         }
         if(_p.allGF) _tryRoundUp(_p.baseAsset, unit, _p.cData, _p.providers);
-        return col;
+        return true;
     }
 
     /**
