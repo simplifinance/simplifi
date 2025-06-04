@@ -74,9 +74,9 @@ const config: HardhatUserConfig = {
     feeTo: {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
-      4158: zeroAddress,
+      4158: `privatekey://${PRIVATE_KEY}`,
       44787: `privatekey://${PRIVATE_KEY}`,
-      42220: zeroAddress
+      42220: `privatekey://${PRIVATE_KEY}`
     },
     // cUSD || xUSD
     baseContributionAsset: {

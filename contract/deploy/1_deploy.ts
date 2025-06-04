@@ -10,7 +10,7 @@ dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, getNetworkName } = deployments;
-	let {deployer, baseContributionAsset, feeTo } = await getNamedAccounts();
+	let {deployer, baseContributionAsset } = await getNamedAccounts();
 
   const networkName = getNetworkName().toLowerCase() as NetworkName;
   const serviceRate = 10; // 0.1%
@@ -72,7 +72,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       from: deployer,
       args: [
         FEE,
-        feeTo,
+        distributor.address,
         roleManager.address
       ],
       log: true,
@@ -117,7 +117,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
    */
   const safeFactory = await deploy("SafeFactory", {
     from: deployer,
-    args: [roleManager.address, feeTo],
+    args: [roleManager.address, distributor.address, distributor.address],
     log: true,
   });
   console.log(`SafeFactory deployed to: ${safeFactory.address}`);  
@@ -150,7 +150,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   // Set up stateManager args
   const stateManagerArgs = [
-    feeTo,
+    distributor.address,
     serviceRate,
     roleManager.address,
     supportAssetManger.address,

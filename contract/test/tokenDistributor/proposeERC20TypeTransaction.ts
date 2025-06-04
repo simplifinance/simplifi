@@ -5,6 +5,7 @@ import { loadFixture, } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Address } from "../types";
+import { zeroAddress } from "viem";
 
 describe("Token distributor", function () {
   async function deployContractsFixcture() {
@@ -15,9 +16,18 @@ describe("Token distributor", function () {
 
   describe("Signers can propose a transaction to transfer ERC20 token to the recipient, non-signers don't", function () {
     it("Propose an ERC20 transfer transaction", async function () {
-      const { distributor, signers: {signer1, alc1Addr, signer1Addr, }, } = await loadFixture(deployContractsFixcture);
+      const { distributor,collateralAssetAddr, signers: {signer1, alc1Addr, signer1Addr, }, } = await loadFixture(deployContractsFixcture);
       const transferAmt = TEN_THOUSAND_TOKEN;
-      const { recipient, amount, executors, txType, status, delay, id} = await proposeTransaction({signer: signer1, recipient: alc1Addr as Address, amount: transferAmt, contract: distributor, delayInHrs: 0, trxType: TrxnType.ERC20});
+      const { recipient, amount, executors, txType, status, delay, id} = await proposeTransaction({
+        signer: signer1, 
+        recipient: alc1Addr as Address, 
+        amount: transferAmt, 
+        contract: distributor, 
+        delayInHrs: 0, 
+        trxType: TrxnType.ERC20,
+        safe: zeroAddress,
+        token: collateralAssetAddr
+      });
       const quorum = await distributor.quorum();
       expect(quorum).to.be.eq(BigInt(QUORUM - 1));
       expect(id).to.be.eq(1n);

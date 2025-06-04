@@ -120,9 +120,9 @@ async function deployCollateralAsset(
  * @param deployer : Deployer address
  * @returns : Contract instance
  */
-export async function deploySafeFactory(deployer: Signer, roleManager: Address, feeTo: Address) : Promise<SafeFactory> {
+export async function deploySafeFactory(deployer: Signer, roleManager: Address, feeTo: Address, multiSig: Address) : Promise<SafeFactory> {
   const OwnershipManager = await ethers.getContractFactory("SafeFactory");
-  return (await OwnershipManager.connect(deployer).deploy(roleManager, feeTo)).waitForDeployment();
+  return (await OwnershipManager.connect(deployer).deploy(roleManager, feeTo, multiSig)).waitForDeployment();
 }
 
 /**
@@ -278,7 +278,7 @@ export async function deployContracts(getSigners_: () => Signers) {
   const escape = await deployEscape(roleManagerAddr, deployer);
   const escapeAddr = await escape.getAddress() as Address;
   
-  const safeFactory = await deploySafeFactory(deployer, roleManagerAddr, feeToAddr);
+  const safeFactory = await deploySafeFactory(deployer, roleManagerAddr, feeToAddr, distributorAddr);
   const safeFactoryAddr = await safeFactory.getAddress() as Address;
 
   const baseAsset = await deployBaseAsset(deployer);
@@ -309,7 +309,7 @@ export async function deployContracts(getSigners_: () => Signers) {
   await roleManager.connect(deployer).setRole([flexpoolAddr, providersAddr, supportedAssetMgrAddr, deployerAddr, stateManagerAddr]);
   const isSupported = await supportedAssetMgr.isSupportedAsset(collateralAssetAddr);
   const isListed = await supportedAssetMgr.listed(collateralAssetAddr);
-  await distributor.connect(deployer).setToken(collateralAssetAddr);
+  // await distributor.connect(deployer).setToken(collateralAssetAddr);
   await attorney.connect(deployer).setToken(collateralAssetAddr);
 
   // const request = await proposeTransaction({signer: deployer, contract: distributor, amount: INITIAL_MINT, delayInHrs: 0, recipient: deployerAddr as Address, trxType: TrxnType.ERC20});
