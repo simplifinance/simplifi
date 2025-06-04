@@ -17,7 +17,6 @@ import type {
     RemoveLiquidityParam, 
     GetFinanceParam,
     FactoryTxReturn,
-    FlexpoolFactory,
     Balances,
     SimpliToken,
     TransferParam,
@@ -410,12 +409,12 @@ import type {
 
   // Propose a new transaction
 export async function proposeTransaction (
-  {signer, contract, recipient, amount, delayInHrs, trxType} 
+  {signer, contract, recipient, amount, delayInHrs, trxType, safe, token} 
   : 
-  {contract: TokenDistributor, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType}
+  {contract: TokenDistributor, signer: Signer, recipient: Address, amount: bigint, delayInHrs: number, trxType: TrxnType, token: Address, safe: Address}
 )
 {
-  await contract.connect(signer).proposeTransaction(recipient, amount, delayInHrs, trxType);
+  await contract.connect(signer).proposeTransaction(token, safe, recipient, amount, delayInHrs, trxType);
   const reqId = await contract.requestIDs();
   const request = await contract.getTransactionRequest(reqId);
   expect(reqId).to.be.eq(request.id);

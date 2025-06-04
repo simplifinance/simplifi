@@ -5,6 +5,7 @@ import { OnlyRoleBase } from "../peripherals/OnlyRoleBase.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Lib } from "../peripherals/token/ERC20Abstract.sol";
 import { SafeERC20, IERC20 } from "../peripherals/token/SafeERC20.sol";
+import { ISafe } from "../interfaces/ISafe.sol";
 
 /**
  * @title InitialTokenReceiver
@@ -49,7 +50,7 @@ contract TokenDistributor is
      * Transaction can be any of the following enum type.
      * By default, they're ERC20 type.
      */
-    enum Type {ERC20, NATIVE, ADDSIGNER, REMOVESIGNER, SETQUORUM}
+    enum Type {ERC20, NATIVE, ADDSIGNER, REMOVESIGNER, SETQUORUM, SAFEWITHDRAWAL}
 
     /**
      * @notice Number of signers require to execute a transfer
@@ -74,6 +75,8 @@ contract TokenDistributor is
         Type txType;
         uint expirationTime;
         uint id;
+        address safe;
+        IERC20 token;
     }
 
     address[] private executors;
@@ -97,9 +100,6 @@ contract TokenDistributor is
      * Mapping of signer to request id to bool
      */
     mapping (address => mapping (uint => bool)) public signed;
-
-    // ERC20 basic token contract held by this contract
-    IERC20 public token;
 
     /**
      * @dev Only signers are allowed
@@ -152,13 +152,13 @@ contract TokenDistributor is
         emit ThankYou("Thank You");
     }
 
-    function setToken(IERC20 newToken) 
-        public 
-        onlyRoleBearer
-    {
-        address(newToken).cannotBeEmptyAddress();
-        token = newToken;
-    }
+    // function setToken(IERC20 newToken) 
+    //     public 
+    //     onlyRoleBearer
+    // {
+    //     address(newToken).cannotBeEmptyAddress();
+    //     token = newToken;
+    // }
 
     /**
      * @dev Generate request Id
@@ -199,24 +199,33 @@ contract TokenDistributor is
                         ADDSIGNER (2): Add more signers to the list.
                         REMOVESIGNER (3): Deactivate the `_recipient` address from as a signers. 
                         SETQUORUM (4): Increase or decrease the number of signatories needed to execute a transaction.
+                        SAFEWITHDRAWAL: Emergency withdrawal from any Safe wallet
         Note: By default, the caller is deemed to have signed the transaction.
      */
     function proposeTransaction(
+        IERC20 _token,
+        address _safe,
         address _recipient,
         uint256 _amount,
-        uint16 _delayInHours,
+        uint16 _delayInHours, 
         uint8 _type
     ) public onlySigner {
-        require(_type < 5, "Invalid selector");
+        require(_type < 6, "Invalid selector");
         uint reqId = _generateRequestId();
-        if(_type < 5) {
+        if(Type(_type) != Type.SETQUORUM) { 
             require(_recipient != address(0), "Arg(0) is zero addr");
+            require(address(_token) != address(0), 'Token');
+        }
+        if(Type(_type) == Type.SAFEWITHDRAWAL) {
+            require(_safe != address(0), 'Safe address is 0'); 
         }
         requests[reqId].amount = _amount;
         requests[reqId].recipient = _recipient;
         requests[reqId].status = Status.INITIATED;
         requests[reqId].txType = Type(_type);
         requests[reqId].id = reqId; 
+        requests[reqId].safe = _safe; 
+        requests[reqId].token = _token;
         unchecked {
             requests[reqId].expirationTime = _now() + 14 days;
             requests[reqId].delay = uint(_delayInHours) * 1 hours;
@@ -283,8 +292,8 @@ contract TokenDistributor is
             if(_now() < req.delay) revert Pending();
             requests[reqId].status = Status.EXECUTED;
             if(req.txType == Type.ERC20) {
-                address(token).cannotBeEmptyAddress();
-                token.safeTransfer(req.recipient, req.amount);
+                address(req.token).cannotBeEmptyAddress();
+                req.token.transfer(req.recipient, req.amount); 
             } else if(req.txType == Type.NATIVE) {
                 req.recipient.cannotBeEmptyAddress();
                 uint256 balance = address(this).balance;
@@ -293,14 +302,15 @@ contract TokenDistributor is
                 require(success,"Trxn failed");
             } else if(req.txType == Type.ADDSIGNER) {
                 req.recipient.cannotBeEmptyAddress();
-                // req = requests[reqId];
                 _addSigner(req.recipient);
             } else if(req.txType == Type.REMOVESIGNER) {
                 req.recipient.cannotBeEmptyAddress();
-                // req = requests[reqId];
                 _removeSigner(req.recipient, req.executors, reqId);
             } else if(req.txType == Type.SETQUORUM) {
                 require(req.amount <= validExecutors, "Quorum exceeds valid executors");
+                quorum = req.amount;
+            } else if(req.txType == Type.SAFEWITHDRAWAL) {
+                require(ISafe(req.safe).forwardBalances(req.recipient, address(req.token)), "E-Withdrawal failed");
                 quorum = req.amount;
             }
         }

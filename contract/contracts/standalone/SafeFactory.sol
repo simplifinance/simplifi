@@ -18,6 +18,8 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
   // Fee receiver account
   address private feeTo;
 
+  address private multiSig;
+
  /**
  * @dev Mapping of unit contribution to safe.
  */
@@ -30,9 +32,13 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
    */
   constructor (
     address _roleManager, 
-    address _feeTo
+    address _feeTo,
+    address _multiSig
   ) OnlyRoleBase(_roleManager) {
+    require(_feeTo != address(0), 'FeeTo is 0');
+    require(_multiSig != address(0), 'MultiSig is 0');
     feeTo = _feeTo;
+    multiSig = _multiSig;
   }
  
   // Not accepting values
@@ -72,7 +78,7 @@ contract SafeFactory is ISafeFactory, OnlyRoleBase {
   function _createSafe(uint256 unit) private returns(address safe) {
     assert(providers != address(0));
     totalSafes ++;
-    safe = address(new Safe(getRoleManager(), feeTo, providers));
+    safe = address(new Safe(getRoleManager(), feeTo, providers, multiSig)); 
     _updateSafe(unit, safe); 
   }
 

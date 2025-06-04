@@ -5,6 +5,7 @@ import { loadFixture, } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Address } from "../types";
+import { parseUnits, zeroAddress } from "viem";
 
 describe("Token distributor", function () {
   async function deployContractsFixcture() {
@@ -14,10 +15,19 @@ describe("Token distributor", function () {
   }
   describe("Native coin transfer such as Celo is a type of transaction that can be proposed", function () {
     it("Create a native transfer transaction", async function () {
-      const { distributor, distributorAddr, signers: {deployer, signer1, alc2, alc1Addr, signer3, alc2Addr}, collateralAsset, } = await loadFixture(deployContractsFixcture);
-      const transferAmt = 10000000000000000000n;
+      const { distributor, collateralAssetAddr, distributorAddr, signers: {deployer, signer1, alc2, alc1Addr, signer3, alc2Addr}, collateralAsset, } = await loadFixture(deployContractsFixcture);
+      const transferAmt = parseUnits('1', 19);
       await alc2.sendTransaction({from: alc2Addr, to: distributorAddr, value: transferAmt});
-      const { txType, id } = await proposeTransaction({signer: signer1, recipient: alc1Addr as Address, amount: transferAmt, contract: distributor, delayInHrs: 0, trxType: TrxnType.NATIVE});
+      const { txType, id } = await proposeTransaction({
+        signer: signer1, 
+        recipient: alc1Addr as Address, 
+        amount: transferAmt, 
+        contract: distributor, 
+        delayInHrs: 0, 
+        trxType: TrxnType.NATIVE,
+        safe: zeroAddress,
+        token: collateralAssetAddr
+      });
       expect(txType).to.be.eq(TrxnType.NATIVE);
   
       const balOfAlcB4Exec = await alc2.provider?.getBalance(alc2Addr);

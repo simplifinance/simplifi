@@ -5,6 +5,7 @@ import { loadFixture, time } from "@nomicfoundation/hardhat-toolbox/network-help
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Address } from "../types";
+import { zeroAddress } from "viem";
 
 describe("Token distributor", function () {
   async function deployContractsFixcture() {
@@ -15,8 +16,17 @@ describe("Token distributor", function () {
 
   describe("When a transaction is proposed, signing and executing it have deadlines after which they become stale", function () {
     it("Request should expire if not executed within appropriate time", async function () {
-      const { distributor, signers: { signer1, alc1Addr, signer3, deployer} } = await loadFixture(deployContractsFixcture);
-      const { id } = await proposeTransaction({signer: signer1, recipient: alc1Addr as Address, amount: TEN_THOUSAND_TOKEN, contract: distributor, delayInHrs: 0, trxType: TrxnType.ERC20});
+      const { distributor, collateralAssetAddr, signers: { signer1, alc1Addr, signer3, deployer} } = await loadFixture(deployContractsFixcture);
+      const { id } = await proposeTransaction({
+        signer: signer1, 
+        recipient: alc1Addr as Address, 
+        amount: TEN_THOUSAND_TOKEN, 
+        contract: distributor, 
+        delayInHrs: 0, 
+        trxType: TrxnType.ERC20,
+        safe: zeroAddress,
+        token: collateralAssetAddr
+      });
       const sign = await signTransaction({signer: deployer, requestId: id, contract: distributor});
       const expirationTime = BigInt((await time.latest()) + (((60 * 60) * DURATION_IN_HOURS) * 15));
       await time.increaseTo(expirationTime);

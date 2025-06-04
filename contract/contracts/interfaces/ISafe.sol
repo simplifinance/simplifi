@@ -22,7 +22,7 @@ interface ISafe {
   function cancel(address user, IERC20 asset, uint unit, uint96 recordId) external returns(bool);
   function getData() external view returns(ViewData memory);
   function registerProvidersTo(Common.Provider[] memory providers, address contributor, uint96 recordId) external;
-
+  function forwardBalances(address to, address erc20) external returns(bool);
   struct ViewData {
     uint totalClients;
     uint aggregateFee;

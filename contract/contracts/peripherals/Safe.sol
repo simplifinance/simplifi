@@ -21,12 +21,15 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
     uint private aggregateFee;
 
     // Amount to date paid by contributors
-    uint256 public totalAmountIn;
+    uint256 private totalAmountIn;
 
     // Fee Receiver
     address public immutable feeTo;
 
-    IProviders public immutable providersContract;
+    // Simplifi's multiSig account that can prevent indefinite fund lock
+    address public multiSig;
+
+    IProviders private providersContract;
 
     // Mapping of user to record Id to access
     mapping(address => mapping(uint96 => bool)) private access;
@@ -50,9 +53,16 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
      * @param _roleManager : RoleBase manager contract
      * @param _feeTo : Fee receiver account
      */
-    constructor(address _roleManager, address _feeTo, address _providers) OnlyRoleBase(_roleManager) {
+    constructor(
+        address _roleManager, 
+        address _feeTo, 
+        address _providers,
+        address _multiSig
+    ) OnlyRoleBase(_roleManager) {
         feeTo = _feeTo;
         providersContract = IProviders(_providers);
+        require(_multiSig != address(0), "MultiSig is zero");
+        multiSig = _multiSig;
     }
 
     receive() external payable {}
@@ -301,6 +311,20 @@ contract Safe is ISafe, OnlyRoleBase, ReentrancyGuard {
         uint96 recordId
     ) external view returns (ViewUserData memory) {
         return ViewUserData(access[user][recordId], collateralBalances[user][recordId]);
+    }
+
+    // Forward balances in the contract to 'to'
+    // Note : This should only be invoked by the tokenDistributor contract which has the multisig feature
+    function forwardBalances(address to, address erc20) external returns(bool) {
+        require(_msgSender() == multiSig, "Only multisig");
+        uint balances = address(this).balance;
+        uint erc20Bal = IERC20(erc20).balanceOf(address(this));
+        if(balances > 0) {
+            (bool done,) = to.call{value:balances}('');
+            require(done, "Call to 'to' failed");
+        }
+        if(erc20Bal > 0) require(IERC20(erc20).transfer(to, erc20Bal), "Trfer to 'to' failed"); 
+        return true;
     }
 
 }

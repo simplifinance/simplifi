@@ -5,6 +5,7 @@ import { loadFixture, } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { Address } from "../types";
+import { zeroAddress } from "viem";
 
 describe("Token distributor", function () {
   async function deployContractsFixcture() {
@@ -14,9 +15,18 @@ describe("Token distributor", function () {
   }
   describe("Signers can propose to remove a signer, non-signers don't", function () {
     it("Should remove a signer successfully", async function () {
-      const { distributor, signers: { signer1, deployer, signer2, alc1Addr, extraAddr, signer2Addr, signer3Addr, signer1Addr, deployerAddr, signer3} } = await loadFixture(deployContractsFixcture);
+      const { distributor, collateralAssetAddr, signers: { signer1, deployer, signer2, alc1Addr, extraAddr, signer2Addr, signer3Addr, signer1Addr, deployerAddr, signer3} } = await loadFixture(deployContractsFixcture);
       const transferAmt = TEN_THOUSAND_TOKEN;
-      const { txType, id, executors: exec1 } = await proposeTransaction({signer: signer1, recipient: signer2Addr as Address, amount: transferAmt, contract: distributor, delayInHrs: 0, trxType: TrxnType.ADDSIGNER});
+      const { txType, id, executors: exec1 } = await proposeTransaction({
+        signer: signer1, 
+        recipient: signer2Addr as Address, 
+        amount: transferAmt, 
+        contract: distributor, 
+        delayInHrs: 0, 
+        trxType: TrxnType.ADDSIGNER,
+        safe: zeroAddress,
+        token: collateralAssetAddr
+      });
       expect(txType).to.be.eq(TrxnType.ADDSIGNER);
       await signTransaction({signer: deployer, requestId: id, contract: distributor});
       const {executors} = await executeTransaction({signer: signer3, contract: distributor, reqId: id});
@@ -28,7 +38,16 @@ describe("Token distributor", function () {
       expect(bn(executors.length).gt(bn(exec1.length)));
   
       // Propose remove signer
-      const newProp = await proposeTransaction({signer: signer2, recipient: signer3Addr as Address, amount: transferAmt, contract: distributor, delayInHrs: 0, trxType: TrxnType.REMOVESIGNER});
+      const newProp = await proposeTransaction({
+        signer: signer2, 
+        recipient: signer3Addr as Address, 
+        amount: transferAmt, 
+        contract: distributor, 
+        delayInHrs: 0, 
+        trxType: TrxnType.REMOVESIGNER,
+        safe: zeroAddress,
+        token: collateralAssetAddr
+      });
       await signTransaction({signer: deployer, requestId: newProp.id, contract: distributor});
       const isSignerB4 = await distributor.signers(signer3Addr);
       const exec = await executeTransaction({signer: signer1, contract: distributor, reqId: newProp.id});
