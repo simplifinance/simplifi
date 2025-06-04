@@ -21,7 +21,7 @@ describe("Token distributor", function () {
       await signTransaction({signer: deployer, requestId: id, contract: distributor});
       await expect( 
         distributor.connect(signer3).executeTransaction(id)
-      ).to.be.revertedWith("await signTransaction({signer: deployer, requestId: id, contract: distributor});");
+      ).to.be.revertedWith("Quorum exceeds valid executors");
       // ).to.be.revertedWith("Quorum exceed valid executors"); // swap this if the test failed
   
       expect(txType).to.be.eq(TrxnType.SETQUORUM);

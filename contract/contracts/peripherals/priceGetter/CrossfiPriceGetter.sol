@@ -34,9 +34,10 @@ abstract contract CrossfiPriceGetter is Pool {
         address _stateManager,
         address oracle,
         address[] memory supportedAssets,
-        PriceData[] memory _priceData, 
-        address _safeFactory
-    ) Pool(_stateManager, _roleManager, _safeFactory) {
+        PriceData[] memory _priceData,
+        address _safeFactory,
+        uint _minmumLiquidity
+    ) Pool(_stateManager, _roleManager, _safeFactory, _minmumLiquidity) {
         require(oracle == address(0));
         require(supportedAssets.length == _priceData.length);
         diaOracle = IDIAOracleV2(oracle);

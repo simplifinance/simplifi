@@ -18,6 +18,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
+
+  // Minimum Liquidity is $1 for Flexpool and providers
+  const minimumLiquidity = parseEther('1');
   const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"].concat([deployer]);
 
   /**
@@ -125,7 +128,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   */ 
    const wrappedNative = await deploy("WrappedNative", {
     from: deployer,
-    args: [ roleManager.address, wrappedAssetMetadata.name, wrappedAssetMetadata.symbol ],
+    args: [ wrappedAssetMetadata.name, wrappedAssetMetadata.symbol ],
     log: true,
   });
 
@@ -172,7 +175,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     stateManager.address,
     [wrappedNative.address],
     priceData,
-    safeFactory.address
+    safeFactory.address,
+    minimumLiquidity
   ];
 
   const hardhatArg = [
@@ -191,11 +195,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log(`Factory deployed to: ${factory.address}`);
 
   /**
-   * Deploy SafeFactory
+   * Deploy Providers
   */
   const providers = await deploy("Providers", {
     from: deployer,
-    args: [stateManager.address, factory.address, roleManager.address],
+    args: [stateManager.address, factory.address, roleManager.address, minimumLiquidity],
     log: true,
   });
 

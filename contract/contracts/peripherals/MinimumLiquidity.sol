@@ -11,7 +11,13 @@ abstract contract MinimumLiquidity is ERC20Manager {
     uint private minimumLiquidity;
 
     // ============= Constructor ================
-    constructor(address _statetManager, address _roleManager) ERC20Manager(_statetManager, _roleManager){}
+    constructor(
+        address _statetManager, 
+        address _roleManager, 
+        uint _minmumLiquidity
+    ) ERC20Manager(_statetManager, _roleManager){
+        minimumLiquidity = _minmumLiquidity;
+    }
 
     /**
      * @dev Set minimum liquidity. 

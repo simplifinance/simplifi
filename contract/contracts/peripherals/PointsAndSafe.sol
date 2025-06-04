@@ -3,9 +3,9 @@
 pragma solidity 0.8.24;
 
 import { IPoint } from "../interfaces/IPoint.sol";
-import { ERC20Manager } from "./ERC20Manager.sol";
 import { Common } from "../interfaces/Common.sol";
 import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
+import { MinimumLiquidity } from "./MinimumLiquidity.sol";
 
 /**
  * @title AwardPoint contract rewards users for their participation only if they had register to earn points in the Points contract 
@@ -17,7 +17,7 @@ import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
  * A1 - Safe factory address parsed to the constructor is zero
  * A2 - Safe creation failed
  */
-abstract contract PointsAndSafe is ERC20Manager {
+abstract contract PointsAndSafe is MinimumLiquidity {
     // Whether to award point to users or not
     bool private awardPoint;
     
@@ -27,8 +27,13 @@ abstract contract PointsAndSafe is ERC20Manager {
     /**
      * ================ Constructor ==============
      */
-    constructor(address _stateManager, address _roleManager, address _safeFactory) 
-        ERC20Manager(_stateManager, _roleManager)
+    constructor(
+        address _stateManager, 
+        address _roleManager, 
+        address _safeFactory,
+        uint _minmumLiquidity
+    ) 
+        MinimumLiquidity(_stateManager, _roleManager, _minmumLiquidity)
     { 
         require(_safeFactory != address(0), 'A1');
         awardPoint = true;

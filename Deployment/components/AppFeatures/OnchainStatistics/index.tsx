@@ -70,29 +70,29 @@ export default function OnchainStatistics() {
               <div className='grid grid-cols-3 gap-2'>
                 <div className={className}>
                   <h3 className=''>Public</h3>
-                  <h3 className='text-2xl'>{totalPermissionless}</h3>
+                  <h3 className='text-xl'>{totalPermissionless}</h3>
                 </div>
                 <div className={className}>
                   <h3>Private</h3>
-                  <h3 className='text-2xl'>{totalPermissioned}</h3>
+                  <h3 className='text-xl'>{totalPermissioned}</h3>
                 </div>
                 <div className={className}>
                   <h3>Open to liquidate</h3>
-                  <h3 className='text-2xl'>{totalLiquidatablePool}</h3>
+                  <h3 className='text-xl'>{totalLiquidatablePool}</h3>
                 </div>
               </div>
               <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
                 <div className={className}>
                   <h3 className=''>Total paid out</h3>
-                  <h3 className='text-2xl'>{`$${totalPayout}`}</h3>
+                  <h3 className='text-xl'>{`$${totalPayout}`}</h3>
                 </div>
                 <div className={className}>
                   <h3>{`Tvl (Base)`}</h3>
-                  <h3 className='text-2xl'>{`$${tvlInBase}`}</h3>
+                  <h3 className='text-xl'>{`$${tvlInBase}`}</h3>
                 </div>
                 <div className={className}>
                   <h3>{`Tvl (Collateral)`}</h3>
-                  <h3 className='text-2xl'>{`$${tvlInCollateral}`}</h3>
+                  <h3 className='text-xl'>{`$${tvlInCollateral}`}</h3>
                 </div>
               </div>
             </div>
@@ -105,21 +105,21 @@ export default function OnchainStatistics() {
                 </div>
                 <div className={className}>
                   <h3>Tvl</h3>
-                  <h3 className='text-2xl'>{`$${tvlProviders}`}</h3>
+                  <h3 className='text-xl'>{`$${tvlProviders}`}</h3>
                 </div>
                 <div className={className}>
                   <h3>Unpaid interests</h3>
-                  <h3 className='text-2xl'>{`$${unpaidInterest}`}</h3>
+                  <h3 className='text-xl'>{`$${unpaidInterest}`}</h3>
                 </div>
               </div>
               <div className='grid grid-cols-2 gap-2'>
                 <div className={className}>
                   <h3 className=''>{`Avg. rate`}</h3>
-                  <h3 className='text-2xl'>{`${averageRate}%`}</h3>
+                  <h3 className='text-xl'>{`${averageRate}%`}</h3>
                 </div>
                 <div className={className}>
                   <h3>{`Total borrowed`}</h3>
-                  <h3 className='text-2xl'>{`$${totalBorrowedFromProviders}`}</h3>
+                  <h3 className='text-xl'>{`$${totalBorrowedFromProviders}`}</h3>
                 </div>
               </div>
             </div>

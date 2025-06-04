@@ -18,8 +18,13 @@ import { ISafe } from "../interfaces/ISafe.sol";
 
 abstract contract Pool is Contributor {
     // ================ Constructor ==============
-    constructor(address stateManager, address roleManager, address _safeFactory)
-        Contributor(stateManager, roleManager, _safeFactory)
+    constructor(
+        address stateManager, 
+        address roleManager, 
+        address _safeFactory,
+        uint _minmumLiquidity
+    )
+        Contributor(stateManager, roleManager, _safeFactory, _minmumLiquidity)
     {}
 
     /**

@@ -18,6 +18,7 @@ import { IStateManager } from "../interfaces/IStateManager.sol";
  * 10 - Not allowed
  * 11 - No debt
  * 12 - No User
+ * 13 - Payback failed
  */
 abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     using Utils for *;
@@ -36,8 +37,18 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     mapping(uint => mapping(address => Common.Provider[])) private unitProviders;
 
     // ============= constructor ============
-    constructor(address _stateManager, address _roleManager, address _safeFactory) 
-       PointsAndSafe(_stateManager, _roleManager, _safeFactory)
+    constructor(
+        address _stateManager, 
+        address _roleManager, 
+        address _safeFactory,
+        uint _minmumLiquidity
+        ) 
+    PointsAndSafe(
+        _stateManager, 
+        _roleManager, 
+        _safeFactory, 
+        _minmumLiquidity
+    )
     {} 
 
     /**
@@ -228,9 +239,9 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
     ) 
         internal
         _requireUnitIsActive(unit)
-        returns(Common.Pool memory pool, uint debt, uint collateral)
-    {
-        (debt, pool) = _getCurrentDebt(unit, payer);
+        returns(Common.Pool memory _pool)
+    { 
+        (uint debt, Common.Pool memory pool) = _getCurrentDebt(unit, payer);
         require(debt > 0, '11');
         uint slot = _getSlot(pool.addrs.lastPaid, pool.big.unitId).value;
         contributors[pool.big.unitId][slot].loan = 0;
@@ -251,11 +262,15 @@ abstract contract Contributor is Epoches, Slots, PointsAndSafe {
         IStateManager.StateVariables memory stm = _getVariables();
         uint attestedInitialBal = stm.baseAsset.balanceOf(pool.addrs.safe);
         _checkAndWithdrawAllowance(stm.baseAsset, payer, pool.addrs.safe, debt);
-        collateral = ISafe(pool.addrs.safe).payback(
-            Common.Payback_Safe(payer, stm.baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.unitId], isSwapped, defaulter, pool.big.recordId, pool.addrs.colAsset, stm.assetManager.isWrappedAsset(address(pool.addrs.colAsset)), _getContributorProviders(payer, pool.big.unitId)),
-            unit
+        require(
+            ISafe(pool.addrs.safe).payback(
+                Common.Payback_Safe(payer, stm.baseAsset, debt, attestedInitialBal, pool.low.maxQuorum == pool.low.allGh, contributors[pool.big.unitId], isSwapped, defaulter, pool.big.recordId, pool.addrs.colAsset, stm.assetManager.isWrappedAsset(address(pool.addrs.colAsset)), _getContributorProviders(payer, pool.big.unitId)),
+                unit
+            )
+            ,
+            '13'    
         );
-        debt = pool.big.currentPool;
+        _pool = pool;
     }
 
     /**
