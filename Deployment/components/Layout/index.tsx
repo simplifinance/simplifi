@@ -6,8 +6,8 @@ import Stack from '@mui/material/Stack';
 import { ThemeProvider } from "../contexts/ThemeProvider";
 import ErrorBoundary from "../utilities/ErrorBoundary";
 import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
 import LeftSidebar from "./LeftSidebar";
-import RightSideBar from "./RightSidebar";
 import { MotionDivWrap } from "../utilities/MotionDivWrap";
 
 const Layout = ({children} : {children: React.ReactNode}) => {
@@ -41,14 +41,14 @@ const Layout = ({children} : {children: React.ReactNode}) => {
         </section>
         <div className="relative appContainer">
           <Navbar />
-          <LeftSidebar />
+          <Sidebar />
           <ScrollButton windowIsDefined={windowIsDefined} />
           <main className='relative bg-white2 dark:bg-gray1'>
             <MotionDivWrap>
               {children}
             </MotionDivWrap>
           </main>
-          <RightSideBar />
+          <LeftSidebar />
         </div>
       </ErrorBoundary>
     </ThemeProvider>

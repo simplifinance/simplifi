@@ -8,8 +8,8 @@ export default function SignUp() {
     const toggleDrawer = (arg: number) => setDrawer(arg);
 
     return(
-         <div className="bg-green1/90 p-4 rounded-lg text-white1/80 space-y-4">
-            <h3 className="text-lg font-semibold text-orange-200">Earn points</h3>
+         <div className="bg-white dark:bg-green1/80 text-green1/80 dark:text-orange-200 p-4 rounded-lg space-y-2 text-sm">
+            <h3 className="text-lg font-semibold dark:text-orange-300">Earn points</h3>
             <p>Create and interact with Flexpools, perform social tasks, and refer your friends to earn SIMPL points which can be converted to SIMPL Tokens. It can also be used as collateral in Flexpools</p>
             <SignUpForRewards 
                 openDrawer={openDrawer}

@@ -6,7 +6,7 @@ import { ConnectWallet } from '@/components/utilities/ConnectWallet';
 import { ModeToggler } from '@/components/utilities/ModeToggler';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { topBarContent } from '../LeftSidebar';
+import { topBarContent } from '../Sidebar';
 
 export default function Navbar() {
   const { showSidebar, toggleSidebar, setActivepath, activePath } = useAppStorage();
