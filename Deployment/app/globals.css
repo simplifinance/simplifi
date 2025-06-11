@@ -41,7 +41,7 @@ body {
   grid-template-rows: auto 1fr;
   grid-template-areas: 
   "navbar navbar"
-  "rightbar main"
+  "leftbar main"
 }
 
 nav{
@@ -54,7 +54,7 @@ nav{
 
 aside{
   top: 72px; 
-  grid-area: leftsidebar;
+  /* grid-area: sidebar; */
   height: calc(100vh - 72px);
   position: fixed;
   width: 300px;
@@ -62,9 +62,9 @@ aside{
   overflow: auto;
 }
 
-.rightsidebar{
+.leftSidebar{
   /* top: 60px; */
-  grid-area: rightbar;
+  grid-area: leftbar;
   height: calc(100vh - 78px);
   position: fixed;
   width: 400px;
@@ -212,11 +212,11 @@ main{
     grid-template-rows: 1fr;
     grid-template-areas:
     "navbar" 
-    "rightbar"
     "main"
+    "leftbar"
   }
 
-  .rightsidebar{
+  .leftSidebar{
     top: 0;
     /* grid-area: rightsidebar; */
     height: 100vh;
@@ -235,7 +235,7 @@ main{
     height: 100%;
   }
 
-  .rightsidebar{
+  .leftSidebar{
     height: 100%;
   }
 

@@ -33,31 +33,31 @@ export default function OnchainStatistics() {
           
           <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
             {/* Epoches */}
-            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-orange-300 p-4 rounded-lg `}>
+            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-white2/20 p-4 rounded-lg `}>
               <h1 className='font-black text-green1/80 dark:text-orange-300'>Epoches</h1>
               <div className='flex justify-start gap-2'>
-                <div className={`flex justify-around text-white1 items-center dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
-                  <h3 className=''>Active</h3>
-                  <h3 className='text-2xl dark:text-green1/80'>{currentEpoches.toString() || '0'}</h3>
+                <div className={`relative text-xs text-white1 items-center dark:text-green1/80 rounded-lg p-4 w-full text-center bg-orange-400 dark:bg-orange-400`}>
+                  <h3 className='absolute'>Active</h3>
+                  <h3 className='text-2xl md:text-4xl'>{currentEpoches.toString() || '0'}</h3>
                 </div>
-                <div className={`flex justify-around items-center text-white1  dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
-                  <h3>Past</h3>
-                  <h3 className='text-2xl'>{recordEpoches.toString() || '0'}</h3>
+                <div className={`relative text-xs text-white1  dark:text-green1/80 rounded-lg p-4 w-full text-center bg-orange-400 dark:bg-orange-400`}>
+                  <h3 className='absolute'>Past</h3>
+                  <h3 className='text-2xl md:text-4xl'>{recordEpoches.toString() || '0'}</h3>
                 </div>
               </div>
             </div>
 
             {/* Users */}
-            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-orange-300 p-4 rounded-lg `}>
+            <div className={`relative bg-white dark:bg-green1/50 space-y-4 w-full border dark:border-white2/20 p-4 rounded-lg `}>
               <h1 className='font-black text-green1/80 dark:text-orange-300'>Active users</h1>
               <div className='flex justify-start gap-2'>
-                <div className={`flex justify-around items-center text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
-                  <h3 className=''>Flexpools</h3>
-                  <h3 className='text-2xl dark:text-green1/80'>{activeUsers}</h3>
+                <div className={`relative text-xs text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center bg-orange-400 dark:bg-orange-400`}>
+                  <h3 className='absolute '>Flexpools</h3>
+                  <h3 className='text-2xl md:text-4xl'>{activeUsers}</h3>
                 </div>
-                <div className={`flex justify-around items-center text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center font-black bg-green1/90 dark:bg-orange-400`}>
-                  <h3>Providers</h3>
-                  <h3 className='text-2xl'>{totalProviders}</h3>
+                <div className={`relative text-xs text-white1 dark:text-green1/80 rounded-lg p-4 w-full text-center bg-orange-400 dark:bg-orange-400`}>
+                  <h3 className='absolute'>Providers</h3>
+                  <h3 className='text-2xl md:text-4xl'>{totalProviders}</h3>
                 </div>
               </div>
             </div>
@@ -65,8 +65,8 @@ export default function OnchainStatistics() {
 
           <div className={`relative grid grid-cols-1 md:grid-cols-2 gap-6 bg-white dark:bg-green1/50 w-full border dark:border-white2/20 p-4 rounded-lg `}>
             {/* Flexpools */}
-            <div className={`space-y-4 font-black`}>
-              <h1 className='text-lg text-green1/90 dark:text-orange-300'>Flexpools</h1> 
+            <div className={`space-y-4`}>
+              <h1 className='font-black text-green1/90 dark:text-orange-300'>Flexpools</h1> 
               <div className='grid grid-cols-3 gap-2'>
                 <div className={className}>
                   <h3 className=''>Public</h3>
@@ -98,8 +98,8 @@ export default function OnchainStatistics() {
             </div>
 
             {/* Providers */}
-            <div className={`space-y-4 font-black`}>
-              <h1 className='text-lg text-green1/90 dark:text-orange-300'>Providers</h1> 
+            <div className={`space-y-4`}>
+              <h1 className='font-black text-green1/90 dark:text-orange-300'>Providers</h1> 
               <div className='grid grid-cols-2 md:grid-cols-3 gap-2'>
                 <div className='hidden md:block'>
                 </div>

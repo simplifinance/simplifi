@@ -69,7 +69,7 @@ export default function Providers() {
                                 <RemoveLiquidity />
                             </div>
                             <div className="bg-white1 dark:bg-green1/60 p-4 space-y-4 rounded-lg">
-                                <h3 className="font-bold">Add Liquidity</h3>
+                                <h3 className="font-bold text-orange-400">Add Liquidity</h3>
                                 <AddLiquidity />
                             </div>
                         </div>
@@ -78,7 +78,7 @@ export default function Providers() {
             </div>
             <MotionDivWrap className="relative dark:bg-green1/90 p-4 space-y-2 shadow-sm shadow-green1/30 rounded-lg max-h-[500px] overflow-auto">
                 <div className={`w-full ${flexSpread}`}>
-                    <h3 className="font-bold">Select providers</h3>
+                    <h3 className="font-semibold text-sm opacity-80">Select providers</h3>
                     <div className="dark:bg-green1/90 p-4 space-y-4 ">
                         {!hasSelectedProvider && <h3 className="text-orangec dark:text-orange-300 t">{"No provider was selected!"}</h3>} 
                         {

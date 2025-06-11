@@ -97,27 +97,27 @@ export default function Flexpool({showMyPool, allPools, padding} : {showMyPool: 
                   <div className='relative grid grid-cols-1 md:grid-cols-2 border-2 border-green1/20 bg-white text-center text-green1/80 dark:text-white2 dark:bg-green1/80 font-black p-4 rounded-lg place-items-center space-y-4 md:space-y-0'>
                     <div className='text-lg space-y-4 md:space-y-0'>
                       <div className='space-y-2'>
-                        <h3 className='dark:text-orange-300'>My Liquidity</h3>
-                        <h3 className='text-2xl md:text-3xl'>{`$${formatValue(filteredProviders[0].amount.toString()).toStr}`}</h3>
+                        <h3 className='dark:text-orange-300 text-xs'>My Liquidity balance</h3>
+                        <h3 className='text-2xl md:text-4xl text-orange-400'>{`$${formatValue(filteredProviders[0].amount.toString()).toStr}`}</h3>
                       </div>
                       <div className='md:absolute top-0 left-4 md:left-0 md:dark:top-[70%] md:dark:left-14'>
                         <RemoveLiquidity />
                       </div>
                     </div>
                     <div className='flex justify-between items-center gap-2 md:block md:space-y-2 w-full'>
-                      <div className='p-4 bg-white2 dark:bg-transparent dark:border dark:border-white2/10 rounded-lg dark:text-orange-300 w-2/4 md:w-full h-32 md:h-full space-y-4 text-sm md:text-md'>
+                      <div className='p-4 bg-white2 dark:bg-transparent dark:border dark:border-white2/10 rounded-lg dark:text-orange-300 w-2/4 md:w-full h-32 md:h-full space-y-4 text-xs'>
                         <h3>Unpaid rewards</h3>
-                        <h3 className='text-xl md:text-3xl'>{`$${formatValue(filteredProviders[0].accruals.fullInterest).toStr}`}</h3>
+                        <h3 className='text-xl md:text-4xl text-orange-400'>{`$${formatValue(filteredProviders[0].accruals.fullInterest).toStr}`}</h3>
                       </div>
-                      <div className='p-4 bg-white2 dark:bg-transparent dark:border dark:border-white2/10 rounded-lg dark:text-orange-300 w-2/4 md:w-full h-32 md:h-full space-y-4'>
+                      <div className='p-4 bg-white2 dark:bg-transparent dark:border dark:border-white2/10 rounded-lg dark:text-orange-300 w-2/4 md:w-full h-32 md:h-full space-y-4 text-xs'>
                         <h3>Rate</h3>
-                        <h3 className='text-xl md:text-3xl'>{`%${formatValue(filteredProviders[0].rate).toStr}`}</h3>
+                        <h3 className='text-xl md:text-4xl text-orange-400'>{`%${formatValue(filteredProviders[0].rate).toStr}`}</h3>
                       </div>
                     </div>
                 </div>
               }
               <div className='space-y-4 bg-white1 dark:bg-green1/50 p-4 rounded-lg'>
-                <h3 className='text-xl dark:text-orange-300 font-bold'>Add liquidity</h3>
+                <h3 className='text-xl text-orange-400 dark:text-orange-300 font-bold'>Add liquidity</h3>
                 <AddLiquidity />
               </div>
             </MotionDivWrap>

@@ -2,7 +2,6 @@ import * as React from "react";
 import Layout from "../Layout";
 import { MotionDivWrap } from "../utilities/MotionDivWrap";
 import type { Path } from "@/interfaces";
-// import Dashboard from "./InitialPopUp";
 import FlexPool from "./FlexPool";
 import Yield from "./Yield";
 import Faq from "./Faq";

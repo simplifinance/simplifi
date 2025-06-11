@@ -24,9 +24,9 @@ export const TabsContent = ({title, description, value, content, footer}: TabCon
 
 export function WelcomeTabs() {
     return (
-        <Tabs defaultValue="dashboard" className="w-full">
+        <Tabs defaultValue="dashboard" className="w-fu">
             <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+                <TabsTrigger value="dashboard">Welcome</TabsTrigger>
                 <TabsTrigger value="rewards">Rewards</TabsTrigger>
                 <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
             </TabsList>

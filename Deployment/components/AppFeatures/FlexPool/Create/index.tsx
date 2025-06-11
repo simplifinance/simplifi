@@ -27,10 +27,10 @@ export default function CreateFlexpool() {
   return (
     <MotionDivWrap className="bg-white2 dark:bg-green1/80 md:dark:bg-transparent">
       <div className={`${flexStart} p-4 gap-2 w-full md:w-[fit-content] text-xs`}>
-        <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`dark:bg-green1/90 dark:text-orange-300`}>
+        <Button variant={'outline'} disabled={disablebutton} onClick={() => handleSwitch('Permissionless')} className={`dark:bg-green1/90 text-orange-400 dark:text-orange-300`}>
           Permissionless
         </Button>
-        <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`dark:bg-green1/90 dark:text-orange-300`}>
+        <Button variant={'outline'} disabled={!disablebutton} onClick={() => handleSwitch('Permissioned')} className={`dark:bg-green1/90 text-orange-400 dark:text-orange-300`}>
           Permissioned
         </Button>
       </div>
