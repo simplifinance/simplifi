@@ -12,6 +12,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	const {deploy, execute, read, getNetworkName } = deployments;
 	let {deployer, baseContributionAsset } = await getNamedAccounts();
 
+  console.log("Deployer", deployer)
   const networkName = getNetworkName().toLowerCase() as NetworkName;
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');

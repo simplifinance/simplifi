@@ -47,12 +47,27 @@
   "paths": {
     "4157": [],
     "4158": [],
-    "42220": [],
+    "42220": [
+      "deployments\\celo\\Attorney.json",
+      "deployments\\celo\\BaseAsset.json",
+      "deployments\\celo\\CeloBased.json",
+      "deployments\\celo\\Escape.json",
+      "deployments\\celo\\Faucet.json",
+      "deployments\\celo\\Points.json",
+      "deployments\\celo\\Providers.json",
+      "deployments\\celo\\Reserve.json",
+      "deployments\\celo\\RoleManager.json",
+      "deployments\\celo\\SafeFactory.json",
+      "deployments\\celo\\SimpliToken.json",
+      "deployments\\celo\\StateManager.json",
+      "deployments\\celo\\SupportedAssetManager.json",
+      "deployments\\celo\\TokenDistributor.json",
+      "deployments\\celo\\WrappedNative.json"
+    ],
     "44787": [
       "deployments\\alfajores\\Attorney.json",
       "deployments\\alfajores\\BaseAsset.json",
       "deployments\\alfajores\\CeloBased.json",
-      "deployments\\alfajores\\CeloSupportedAssetManager.json",
       "deployments\\alfajores\\Escape.json",
       "deployments\\alfajores\\Faucet.json",
       "deployments\\alfajores\\Points.json",
@@ -70,18 +85,34 @@
   "contractAddresses": [
     {
       "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
-      "Attorney": "0xb64c918d764348dc2D31A764db9F66c368B7A61d",
+      "Attorney": "0x052c747179Defd240c3F1DF35d81ACce448fa291",
       "BaseAsset": "0x210e77886554170bBa347db97CA64E2B9258124E",
-      "CeloBased": "0x78c8575077fbEf2E0eF96d37c0C9f49b8ebd5881",
-      "CeloSupportedAssetManager": "0xB417BD4eB45A35Dd46f68C9549D4c55F2033E32F",
+      "CeloBased": "0xD2bDCC220CCC4934aD2f2EE776a4786374530b01",
       "Escape": "0xB2E930356D20dfC7BB51d7E9cfdB317004278B40",
-      "Faucet": "0xE28D8Da2919Ee43dd3f5EC0420B079fDd215C0F1",
-      "Points": "0xdB05EC3035D38D0f1eCcF463Fd65eEF751ae284D",
-      "Providers": "0x5f8747c595B7Ff7A83F1d8ec987499c80282621c",
+      "Faucet": "0x57e70e60E2d533E7968A4CB6272818C5b3c44c75",
+      "Points": "0x1A5A1fEf3933C5bE086Bf5730a749f485f25F0fF",
+      "Providers": "0x9df06dD513b2cA41c2807A04bda521b7CBEEd6A3",
       "Reserve": "0x93ff269b57128B83C92Faf09D210b858ce4D004E",
-      "SimpliToken": "0xA198dBa0baaBCDb67C2c1aCD8546d7a7bd9e6faF",
-      "SupportedAssetManager": "0x475b964bd393F8aAbA00FBE817d1F155ea2AF4a6",
-      "WrappedNative": "0x12671270d6207786E58B9cE62fAc5814c8684056"
+      "SimpliToken": "0xF926a5755ccFd27C9D9e503D3F5aCcbC0C364Ec4",
+      "SupportedAssetManager": "0x98C2134E3CF17a1632065E75A4a344d03dA36a5F",
+      "WrappedNative": "0x75fAb1AD0cF1B19A07885C44a7C96c119542a25a"
+    },
+    {
+      "stablecoin": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "stablecoin": "0x765de816845861e75a25fca122bb6898b8b1282a",
+      "Attorney": "0x0d207554fAEbd86CEc769922dc22279343Cdf450",
+      "BaseAsset": "0xFE1A76334Ee2cd9855684a800012Eb4820Bb0CA6",
+      "CeloBased": "0xD9038820937F7ba1A63948016AF8F2f9d72700B3",
+      "Escape": "0x005adf762f58e9beb75051DaEc40a6589d166B45",
+      "Faucet": "0xbfFd6Ea701D2FFf426cC343E4323ca17f88DCB57",
+      "Points": "0xCaDE50298B65e0Cead712FdE46Cc1aa00043Eabc",
+      "Providers": "0xac31b4186060237A6f40419848FaaF2ef827b300",
+      "Reserve": "0xBDD3A1EED3ac97c6c526d4DBDC82C1d845CEEb86",
+      "SimpliToken": "0x88DdCaA95d04024caE76506f9a584412071072e1",
+      "SupportedAssetManager": "0x83542F0b78cA891b4457aE78F22ef263646177a5",
+      "WrappedNative": "0x212A58E62C2259bbd7DAE1656e3936b79e8d5C56"
     },
     {
       "stablecoin": "0x0000000000000000000000000000000000000000"

@@ -29,7 +29,7 @@ export default function OnchainStatistics() {
   return(
     <MotionDivWrap>
       <div className='space-y-4 p-4 relative font-bold'>
-          <h1 className='text-lg text-green1/90 opacity-90 dark:text-orange-300 font-black md:text-2xl pb-2 underline '>Onchain Stats</h1>
+          <h1 className='text-lg text-green1/90 opacity-90 dark:text-orange-300 font-black md:text-2xl md:pb-2 '>Onchain Stats</h1>
           
           <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
             {/* Epoches */}

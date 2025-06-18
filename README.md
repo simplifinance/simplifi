@@ -122,3 +122,53 @@ The following smart contracts are deployed to the Celo Alfajores network for tho
 - __[Testnet site](https://testnet.simplifinance.xyz)__
 - __[Documentation](https://simplifinance.gitbook.io/docs/)__
 
+
+
+
+
+
+
+
+
+
+
+<!-- yarn run v1.22.22
+Mainnet
+$ hardhat deploy --network celo --export deployments/contracts.json && node sync-data.js
+Nothing to compile
+No need to generate any newer typings.
+Deployer 0xa1f70ffA4322E3609dD905b41f17Bf3913366bC1
+deploying "RoleManager" (tx: 0x1ebbe506167d51fbe070f5f190c516be1aedc34573dbe370375300d708a466fd)...: deployed at 0xC12E651d037C8b369FA70978e91c863ab39E7d52 with 411215 gas
+RoleManager deployed to: 0xC12E651d037C8b369FA70978e91c863ab39E7d52
+deploying "BaseAsset" (tx: 0x87b23854af08a70f390a5eb435b24161ee5b70d8e6e47ea593fe8356a9a65864)...: deployed at 0xFE1A76334Ee2cd9855684a800012Eb4820Bb0CA6 with 553401 gas
+BaseAsset contract deployed to: 0xFE1A76334Ee2cd9855684a800012Eb4820Bb0CA6
+deploying "Escape" (tx: 0x4211d44be8ee72dba336a45f9201176993b4425e35a804465093777ff299f724)...: deployed at 0x005adf762f58e9beb75051DaEc40a6589d166B45 with 640615 gas
+Escape contract deployed to: 0x005adf762f58e9beb75051DaEc40a6589d166B45
+deploying "Reserve" (tx: 0x167a008496c7035941dbed0ef4f41f2493949972c7c15414ab86cf7ba8ea536a)...: deployed at 0xBDD3A1EED3ac97c6c526d4DBDC82C1d845CEEb86 with 640831 gas
+Reserve contract deployed to: 0xBDD3A1EED3ac97c6c526d4DBDC82C1d845CEEb86
+deploying "TokenDistributor" (tx: 0x53834ff1456652b739d06d49b6ef2c7f4b4488d19712bd9eca01b5ef9ce9e3a3)...: deployed at 0x6e4faA340d48728bBCfC03da74894B97267B2246 with 1759287 gas
+TokenDistributor deployed to: 0x6e4faA340d48728bBCfC03da74894B97267B2246
+deploying "Attorney" (tx: 0xf2d7ef96e48fb144acdd212b920fb48920e26d7d1e0dbd9697a8655d3f8752ae)...: deployed at 0x0d207554fAEbd86CEc769922dc22279343Cdf450 with 652152 gas
+Attorney contract deployed to: 0x0d207554fAEbd86CEc769922dc22279343Cdf450
+deploying "SimpliToken" (tx: 0xe6cc8ca126778a39afaf23c303a55d16fd97e2f8ace2448b63291ed4adb1a197)...: deployed at 0x88DdCaA95d04024caE76506f9a584412071072e1 with 1400524 gas
+SimpliToken deployed to: 0x88DdCaA95d04024caE76506f9a584412071072e1
+deploying "Faucet" (tx: 0x7e9cbaa7eae6129c7494f60b5cf65670ce74476f9381b73ca06509cd52daf80b)...: deployed at 0xbfFd6Ea701D2FFf426cC343E4323ca17f88DCB57 with 822899 gas
+Faucet contract deployed to: 0xbfFd6Ea701D2FFf426cC343E4323ca17f88DCB57
+deploying "Points" (tx: 0x6db9bd6c46096802ac60be279d09deca0c26c5b76fd60ff644246b11b649f22e)...: deployed at 0xCaDE50298B65e0Cead712FdE46Cc1aa00043Eabc with 1115339 gas
+Points contract deployed to: 0xCaDE50298B65e0Cead712FdE46Cc1aa00043Eabc
+deploying "SafeFactory" (tx: 0x91c24c00fe4e7fa65f7e2fdffd7fc0c9ba7337fd9c84ce248472ef017d14f763)...: deployed at 0xAd5b46EbAbf5a84a351981C6a671d42D052C01DA with 2173356 gas
+SafeFactory deployed to: 0xAd5b46EbAbf5a84a351981C6a671d42D052C01DA
+NetworkName: celo
+deploying "WrappedNative" (tx: 0xdff8e7160ce764fd4dae540980a91c89281790d104329891035ae158254f683c)...: deployed at 0x212A58E62C2259bbd7DAE1656e3936b79e8d5C56 with 753386 gas
+WrappedNative token deployed to: 0x212A58E62C2259bbd7DAE1656e3936b79e8d5C56
+deploying "SupportedAssetManager" (tx: 0x9afc9ed08352e46236aa6d5755742afa027d0e6596fbe9f3e66822c6676ff893)...: deployed at 0x83542F0b78cA891b4457aE78F22ef263646177a5 with 1076603 gas
+SupportedAssetManager contract deployed to: 0x83542F0b78cA891b4457aE78F22ef263646177a5
+Deploying StateManager
+deploying "StateManager" (tx: 0x5bfaf46c0a6f6e8b662d265e02242bb7d3bc25ddc7bd168a9dcba535850e383a)...: deployed at 0x56c011916dEcFc8bB68174f69bD9F7ECa36Ed0f4 with 470702 gas
+Factory deployed to: 0x56c011916dEcFc8bB68174f69bD9F7ECa36Ed0f4
+deploying "CeloBased" (tx: 0x8d5f1c6f1eb0585afdbf4bf0a83bf2659dded9937f0ec6e58fd37a04b3f1d503)...: deployed at 0xD9038820937F7ba1A63948016AF8F2f9d72700B3 with 5446407 gas
+Factory deployed to: 0xD9038820937F7ba1A63948016AF8F2f9d72700B3
+deploying "Providers" (tx: 0xa2ebb30cd8b4ae7cee4078894cb7c5317de4b38d4464afbbd564793aed01bdbf)...: deployed at 0xac31b4186060237A6f40419848FaaF2ef827b300 with 1802186 gas
+Providers deployed to: 0xac31b4186060237A6f40419848FaaF2ef827b300
+Confirmation block 1
+Quote 28805865 -->
