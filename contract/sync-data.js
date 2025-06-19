@@ -25,7 +25,7 @@ let globalOutput = {
     chainName: chainName,
     chainIds: chainIds,
     paths: workBuild,
-    contractAddresses: [{"stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"}, {"stablecoin": zeroAddress}],
+    contractAddresses: [{"stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"}, {"stablecoin": zeroAddress}, {stablecoin: "0x765de816845861e75a25fca122bb6898b8b1282a"}, {stablecoin: zeroAddress}],
 };
 
 let itemOutput = {

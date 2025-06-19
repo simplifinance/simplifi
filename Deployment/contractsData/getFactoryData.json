@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x78c8575077fbEf2E0eF96d37c0C9f49b8ebd5881",
+  "contractAddress": "0xD9038820937F7ba1A63948016AF8F2f9d72700B3",
   "functionName": "getFactoryData",
   "inputCount": 0,
   "requireArgUpdate": false,
@@ -10,33 +10,6 @@
       "outputs": [
         {
           "components": [
-            {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tvlCollateral",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "tvlBase",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalPermissioned",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalPermissionless",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct Common.Analytics",
-              "name": "analytics",
-              "type": "tuple"
-            },
             {
               "internalType": "uint16",
               "name": "makerRate",

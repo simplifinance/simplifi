@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x78c8575077fbEf2E0eF96d37c0C9f49b8ebd5881",
+  "contractAddress": "0xD9038820937F7ba1A63948016AF8F2f9d72700B3",
   "functionName": "liquidate",
   "inputCount": 1,
   "requireArgUpdate": false,
@@ -52,6 +52,11 @@
           "internalType": "address",
           "name": "_safeFactory",
           "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minmumLiquidity",
+          "type": "uint256"
         }
       ],
       "stateMutability": "nonpayable",
@@ -1149,33 +1154,6 @@
         {
           "components": [
             {
-              "components": [
-                {
-                  "internalType": "uint256",
-                  "name": "tvlCollateral",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "tvlBase",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalPermissioned",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "totalPermissionless",
-                  "type": "uint256"
-                }
-              ],
-              "internalType": "struct Common.Analytics",
-              "name": "analytics",
-              "type": "tuple"
-            },
-            {
               "internalType": "uint16",
               "name": "makerRate",
               "type": "uint16"
@@ -1696,6 +1674,19 @@
         }
       ],
       "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getMinimumLiquidity",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -2656,6 +2647,19 @@
           "type": "bool"
         }
       ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_minLiquidity",
+          "type": "uint256"
+        }
+      ],
+      "name": "setMinimumLiquidity",
+      "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
