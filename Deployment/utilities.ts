@@ -22,6 +22,7 @@ import { formatEther } from "viem";
 import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
 import { getStepData } from "./stepsData";
+mport { getDataSuffix as getDivviDataSuffix, submitReferral } from "@divvi/referral-sdk";
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -382,4 +383,29 @@ export function getAnalytics(providers: ProviderResult[], pools: ReadDataReturnV
     totalBorrowedFromProviders: formatValue(totalBorrowedFromProviders).toStr,
     totalProviders: allProviders
   };
+}
+
+// consumer is your Divvi Identifier
+// providers are the addresses of the Rewards Campaigns that you signed up for on the previous page
+export function getDivviReferralUtilities() {
+  const getDataSuffix = () => {
+    const consumer = process.env.NEXT_PUBLIC_DIVVI_IDENTIFIER as Address;
+    const campaign1 = process.env.NEXT_PUBLIC_CAMPAIGN_1 as string;
+    const campaign2 = process.env.NEXT_PUBLIC_CAMPAIGN_2 as string;
+    const providers = Array.from([campaign1, campaign2]) as Address[];
+    return getDivviDataSuffix({
+      consumer,
+      providers,
+    }) as Address;
+  }
+  const submitReferralData = async(txHash:`0x${string}`, chainId: number) => {
+    return await submitReferral({
+      txHash,
+      chainId,
+    })
+  }
+  return {
+    getDataSuffix,
+    submitReferralData
+  }
 }

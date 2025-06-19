@@ -2,11 +2,11 @@ import React from "react";
 import { Spinner } from "@/components/utilities/Spinner";
 import useAppStorage from "@/components/contexts/StateContextProvider/useAppStorage";
 import Drawer from './Drawer';
-import Message from "../../../../../utilities/Message";
+import Message from "@/components/utilities/Message";
 import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
-import { formatAddr } from "@/utilities";
+import { formatAddr, getDivviReferralUtilities } from "@/utilities";
 import { useAccount, useConfig, useWriteContract } from "wagmi";
 import { WriteContractErrorType, waitForTransactionReceipt } from "wagmi/actions";
 import { displayMessages } from "@/constants";
@@ -102,6 +102,37 @@ export const Confirmation :
         mutation: { onError, onSuccess }
     });
 
+    /**
+     * @dev Broadcast a transaction to the blockchain with Divvi referral processing
+     *  @param arg: Parameter of type Transaction
+     */
+    const runTransaction = async(arg: Transaction, message: string) => {
+        const { abi, functionName, args, contractAddress, value} = arg;
+        const { getDataSuffix, submitReferralData } = getDivviReferralUtilities();
+        const useDivvi = chainId === celo.id;
+        const dataSuffix = useDivvi? getDataSuffix() : undefined;
+        setmessage(message);
+        const hash = await writeContractAsync({
+            abi,
+            functionName,
+            address:contractAddress,
+            account,
+            args,
+            value,
+            dataSuffix
+        });
+        let resultHash = await waitForTransactionReceipt(
+            config,
+            { hash, confirmations: 2 }
+        );
+
+        resultHash = await waitForConfirmation(hash1, true);
+        if(useDivvi) {
+            const result = await submitReferralData(resultHash, chainId);
+            console.log("Divvi Ref result:", result, "\n resultHash", resultHash);
+        }
+    }
+
     const handleSendTransaction = async() => {
         if(!isConnected) return setError('Please connect wallet');
         setLoading(true);
@@ -117,22 +148,16 @@ export const Confirmation :
                 value_ = result?.value;
                 execute = result?.proceed;
             }
-            console.log("FuncName", functionName);
-            console.log("address", address);
-            console.log("Args", args);
             if(execute === 1) {
-                setmessage(`${displayMessages[functionName].start}.none`);
-                const hash = await writeContractAsync({
-                    abi,
-                    functionName,
-                    address,
-                    account,
-                    args,
-                    value: value_
-                });
-                await waitForTransactionReceipt(
-                    config,
-                    { hash, confirmations: 2 }
+                await runTransaction(
+                    {
+                        abi,
+                        functionName,
+                        address,
+                        args,
+                        value: value_
+                    },
+                    `${displayMessages[functionName].start}.none`
                 );
             } else {
                 setmessage(functionName === 'approve'? 'Previous approval was detected!' : `${functionName} was completed!`);
