@@ -7,9 +7,10 @@ import { Address, FunctionName, VoidFunc } from "@/interfaces";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { formatAddr, getDivviReferralUtilities } from "@/utilities";
-import { useAccount, useConfig, useWriteContract } from "wagmi";
+import { useAccount, useChainId, useConfig, useWriteContract } from "wagmi";
 import { WriteContractErrorType, waitForTransactionReceipt } from "wagmi/actions";
 import { displayMessages } from "@/constants";
+import { celo } from "wagmi/chains";
 
 export const Confirmation : 
     React.FC<ConfirmationProps> = 
@@ -22,6 +23,7 @@ export const Confirmation :
     const { address, isConnected } = useAccount();
     const account = formatAddr(address);
     const config = useConfig();
+    const chainId = useChainId();
 
     // Reset the messages and error messages in state, and close the drawer when transaction is completed
     const handleCloseDrawer = () => {
@@ -106,8 +108,17 @@ export const Confirmation :
      * @dev Broadcast a transaction to the blockchain with Divvi referral processing
      *  @param arg: Parameter of type Transaction
      */
-    const runTransaction = async(arg: Transaction, message: string) => {
-        const { abi, functionName, args, contractAddress, value} = arg;
+    const runTransaction = async(
+        arg: {
+                abi: any[] | [], 
+                functionName: FunctionName,
+                args: any[] | Readonly<any[]>, 
+                contractAddress: Address,
+                value?: bigint;
+            }, 
+            message: string
+    ) => {
+        const { abi, functionName, args, contractAddress, value } = arg;
         const { getDataSuffix, submitReferralData } = getDivviReferralUtilities();
         const useDivvi = chainId === celo.id;
         const dataSuffix = useDivvi? getDataSuffix() : undefined;
@@ -121,18 +132,17 @@ export const Confirmation :
             value,
             dataSuffix
         });
-        let resultHash = await waitForTransactionReceipt(
+        let receipt = await waitForTransactionReceipt(
             config,
             { hash, confirmations: 2 }
         );
-
-        resultHash = await waitForConfirmation(hash1, true);
         if(useDivvi) {
-            const result = await submitReferralData(resultHash, chainId);
-            console.log("Divvi Ref result:", result, "\n resultHash", resultHash);
+            const result = await submitReferralData(receipt.transactionHash, chainId);
+            console.log("Divvi Ref result:", result, "\n resultHash", receipt.transactionHash);
         }
     }
 
+    // handle send transaction event
     const handleSendTransaction = async() => {
         if(!isConnected) return setError('Please connect wallet');
         setLoading(true);
@@ -151,9 +161,9 @@ export const Confirmation :
             if(execute === 1) {
                 await runTransaction(
                     {
-                        abi,
+                        abi: [...abi],
                         functionName,
-                        address,
+                        contractAddress: address,
                         args,
                         value: value_
                     },
