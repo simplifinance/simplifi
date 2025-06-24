@@ -41,8 +41,8 @@ export default function SimplifiApp() {
       functionNames: steps,
       callback
     });
-    console.log("filtered", filtered)
-    const symbol = {abi: filtered.transactionData[0].abi, ca: formatAddr(filtered?.contractAddresses?.WrappedNative)};
+    // console.log("filtered", filtered)
+    const symbol = {abi: filtered.transactionData[0].abi, ca: formatAddr(filtered.contractAddresses.WrappedNative)};
     const fData = {abi: filtered.transactionData[1].abi, ca: formatAddr(filtered.transactionData[1].contractAddress)};
     const point = {abi: filtered.transactionData[2].abi, ca: formatAddr(filtered.transactionData[2].contractAddress)};
     const provider = {abi: filtered.transactionData[3].abi, ca: formatAddr(filtered.transactionData[3].contractAddress)};
