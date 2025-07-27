@@ -63,7 +63,6 @@ const SCOPE = "Simplifinance_verifier";
 const ENDPOINT = "https://testnet.simplifinance.xyz";
 const ENDPOINT_TYPE : EndpointType | undefined = "celo";
 
-
 export function selfConfiguration(userId: Address, isMobileState: boolean) {
     // Create a SelfApp instance using the builder pattern
     const selfApp = new SelfAppBuilder({

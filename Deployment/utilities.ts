@@ -18,7 +18,7 @@ import type {
 } from "@/interfaces";
 import BigNumber from "bignumber.js";
 import { Router, Stage, StageStr } from "./constants";
-import { formatEther } from "viem";
+import { formatEther, Hex } from "viem";
 import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
 import { getStepData } from "./stepsData";
@@ -410,4 +410,19 @@ export function getDivviReferralUtilities() {
     getDataSuffix,
     submitReferralData
   }
+}
+
+// Encode multiple values in binary format
+export function encodeUserData(campaignHash: Hex): string {
+  // Frontend: Creating user defined data
+  const actionData = {
+    action: 1,
+    campaignHash: campaignHash,
+  };
+
+  const userDefinedData = "0x" + Buffer.from(
+    JSON.stringify(actionData)
+  ).toString('hex').padEnd(128, '0'); 
+  
+  return userDefinedData;
 }

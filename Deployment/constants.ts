@@ -84,6 +84,10 @@ export const getChainData = (chainId: number | undefined) => {
   return { currency, network, baseCurrency, collateralCurrency, pair };
 }
 
+export const APP_NAME = 'Simplifinance';
+export const APP_LOGO_URI = 'https://simplifinance.xyz/logoSimplifi.png';
+export const APP_URI = 'https://simplifinance.xyz/'
+
 // Assets with USDC pairs
 // export const supportedConvertibleAssets = [
 //   {
