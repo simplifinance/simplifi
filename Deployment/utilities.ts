@@ -18,11 +18,11 @@ import type {
 } from "@/interfaces";
 import BigNumber from "bignumber.js";
 import { Router, Stage, StageStr } from "./constants";
-import { formatEther } from "viem";
+import { formatEther, Hex } from "viem";
 import globalContractData from "@/contractsData/global.json";
 import assert from "assert";
 import { getStepData } from "./stepsData";
-mport { getDataSuffix as getDivviDataSuffix, submitReferral } from "@divvi/referral-sdk";
+import { getDataSuffix as getDivviDataSuffix, submitReferral } from "@divvi/referral-sdk";
 
 /**
  * @dev Converts an undefined string object to a default string value
@@ -369,10 +369,11 @@ export function getAnalytics(providers: ProviderResult[], pools: ReadDataReturnV
     })
   });
 
+  const avgRate = providers.length === 0? '0' : BigInt((averageRate / BigInt(providers.length)/100n)).toString();
   return {
     tvlProviders: formatValue(totalProvidedLiquidity).toStr,
     unpaidInterest: formatValue(totalAccruedInterest).toStr,
-    averageRate: BigInt((averageRate / BigInt(providers.length)/100n)).toString(),
+    averageRate: avgRate,
     totalPermissioned,
     totalPermissionless,
     tvlInBase: formatValue(tvlInContribution).toStr,
@@ -398,6 +399,7 @@ export function getDivviReferralUtilities() {
       providers,
     }) as Address;
   }
+  
   const submitReferralData = async(txHash:`0x${string}`, chainId: number) => {
     return await submitReferral({
       txHash,
@@ -408,4 +410,19 @@ export function getDivviReferralUtilities() {
     getDataSuffix,
     submitReferralData
   }
+}
+
+// Encode multiple values in binary format
+export function encodeUserData(campaignHash: Hex): string {
+  // Frontend: Creating user defined data
+  const actionData = {
+    action: 1,
+    campaignHash: campaignHash,
+  };
+
+  const userDefinedData = "0x" + Buffer.from(
+    JSON.stringify(actionData)
+  ).toString('hex').padEnd(128, '0'); 
+  
+  return userDefinedData;
 }
