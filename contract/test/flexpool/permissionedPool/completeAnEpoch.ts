@@ -12,7 +12,7 @@ import {
   formatAddr,
   DURATION_IN_SECS,
 } from "../../utilities";
-import { createPermissionedPool, getFinance, joinEpoch, payback, withdraw } from "../../utils";
+import { createPermissionedPool, getFinance, joinEpoch, payback, verifyUsers, withdraw } from "../../utils";
 import { Address } from "../../types";
 
 describe("Permissioned: Complete An Epoch", function () {
@@ -27,7 +27,8 @@ describe("Permissioned: Complete An Epoch", function () {
         flexpool,
         collateralAsset,
         signers : { signer1, signer2, deployer, signer1Addr, signer2Addr, },
-        flexpoolAddr 
+        flexpoolAddr,
+        verifier
       } = await loadFixture(deployContractsFixcture);
 
       const signers = [signer1, signer2];
@@ -44,6 +45,7 @@ describe("Permissioned: Complete An Epoch", function () {
         collateralToken: collateralAsset
       });
 
+      await verifyUsers({users: [signer2], verifier});
       await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

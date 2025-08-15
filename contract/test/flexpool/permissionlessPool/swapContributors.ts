@@ -13,7 +13,7 @@ import {
   ONE_HOUR_ONE_MINUTE,
   QUORUM,
 } from "../../utilities";
-import { createPermissionlessPool, getFinance, joinEpoch, payback } from "../../utils";
+import { createPermissionlessPool, getFinance, joinEpoch, payback, verifyUsers } from "../../utils";
 
 describe("Permissionless: Swap contributors", function () {
   async function deployContractsFixcture() {
@@ -24,6 +24,7 @@ describe("Permissionless: Swap contributors", function () {
     it("Should swap participant successfully", async function () {
       const {
         baseAsset,
+        verifier,
         flexpool,
         collateralAsset,
         signers : { signer1, signer2, signer3, deployer, signer2Addr, signer3Addr },
@@ -45,6 +46,7 @@ describe("Permissionless: Swap contributors", function () {
         }
       );
 
+      await verifyUsers({users: [signer2, signer3], verifier});
       await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

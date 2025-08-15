@@ -20,7 +20,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  const scopeValue = networkName === 'alfajores'? BigInt('') : BigInt('');
+  // const scopeSeed = 'simplifinance-simplifi';
+  const scopeValue = networkName === 'alfajores'? BigInt('11093060884784780800910785808741096496213751621594761261038373606241471145350') : BigInt('');
 	const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
 
   // Minimum Liquidity is $1 for Flexpool and providers
@@ -220,12 +221,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
-	// await execute('Claim', {from: deployer}, 'setConfigId', verificationConfig);
-	// await execute('Claim', {from: deployer}, 'setScope', scopeValue);
+	await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
+	await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
   
-	const isWalletVerificationRequired = await read('Claim', 'isWalletVerificationRequired');
-	const config = await read('Claim', 'configId');
-	const scope = await read('Claim', 'scope');
+	const isWalletVerificationRequired = await read('Verifier', 'isWalletVerificationRequired');
+	const config = await read('Verifier', 'configId');
+	const scope = await read('Verifier', 'scope');
 
 	console.log("scope", toBigInt(scope.toString()));
 	console.log("isWalletVerificationRequired", isWalletVerificationRequired);

@@ -12,7 +12,7 @@ import {
   DURATION_IN_SECS,
   ONE_HOUR_ONE_MINUTE,
 } from "../../utilities";
-import { createPermissionlessPool, enquireLiquidation, getFinance, joinEpoch, withdraw } from "../../utils";
+import { createPermissionlessPool, enquireLiquidation, getFinance, joinEpoch, verifyUsers, withdraw } from "../../utils";
 import { ZeroAddress } from "ethers/constants";
 
 describe("Permissionless: Enquire Liquidation", function () {
@@ -26,6 +26,7 @@ describe("Permissionless: Enquire Liquidation", function () {
         baseAsset,
         flexpool,
         collateralAsset,
+        verifier,
         signers : { signer1, signer2, deployer,},
         flexpoolAddr 
       } = await loadFixture(deployContractsFixcture);
@@ -44,7 +45,7 @@ describe("Permissionless: Enquire Liquidation", function () {
           collateralToken: collateralAsset
         }
       );
-
+      await verifyUsers({users: [signer2], verifier});
       await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

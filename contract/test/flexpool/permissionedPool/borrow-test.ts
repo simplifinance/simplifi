@@ -12,7 +12,7 @@ import {
   formatAddr,
   DURATION_IN_SECS,
 } from "../../utilities";
-import { createPermissionedPool, getFinance, joinEpoch, withdraw } from "../../utils";
+import { createPermissionedPool, getFinance, joinEpoch, verifyUsers, withdraw } from "../../utils";
 
 describe("Permissioned: Borrow", function () {
   async function deployContractsFixcture() {
@@ -26,7 +26,8 @@ describe("Permissioned: Borrow", function () {
               flexpool,
               collateralAsset,
               signers : { signer1, signer2, deployer, signer1Addr, },
-              flexpoolAddr
+              flexpoolAddr,
+              verifier,
             } = await loadFixture(deployContractsFixcture);
             const create = await createPermissionedPool({
               asset: baseAsset,
@@ -40,7 +41,7 @@ describe("Permissioned: Borrow", function () {
               deployer,
               collateralToken: collateralAsset
             });
-
+            await verifyUsers({users: [signer2], verifier});
             const join = await joinEpoch({
               deployer,
               unit: create.pool.pool.big.unit,
