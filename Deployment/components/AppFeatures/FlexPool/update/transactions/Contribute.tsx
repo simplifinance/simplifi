@@ -19,7 +19,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
         const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: ['allowance'],
+            functionNames: ['allowance', 'getVerificationStatus'],
             callback
         });
 
@@ -28,10 +28,10 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
             filter: true,
             functionNames: ['approve', 'contribute'],
             callback
-        });
+        });getVerificationStatus
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
-        const readArgs = [[account, flexpoolContract]];
+        const readArgs = [[account, flexpoolContract], [account]];
         const addresses = [ca.stablecoin];
         const readTxObject = td.map((item, i) => {
             return{

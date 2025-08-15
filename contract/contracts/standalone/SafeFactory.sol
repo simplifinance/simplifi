@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.24;
+pragma solidity 0.8.28;
 
 import { ISafeFactory } from "../interfaces/ISafeFactory.sol";
 import { Safe, OnlyRoleBase } from "../peripherals/Safe.sol";

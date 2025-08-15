@@ -1,5 +1,5 @@
 import React from "react";
-import SelfQRcodeWrapper, { SelfAppBuilder, type SelfApp, SelfQRcode } from "@selfxyz/qrcode";
+import SelfQRcodeWrapper, { SelfAppBuilder, type SelfApp } from '@selfxyz/qrcode';
 import { APP_LOGO_URI, APP_URI, APP_NAME } from "@/constants";
 import { encodeUserData, filterTransactionData, formatAddr } from "@/utilities";
 import { useAccount, useChainId } from "wagmi";
@@ -123,7 +123,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
                 <div className="flex justify-center mb-4 sm:mb-6">
                     {
                         selfApp ? (
-                            <SelfQRcode
+                            <SelfQRcodeWrapper
                                 size={250}
                                 selfApp={selfApp}
                                 onSuccess={handleSuccessfulVerification}
@@ -152,9 +152,8 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
                     </button>
 
                     <CustomButton
-                        onClick={openSelfApp}
+                        handleButtonClick={openSelfApp}
                         disabled={!universalLink}
-                        exit={true}
                         overrideClassName="transition-colors "
                     > 
                         Open Self App

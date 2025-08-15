@@ -4,13 +4,14 @@ import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
 import { parseEther, zeroAddress } from 'viem';
 import { getContractData, NetworkName } from "../getSupportedAssets";
+import { toBigInt } from 'ethers';
 
 dotconfig();
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, getNetworkName } = deployments;
-	let {deployer, baseContributionAsset } = await getNamedAccounts();
+	let {deployer, baseContributionAsset, identityVerificationHub } = await getNamedAccounts();
 
   console.log("Deployer", deployer)
   const networkName = getNetworkName().toLowerCase() as NetworkName;
@@ -19,10 +20,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
+  const scopeValue = networkName === 'alfajores'? BigInt('') : BigInt('');
+	const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
 
   // Minimum Liquidity is $1 for Flexpool and providers
   const minimumLiquidity = parseEther('1');
   const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"].concat([deployer]);
+
+  /**
+   * Deploy Ownership Manager
+   */
+    const verifier = await deploy("Verifier", {
+      from: deployer,
+      args: [identityVerificationHub],
+      log: true,
+    });
+    console.log(`Verifier deployed to: ${verifier.address}`);
 
   /**
    * Deploy Ownership Manager
@@ -156,7 +169,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     roleManager.address,
     supportAssetManger.address,
     baseContributionAsset,
-    reward.address
+    reward.address,
+    verifier.address,
   ];
 
   /**
@@ -205,6 +219,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 
   console.log(`Providers deployed to: ${providers.address}`);
+
+	// await execute('Claim', {from: deployer}, 'setConfigId', verificationConfig);
+	// await execute('Claim', {from: deployer}, 'setScope', scopeValue);
+  
+	const isWalletVerificationRequired = await read('Claim', 'isWalletVerificationRequired');
+	const config = await read('Claim', 'configId');
+	const scope = await read('Claim', 'scope');
+
+	console.log("scope", toBigInt(scope.toString()));
+	console.log("isWalletVerificationRequired", isWalletVerificationRequired);
+	console.log("config", config);
 
   await execute("SafeFactory", {from: deployer}, 'setProviderContract', providers.address);
   const receipt = await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);

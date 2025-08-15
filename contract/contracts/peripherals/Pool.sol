@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.28;
 
 // import "hardhat/console.sol";
 import { Contributor, Common, IERC20 } from "./Contributor.sol";
@@ -94,6 +94,7 @@ abstract contract Pool is Contributor {
         Common.Pool memory pool
     ) internal _requireUnitIsActive(unit) returns(Common.Pool memory _pool) {
         require(pool.stage == Common.Stage.JOIN, '8');
+        require(_getVariables().verifier.isVerified(user), "Not verified");
         Common.ContributorReturnValue memory data;
         unchecked {
             pool.big.currentPool += pool.big.unit;

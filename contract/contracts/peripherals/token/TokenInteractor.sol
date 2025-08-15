@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity 0.8.28;
 
 import { OnlyRoleBase } from "../OnlyRoleBase.sol";
 import { SafeERC20 } from "./SafeERC20.sol";
