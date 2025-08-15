@@ -15,10 +15,11 @@ import type {
   Reserve as Rsv,
   Escape as Esc,
   TokenDistributor as Tkd,
-  Attorney as Attn
+  Attorney as Attn,
+  Verifier as Verify
 } from "../typechain-types";
-import { Common } from "../typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { Common as CMon, } from "../typechain-types/contracts/peripherals/Contributor";
+import { Common } from "../typechain-types/contracts/standalone/flexpools/HardhatBased";
 
 export type BigNumber = ethers.BigNumberish
 export type AddressReturn = Promise<Address>;
@@ -275,5 +276,9 @@ export type Faucet = Fct & {
 };
 
 export type StateManager = State & {
+  deploymentTransaction(): ContractTransactionResponse;
+};
+
+export type Verifier = Verify & {
   deploymentTransaction(): ContractTransactionResponse;
 };

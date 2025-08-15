@@ -12,7 +12,7 @@ import {
   DURATION_IN_SECS,
   ONE_HOUR_ONE_MINUTE,
 } from "../../utilities";
-import { createPermissionlessPool, getFinance, joinEpoch, liquidate, payback, withdraw } from "../../utils";
+import { createPermissionlessPool, getFinance, joinEpoch, liquidate, payback, verifyUsers, withdraw } from "../../utils";
 
 describe("Permissionless: Go as intended", function () {
   async function deployContractsFixcture() {
@@ -24,6 +24,7 @@ describe("Permissionless: Go as intended", function () {
       const {
         baseAsset,
         flexpool,
+        verifier,
         collateralAsset,
         signers : { signer1, signer2, signer3, deployer, signer1Addr, signer2Addr, },
         flexpoolAddr 
@@ -44,6 +45,7 @@ describe("Permissionless: Go as intended", function () {
         }
       );
 
+      await verifyUsers({users: [signer2], verifier});
       await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

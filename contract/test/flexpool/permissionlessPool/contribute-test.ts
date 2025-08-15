@@ -12,7 +12,7 @@ import {
   TOTAL_LIQUIDITY,
   QUORUM,
 } from "../../utilities";
-import { createPermissionlessPool, joinEpoch } from "../../utils";
+import { createPermissionlessPool, joinEpoch, verifyUsers } from "../../utils";
 
 describe("Permissionless: Contribute", function () {
   async function deployContractsFixcture() {
@@ -25,6 +25,7 @@ describe("Permissionless: Contribute", function () {
                baseAsset,
                flexpool,
                collateralAsset,
+               verifier,
                signers : { signer1, signer2, signer3, deployer, signer2Addr, signer3Addr },
                flexpoolAddr 
             } = await loadFixture(deployContractsFixcture);
@@ -43,7 +44,8 @@ describe("Permissionless: Contribute", function () {
               collateralToken: collateralAsset
             }
           );
-    
+          
+          await verifyUsers({users: [signer2, signer3], verifier});
           const {
             balances: { base, collateral }, 
             pool: { pool: {big: { currentPool,}}},

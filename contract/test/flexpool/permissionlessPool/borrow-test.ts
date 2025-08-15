@@ -13,7 +13,7 @@ import {
   DURATION_IN_SECS,
   QUORUM,
 } from "../../utilities";
-import { createPermissionlessPool, getFinance, joinEpoch, withdraw } from "../../utils";
+import { createPermissionlessPool, getFinance, joinEpoch, verifyUsers, withdraw } from "../../utils";
 
 describe("Permissionless: Borrow", function () {
   async function deployContractsFixcture() {
@@ -26,6 +26,7 @@ describe("Permissionless: Borrow", function () {
           baseAsset,
           flexpool,
           collateralAsset,
+          verifier,
           signers : { signer1, signer2, signer3, deployer, signer1Addr, },
           flexpoolAddr 
         } = await loadFixture(deployContractsFixcture);
@@ -44,7 +45,7 @@ describe("Permissionless: Borrow", function () {
             collateralToken: collateralAsset
           }
       );
-
+      await verifyUsers({users: [signer2, signer3], verifier});
       const join = await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

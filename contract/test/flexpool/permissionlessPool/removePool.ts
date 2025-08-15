@@ -9,7 +9,6 @@ import {
   DURATION_IN_HOURS,
   ZERO,
   INTEREST_RATE,
-  formatAddr,
   FuncTag,
   QUORUM,
 } from "../../utilities";

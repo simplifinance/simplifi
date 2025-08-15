@@ -12,7 +12,7 @@ import {
   formatAddr,
   DURATION_IN_SECS,
 } from "../../utilities";
-import { createPermissionedPool, getFinance, joinEpoch, payback, withdraw } from "../../utils";
+import { createPermissionedPool, getFinance, joinEpoch, payback, verifyUsers, withdraw } from "../../utils";
 import { Address } from "../../types";
 
 describe("Permissioned: Payback", function () {
@@ -26,6 +26,7 @@ describe("Permissioned: Payback", function () {
         baseAsset,
         flexpool,
         collateralAsset,
+        verifier,
         signers : { signer1, signer2, deployer, signer1Addr, },
         flexpoolAddr } = await loadFixture(deployContractsFixcture);
 
@@ -43,6 +44,7 @@ describe("Permissioned: Payback", function () {
         collateralToken: collateralAsset
       });
 
+      await verifyUsers({users: [signer2], verifier});
       const join = await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,
@@ -97,21 +99,12 @@ describe("Permissioned: Payback", function () {
       expect(collateralBalance).to.be.eq(0n);
 
       expect(pay.balances?.collateral).to.be.equal(ZERO);
-      // const { colBalAfter, colBalB4 } = await withdraw({
-      //   owner: pay.pool.pool.addrs.safe as Address, 
-      //   asset: baseAsset, 
-      //   factory: flexpool, 
-      //   spender: signer1, 
-      //   collateral: collateralAsset,
-      //   unit: create.pool.pool.big.unit
-      // });
       const rs = await safeContract.getUserData(signer1Addr, create.pool.pool.big.recordId);
       expect(rs.collateralBalance).to.be.eq(0n);
       
       const prof = (await flexpool.getProfile(create.pool.pool.big.unit, signer1Addr)).profile;
       expect(prof.colBals).to.be.equal(ZERO);
       expect(await signer1.provider?.getBalance(pay.pool.pool.addrs.safe)).to.be.equal(ZERO);
-      // expect(bn(colBalAfter).gt(bn(colBalB4))).to.be.true;
     });
   })
 })

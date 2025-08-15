@@ -17,11 +17,13 @@ import type {
   TokenDistributor,
   Escape,
   Faucet,
-  StateManager
+  StateManager,
+  Verifier
 } from "./types";
 
 import { FEE, MAKER_RATE, QUORUM, UNIT_LIQUIDITY } from "./utilities";
 import { expect } from "chai";
+import { zeroAddress } from "viem";
 
 /**
  * Deploys and return an instance of the Escape contract.
@@ -188,6 +190,16 @@ export async function deployBaseAsset(deployer: Signer): Promise<BaseAsset> {
 }
 
 /**
+ * Deploys and return an address instance of the Base Asset contract
+ * @param deployer : Deployer address
+ * @returns Contract address
+ */
+export async function deployVerifier(deployer: Signer): Promise<Verifier> {
+  const testAsset = await ethers.getContractFactory("Verifier");
+  return (await testAsset.connect(deployer).deploy(zeroAddress)).waitForDeployment();
+}
+
+/**
  * Deploy an instance of the FlexpoolFactory contract
  * @param deployer : Deployer.
  * @param feeTo : Fee receiver.
@@ -206,7 +218,8 @@ export async function deployStateManager(
   roleManager:Address,
   assetManager:Address, 
   baseAsset:Address,
-  pointFactory: Address
+  pointFactory: Address,
+  verifier: Address
 ) : Promise<StateManager> {
   const Factory = await ethers.getContractFactory("StateManager");
   return (await Factory.connect(deployer).deploy(
@@ -215,7 +228,8 @@ export async function deployStateManager(
     roleManager,
     assetManager,
     baseAsset,
-    pointFactory
+    pointFactory,
+    verifier
   )).waitForDeployment();
 }
 
@@ -292,8 +306,11 @@ export async function deployContracts(getSigners_: () => Signers) {
   
   const supportedAssetMgr = await deploySupportedAssetManager(collateralAssetAddr, roleManagerAddr, deployer);
   const supportedAssetMgrAddr = await supportedAssetMgr.getAddress() as Address;
-  
-  const stateManager = await deployStateManager(deployer, feeToAddr as Address, MAKER_RATE, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr);
+
+  const verifier = await deployVerifier(deployer);
+  const verifierAddr = await verifier.getAddress() as Address;
+
+  const stateManager = await deployStateManager(deployer, feeToAddr as Address, MAKER_RATE, roleManagerAddr, supportedAssetMgrAddr, baseAssetAddr, pointsAddr, verifierAddr);
   const stateManagerAddr = await stateManager.getAddress() as Address;
 
   const flexpool = await deployFlexpool(deployer, roleManagerAddr, stateManagerAddr, safeFactoryAddr);
@@ -320,7 +337,8 @@ export async function deployContracts(getSigners_: () => Signers) {
   expect(isSupported).to.be.true;
 
   return {
-    // INITIAL_MINT,
+    verifier,
+    verifierAddr,
     flexpool,
     flexpoolAddr,
     pointsAddr,

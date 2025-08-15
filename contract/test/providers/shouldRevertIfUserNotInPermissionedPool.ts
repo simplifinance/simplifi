@@ -3,7 +3,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { COLLATER_COVERAGE_RATIO, DURATION_IN_HOURS, INTEREST_RATE, } from "../utilities";
-import { borrow, createPermissionedPool, provideLiquidity,} from "../utils";
+import { borrow, createPermissionedPool, provideLiquidity, verifyUsers,} from "../utils";
 import { parseEther } from "viem";
 
 describe("Providers", function () {
@@ -20,10 +20,10 @@ describe("Providers", function () {
         rate,
         collateralAsset,
         flexpool,
-        flexpoolAddr,
         amount,
         signers : { signer1, alc1, alc1Addr, deployer, signer2, signer3, signer2Addr, signer3Addr },
         providers,
+        verifier,
         providersAddr
       } = await loadFixture(deployContractsFixcture);
       
@@ -41,6 +41,7 @@ describe("Providers", function () {
           collateralToken: collateralAsset
         }
       );
+      await verifyUsers({users: [alc1], verifier});
       const prov = await provideLiquidity({deployer, signer: signer3, amount, asset: baseAsset, contract: providers, contractAddr: providersAddr, rate, signerAddr: signer3Addr});
       await expect(
         borrow({

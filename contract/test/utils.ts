@@ -1,6 +1,5 @@
 // import { Contract, ContractTransactionResponse } from "ethers";
 import { expect } from "chai";
-import { Common } from "../typechain-types/contracts/standalone/celo/FlexpoolFactory";
 import { Common as CMon } from "../typechain-types/contracts/peripherals/Contributor";
 import type { 
     Address, 
@@ -23,9 +22,11 @@ import type {
     TokenDistributor,
     ProvideLiquidityArg,
     RemoveLiquidityArg,
-    BorrowArg, } from "./types";
+    BorrowArg,
+    Verifier, } from "./types";
   
   import { bn, formatAddr, TrxnType } from "./utilities";
+import { Common } from "../typechain-types/contracts/peripherals/priceGetter/HardhatPriceGetter";
   
   /**
    * @dev Create public pool
@@ -302,6 +303,18 @@ import type {
   export async function transferAsset(x: TransferParam) : Null {
     for(let i = 0; i < x.recipients.length; i++) {
       x.asset.connect(x.sender).transfer(formatAddr(x.recipients[i]), x.amount);
+    }
+  }
+
+  /**
+   * @dev Send Collateral or base tokens to the accounts provided as signers in `x`.
+   * 
+   * @param x : Parameters of type FundAccountParam
+   * @returns : Promise<{amtSentToEachAccount: Hex, amtSentToAlc1: Hex}>
+   */
+  export async function verifyUsers({users, verifier} : {users: Signer[], verifier: Verifier}) : Null {
+    for(let i = 0; i < users.length; i++) {
+      await verifier.connect(users[i])["setVerification()"]();
     }
   }
   
