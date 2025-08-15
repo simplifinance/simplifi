@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x98d3a3E46630cB7b2803C6bC736b693c6c21e5B6",
+  "contractAddress": "0x8B247cE6A56e39E6C4b7090e68aA07b13C1ee0B8",
   "functionName": "balanceOf",
   "inputCount": 1,
   "requireArgUpdate": false,

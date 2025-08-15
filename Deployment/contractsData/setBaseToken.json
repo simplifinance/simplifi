@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xC5e0e53bAAd9aD6EF301ec7b90fc6672930bFFE9",
+  "contractAddress": "0xc6a243986DD80721965C66C32586E749A6Be8Db8",
   "functionName": "setBaseToken",
   "inputCount": 1,
   "requireArgUpdate": false,

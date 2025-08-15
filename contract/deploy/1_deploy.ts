@@ -21,7 +21,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
   // const scopeSeed = 'simplifinance-simplifi';
-  const scopeValue = networkName === 'alfajores'? BigInt('11093060884784780800910785808741096496213751621594761261038373606241471145350') : BigInt('');
+  const scopeValue = networkName === 'alfajores'? BigInt('11093060884784780800910785808741096496213751621594761261038373606241471145350') : BigInt('7843523105982238564084219268241903396375716608974682481955384284645198792974');
 	const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
 
   // Minimum Liquidity is $1 for Flexpool and providers

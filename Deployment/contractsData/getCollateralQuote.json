@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xFd20cb018d823A9cadBbd77526eE003BEd143877",
+  "contractAddress": "0x0B152084a3AB664f3D8E40c27C9156b934184904",
   "functionName": "getCollateralQuote",
   "inputCount": 1,
   "requireArgUpdate": false,
