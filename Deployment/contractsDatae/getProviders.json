@@ -1,0 +1,65 @@
+{
+  "contractAddress": "0x3330c7a2a7F1199E94C175CFE7dab912aB96c9bc",
+  "functionName": "getProviders",
+  "inputCount": 0,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getProviders",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "slot",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "rate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "earnStartDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "fullInterest",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "intPerSec",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct Common.Interest",
+              "name": "accruals",
+              "type": "tuple"
+            }
+          ],
+          "internalType": "struct Common.Provider[]",
+          "name": "prov",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

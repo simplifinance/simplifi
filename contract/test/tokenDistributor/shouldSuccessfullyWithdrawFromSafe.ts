@@ -1,5 +1,5 @@
 import { COLLATER_COVERAGE_RATIO, DURATION_IN_HOURS, formatAddr, INTEREST_RATE, QUORUM, TrxnType, UNIT_LIQUIDITY, } from "../utilities";
-import {createPermissionlessPool, executeTransaction, joinEpoch, proposeTransaction, signTransaction } from "../utils"
+import {createPermissionlessPool, executeTransaction, joinEpoch, proposeTransaction, signTransaction, verifyUsers } from "../utils"
 import { deployContracts } from "../deployments";
 import { loadFixture, } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
@@ -21,6 +21,7 @@ describe("Token distributor", function () {
         baseAssetAddr,
         flexpool,
         flexpoolAddr,
+        verifier,
         collateralAsset,
         signers: { signer1, signer3, signer2, alc1Addr, deployer}, 
         signers_distributor } = await loadFixture(deployContractsFixcture);
@@ -41,7 +42,8 @@ describe("Token distributor", function () {
         }
       );
 
-      const {balances, } = await joinEpoch({
+      await verifyUsers({users: [signer2, signer3], verifier});
+      await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,
         factory: flexpool,

@@ -12,7 +12,7 @@ import {
   DURATION_IN_SECS,
   ONE_HOUR_ONE_MINUTE,
 } from "../../utilities";
-import { createPermissionedPool, getFinance, joinEpoch, payback } from "../../utils";
+import { createPermissionedPool, getFinance, joinEpoch, payback, verifyUsers } from "../../utils";
 
 describe("Permissioned: Swap contributors", function () {
   async function deployContractsFixcture() {
@@ -23,11 +23,13 @@ describe("Permissioned: Swap contributors", function () {
     it("Should swap participant successfully", async function () {
       const {
         baseAsset,
+        verifier,
         flexpool,
         collateralAsset,
         signers : { signer1, signer2, signer3, deployer, signer2Addr, signer3Addr },
         flexpoolAddr } = await loadFixture(deployContractsFixcture);
-
+        
+      await verifyUsers({users: [signer2, signer1, signer3], verifier});
       const signers = [signer1, signer2, signer3];
       const create = await createPermissionedPool({
         asset: baseAsset,

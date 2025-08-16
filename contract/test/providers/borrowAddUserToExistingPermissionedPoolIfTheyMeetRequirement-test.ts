@@ -3,7 +3,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { ethers } from "hardhat";
 import { expect } from "chai";
 import { COLLATER_COVERAGE_RATIO, DURATION_IN_HOURS, DURATION_IN_SECS, INTEREST_RATE, QUORUM, } from "../utilities";
-import { borrow, createPermissionedPool, provideLiquidity,} from "../utils";
+import { borrow, createPermissionedPool, provideLiquidity, verifyUsers,} from "../utils";
 import { parseEther } from "viem";
 
 describe("Providers", function () {
@@ -23,9 +23,10 @@ describe("Providers", function () {
         amount,
         signers : { signer1, deployer, signer3, alc1, alc2, signer3Addr, signer1Addr },
         providers,
-        providersAddr
+        providersAddr,
+        verifier
       } = await loadFixture(deployContractsFixcture);
-      
+      await verifyUsers({users: [signer3, alc1,alc2], verifier});
       await createPermissionedPool(
         {
           asset: baseAsset,

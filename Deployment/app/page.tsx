@@ -10,7 +10,7 @@ import AppFeatures from "@/components/AppFeatures";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
 import InitialPopUp from "@/components/AppFeatures/InitialPopUp";
 
-const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets'];
+const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets', 'isVerified'];
 
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
@@ -30,24 +30,25 @@ export default function SimplifiApp() {
     if(arg.errorMessage) setErrorMessage(arg.errorMessage);
   };
 
-  const { isConnected, chainId } = useAccount();
+  const { isConnected, chainId, address } = useAccount();
   const config = useConfig();
+  const account = formatAddr(address);
   const { data: blockNumber} = useBlockNumber({watch: true});
   
-  const { symbol, fData, point, provider, sAsset } = React.useMemo(() => {
-    const filtered = filterTransactionData({
+  const { symbol, fData, point, provider, sAsset, verificationStatus: vs } = React.useMemo(() => {
+    const td = filterTransactionData({
       chainId,
       filter: true,
       functionNames: steps,
       callback
     });
-    // console.log("filtered", filtered)
-    const symbol = {abi: filtered.transactionData[0].abi, ca: formatAddr(filtered.contractAddresses.WrappedNative)};
-    const fData = {abi: filtered.transactionData[1].abi, ca: formatAddr(filtered.transactionData[1].contractAddress)};
-    const point = {abi: filtered.transactionData[2].abi, ca: formatAddr(filtered.transactionData[2].contractAddress)};
-    const provider = {abi: filtered.transactionData[3].abi, ca: formatAddr(filtered.transactionData[3].contractAddress)};
-    const sAsset = {abi: filtered.transactionData[4].abi, ca: formatAddr(filtered.transactionData[4].contractAddress)};
-    return { symbol, fData, point, provider, sAsset }
+    const symbol = {abi: td.transactionData[0].abi, ca: formatAddr(td.contractAddresses.WrappedNative)};
+    const fData = {abi: td.transactionData[1].abi, ca: formatAddr(td.transactionData[1].contractAddress)};
+    const point = {abi: td.transactionData[2].abi, ca: formatAddr(td.transactionData[2].contractAddress)};
+    const provider = {abi: td.transactionData[3].abi, ca: formatAddr(td.transactionData[3].contractAddress)};
+    const sAsset = {abi: td.transactionData[4].abi, ca: formatAddr(td.transactionData[4].contractAddress)};
+    const verificationStatus = { abi: td.transactionData[5].abi, ca: formatAddr(td.transactionData[5].contractAddress)}
+    return { symbol, fData, point, provider, sAsset, verificationStatus }
   }, [chainId]);
 
   // Read contract data from the blockchain
@@ -59,23 +60,25 @@ export default function SimplifiApp() {
       {abi: point.abi, address: point.ca, args: [], functionName: 'getPoints'},
       {abi: provider.abi, address: provider.ca, args: [], functionName: 'getProviders'},
       {abi: sAsset.abi, address: sAsset.ca, args: [], functionName: 'getSupportedAssets'},
+      {abi: vs.abi, address: vs.ca, args: [account], functionName: 'isVerified'},
     ],
     allowFailure: true,
     query: {
       enabled: !!isConnected,
       refetchOnReconnect: 'always', 
-      refetchInterval: 5000,
+      refetchInterval: 4000,
     }
   });
 
-  const { symbols, factoryData, points, supportedAssets, providers, pools } = React.useMemo(() => {
+  const { symbols, factoryData, points, supportedAssets, providers, pools, isVerified } = React.useMemo(() => {
     const notReady = isPending || !data;
     const pointData = data?.[2]?.result as PointsReturnValue[];
     const provs = data?.[3]?.result as ProviderResult[];
     const sassets = data?.[4]?.result as SupportedAsset[];
     const fdata = data?.[1]?.result as FactoryData;
-    const sym= data?.[0]?.result as string;
-
+    const sym = data?.[0]?.result as string;
+    const isVerified = data?.[5]?.result as boolean;
+    
     const symbols = notReady? appData[0] : sym || appData[0];
     const factoryData = notReady? appData[1] : fdata || appData[1];
     const pastPools = [...factoryData.pastPools ];
@@ -87,9 +90,11 @@ export default function SimplifiApp() {
     const points : PointsReturnValue[] = [beta, alpha, mainnet];
     const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
     const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
-    return { notReady, symbols, factoryData, points, supportedAssets, providers, pools };
-  }, [data]);
-
+    return { notReady, symbols, factoryData, points, supportedAssets, providers, pools, isVerified };
+  }, [data, isPending]);
+  // console.log("IsVerified", isVerified, data?.[5]?.result)
+  // console.log("Data", data)
+  
   const toggleProviders = (arg: bigint) => {
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
   }
@@ -117,7 +122,7 @@ export default function SimplifiApp() {
     if(isConnected) {
       if(toBN(blockNumber).toNumber() % 10 === 0) refetch();
     } 
-  }, [isConnected, blockNumber]);
+  }, [isConnected, blockNumber, refetch]);
 
   return (
     <StorageContextProvider 
@@ -130,6 +135,7 @@ export default function SimplifiApp() {
           pools, 
           points,
           providers,
+          isVerified,
           supportedAssets,
           toggleProviders,
           displayForm,

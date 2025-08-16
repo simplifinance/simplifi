@@ -1,0 +1,27 @@
+{
+  "contractAddress": "0x58D7e133c9Bb3369D2A34D05DA14Dc76feb2a35d",
+  "functionName": "getVerificationStatus",
+  "inputCount": 1,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getVerificationStatus",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "_verification",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

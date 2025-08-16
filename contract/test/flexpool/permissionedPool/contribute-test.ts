@@ -11,7 +11,7 @@ import {
   formatAddr,
   TOTAL_LIQUIDITY,
 } from "../../utilities";
-import { createPermissionedPool, joinEpoch } from "../../utils";
+import { createPermissionedPool, joinEpoch, verifyUsers } from "../../utils";
 
 describe("Permissioned: Contribute", function () {
   async function deployContractsFixcture() {
@@ -25,7 +25,8 @@ describe("Permissioned: Contribute", function () {
                flexpool,
                collateralAsset,
                signers : { signer1, signer2, signer3, deployer, signer2Addr, signer3Addr },
-               flexpoolAddr 
+               flexpoolAddr,
+               verifier
             } = await loadFixture(deployContractsFixcture);
                
              const create = await createPermissionedPool({
@@ -40,7 +41,8 @@ describe("Permissioned: Contribute", function () {
                deployer,
                collateralToken: collateralAsset
              });
-       
+             
+             await verifyUsers({users: [signer2, signer3], verifier});
              const {
                balances: { base, collateral }, 
                pool: { 

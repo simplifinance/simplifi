@@ -95,7 +95,7 @@ export default function AppProvider({children} : {children: React.ReactNode}) {
   return(
     <WagmiProvider config={config}>
       <QueryClientProvider client={new QueryClient()}>
-        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={celoAlfajores.id} showRecentTransactions={true}>
+        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={celo.id} showRecentTransactions={true}>
           { children }
         </RainbowKitProvider>
       </QueryClientProvider>

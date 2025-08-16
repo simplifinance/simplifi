@@ -13,7 +13,7 @@ import {
   DURATION_IN_SECS,
   QUORUM,
 } from "../../utilities";
-import { createPermissionlessPool, getFinance, joinEpoch, payback, withdraw } from "../../utils";
+import { createPermissionlessPool, getFinance, joinEpoch, payback, verifyUsers, withdraw } from "../../utils";
 import { Address } from "../../types";
 
 describe("Permissionless: Payback", function () {
@@ -28,7 +28,8 @@ describe("Permissionless: Payback", function () {
         flexpool,
         collateralAsset,
         signers : { signer1, signer2, signer3, deployer, signer1Addr, },
-        flexpoolAddr 
+        flexpoolAddr,
+        verifier
       } = await loadFixture(deployContractsFixcture);
 
       const signers = [signer2, signer3];
@@ -46,7 +47,7 @@ describe("Permissionless: Payback", function () {
           collateralToken: collateralAsset
         }
       );
-
+      await verifyUsers({users: signers, verifier});
       const join = await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

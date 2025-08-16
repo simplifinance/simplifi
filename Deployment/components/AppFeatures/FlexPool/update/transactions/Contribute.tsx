@@ -1,10 +1,11 @@
 import React from 'react';
-import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
+import {type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContracts} from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
 import type { FunctionName, TransactionData } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
+import Verifier from './Verifier';
 
 export default function Contribute({ unit, disabled, overrideButtonContent}: ContributeProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);
@@ -13,13 +14,13 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
     const { chainId, address } = useAccount();
     const config = useConfig();
     const account = formatAddr(address);
-    const { callback } = useAppStorage();
+    const { callback, isVerified } = useAppStorage();
 
     const { readTxObject, flexpoolContract, mutate } = React.useMemo(() => {
         const { contractAddresses: ca, transactionData: td, isCelo } = filterTransactionData({
             chainId,
             filter: true,
-            functionNames: ['allowance', 'getVerificationStatus'],
+            functionNames: ['allowance'],
             callback
         });
 
@@ -28,10 +29,10 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
             filter: true,
             functionNames: ['approve', 'contribute'],
             callback
-        });getVerificationStatus
+        });
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
-        const readArgs = [[account, flexpoolContract], [account]];
+        const readArgs = [[account, flexpoolContract]];
         const addresses = [ca.stablecoin];
         const readTxObject = td.map((item, i) => {
             return{
@@ -73,17 +74,17 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
         };
 
         const getArgs = (txObject: TransactionData) => {
-            let result: any[] = [];
+            let args: any[] = [];
             let contractAddress = flexpoolContract;
             switch (txObject.functionName) {
                 case 'approve':
                     contractAddress = formatAddr(mutate.contractAddresses.stablecoin);
                     break;
                 default:
-                    result = [unit];
+                    args = [unit];
                     break;
             }
-            return {args: result, contractAddress};
+            return {args, contractAddress};
         }
 
         let transactions = mutate.transactionData.map((txObject) => {
@@ -111,12 +112,11 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
                 buttonContent={overrideButtonContent || 'Contribute'}
                 widthType='fit-content'
             />
-            <Confirmation 
+            <Verifier 
+                getTransactions={getTransactions}
+                isVerified={isVerified}
                 openDrawer={openDrawer}
                 toggleDrawer={toggleDrawer}
-                getTransactions={getTransactions}
-                displayMessage='Request to contribute to a Flexpool'
-                lastStepInList='contribute'
             />
         </React.Fragment>
     )

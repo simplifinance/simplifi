@@ -61,12 +61,12 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable, ReentrancyGuard {
         return configId;
     }
 
-    /**@dev Return user's verification status
-        * @param user : User's account
-     */
-    function getVerificationStatus(address user) public view returns(bool _verification) {
-        return verification[user];
-    }
+    // /**@dev Return user's verification status
+    //     * @param user : User's account
+    //  */
+    // function getVerificationStatus(address user) public view returns(bool _verification) {
+    //     return verification[user];
+    // }
 
     // Set verification config ID
     function setConfigId(bytes32 _configId) external onlyOwner {

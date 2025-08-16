@@ -12,7 +12,7 @@ import {
   DURATION_IN_SECS,
   ONE_HOUR_ONE_MINUTE,
 } from "../../utilities";
-import { createPermissionedPool, enquireLiquidation, getFinance, joinEpoch, withdraw } from "../../utils";
+import { createPermissionedPool, enquireLiquidation, getFinance, joinEpoch, verifyUsers, withdraw } from "../../utils";
 
 describe("Permissioned: Enquire Liquidation Success", function () {
   async function deployContractsFixcture() {
@@ -26,7 +26,8 @@ describe("Permissioned: Enquire Liquidation Success", function () {
         flexpool,
         collateralAsset,
         signers : { signer1, signer2, deployer, signer1Addr, },
-        flexpoolAddr 
+        flexpoolAddr,
+        verifier
       } = await loadFixture(deployContractsFixcture);
 
       const signers = [signer1, signer2];
@@ -43,6 +44,7 @@ describe("Permissioned: Enquire Liquidation Success", function () {
         collateralToken: collateralAsset
       });
 
+      await verifyUsers({users: [signer2], verifier});
       await joinEpoch({
         deployer,
         unit: create.pool.pool.big.unit,

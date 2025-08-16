@@ -1,0 +1,60 @@
+{
+  "contractAddress": "0xe312868221076fDA78125BE58ef8D5ae944DCF52",
+  "functionName": "getPoints",
+  "inputCount": 0,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getPoints",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "contributor",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "creator",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "referrals",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "user",
+                  "type": "address"
+                },
+                {
+                  "internalType": "enum Common.Phase",
+                  "name": "phase",
+                  "type": "uint8"
+                }
+              ],
+              "internalType": "struct Common.Point[]",
+              "name": "value",
+              "type": "tuple[]"
+            }
+          ],
+          "internalType": "struct Common.PointsReturnValue[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

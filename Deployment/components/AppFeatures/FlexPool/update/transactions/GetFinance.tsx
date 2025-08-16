@@ -71,7 +71,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
             let proceed = 1;
             await refetch().then((result) => {
                 let collateralQuote = result?.data?.[0].result as bigint;
-                console.log("collateralQuoteOld", collateralQuote);
+                // console.log("collateralQuoteOld", collateralQuote);
 
                 /**
                  * We need to prepare for price flunctuation in case the oracle price in 
@@ -104,7 +104,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
                     default:
                         break;
                 }
-                console.log("collateralQuoteNew", collateralQuote);
+                // console.log("collateralQuoteNew", collateralQuote);
                 
             });
             return {args, value, proceed};
@@ -145,7 +145,7 @@ export default function GetFinance({ unit, collateralAddress, safe, disabled, ov
             };
             return transaction;
         })
-        console.log("transactions", transactions);
+        // console.log("transactions", transactions);
 
         return transactions;
    }, [mutate, flexpoolContract, getFinanceArgs, unit, safe, refetch]);

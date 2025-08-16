@@ -10,8 +10,8 @@ export default function ClosePool({ unit, disabled, overrideButtonContent }: Clo
     const [ openDrawer, setDrawerState ] = React.useState<number>(0);
 
     const toggleDrawer = (arg: number) => setDrawerState(arg);
-    const { chainId, address } = useAccount();
-    const account  = formatAddr(address);
+    const { chainId } = useAccount();
+    // const account  = formatAddr(address);
     const { callback } = useAppStorage();
  
     const { flexpoolContract, td } = React.useMemo(() => {
