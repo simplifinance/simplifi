@@ -1,14 +1,13 @@
 import React from "react";
 import { SelfQRcodeWrapper, SelfAppBuilder, type SelfApp } from '@selfxyz/qrcode';
 import { APP_LOGO_URI, APP_NAME } from "@/constants";
-import { encodeUserData, filterTransactionData, formatAddr } from "@/utilities";
+import { filterTransactionData, formatAddr } from "@/utilities";
 import { useAccount, useChainId } from "wagmi";
-import { countries, getUniversalLink } from "@selfxyz/core";
-import { Hex } from "viem";
+import { getUniversalLink } from "@selfxyz/core";
 import { Address } from "@/interfaces";
 import { CustomButton } from "./CustomButton";
 
-export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } : {toggleDrawer: (arg: number) => void, back: () => void, campaignHash: Hex}) {
+export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawer: (arg: number) => void, back: () => void}) {
     const [selfApp, setSelfApp] = React.useState<SelfApp | null>(null);
     const [universalLink, setUniversalLink] = React.useState<string>("");
     const [linkCopied, setLinkCopied] = React.useState<boolean>(false);
@@ -18,11 +17,12 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
     const chainId = useChainId();
     const account = formatAddr(useAccount().address);
 
-    const { verificationConfig, claim } = React.useMemo(
+    const { verificationConfig, verifier } = React.useMemo(
         () => {
             const { contractAddresses } = filterTransactionData({chainId, filter: false});
-            const claim = contractAddresses.Attorney as Address
-            const excludedCountries = [countries.NORTH_KOREA];
+            const verifier = contractAddresses.Verifier as Address
+            // const excludedCountries = [countries.NORTH_KOREA];
+            const excludedCountries : any[] = [];
             const verificationConfig = {
                 minimumAge: 16,
                 ofac: true,
@@ -31,7 +31,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
 
             return {
                 verificationConfig,
-                claim,
+                verifier,
             }
         },  
         [chainId]
@@ -39,18 +39,15 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
 
     // Use useEffect to ensure code only executes on the client side
     React.useEffect(() => {
-        const userDefinedData = encodeUserData(campaignHash);
         try {
             const app = new SelfAppBuilder({
                     appName: APP_NAME,
                     scope: process.env.NEXT_PUBLIC_SCOPE as string,
-                    endpoint: claim,
+                    endpoint: verifier,
                     logoBase64: APP_LOGO_URI,
                     userId: account,
                     endpointType: "staging_celo",
                     userIdType: "hex",
-                    
-                    // userDefinedData,
                     disclosures: {
                        ...verificationConfig,
                     }
@@ -62,7 +59,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
         } catch (error) {
             console.error("Failed to initialize Self app:", error);
         }
-    }, [campaignHash, account, claim, verificationConfig]);
+    }, [account, verifier, verificationConfig]);
 
     const displayToast = (message: string) => {
         setToastMessage(message);
@@ -107,7 +104,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back, campaignHash } 
                     { APP_NAME }
                 </h1>
                 <p className="text-sm sm:text-base text-gray-600 px-2">
-                    To claim your reward, please verify your identity. Scan QR code with Self Protocol App to verify your identity
+                    To contribute, please verify your identity. Scan QR code with Self Protocol App to verify your identity
                 </p>
                 <CustomButton 
                     overrideClassName="w-full" 

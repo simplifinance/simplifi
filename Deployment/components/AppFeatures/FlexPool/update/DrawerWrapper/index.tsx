@@ -44,7 +44,7 @@ export const InfoDisplay = ({ data, actions, popUpDrawer, toggleDrawer } : InfoD
             setDrawerState={toggleDrawer} 
         >
             <div className={`space-y-4 md:space-y-4`}>
-                <div className="w-fit">{ actions }</div>
+                <div>{ actions }</div>
                 <ul className={`bg-white1 dark:bg-transparent border border-b-4 p-4 rounded-lg dark:text-orange-300 space-y-2 font-medium `}>
                     <li className={`${flexSpread}`}>
                         <h3>{`Collateral denom : ${symbol}`}</h3>

@@ -6,14 +6,14 @@ import { MotionDivWrap } from "@/components/utilities/MotionDivWrap";
 import DialogBox from "@/components/utilities/DialogBox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
-import useMediaQuery from "@mui/material/useMediaQuery";
+// import useMediaQuery from "@mui/material/useMediaQuery";
 import { flexCenter, flexSpread } from "@/constants";
 import Link from "next/link";
 
 export default function InitialPopUp() {
   const { setActivepath } = useAppStorage();
   const handleNavigate = () => setActivepath("AiAssist");
-  const isLargeScreen = useMediaQuery('(min-width:768px)');
+  // const isLargeScreen = useMediaQuery('(min-width:768px)');
 
   return(
     <DialogBox

@@ -120,7 +120,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
         callback?.({errorMessage});
         throw new Error(errorMessage);
       }
-      const data = getStepData(functionName);
+      const data = getStepData(functionName, chainId);
       transactionData.push(data);
     })
   }
@@ -413,16 +413,16 @@ export function getDivviReferralUtilities() {
 }
 
 // Encode multiple values in binary format
-export function encodeUserData(campaignHash: Hex): string {
-  // Frontend: Creating user defined data
-  const actionData = {
-    action: 1,
-    campaignHash: campaignHash,
-  };
+// export function encodeUserData(campaignHash: Hex): string {
+//   // Frontend: Creating user defined data
+//   const actionData = {
+//     action: 1,
+//     campaignHash: campaignHash,
+//   };
 
-  const userDefinedData = "0x" + Buffer.from(
-    JSON.stringify(actionData)
-  ).toString('hex').padEnd(128, '0'); 
+//   const userDefinedData = "0x" + Buffer.from(
+//     JSON.stringify(actionData)
+//   ).toString('hex').padEnd(128, '0'); 
   
-  return userDefinedData;
-}
+//   return userDefinedData;
+// }

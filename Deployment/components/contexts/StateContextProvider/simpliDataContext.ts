@@ -5,6 +5,7 @@ export interface DataContextProps {
     exitOnboardScreen: VoidFunc;
     toggleSidebar: (arg: boolean) => void;
     showSidebar: boolean;
+    isVerified: boolean;
     messages: string[];
     setmessage: (arg: string) => void;
     toggleDisplayOnboardUser: VoidFunc;

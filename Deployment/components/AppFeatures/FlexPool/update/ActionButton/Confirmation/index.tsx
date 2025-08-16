@@ -14,7 +14,7 @@ import { celo } from "wagmi/chains";
 
 export const Confirmation : 
     React.FC<ConfirmationProps> = 
-        ({ getTransactions, back, toggleDrawer, lastStepInList, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
+        ({ getTransactions, back, toggleDrawer, lastStepInList, useAppOnly, openDrawer, displayMessage, optionalDisplay, actionButtonText}) => 
 {   
     const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -39,7 +39,7 @@ export const Confirmation :
         setTimeout(() => {
             handleCloseDrawer();
             back?.();
-            if(functionName === 'createPool') setActivepath('Flexpool');
+            if(functionName === 'createPool') setActivepath('Home');
         }, 6000);
         clearTimeout(6000);
     };
@@ -137,8 +137,8 @@ export const Confirmation :
             { hash, confirmations: 2 }
         );
         if(useDivvi) {
-            const result = await submitReferralData(receipt.transactionHash, chainId);
-            console.log("Divvi Ref result:", result, "\n resultHash", receipt.transactionHash);
+            await submitReferralData(receipt.transactionHash, chainId);
+            // console.log("Divvi Ref result:", result, "\n resultHash", receipt.transactionHash);
         }
     }
 
@@ -159,6 +159,7 @@ export const Confirmation :
                 execute = result?.proceed;
             }
             if(execute === 1) {
+                // console.log("Args", args)
                 await runTransaction(
                     {
                         abi: [...abi],
@@ -167,7 +168,7 @@ export const Confirmation :
                         args,
                         value: value_
                     },
-                    `${displayMessages[functionName].start}.none`
+                    `${displayMessages[functionName]?.start || ''}.none`
                 );
             } else {
                 setmessage(functionName === 'approve'? 'Previous approval was detected!' : `${functionName} was completed!`);
@@ -175,6 +176,15 @@ export const Confirmation :
         }
     }
 
+    const app = (
+        <div className="w-full bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
+            { optionalDisplay && optionalDisplay }
+            <Message />
+            <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || 'Proceed'}</Button>
+        </div>
+    );
+
+    if(useAppOnly) return app;
     return (
         <Drawer 
             title={ !loading? (displayMessage || 'Transaction request') : 'Transaction sent' }
@@ -183,14 +193,7 @@ export const Confirmation :
             onClickAction={handleCloseDrawer}
             styles={{padding:'22px', borderLeft: '1px solid #2e3231', height: "100%", background: isDark? '#121212' : '#F9F4F4'}}
         >
-            <div className="bg-white1 dark:bg-green1/90 space-y-4 text-green1/90 dark:text-orange-300 text-center">
-                { optionalDisplay && optionalDisplay }
-                {/* {
-                    isGetFinance && !loading && <SelectComponent data='convertible' callback={setConvertible} label="Asset holding" placeholder="Which asset are you holding?"/>
-                }  */}
-                <Message />
-                <Button variant={'outline'} disabled={loading} className="w-full max-w-sm dark:text-orange-200" onClick={handleSendTransaction}>{loading? <Spinner color={"white"} /> : actionButtonText || 'Proceed'}</Button>
-            </div>
+            { app }
         </Drawer>
     );
 }
@@ -214,4 +217,5 @@ export interface ConfirmationProps {
     actionButtonText?: string;
     getTransactions: () => Transaction[];
     lastStepInList: FunctionName;
+    useAppOnly?: boolean;
 }

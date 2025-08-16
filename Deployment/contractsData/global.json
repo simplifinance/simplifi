@@ -30,7 +30,12 @@
     "getPoolRecord",
     "getPoints",
     "getSupportedAssets",
-    "getPoolData"
+    "getPoolData",
+    "getVerificationStatus",
+    "setVerification",
+    "toggleUseWalletVerification",
+    "isVerified",
+    "getDeposit"
   ],
   "chainName": {
     "4157": "crossstestnet",
@@ -97,6 +102,7 @@
       "Reserve": "0xe6D9B82B865bd1a2f2B6dbBa0A51e7E99bBd34f0",
       "SimpliToken": "0x694FFCf43C982800036BFb80B8c2E5f88c8D6CD3",
       "SupportedAssetManager": "0xa9F54396f02633333c5b354bC08d62D1347F7788",
+      "Verifier": "0x58D7e133c9Bb3369D2A34D05DA14Dc76feb2a35d",
       "WrappedNative": "0x98d3a3E46630cB7b2803C6bC736b693c6c21e5B6"
     },
     {
@@ -114,6 +120,7 @@
       "Reserve": "0xEa24bFE70bec3317029db20bE5981748AD2C198E",
       "SimpliToken": "0x6C48F0335BDF9191f57d4B5cCD09AC7447040D33",
       "SupportedAssetManager": "0x4D5A25F7D3d8F487ad1b5c57745AfD024bA5b311",
+      "Verifier": "0x08dba25B65FabC98A0f44bd888384Cb545ddD9F2",
       "WrappedNative": "0x8B247cE6A56e39E6C4b7090e68aA07b13C1ee0B8"
     },
     {

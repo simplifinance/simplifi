@@ -1,0 +1,32 @@
+{
+  "contractAddress": "0x98d3a3E46630cB7b2803C6bC736b693c6c21e5B6",
+  "functionName": "getDeposit",
+  "inputCount": 2,
+  "requireArgUpdate": false,
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "unit",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "depositor",
+          "type": "address"
+        }
+      ],
+      "name": "getDeposit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

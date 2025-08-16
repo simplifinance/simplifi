@@ -60,28 +60,28 @@ export default function BalancesAndCollaterals({unit, safe, collateralAsset} : {
     const collateralInWallet = data?.[3]?.result as bigint;
 
     return(
-        <div className={`bg-white1 dark:bg-transparent text-sm border border-b-4 p-4 space-y-4 rounded-lg dark:text-white1`}>
+        <div className={`bg-white1 text-gray-800 font-semibold dark:bg-transparent text-sm border border-b-4 p-4 space-y-4 rounded-lg dark:text-white1`}>
             <div className={`${flexSpread} items-baseline`}>
                 <div className="w-[50%]">
-                    <h1 className="text-orange-200">Collateral Quote { isPending? <Spinner color="#fed7aa" /> : <h3>{`${toBN(formatEther(quote || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h3> }</h1>
+                    <h1>Collateral Quote { isPending? <Spinner color="#fed7aa" /> : <h3>{`${toBN(formatEther(quote || 0n)).decimalPlaces(5).toString()} ${symbol}`}</h3> }</h1>
                 </div>
-                <div className="w-[50%] flex text-orange-200">
+                <div className="w-[50%] flex">
                     <h3>{`Amount of ${symbol} required to get finance in this pool`}</h3>
                 </div>
             </div>
-            <div className={`&{flexSpread} text-orange-200`}>
+            <div className={`&{flexSpread}`}>
                 <h1>Total contribution in Safe</h1>
                 {
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(safeBaseBalance || 0n)).decimalPlaces(5).toString()} usd`}</h1>
                 }
             </div>
-            <div className={`&{flexSpread} text-orange-200`}>
+            <div className={`&{flexSpread}`}>
                 <h1>{`Balances of ${symbol} in my wallet`}</h1>
                 {
                     isPending? <Spinner color="#fed7aa" /> : <h1>{`${toBN(formatEther(collateralInWallet || 0n)).decimalPlaces(5).toString()} usd`}</h1>
                 }
             </div>
-            <div className={`${flexSpread} text-orange-200`}>
+            <div className={`${flexSpread}`}>
                 <div>
                     <h1>Total amount owed</h1>
                     {
