@@ -6,7 +6,7 @@ import { FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import assert from 'assert';
 
-export default function Borrow({ unit, args, openDrawer, toggleDrawer }: BorrowProps) {
+export default function Borrow({ args, openDrawer, toggleDrawer }: BorrowProps) {
     const { chainId } = useAccount();
     const { callback } = useAppStorage();
 

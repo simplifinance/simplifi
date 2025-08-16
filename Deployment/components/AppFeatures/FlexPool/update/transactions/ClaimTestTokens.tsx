@@ -13,7 +13,7 @@ export default function ClaimTestTokens({ disabled }: ClaimTestTokenProps) {
     const { chainId } = useAccount();
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, faucetContract } = React.useMemo(() => {
+    const { transactionData: td, faucetContract } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,

@@ -88,7 +88,7 @@ export default function SimplifiApp() {
     const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
     const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
     return { notReady, symbols, factoryData, points, supportedAssets, providers, pools };
-  }, [data]);
+  }, [data, isPending]);
 
   const toggleProviders = (arg: bigint) => {
     providersIds.includes(arg)? setProvidersIds(providersIds.filter((id) => id !== arg)) : setProvidersIds((prev) => [...prev, arg]);
@@ -117,7 +117,7 @@ export default function SimplifiApp() {
     if(isConnected) {
       if(toBN(blockNumber).toNumber() % 10 === 0) refetch();
     } 
-  }, [isConnected, blockNumber]);
+  }, [isConnected, blockNumber, refetch]);
 
   return (
     <StorageContextProvider 

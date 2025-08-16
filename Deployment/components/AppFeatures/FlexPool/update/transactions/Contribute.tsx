@@ -28,7 +28,7 @@ export default function Contribute({ unit, disabled, overrideButtonContent}: Con
             filter: true,
             functionNames: ['approve', 'contribute'],
             callback
-        });getVerificationStatus
+        });
 
         const flexpoolContract = formatAddr(isCelo? ca.CeloBased : ca.CeloBased);
         const readArgs = [[account, flexpoolContract], [account]];

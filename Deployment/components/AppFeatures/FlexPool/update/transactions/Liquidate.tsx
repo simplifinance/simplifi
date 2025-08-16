@@ -2,12 +2,12 @@ import React from 'react';
 import { Confirmation, type Transaction } from '../ActionButton/Confirmation';
 import { useAccount, useConfig, useReadContracts } from 'wagmi';
 import { filterTransactionData, formatAddr } from '@/utilities';
-import { Address, FunctionName, TransactionData } from '@/interfaces';
+import { Address, FunctionName } from '@/interfaces';
 import useAppStorage from '@/components/contexts/StateContextProvider/useAppStorage';
 import { ActionButton } from '../ActionButton';
 import { zeroAddress } from 'viem';
 
-const steps : FunctionName[] = ['getCurrentDebt', 'allowance', 'approve', 'liquidate', 'transferFrom'];
+// const steps : FunctionName[] = ['getCurrentDebt', 'allowance', 'approve', 'liquidate', 'transferFrom'];
 
 export default function Liquidate({ unit, disabled, lastPaid, overrideButtonContent}: LiquidateProps) {
     const [openDrawer, setDrawer] = React.useState<number>(0);

@@ -71,7 +71,6 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
         const getArgs = (txObject: TransactionData) => {
             let args: any[] = [];
             let address = '' as Address;
-            console.log("provideLiquidityArgs", provideLiquidityArgs);
             switch (txObject.functionName) {
                 case 'provideLiquidity':
                     address = providersContract;
@@ -97,10 +96,9 @@ export default function ProvideLiquidity({ args: provideLiquidityArgs, back, liq
             };
             return transaction;
         })
-        console.log("Transactions", transactions);
         return transactions;
 
-    }, [mutate, providersContract, account, provideLiquidityArgs, liquidityAmount, refetch]);
+    }, [mutate, providersContract, provideLiquidityArgs, liquidityAmount, refetch]);
 
     return(
         <Confirmation 

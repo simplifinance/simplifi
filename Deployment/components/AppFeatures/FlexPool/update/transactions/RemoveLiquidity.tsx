@@ -58,14 +58,17 @@ export default function RemoveLiquidity() {
         return { readTxObject, mutate, providersContract };
     }, [chainId, account, callback]);
 
-    const { data, refetch } = useReadContracts(
+    const { refetch } = useReadContracts(
         {
             config,
-            contracts: readTxObject.map((item) => { return item})
+            contracts: readTxObject.map((item) => { return item}),
+            query: {
+                enabled: false
+            }
         }
     );
 
-    const allowance = data?.[0].result as bigint;
+    // const allowance = data?.[0].result as bigint;
     const { disabled, } = formatProvider(providers, account);
 
     const getTransactions = React.useCallback(() => {

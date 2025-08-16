@@ -1,6 +1,6 @@
 import React from "react";
-import SelfQRcodeWrapper, { SelfAppBuilder, type SelfApp } from '@selfxyz/qrcode';
-import { APP_LOGO_URI, APP_URI, APP_NAME } from "@/constants";
+import { SelfQRcodeWrapper, SelfAppBuilder, type SelfApp } from '@selfxyz/qrcode';
+import { APP_LOGO_URI, APP_NAME } from "@/constants";
 import { encodeUserData, filterTransactionData, formatAddr } from "@/utilities";
 import { useAccount, useChainId } from "wagmi";
 import { countries, getUniversalLink } from "@selfxyz/core";
