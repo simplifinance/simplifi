@@ -68,7 +68,7 @@ export default function Flexpool({showMyPool, allPools, padding} : {showMyPool: 
   }
 
   return (
-    <div className={`relative space-y-4 ${padding}`}>
+    <div className={`relative space-y-2 ${padding}`}>
       {/* My Pools container */}
       {
         showMyPool && 
@@ -155,22 +155,22 @@ export default function Flexpool({showMyPool, allPools, padding} : {showMyPool: 
                   myPools.length > 0 
                     && 
                       <MotionDivWrap className="w-full max-h-[300px] pb-4 overflow-auto">
-                        <Grid container xs={"auto"} spacing={2}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           {
                             myPools.filter(({pool}) => myPoolSearchElement === 0n? true : pool.big.unit === myPoolSearchElement).map(({pool, cData}, index) => {
                               const hasPool = toBN(pool.big.unit.toString()).gt(0);
                               if(hasPool) {
                                 return (
-                                  <Grid item xs={6} md={3} key={index}>
+                                  <div key={index}>
                                     <MotionDivWrap className='w-full rounded-md' transitionDelay={index / myPools?.length}>
                                       <FlexCard cData={cData} pool={pool} />
                                     </MotionDivWrap>
-                                  </Grid>
+                                  </div>
                                 )
                               }
                             })
                           }
-                        </Grid> 
+                        </div> 
                       </MotionDivWrap>
             }
           </div>
@@ -180,16 +180,16 @@ export default function Flexpool({showMyPool, allPools, padding} : {showMyPool: 
       {/* Dashboard container */}
       {
         allPools && 
-          <MotionDivWrap className='grid grid-cols-1 gap-4'>
-            <div className='grid grid-cols-2 md:grid-cols-4 gap-2 bg-white2/80 p-4 border border-white dark:bg-green1/90 dark:border-none rounded-lg'>
-              <h3 className='text-lg md:text-2xl font-bold text-green1/80 dark:text-orange-200'>Flexpools</h3>
+          <MotionDivWrap className='grid grid-cols-1 gap-2'>
+            <h3 className='text-lg md:text-2xl font-bold text-green1/80 dark:text-orange-200'>Flexpools</h3>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-2 bg-white2/80 p-4 border border-white dark:bg-green1/90 dark:border-none rounded-lg'>
               <Input 
                 placeholder="Search by amount..."
                 onChange={onchange}
-                className="max-w-sm text-xs md:text-md"
+                className="max-w-md text-xs md:text-md"
                 type='text'
               />
-              <div className={`${flexEnd}`}>
+              <div className={`${flexEnd} gap-2`}>
                 <Button variant={'outline'} onClick={handleCreatePool} className={`dark:bg-green1/90 w-full`}>
                   <h3>New pool</h3>
                   <Tooltip title="New Pool">
@@ -198,8 +198,6 @@ export default function Flexpool({showMyPool, allPools, padding} : {showMyPool: 
                     </svg>
                   </Tooltip>
                 </Button>
-              </div>
-              <div className={`${flexEnd}`}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="ml-auto w-full capitalize">

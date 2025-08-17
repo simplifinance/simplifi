@@ -2,18 +2,20 @@
 
 import React from "react";
 import Notification from "@/components/utilities/Notification";
-import { appData, emptyMockPoint, mockAssets, mockPoint, mockProviders, phases } from "@/interfaces";
+import { mockAssets, mockFactoryData, mockPointsReturnValue, mockProviders } from "@/interfaces";
 import type { FactoryData, FunctionName, Path, PointsReturnValue, ProviderResult, SupportedAsset, TransactionCallback, } from "@/interfaces";
 import { StorageContextProvider } from "@/components/contexts/StateContextProvider";
-import { useAccount, useBlockNumber, useConfig, useReadContracts,} from "wagmi";
+import { useAccount, useBlockNumber, useConfig, useConnect, useReadContracts,} from "wagmi";
 import AppFeatures from "@/components/AppFeatures";
 import { filterTransactionData, formatAddr, toBN } from "@/utilities";
 import InitialPopUp from "@/components/AppFeatures/InitialPopUp";
 
+// Array of functions to read from the contracts
 const steps : FunctionName[] = ['symbol', 'getFactoryData', 'getPoints', 'getProviders', 'getSupportedAssets', 'isVerified'];
 
 export default function SimplifiApp() {
   const [displayAppScreen, setDisplay] = React.useState<boolean>(false);
+  const [displayForm, setDisplayForm] = React.useState<boolean>(false);
   const [showSidebar, setShowSidebar] = React.useState(false);
   const [messages, setMessage] = React.useState<string[]>([]);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
@@ -21,8 +23,12 @@ export default function SimplifiApp() {
   const [prevPaths, setPreviousPath] = React.useState<Path[]>([]);
   const [providersIds, setProvidersIds] = React.useState<bigint[]>([]);
   const [activePath, setActivePath] = React.useState<Path>('Home');
-  const [displayForm, setDisplayForm] = React.useState<boolean>(false);
-
+  const [pointData, setPointData] = React.useState<PointsReturnValue[]>(mockPointsReturnValue);
+  const [providers, setProviders] = React.useState<ProviderResult[]>(mockProviders);
+  const [supportedAssets, setSupportedAssets] = React.useState<SupportedAsset[]>(mockAssets);
+  const [factoryData, setFactoryData] = React.useState<FactoryData>(mockFactoryData);
+  const [symbol, setSymbol] = React.useState<string>('USD');
+  const [isVerified, setIsVerified] = React.useState<boolean>(false);
 
   const setmessage = (arg: string) => arg === ''? setMessage([]): setMessage((prev) => [...prev, arg]);
   const callback : TransactionCallback = (arg) => {
@@ -30,38 +36,40 @@ export default function SimplifiApp() {
     if(arg.errorMessage) setErrorMessage(arg.errorMessage);
   };
 
-  const { isConnected, chainId, address } = useAccount();
+  const { isConnected, chainId, address, connector } = useAccount();
+  const { connect } = useConnect();
   const config = useConfig();
   const account = formatAddr(address);
   const { data: blockNumber} = useBlockNumber({watch: true});
+
+  // Update current page based on connection state
+  React.useEffect(() => {
+      if(!isConnected && connector) connect({connector, chainId});
+  }, [isConnected, connector, chainId, connect]);
   
-  const { symbol, fData, point, provider, sAsset, verificationStatus: vs } = React.useMemo(() => {
+  // Prepare and format read data
+  const readData = React.useMemo(() => {
     const td = filterTransactionData({
       chainId,
       filter: true,
       functionNames: steps,
       callback
     });
-    const symbol = {abi: td.transactionData[0].abi, ca: formatAddr(td.contractAddresses.WrappedNative)};
-    const fData = {abi: td.transactionData[1].abi, ca: formatAddr(td.transactionData[1].contractAddress)};
-    const point = {abi: td.transactionData[2].abi, ca: formatAddr(td.transactionData[2].contractAddress)};
-    const provider = {abi: td.transactionData[3].abi, ca: formatAddr(td.transactionData[3].contractAddress)};
-    const sAsset = {abi: td.transactionData[4].abi, ca: formatAddr(td.transactionData[4].contractAddress)};
-    const verificationStatus = { abi: td.transactionData[5].abi, ca: formatAddr(td.transactionData[5].contractAddress)}
-    return { symbol, fData, point, provider, sAsset, verificationStatus }
-  }, [chainId]);
 
-  // Read contract data from the blockchain
+    return td.transactionData.map(({abi, contractAddress, functionName}) => {
+      return {
+        abi,
+        address: functionName === 'symbol'? formatAddr(td.contractAddresses.WrappedNative) : formatAddr(contractAddress),
+        args: functionName === 'isVerified'? [account] : [],
+        functionName
+      }
+    });
+  }, [chainId, account]);
+
+  // Fetch the data ahead
   const { refetch, data, isPending } = useReadContracts({
     config,
-    contracts: [
-      {abi: symbol.abi, address: symbol.ca, args: [], functionName: 'symbol'},
-      {abi: fData.abi, address: fData.ca, args: [], functionName: 'getFactoryData'},
-      {abi: point.abi, address: point.ca, args: [], functionName: 'getPoints'},
-      {abi: provider.abi, address: provider.ca, args: [], functionName: 'getProviders'},
-      {abi: sAsset.abi, address: sAsset.ca, args: [], functionName: 'getSupportedAssets'},
-      {abi: vs.abi, address: vs.ca, args: [account], functionName: 'isVerified'},
-    ],
+    contracts: readData,
     allowFailure: true,
     query: {
       enabled: !!isConnected,
@@ -70,28 +78,56 @@ export default function SimplifiApp() {
     }
   });
 
-  const { symbols, factoryData, points, supportedAssets, providers, pools, isVerified } = React.useMemo(() => {
-    const notReady = isPending || !data;
-    const pointData = data?.[2]?.result as PointsReturnValue[];
-    const provs = data?.[3]?.result as ProviderResult[];
-    const sassets = data?.[4]?.result as SupportedAsset[];
-    const fdata = data?.[1]?.result as FactoryData;
-    const sym = data?.[0]?.result as string;
-    const isVerified = data?.[5]?.result as boolean;
-    
-    const symbols = notReady? appData[0] : sym || appData[0];
-    const factoryData = notReady? appData[1] : fdata || appData[1];
+  // Update the data to state anytime new updates are fetched
+  React.useEffect(() => {
+    let pointData_ : PointsReturnValue[] = mockPointsReturnValue;
+    let providers_ : ProviderResult[] = mockProviders;
+    let supportedAssets_ : SupportedAsset[] = mockAssets;
+    let factoryData_ : FactoryData = mockFactoryData;
+    let symbol_ : string = 'USD';
+    let isVerified_ : boolean = false;
+
+    if(data && data[0].status === 'success' && data[0].result !== undefined) {
+      symbol_ = data?.[0]?.result as string;
+    }
+    if(data && data[1].status === 'success' && data[1].result !== undefined) {
+      factoryData_ = data?.[1]?.result as FactoryData;
+    }
+    if(data && data[2].status === 'success' && data[2].result !== undefined) {
+      pointData_ = data?.[2]?.result as PointsReturnValue[];
+    }
+    if(data && data[3].status === 'success' && data[3].result !== undefined) {
+      providers_ = data?.[3]?.result as ProviderResult[];
+    }
+    if(data && data[4].status === 'success' && data[4].result !== undefined) {
+      supportedAssets_ = data?.[4]?.result as SupportedAsset[];
+    }
+    if(data && data[5].status === 'success' && data[5].result !== undefined) {
+      isVerified_ = data?.[5]?.result as boolean;
+    }
+
+    setPointData(pointData_);
+    setFactoryData(factoryData_);
+    setProviders(providers_);
+    setSupportedAssets(supportedAssets_);
+    setSymbol(symbol_);
+    setIsVerified(isVerified_);
+  }, [data]);
+  
+
+  const { pools } = React.useMemo(() => {
+    // const factoryData = notReady? appData[1] : fdata || appData[1];
     const pastPools = [...factoryData.pastPools ];
     const currentPools = [ ...factoryData.currentPools ];
     const pools = currentPools.concat(pastPools);
-    const beta : PointsReturnValue = notReady? {key: phases[0].phase, value: [mockPoint]} : {key: pointData?.[0]?.key || phases[0].phase, value: [...pointData?.[0].value || [mockPoint]]}
-    const alpha : PointsReturnValue = notReady? {key: phases[1].phase, value: [emptyMockPoint]} : {key: pointData?.[1]?.key || phases[1].phase, value: [...pointData?.[1].value || [emptyMockPoint]]}
-    const mainnet : PointsReturnValue = notReady? {key: phases[2].phase, value: [emptyMockPoint]} : {key: pointData?.[2]?.key || phases[2].phase, value: [...pointData?.[2].value || [emptyMockPoint]]}
-    const points : PointsReturnValue[] = [beta, alpha, mainnet];
-    const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
-    const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
-    return { notReady, symbols, factoryData, points, supportedAssets, providers, pools, isVerified };
-  }, [data, isPending]);
+    // const beta : PointsReturnValue = notReady? {key: phases[0].phase, value: [mockPoint]} : {key: pointData?.[0]?.key || phases[0].phase, value: [...pointData?.[0].value || [mockPoint]]}
+    // const alpha : PointsReturnValue = notReady? {key: phases[1].phase, value: [emptyMockPoint]} : {key: pointData?.[1]?.key || phases[1].phase, value: [...pointData?.[1].value || [emptyMockPoint]]}
+    // const mainnet : PointsReturnValue = notReady? {key: phases[2].phase, value: [emptyMockPoint]} : {key: pointData?.[2]?.key || phases[2].phase, value: [...pointData?.[2].value || [emptyMockPoint]]}
+    // const points : PointsReturnValue[] = [beta, alpha, mainnet];
+    // const supportedAssets : SupportedAsset[] = notReady? mockAssets : [...sassets || mockAssets];
+    // const providers : ProviderResult[] = notReady? mockProviders : [...provs || mockProviders];
+    return { pools };
+  }, [factoryData]);
   // console.log("IsVerified", isVerified, data?.[5]?.result)
   // console.log("Data", data)
   
@@ -128,12 +164,12 @@ export default function SimplifiApp() {
     <StorageContextProvider 
       value={
         {
-          symbol: symbols,
+          symbol,
           currentEpoches: factoryData.currentEpoches,
           recordEpoches: factoryData.recordEpoches, 
           analytics: factoryData.analytics,
           pools, 
-          points,
+          points: pointData,
           providers,
           isVerified,
           supportedAssets,

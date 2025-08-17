@@ -1,6 +1,7 @@
 "use client"
 
-import { WagmiProvider } from "wagmi";
+import React from "react";
+import { useAccount, useConnect, WagmiProvider, http } from "wagmi";
 import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
@@ -65,6 +66,44 @@ if (!projectId) throw new Error('Project ID is undefined');
 //   }
 // } 
 
+function useCoinbaseWalletAutoConnect() {
+  const [isCoinbaseWallet, setIsCoinbaseWallet] = React.useState(false);
+  const { connect, connectors } = useConnect();
+  const { isConnected } = useAccount();
+
+  React.useEffect(() => {
+    // Check if we're running in Coinbase Wallet
+    const checkCoinbaseWallet = () => {
+      const isInCoinbaseWallet = window.ethereum?.isCoinbaseWallet || 
+        window.ethereum?.isCoinbaseWalletExtension ||
+        window.ethereum?.isCoinbaseWalletBrowser;
+      setIsCoinbaseWallet(!!isInCoinbaseWallet);
+    };
+    
+    checkCoinbaseWallet();
+    window.addEventListener('ethereum#initialized', checkCoinbaseWallet);
+    
+    return () => {
+      window.removeEventListener('ethereum#initialized', checkCoinbaseWallet);
+    };
+  }, []);
+
+  React.  useEffect(() => {
+    // Auto-connect if in Coinbase Wallet and not already connected
+    if (isCoinbaseWallet && !isConnected) {
+      connect({ connector: connectors[1] }); // Coinbase Wallet connector
+    }
+  }, [isCoinbaseWallet, isConnected, connect, connectors]);
+
+  return isCoinbaseWallet;
+}
+
+// Wrapper component that provides Coinbase Wallet auto-connection
+function CoinbaseWalletAutoConnect({ children }: { children: React.ReactNode }) {
+  useCoinbaseWalletAutoConnect();
+  return <>{children}</>;
+}
+
 // Load the defaut config from RainbowKit
 const config = getDefaultConfig({
   appName: 'Simplifinance',
@@ -76,7 +115,13 @@ const config = getDefaultConfig({
   ssr: true,
   multiInjectedProviderDiscovery: true,
   pollingInterval: 10_000,
-  syncConnectedChain: true
+  syncConnectedChain: true,
+  transports: {
+    [celoAlfajores.id]: http(),
+    [celo.id]: http(),
+  },
+  // multiInjectedProviderDiscovery: true,
+  // syncConnectedChain: true
 });
 
 // Light theme configuration for RainbowKit wallet set up
@@ -93,13 +138,24 @@ const theme = lightTheme(
 
 export default function AppProvider({children} : {children: React.ReactNode}) {
   return(
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={new QueryClient()}>
-        <RainbowKitProvider modalSize="compact" theme={theme} initialChain={celo.id} showRecentTransactions={true}>
-          { children }
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
+     <WagmiProvider config={config}>
+        <QueryClientProvider client={new QueryClient()}>
+          <RainbowKitProvider 
+            coolMode={true}
+            modalSize="compact" 
+            theme={theme} 
+            showRecentTransactions={true}
+            appInfo={{
+              appName: "Simplifinance",
+              learnMoreUrl: 'https://testnet.simplifinance.xyz'
+            }}
+          >
+            <CoinbaseWalletAutoConnect>
+              { children }
+            </CoinbaseWalletAutoConnect>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
   );
 }
 
