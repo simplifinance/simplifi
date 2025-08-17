@@ -44,7 +44,7 @@ export default function SimplifiApp() {
 
   // Update current page based on connection state
   React.useEffect(() => {
-      if(!isConnected && connector) connect({connector, chainId});
+    if(!isConnected && connector) connect({connector, chainId});
   }, [isConnected, connector, chainId, connect]);
   
   // Prepare and format read data
