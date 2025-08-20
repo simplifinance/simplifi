@@ -2,8 +2,8 @@ import { HardhatRuntimeEnvironment, } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { config as dotconfig } from "dotenv";
 import { QUORUM } from '../test/utilities';
-import { parseEther, zeroAddress } from 'viem';
-import { getContractData, NetworkName } from "../getSupportedAssets";
+import { parseEther, parseUnits, zeroAddress } from 'viem';
+import { createPool, getContractData, getFinance, joinAPool, NetworkName, payback, testers as vTesters, type Address } from "../getSupportedAssets";
 import { toBigInt } from 'ethers';
 
 dotconfig();
@@ -228,8 +228,49 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
-	await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
-	await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
+	// await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
+	// await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
+  const units = [parseUnits('0.001', 18), parseUnits('0.0011', 18), parseUnits('0.0012', 18), parseUnits('0.003', 18)];
+  const colCoverages = [10, 30, 22, 15];
+  const durationInHrs = [4, 12, 5, 24];
+  let testersSlice = {from: 0, to: 4}
+  const maxQuorums = [2, 3, 2, 2];
+
+  const creators = await createPool({
+    colAsset: wrappedNative.address as Address,
+    colCoverages,
+    durationInHrs,
+    isPermissionless: true,
+    networkName,
+    testersSlice,
+    units,
+    maxQuorums,
+    run: false
+  });
+
+  // console.log("Creators after Created pool", creators);
+  // testersSlice = {from: 4, to: 8}
+  // await joinAPool({
+  //   creators: creators, 
+  //   networkName, 
+  //   testersSlice,
+  //   units,
+  //   run: true
+  // });
+
+  await getFinance({
+    networkName,
+    testersSlice,
+    units,
+    run: true
+  })
+
+  await payback({
+    networkName,
+    testersSlice,
+    units,
+    run: false
+  });
   
 	const isWalletVerificationRequired = await read('Verifier', 'isWalletVerificationRequired');
 	const config = await read('Verifier', 'configId');
