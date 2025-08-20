@@ -52,7 +52,7 @@ export const displayMessages : Record<string, {start: string, end: string}> = {
   'registerToEarnPoints' : {start: 'Signing up for reward', end: 'Registration was successful'},
   'removeLiquidity': {start: 'Requesting to remove liquidity', end: 'Successfully removed liquidity'},
   'provideLiquidity': {start: 'Request to provide liquidity', end: 'You successully provided liquidity '},
-  'setVerification': {start: "Verifying your humanity score", end: 'Verification successful'}
+  'setVerification': {start: "Verifying your humanity score", end: 'Verification successful'},
 }
 
 // We support only USDC and native platform token for now
@@ -86,8 +86,8 @@ export const getChainData = (chainId: number | undefined) => {
 }
 
 export const APP_NAME = 'Simplifinance';
-export const APP_LOGO_URI = 'https://simplifinance.xyz/logoSimplifi.png';
-export const APP_URI = 'https://simplifinance.xyz/'
+export const APP_LOGO_URI = 'https://testnet.simplifinance.xyz/logoSimplifi.png';
+export const APP_URI = 'https://testnet.simplifinance.xyz/'
 
 // Assets with USDC pairs
 // export const supportedConvertibleAssets = [

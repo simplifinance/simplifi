@@ -4,7 +4,11 @@ import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
 import "@nomiclabs/hardhat-web3";
 import "@nomicfoundation/hardhat-viem";
+import "@nomicfoundation/hardhat-verify";
 import { zeroAddress } from "viem";
+// import { vars } from "hardhat/config";
+
+// const ETHERSCAN_API_KEY = vars.get("ETHERSCAN_API_KEY");
 
 dotconfig();
 const PRIVATE_KEY = process.env.PRIVATE_KEY_CROSS_0xD7c;
@@ -61,7 +65,7 @@ const config: HardhatUserConfig = {
     ],
   },
   sourcify: {
-    enabled: false,
+    enabled: true,
   },
   namedAccounts: {
     deployer: {
@@ -70,6 +74,46 @@ const config: HardhatUserConfig = {
       4158: `privatekey://${PRIVATE_KEY}`,
       44787: `privatekey://${PRIVATE_KEY}`,
       42220: `privatekey://${PRIVATE_KEY_MAIN}`,
+    },
+    t1: {
+      default: 1,
+      44787: `privatekey://${process.env.P_KEY_0xe5d as string}`,
+      42220: `privatekey://${process.env.P_KEY_0xe5d as string}`
+    },
+    t2: {
+      default: 2,
+      44787: `privatekey://${process.env.P_KEY_0xd53 as string}`,
+      42220: `privatekey://${process.env.P_KEY_0xd53 as string}`
+    },
+    t3: {
+      default: 3,
+      44787: `privatekey://${process.env.P_KEY_0x286a as string}`,
+      42220: `privatekey://${process.env.P_KEY_0x286a as string}`
+    },
+    t4: {
+      default: 4,
+      44787: `privatekey://${process.env.P_KEY_0xdd0 as string}`,
+      42220: `privatekey://${process.env.P_KEY_0xdd0 as string}`
+    },
+    t5: {
+      default: 5,
+      44787: `privatekey://${process.env.P_KEY_0xD7c as string}`,
+      42220: `privatekey://${process.env.P_KEY_0xD7c as string}`
+    },
+    t6: {
+      default: 6,
+      44787: `privatekey://${process.env.P_KEY_farca as string}`,
+      42220: `privatekey://${process.env.P_KEY_farca as string}`
+    },
+    t7: {
+      default: 7,
+      44787: `privatekey://${process.env.P_KEY_0x84F as string}`,
+      42220: `privatekey://${process.env.P_KEY_0x84F as string}`
+    },
+    t8: {
+      default: 8,
+      44787: `privatekey://${process.env.P_KEY_0xC0F as string}`,
+      42220: `privatekey://${process.env.P_KEY_0xC0F as string}`
     },
     feeTo: {
       default: 0,

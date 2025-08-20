@@ -44,7 +44,7 @@ export default function SimplifiApp() {
 
   // Update current page based on connection state
   React.useEffect(() => {
-      if(!isConnected && connector) connect({connector, chainId});
+    if(!isConnected && connector) connect({connector, chainId});
   }, [isConnected, connector, chainId, connect]);
   
   // Prepare and format read data
@@ -86,32 +86,34 @@ export default function SimplifiApp() {
     let factoryData_ : FactoryData = mockFactoryData;
     let symbol_ : string = 'USD';
     let isVerified_ : boolean = false;
-
+    
     if(data && data[0].status === 'success' && data[0].result !== undefined) {
       symbol_ = data?.[0]?.result as string;
+      setSymbol(symbol_);
     }
     if(data && data[1].status === 'success' && data[1].result !== undefined) {
       factoryData_ = data?.[1]?.result as FactoryData;
+      setFactoryData(factoryData_);
     }
     if(data && data[2].status === 'success' && data[2].result !== undefined) {
       pointData_ = data?.[2]?.result as PointsReturnValue[];
+      setPointData(pointData_);
     }
     if(data && data[3].status === 'success' && data[3].result !== undefined) {
       providers_ = data?.[3]?.result as ProviderResult[];
+      setProviders(providers_);
     }
     if(data && data[4].status === 'success' && data[4].result !== undefined) {
       supportedAssets_ = data?.[4]?.result as SupportedAsset[];
+      setSupportedAssets(supportedAssets_);
     }
     if(data && data[5].status === 'success' && data[5].result !== undefined) {
       isVerified_ = data?.[5]?.result as boolean;
+      setIsVerified(isVerified_);
     }
 
-    setPointData(pointData_);
-    setFactoryData(factoryData_);
-    setProviders(providers_);
-    setSupportedAssets(supportedAssets_);
-    setSymbol(symbol_);
-    setIsVerified(isVerified_);
+    
+    
   }, [data]);
   
 

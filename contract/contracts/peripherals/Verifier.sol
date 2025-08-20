@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import { SelfVerificationRoot } from "../abstract/SelfVerificationRoot.sol";
-import { ISelfVerificationRoot } from "../interfaces/self/ISelfVerificationRoot.sol";
-import { AttestationId } from "../constants/AttestationId.sol";
+import { SelfVerificationRoot } from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
+import { ISelfVerificationRoot } from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
+import { AttestationId } from "@selfxyz/contracts/contracts/constants/AttestationId.sol";
 import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IVerifier } from "../interfaces/IVerifier.sol";
 
-contract Verifier is IVerifier, SelfVerificationRoot, Ownable, ReentrancyGuard {
+contract Verifier is IVerifier, SelfVerificationRoot, Ownable {
     using SafeERC20 for IERC20;
 
     enum Type { UNCLAIM, CLAIMED }
@@ -28,9 +27,6 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable, ReentrancyGuard {
 
     /// @dev User's registered claim. We use this to prevent users from trying to verify twice
     mapping(address => bool) internal verification;
-
-    // Blacklist
-    // mapping(address => bool) internal blacklisted;
 
     modifier whenWalletRequired() {
         require(isWalletVerificationRequired, "Wallet verification required");
@@ -56,17 +52,10 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable, ReentrancyGuard {
         bytes32 destinationChainId,
         bytes32 userIdentifier, 
         bytes memory userDefinedData // Custom data from the qr code configuration
-    ) public view override returns (bytes32) {
+    ) public view override returns (bytes32 _return) {
         // Return your app's configuration ID
-        return configId;
+        _return = configId;
     }
-
-    // /**@dev Return user's verification status
-    //     * @param user : User's account
-    //  */
-    // function getVerificationStatus(address user) public view returns(bool _verification) {
-    //     return verification[user];
-    // }
 
     // Set verification config ID
     function setConfigId(bytes32 _configId) external onlyOwner {
@@ -125,7 +114,7 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable, ReentrancyGuard {
     */
     function customVerificationHook(
         ISelfVerificationRoot.GenericDiscloseOutputV2 memory output,
-        bytes memory userData 
+        bytes memory /** unused-param */ 
     ) internal override {
         address user = address(uint160(output.userIdentifier));
         require(output.userIdentifier > 0, "InvalidUserIdentifier");

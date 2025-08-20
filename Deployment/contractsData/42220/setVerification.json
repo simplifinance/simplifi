@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x08dba25B65FabC98A0f44bd888384Cb545ddD9F2",
+  "contractAddress": "0x5FA880883a4BB7b44ddCb115a09ff86c3d764C61",
   "functionName": "setVerification",
   "inputCount": 1,
   "requireArgUpdate": false,
@@ -45,11 +45,6 @@
         }
       ],
       "name": "OwnableUnauthorizedAccount",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "ReentrancyGuardReentrantCall",
       "type": "error"
     },
     {
@@ -137,27 +132,8 @@
       "outputs": [
         {
           "internalType": "bytes32",
-          "name": "",
+          "name": "_return",
           "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "getVerificationStatus",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "_verification",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",

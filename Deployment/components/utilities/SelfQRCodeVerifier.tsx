@@ -22,11 +22,9 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
             const { contractAddresses } = filterTransactionData({chainId, filter: false});
             const verifier = contractAddresses.Verifier as Address
             // const excludedCountries = [countries.NORTH_KOREA];
-            const excludedCountries : any[] = [];
-            const verificationConfig = {
+             const verificationConfig = {
                 minimumAge: 16,
                 ofac: true,
-                excludedCountries
             }
 
             return {
@@ -46,8 +44,9 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
                     endpoint: verifier,
                     logoBase64: APP_LOGO_URI,
                     userId: account,
-                    endpointType: "staging_celo",
+                    endpointType: chainId === 44787? "staging_celo" : "celo",
                     userIdType: "hex",
+                    devMode: chainId === 44787? true : false,
                     disclosures: {
                        ...verificationConfig,
                     }
