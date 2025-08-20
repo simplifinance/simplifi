@@ -11,7 +11,7 @@ dotconfig();
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const {deployments, getNamedAccounts} = hre;
 	const {deploy, execute, read, getNetworkName } = deployments;
-	let {deployer, baseContributionAsset, identityVerificationHub } = await getNamedAccounts();
+	let {deployer, baseContributionAsset, identityVerificationHub, t1, t2, t3, t4, t5, t6, t7, t8 } = await getNamedAccounts();
 
   console.log("Deployer", deployer)
   const networkName = getNetworkName().toLowerCase() as NetworkName;
@@ -20,13 +20,20 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  // const scopeSeed = 'simplifinance-simplifi';
-  const scopeValue = networkName === 'alfajores'? BigInt('11093060884784780800910785808741096496213751621594761261038373606241471145350') : BigInt('7843523105982238564084219268241903396375716608974682481955384284645198792974');
+  const scopeValue = networkName === 'alfajores'? BigInt('9810156523260249702805794675437158763574963685538935215729215920794175915514') : BigInt('11864921262911609789524129427267932447800086694543882861306386331486914134388');
 	const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
 
   // Minimum Liquidity is $1 for Flexpool and providers
   const minimumLiquidity = parseEther('1');
   const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"].concat([deployer]);
+  const testers = [t1, t2, t3, t4, t5, t6, t7, t8, deployer].map((account, i) => {
+		return{
+			account,
+			// correctAnswerCount: answerCount[i],
+			// selectedCategory: selectedCategories[i],
+			// selectedDifficulty: selectedDifficulties[i]
+		}
+	});
 
   /**
    * Deploy Ownership Manager
