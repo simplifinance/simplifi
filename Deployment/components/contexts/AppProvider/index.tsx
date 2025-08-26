@@ -120,8 +120,6 @@ const config = getDefaultConfig({
     [celoAlfajores.id]: http(),
     [celo.id]: http(),
   },
-  // multiInjectedProviderDiscovery: true,
-  // syncConnectedChain: true
 });
 
 // Light theme configuration for RainbowKit wallet set up

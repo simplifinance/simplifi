@@ -262,14 +262,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     networkName,
     testersSlice,
     units,
-    run: true
+    run: false
   })
 
   await payback({
     networkName,
     testersSlice,
     units,
-    run: false
+    run: true
   });
   
 	const isWalletVerificationRequired = await read('Verifier', 'isWalletVerificationRequired');
