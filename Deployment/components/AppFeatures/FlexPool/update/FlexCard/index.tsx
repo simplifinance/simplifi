@@ -136,7 +136,7 @@ export const FlexCard = (props: ReadDataReturnValue) => {
             <div className={`relative bg-white1 dark:bg-green1 ${endedOrCancelled ? 'opacity-80 dark:opacity-70' : ''} shadow-sm shadow-green1/90 dark:shadow-none dark:border border-green1/30 p-2 md:p-4 rounded-xl space-y-2`}>
                 <h1 className={`${endedOrCancelled? 'block' : 'hidden'} absolute right-2 top-2 text-xs font-semibold text-red-400 `}>ENDED</h1>
                 <h2 className="absolute right-2 md:right-4 top-10 max-w-s text-lg md:text-xl font-black dark:text-orange-200">
-                    {`$${unit.inEther}`}
+                    {`$${unit.inEther} cUSD`}
                 </h2>
                 <button className={`${flexCenter} absolute top-0 left-12 w-fit rounded-full p-2 shadow-sm shadow-green1/90 dark:shadow-orange-300`} onClick={() => showPermissionDetail(1)} >
                     <span className="bg-transparent text-sm">{renderIcon(isPermissionless)}</span>

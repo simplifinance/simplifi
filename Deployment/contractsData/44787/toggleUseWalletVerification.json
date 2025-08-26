@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x58D7e133c9Bb3369D2A34D05DA14Dc76feb2a35d",
+  "contractAddress": "0x2e4b33a482FF9da354E92c49520819211a994ECB",
   "functionName": "toggleUseWalletVerification",
   "inputCount": 0,
   "requireArgUpdate": false,
@@ -45,11 +45,6 @@
         }
       ],
       "name": "OwnableUnauthorizedAccount",
-      "type": "error"
-    },
-    {
-      "inputs": [],
-      "name": "ReentrancyGuardReentrantCall",
       "type": "error"
     },
     {
@@ -137,27 +132,8 @@
       "outputs": [
         {
           "internalType": "bytes32",
-          "name": "",
+          "name": "_return",
           "type": "bytes32"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "getVerificationStatus",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "_verification",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",

@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xFd20cb018d823A9cadBbd77526eE003BEd143877",
+  "contractAddress": "0x1068b259c6dE04aF2436BcE8A16B748b510B172e",
   "functionName": "liquidate",
   "inputCount": 1,
   "requireArgUpdate": false,
