@@ -20,8 +20,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  const scopeValue = networkName === 'alfajores'? BigInt('9810156523260249702805794675437158763574963685538935215729215920794175915514') : BigInt('11864921262911609789524129427267932447800086694543882861306386331486914134388');
-	const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
+  const scopeValue = networkName === 'alfajores'? BigInt('9810156523260249702805794675437158763574963685538935215729215920794175915514') : BigInt('8145347445755816004296864013014738235339958571365699655857522453089954961223');
+	// const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
+	const verificationConfig = '0x7b6436b0c98f62380866d9432c2af0ee08ce16a171bda6951aecd95ee1307d61'; // Accepts all
 
   // Minimum Liquidity is $1 for Flexpool and providers
   const minimumLiquidity = parseEther('1');
@@ -228,25 +229,33 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
-	// await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
-	// await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
+  try {
+    await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
+  } catch (error) {
+    console.log("Error setting configId", error?.data?.message || error?.message || error);
+  }
+  try {
+    await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
+  } catch (error) {
+    console.log("Error setting scope", error?.data?.message || error?.message || error);
+  }
   const units = [parseUnits('0.001', 18), parseUnits('0.0011', 18), parseUnits('0.0012', 18), parseUnits('0.003', 18)];
   const colCoverages = [10, 30, 22, 15];
   const durationInHrs = [4, 12, 5, 24];
   let testersSlice = {from: 0, to: 4}
   const maxQuorums = [2, 3, 2, 2];
 
-  const creators = await createPool({
-    colAsset: wrappedNative.address as Address,
-    colCoverages,
-    durationInHrs,
-    isPermissionless: true,
-    networkName,
-    testersSlice,
-    units,
-    maxQuorums,
-    run: false
-  });
+  // const creators = await createPool({
+  //   colAsset: wrappedNative.address as Address,
+  //   colCoverages,
+  //   durationInHrs,
+  //   isPermissionless: true,
+  //   networkName,
+  //   testersSlice,
+  //   units,
+  //   maxQuorums,
+  //   run: false
+  // });
 
   // console.log("Creators after Created pool", creators);
   // testersSlice = {from: 4, to: 8}
@@ -258,19 +267,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   //   run: true
   // });
 
-  await getFinance({
-    networkName,
-    testersSlice,
-    units,
-    run: false
-  })
+  // await getFinance({
+  //   networkName,
+  //   testersSlice,
+  //   units,
+  //   run: false
+  // })
 
-  await payback({
-    networkName,
-    testersSlice,
-    units,
-    run: true
-  });
+  // await payback({
+  //   networkName,
+  //   testersSlice,
+  //   units,
+  //   run: true
+  // });
   
 	const isWalletVerificationRequired = await read('Verifier', 'isWalletVerificationRequired');
 	const config = await read('Verifier', 'configId');
@@ -280,9 +289,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	console.log("isWalletVerificationRequired", isWalletVerificationRequired);
 	console.log("config", config);
 
+  // await execute("Verifier", {from: deployer}, 'setConfigId', verificationConfig);
+  // await execute("Verifier", {from: deployer}, 'setScope', scopeValue);
   await execute("SafeFactory", {from: deployer}, 'setProviderContract', providers.address);
   const receipt = await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);
   console.log("Confirmation block", receipt.confirmations);
+
+	// const config2 = await read('Verifier', 'configId');
+	// const scope2 = await read('Verifier', 'scope');
+
+	// console.log("scope2", toBigInt(scope2.toString()));
+	// console.log("config2", config2);
   
   // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
   if(networkName !== 'hardhat') {

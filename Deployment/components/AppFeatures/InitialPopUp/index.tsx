@@ -20,6 +20,7 @@ export default function InitialPopUp() {
       footerContent={
         <Button variant={'default'} onClick={handleNavigate} className="w-full">Try AI Assist</Button>
       }
+      description="Get personalized assistance with your financial tasks"
     >
       <MotionDivWrap>
         <Carousel 
