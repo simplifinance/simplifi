@@ -17,20 +17,19 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
     const chainId = useChainId();
     const account = formatAddr(useAccount().address);
 
-    const { verificationConfig, verifier } = React.useMemo(
+    const { verifier } = React.useMemo(
         () => {
             const { contractAddresses } = filterTransactionData({chainId, filter: false});
             const verifier = contractAddresses.Verifier as Address;
-            console.log("verifier", verifier);
+            // console.log("verifier", verifier);
             // const excludedCountries = [countries.NORTH_KOREA];
-             const verificationConfig = {}
+            //  const verificationConfig = {}
             //  const verificationConfig = {
             //     minimumAge: 16,
             //     ofac: true,
             // }
 
             return {
-                verificationConfig,
                 verifier,
             }
         },  
@@ -50,9 +49,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
                     userIdType: "hex",
                     version: 2, 
                     devMode: chainId === 44787? true : false,
-                    disclosures: {
-                       ...verificationConfig,
-                    },
+                    disclosures: {},
                     userDefinedData: 'Hello from Simplifi'
                 }
             ).build();
@@ -62,7 +59,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
         } catch (error) {
             console.error("Failed to initialize Self app:", error);
         }
-    }, [account, verifier, verificationConfig]);
+    }, [account, verifier]);
 
     const displayToast = (message: string) => {
         setToastMessage(message);

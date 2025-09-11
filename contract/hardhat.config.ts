@@ -72,7 +72,7 @@ const config: HardhatUserConfig = {
       default: 0,
       4157: `privatekey://${PRIVATE_KEY}`,
       4158: `privatekey://${PRIVATE_KEY}`,
-      44787: `privatekey://${PRIVATE_KEY}`,
+      44787: `privatekey://${process.env.P_KEY_0xC0F as string}`,
       42220: `privatekey://${PRIVATE_KEY_MAIN}`,
     },
     t1: {

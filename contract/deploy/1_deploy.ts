@@ -20,7 +20,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  const scopeValue = networkName === 'alfajores'? BigInt('9810156523260249702805794675437158763574963685538935215729215920794175915514') : BigInt('8145347445755816004296864013014738235339958571365699655857522453089954961223');
+  const scopeValue = networkName === 'alfajores'? BigInt('17746767250607118150784203236941562361409034855931639607627369812460571281429') : BigInt('8145347445755816004296864013014738235339958571365699655857522453089954961223');
 	// const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
 	const verificationConfig = '0x7b6436b0c98f62380866d9432c2af0ee08ce16a171bda6951aecd95ee1307d61'; // Accepts all
 
