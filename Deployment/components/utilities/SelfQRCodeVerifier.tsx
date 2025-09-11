@@ -20,12 +20,14 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
     const { verificationConfig, verifier } = React.useMemo(
         () => {
             const { contractAddresses } = filterTransactionData({chainId, filter: false});
-            const verifier = contractAddresses.Verifier as Address
+            const verifier = contractAddresses.Verifier as Address;
+            console.log("verifier", verifier);
             // const excludedCountries = [countries.NORTH_KOREA];
-             const verificationConfig = {
-                minimumAge: 16,
-                ofac: true,
-            }
+             const verificationConfig = {}
+            //  const verificationConfig = {
+            //     minimumAge: 16,
+            //     ofac: true,
+            // }
 
             return {
                 verificationConfig,
@@ -41,15 +43,17 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
             const app = new SelfAppBuilder({
                     appName: APP_NAME,
                     scope: process.env.NEXT_PUBLIC_SCOPE as string,
-                    endpoint: verifier,
+                    endpoint: verifier as string,
                     logoBase64: APP_LOGO_URI,
                     userId: account,
                     endpointType: chainId === 44787? "staging_celo" : "celo",
                     userIdType: "hex",
+                    version: 2, 
                     devMode: chainId === 44787? true : false,
                     disclosures: {
                        ...verificationConfig,
-                    }
+                    },
+                    userDefinedData: 'Hello from Simplifi'
                 }
             ).build();
 
