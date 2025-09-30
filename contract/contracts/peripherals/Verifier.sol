@@ -1,29 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import { SelfVerificationRoot } from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
-import { ISelfVerificationRoot } from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
-import { AttestationId } from "@selfxyz/contracts/contracts/constants/AttestationId.sol";
-import { IERC20, SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { IVerifier } from "../interfaces/IVerifier.sol";
+import { SelfVerificationRoot } from "@selfxyz/contracts/contracts/abstract/SelfVerificationRoot.sol";
+import { ISelfVerificationRoot } from "@selfxyz/contracts/contracts/interfaces/ISelfVerificationRoot.sol";
+import { SelfStructs } from "@selfxyz/contracts/contracts/libraries/SelfStructs.sol";
+import { IIdentityVerificationHubV2 } from "@selfxyz/contracts/contracts/interfaces/IIdentityVerificationHubV2.sol";
+import { SelfUtils } from "@selfxyz/contracts/contracts/libraries/SelfUtils.sol";
 
 contract Verifier is IVerifier, SelfVerificationRoot, Ownable {
-    using SafeERC20 for IERC20;
-
-    enum Type { UNCLAIM, CLAIMED }
-
-    // Errors
-    error NativeClaimUnsuccessful();
-
     // Events
     event UserIdentifierVerified(address indexed registeredUserIdentifier);
 
     /// @notice Verification config ID for identity verification
-    bytes32 public configId;
+    // bytes32 public configId;
 
     ///@notice When this flag is turned off, user will need no verification to claim reward
     bool public isWalletVerificationRequired; // default is true in the constructor, meaning user must verify before claiming
+
+    SelfStructs.VerificationConfigV2 public verificationConfig;
+
+    bytes32 public verificationConfigId;
 
     /// @dev User's registered claim. We use this to prevent users from trying to verify twice
     mapping(address => bool) internal verification;
@@ -35,41 +33,70 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable {
 
     /**
      * @dev Constructor
-     * @param identityVerificationHubAddress : Hub verification address
      * @notice We set the scope to zero value hoping to set the real value immediately after deployment. This saves 
      * us the headache of generating the contract address ahead of time 
      */
-    constructor(address identityVerificationHubAddress)
+    constructor(
+        address hubV2, 
+        string memory scopeSeed,
+        bool ofacEnabled,
+        uint8 olderThan,
+        string[] memory forbiddenCountries
+    )
         Ownable(_msgSender())
-        SelfVerificationRoot(identityVerificationHubAddress, 0)
+        SelfVerificationRoot(hubV2, scopeSeed)
     {
         isWalletVerificationRequired = true; 
+        verificationConfig = SelfUtils.formatVerificationConfigV2(
+            _generateRawVerificationConfig(
+                olderThan,
+                forbiddenCountries,
+                ofacEnabled
+            )
+        );
+        verificationConfigId = IIdentityVerificationHubV2(hubV2).setVerificationConfigV2(verificationConfig);
     }
 
     // receive() external payable {}
 
     function getConfigId(
-        bytes32 destinationChainId,
-        bytes32 userIdentifier, 
-        bytes memory userDefinedData // Custom data from the qr code configuration
-    ) public view override returns (bytes32 _return) {
+        bytes32 /**unused-param */,
+        bytes32 /**unused-param */, 
+        bytes memory /**unused-param */
+    ) public view override returns (bytes32) {
         // Return your app's configuration ID
-        _return = configId;
+        return verificationConfigId;
     }
 
-    // Set verification config ID
-    function setConfigId(bytes32 _configId) external onlyOwner {
-        configId = _configId;
+    function _generateRawVerificationConfig(
+        uint8 olderThan,
+        string[] memory forbiddenCountries,
+        bool ofacEnabled
+    ) internal pure returns(SelfUtils.UnformattedVerificationConfigV2 memory rawConfig) {
+        // string[] memory forbiddenCountries = new string[](4);
+        // forbiddenCountries[0] = CountryCodes.UNITED_STATES;
+        rawConfig = SelfUtils.UnformattedVerificationConfigV2({
+            olderThan: olderThan,
+            forbiddenCountries: forbiddenCountries,
+            ofacEnabled: ofacEnabled
+        });
     }
 
-    /**
-     * @notice Updates the scope used for verification.
-     * @dev Only callable by the contract owner.
-     * @param newScope The new scope to set.
-     */
-    function setScope(uint256 newScope) external onlyOwner {
-        _setScope(newScope);
-    }
+    // // Set verification config ID
+    // function setConfigId(bytes32 _configId) external onlyOwner returns(bool) {
+    //     configId = _configId;
+    //     return true;
+    // }
+
+    // /**
+    //  * @notice Updates the scope used for verification.
+    //  * @dev Only callable by the contract owner.
+    //  * @param newScope The new scope to set.
+    //  */
+    // function setScope(uint256 newScope) external onlyOwner returns(bool) {
+    //     _setScope(newScope);
+    //     return true;
+    // }
     
     /**
      * @dev Verify and register users for unclaim rewards. 
@@ -102,7 +129,7 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable {
      * @notice Should be called only by the approved account provided the parsed user had subscribed to the campaign already.
      * Must not be using Self verification.
      */
-    function setVerification(address user) external whenWalletRequired onlyOwner returns(bool) {
+    function setVerificationByOwner(address user) external whenWalletRequired onlyOwner returns(bool) {
         _setVerification(user);
         return true;
     }
@@ -117,13 +144,7 @@ contract Verifier is IVerifier, SelfVerificationRoot, Ownable {
         bytes memory /** unused-param */ 
     ) internal override {
         address user = address(uint160(output.userIdentifier));
-        // require(output.userIdentifier > 0, "InvalidUserIdentifier");
-        // require(output.olderThan >= 16, "You should be at least 16 yrs");
-        // bool[3] memory ofacs = output.ofac;
-        // for(uint8 i = 0; i < ofacs.length; i++) {
-        //     require(ofacs[i], "Sanction individual");
-        // }
- 
+        require(output.userIdentifier > 0, "InvalidUserIdentifier");
         _setVerification(user);
 
         emit UserIdentifierVerified(user);
