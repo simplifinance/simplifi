@@ -110,8 +110,7 @@ export const filterAbi = (abi: any[], functionName: FunctionName) => {
 export function filterTransactionData({chainId, filter, functionNames, callback}: FilterTransactionDataProps) {
   const { approvedFunctions, chainIds, contractAddresses } = globalContractData;
   let transactionData : TransactionData[] = [];
-  const index = chainIds.indexOf(chainId || chainIds[0]);
-  const isCelo = chainId === chainIds[0];
+  const index = chainIds.indexOf(chainId || 42220);
   if(filter) {
     assert(functionNames !== undefined, "FunctionNames not provided");
     functionNames.forEach((functionName) => {
@@ -120,7 +119,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
         callback?.({errorMessage});
         throw new Error(errorMessage);
       }
-      const data = getStepData(functionName, chainId);
+      const data = getStepData(functionName);
       transactionData.push(data);
     })
   }
@@ -129,7 +128,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
     transactionData,
     approvedFunctions,
     contractAddresses: contractAddresses[index],
-    isCelo  
+    isCelo : true
   }
 }
 

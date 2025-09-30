@@ -37,20 +37,12 @@
     "getDeposit"
   ],
   "chainName": {
-    "4157": "crossstestnet",
-    "4158": "crossmainnet",
-    "42220": "celo",
-    "44787": "alfajores"
+    "42220": "celo"
   },
   "chainIds": [
-    44787,
-    4157,
-    42220,
-    4158
+    42220
   ],
   "paths": {
-    "4157": [],
-    "4158": [],
     "42220": [
       "deployments\\celo\\Attorney.json",
       "deployments\\celo\\BaseAsset.json",
@@ -68,31 +60,11 @@
       "deployments\\celo\\TokenDistributor.json",
       "deployments\\celo\\Verifier.json",
       "deployments\\celo\\WrappedNative.json"
-    ],
-    "44787": [
-      "deployments\\alfajores\\Attorney.json",
-      "deployments\\alfajores\\BaseAsset.json",
-      "deployments\\alfajores\\Escape.json",
-      "deployments\\alfajores\\Reserve.json",
-      "deployments\\alfajores\\RoleManager.json",
-      "deployments\\alfajores\\TokenDistributor.json",
-      "deployments\\alfajores\\Verifier.json"
     ]
   },
   "contractAddresses": [
     {
       "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
-      "Attorney": "0x82E519c6eeD81014b3504FEf394bAcC03cD3728b",
-      "BaseAsset": "0xD4E44594664e012C41fd7FEF89c9AD766FE56426",
-      "Escape": "0xc7eB2f8065EB8b906ba91ec0FC00Db0AbB9411B2",
-      "Reserve": "0xB675D7Aa0AF1B826Bbf9886Db651d915EbD97236",
-      "Verifier": "0xa51f0822b0691FE50EE667832489710fD2B99Ed7"
-    },
-    {
-      "stablecoin": "0x0000000000000000000000000000000000000000"
-    },
-    {
-      "stablecoin": "0x765de816845861e75a25fca122bb6898b8b1282a",
       "Attorney": "0xB9Ea42657F41fabD8166991A308C5C8FA565B0e1",
       "BaseAsset": "0x39f21F3268F6A40F90ED152e22a77174B1C1f9B5",
       "CeloBased": "0x4644898249a2af140847A979E9C8dbC18713DC8f",
@@ -105,9 +77,6 @@
       "SupportedAssetManager": "0xD225c72Ee0afff289F73FEF445e27Cc6Fc48f852",
       "Verifier": "0x27df871f36503ba22F2aebf57096ad5dE6fC3bDd",
       "WrappedNative": "0xcBaE0Ef7Fe8128b1462217AF3b77dBa92dBe5798"
-    },
-    {
-      "stablecoin": "0x0000000000000000000000000000000000000000"
     }
   ]
 }

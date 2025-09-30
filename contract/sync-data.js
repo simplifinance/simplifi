@@ -11,13 +11,10 @@ const GLOBAL_OUTPUT_PATH = '../Deployment/contractsData/global.json';
 const approvedFunctions = ['createPool', 'getFinance', 'deposit', 'payback', 'liquidate', 'deposits', 'closePool', 'contribute', 'registerToEarnPoints', 'provideLiquidity', 'removeLiquidity', 'borrow', 'claimTestTokens', 'setBaseToken', 'setCollateralToken', 'panicUnlock', 'unlockToken', 'lockToken', 'transferFrom', 'approve', 'getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData', 'setVerification', 'toggleUseWalletVerification', 'isVerified', 'getDeposit'];
 const readFunctions = ['getCollateralQuote', 'getCurrentDebt', 'allowance', 'balanceOf', 'getProviders', 'symbol', 'getFactoryData', 'getPoolRecord', 'getPoints', 'getSupportedAssets', 'getPoolData', 'isVerified', 'getDeposit'];
 const functionsRequireArgUpdate = ['transferFrom', 'approve', 'deposit'];
-const chainName = {44787: 'alfajores', 4157: 'crossstestnet', 42220: 'celo', 4158: 'crossmainnet'};
-const chainIds = [44787, 4157, 42220, 4158]
+const chainName = {42220: 'celo'};
+const chainIds = [42220]
 let workBuild = {
-    44787: [],
     42220: [],
-    4157:[],
-    4158: []
 };
 
 let globalOutput = {
@@ -25,7 +22,7 @@ let globalOutput = {
     chainName: chainName,
     chainIds: chainIds,
     paths: workBuild,
-    contractAddresses: [{"stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"}, {"stablecoin": zeroAddress}, {stablecoin: "0x765de816845861e75a25fca122bb6898b8b1282a"}, {stablecoin: zeroAddress}],
+    contractAddresses: [{stablecoin: "0x765de816845861e75a25fca122bb6898b8b1282a"}],
 };
 
 let itemOutput = {
