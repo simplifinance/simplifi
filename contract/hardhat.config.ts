@@ -146,6 +146,7 @@ const config: HardhatUserConfig = {
     identityVerificationHub: {
       default: 2,
       44787: '0x68c931C9a534D37aa78094877F46fE46a49F1A51',
+      11142220: '0x16ECBA51e18a4a7e61fdC417f0d47AFEeDfbed74',
       42220: '0xe57F4773bd9c9d8b6Cd70431117d353298B9f5BF'
     },
   },
@@ -157,7 +158,7 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
-      evmVersion: 'constantinople',
+      evmVersion: 'paris',
       // viaIR: true
       }
     },

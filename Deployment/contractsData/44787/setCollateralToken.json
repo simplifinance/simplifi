@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0xC5e0e53bAAd9aD6EF301ec7b90fc6672930bFFE9",
+  "contractAddress": "0xB036765CdF605A2100579Dd71596208EcF673a8C",
   "functionName": "setCollateralToken",
   "inputCount": 1,
   "requireArgUpdate": false,

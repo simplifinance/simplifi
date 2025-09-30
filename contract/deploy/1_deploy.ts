@@ -15,33 +15,46 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log("Deployer", deployer)
   const networkName = getNetworkName().toLowerCase() as NetworkName;
+  const SCOPE_SEED = process.env.SCOPE_SEED as string;
+  const olderThan = 16;
+  const ofacEnabled = true;
+  const forbiddenCountries = ['IRN', 'PRK', 'RUS', 'SYR'];
+  console.log("SCOPE_SEED", SCOPE_SEED); 
+  console.log("Network Name", networkName); 
+
   const serviceRate = 10; // 0.1%
   const FEE = parseEther('10');
   const baseAmount = parseEther('1000');
   const collacteralAmount = parseEther('3000');
   const amountToFaucet = parseEther('3000000');
-  const scopeValue = networkName === 'alfajores'? BigInt('17746767250607118150784203236941562361409034855931639607627369812460571281429') : BigInt('8145347445755816004296864013014738235339958571365699655857522453089954961223');
+  // const scopeValue = networkName === 'alfajores'? BigInt('9489076225082743761492848192696600610016373137223142740034652208492472269404') : BigInt('8145347445755816004296864013014738235339958571365699655857522453089954961223');
 	// const verificationConfig = '0x8475d3180fa163aec47620bfc9cd0ac2be55b82f4c149186a34f64371577ea58'; // Accepts all countries. Filtered individuals from the list of sanctioned countries using ofac1, 2, and 3
-	const verificationConfig = '0x7b6436b0c98f62380866d9432c2af0ee08ce16a171bda6951aecd95ee1307d61'; // Accepts all
+	// const verificationConfig = '0x7b6436b0c98f62380866d9432c2af0ee08ce16a171bda6951aecd95ee1307d61'; // Accepts all
 
   // Minimum Liquidity is $1 for Flexpool and providers
   const minimumLiquidity = parseEther('1');
   const signers = ["0x16101742676EC066090da2cCf7e7380f917F9f0D", "0x85AbBd0605F9C725a1af6CA4Fb1fD4dC14dBD669", "0xef55Bc253297392F1a2295f5cE2478F401368c27"].concat([deployer]);
-  const testers = [t1, t2, t3, t4, t5, t6, t7, t8, deployer].map((account, i) => {
-		return{
-			account,
-			// correctAnswerCount: answerCount[i],
-			// selectedCategory: selectedCategories[i],
-			// selectedDifficulty: selectedDifficulties[i]
-		}
-	});
+  // const testers = [t1, t2, t3, t4, t5, t6, t7, t8, deployer].map((account, i) => {
+	// 	return{
+	// 		account,
+	// 		// correctAnswerCount: answerCount[i],
+	// 		// selectedCategory: selectedCategories[i],
+	// 		// selectedDifficulty: selectedDifficulties[i]
+	// 	}
+	// });
 
   /**
    * Deploy Ownership Manager
    */
     const verifier = await deploy("Verifier", {
       from: deployer,
-      args: [identityVerificationHub],
+      args: [
+        identityVerificationHub,
+        SCOPE_SEED,
+        ofacEnabled,
+        olderThan,
+        forbiddenCountries
+      ],
       log: true,
     });
     console.log(`Verifier deployed to: ${verifier.address}`);
@@ -229,16 +242,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   console.log(`Providers deployed to: ${providers.address}`);
 
-  try {
-    await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
-  } catch (error) {
-    console.log("Error setting configId", error?.data?.message || error?.message || error);
-  }
-  try {
-    await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
-  } catch (error) {
-    console.log("Error setting scope", error?.data?.message || error?.message || error);
-  }
+  // try {
+  //   await execute('Verifier', {from: deployer}, 'setConfigId', verificationConfig);
+  // } catch (error) {
+  //   console.log("Error setting configId", error?.data?.message || error?.message || error);
+  // }
+  // try {
+  //   await execute('Verifier', {from: deployer}, 'setScope', scopeValue);
+  // } catch (error) {
+  //   console.log("Error setting scope", error?.data?.message || error?.message || error);
+  // }
   const units = [parseUnits('0.001', 18), parseUnits('0.0011', 18), parseUnits('0.0012', 18), parseUnits('0.003', 18)];
   const colCoverages = [10, 30, 22, 15];
   const durationInHrs = [4, 12, 5, 24];
@@ -282,18 +295,27 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // });
   
 	const isWalletVerificationRequired = await read('Verifier', 'isWalletVerificationRequired');
-	const config = await read('Verifier', 'configId');
+	const config = await read('Verifier', 'verificationConfig');
+	const configId = await read('Verifier', 'verificationConfigId');
 	const scope = await read('Verifier', 'scope');
 
 	console.log("scope", toBigInt(scope.toString()));
 	console.log("isWalletVerificationRequired", isWalletVerificationRequired);
 	console.log("config", config);
+	console.log("configID", configId);
 
-  // await execute("Verifier", {from: deployer}, 'setConfigId', verificationConfig);
-  // await execute("Verifier", {from: deployer}, 'setScope', scopeValue);
-  await execute("SafeFactory", {from: deployer}, 'setProviderContract', providers.address);
-  const receipt = await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);
-  console.log("Confirmation block", receipt.confirmations);
+  try {
+    await execute("RoleManager", {from: deployer}, "setRole", [factory.address, roleManager.address, deployer, safeFactory.address, supportAssetManger.address, distributor.address, providers.address, stateManager.address]);
+  } catch (error) {
+    console.log("Error setting role", error?.data?.message || error?.message || error);
+  }
+
+  try {
+    await execute("SafeFactory", {from: deployer}, 'setProviderContract', providers.address);
+  } catch (error) {
+    console.log("Error setting provider contract", error?.data?.message || error?.message || error);
+  }
+
 
 	// const config2 = await read('Verifier', 'configId');
 	// const scope2 = await read('Verifier', 'scope');
@@ -302,12 +324,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 	// console.log("config2", config2);
   
   // Every supported collateral assets on the Celo network has a corresponding mapped oracle address on the Chainlink network
-  if(networkName !== 'hardhat') {
-    const result = await read(flexpool, {from: deployer}, "getPriceData", wrappedNative.address);
-    console.log("Quote", result?.any.toString() || result?.[3].toString());
-  } else {
-    await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
-  }
+  // if(networkName !== 'hardhat') {
+  //   const result = await read(flexpool, {from: deployer}, "getPriceData", wrappedNative.address);
+  //   console.log("Quote", result?.any.toString() || result?.[3].toString());
+  // } else {
+  //   await execute("BaseAsset", {from: deployer}, "transfer", faucet.address, amountToFaucet);
+  // }
 };
 
 export default func;

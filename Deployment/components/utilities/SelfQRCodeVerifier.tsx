@@ -21,14 +21,6 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
         () => {
             const { contractAddresses } = filterTransactionData({chainId, filter: false});
             const verifier = contractAddresses.Verifier as Address;
-            // console.log("verifier", verifier);
-            // const excludedCountries = [countries.NORTH_KOREA];
-            //  const verificationConfig = {}
-            //  const verificationConfig = {
-            //     minimumAge: 16,
-            //     ofac: true,
-            // }
-
             return {
                 verifier,
             }
@@ -42,15 +34,19 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
             const app = new SelfAppBuilder({
                     appName: APP_NAME,
                     scope: process.env.NEXT_PUBLIC_SCOPE as string,
-                    endpoint: verifier as string,
+                    endpoint: verifier.toLowerCase() as string,
                     logoBase64: APP_LOGO_URI,
                     userId: account,
                     endpointType: chainId === 44787? "staging_celo" : "celo",
                     userIdType: "hex",
                     version: 2, 
                     devMode: chainId === 44787? true : false,
-                    disclosures: {},
-                    userDefinedData: 'Hello from Simplifi'
+                    userDefinedData: 'Hello from Simplifi',
+                    disclosures: {
+                        minimumAge: 16,
+                        ofac: true,
+                        excludedCountries: ["IRN", "PRK", "RUS", "SYR"],
+                    }
                 }
             ).build();
 

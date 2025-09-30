@@ -72,55 +72,39 @@
     "44787": [
       "deployments\\alfajores\\Attorney.json",
       "deployments\\alfajores\\BaseAsset.json",
-      "deployments\\alfajores\\CeloBased.json",
       "deployments\\alfajores\\Escape.json",
-      "deployments\\alfajores\\Faucet.json",
-      "deployments\\alfajores\\Points.json",
-      "deployments\\alfajores\\Providers.json",
       "deployments\\alfajores\\Reserve.json",
       "deployments\\alfajores\\RoleManager.json",
-      "deployments\\alfajores\\SafeFactory.json",
-      "deployments\\alfajores\\SimpliToken.json",
-      "deployments\\alfajores\\StateManager.json",
-      "deployments\\alfajores\\SupportedAssetManager.json",
       "deployments\\alfajores\\TokenDistributor.json",
-      "deployments\\alfajores\\Verifier.json",
-      "deployments\\alfajores\\WrappedNative.json"
+      "deployments\\alfajores\\Verifier.json"
     ]
   },
   "contractAddresses": [
     {
       "stablecoin": "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1",
-      "Attorney": "0xa40C5E8c5Ee1454D3d4cFe9d3d2F95daF7859A9C",
-      "BaseAsset": "0x91a9d26423C58A0E16a05bB0497de8847846943F",
-      "CeloBased": "0x1068b259c6dE04aF2436BcE8A16B748b510B172e",
-      "Escape": "0xC23ce12c06e40152514e8860643f4AA9526ddE31",
-      "Faucet": "0xC5e0e53bAAd9aD6EF301ec7b90fc6672930bFFE9",
-      "Points": "0xe312868221076fDA78125BE58ef8D5ae944DCF52",
-      "Providers": "0x83B59ef0888D8B8C48b71dc53A091241703BC671",
-      "Reserve": "0xe6D9B82B865bd1a2f2B6dbBa0A51e7E99bBd34f0",
-      "SimpliToken": "0x694FFCf43C982800036BFb80B8c2E5f88c8D6CD3",
-      "SupportedAssetManager": "0xa9F54396f02633333c5b354bC08d62D1347F7788",
-      "Verifier": "0x2e4b33a482FF9da354E92c49520819211a994ECB",
-      "WrappedNative": "0x98d3a3E46630cB7b2803C6bC736b693c6c21e5B6"
+      "Attorney": "0x82E519c6eeD81014b3504FEf394bAcC03cD3728b",
+      "BaseAsset": "0xD4E44594664e012C41fd7FEF89c9AD766FE56426",
+      "Escape": "0xc7eB2f8065EB8b906ba91ec0FC00Db0AbB9411B2",
+      "Reserve": "0xB675D7Aa0AF1B826Bbf9886Db651d915EbD97236",
+      "Verifier": "0xa51f0822b0691FE50EE667832489710fD2B99Ed7"
     },
     {
       "stablecoin": "0x0000000000000000000000000000000000000000"
     },
     {
       "stablecoin": "0x765de816845861e75a25fca122bb6898b8b1282a",
-      "Attorney": "0x4d46f73d8Ef45bD028B00713655E6816a6043254",
-      "BaseAsset": "0x494227a12a14b2cc9D4dF748cEe54a13b7B87966",
-      "CeloBased": "0x11ca7ac043dfc6adf637890e68a144e18a82fe1a",
-      "Escape": "0x27Fa62cc77522b937ca98684cb23870e3d4874A1",
-      "Faucet": "0xc6a243986DD80721965C66C32586E749A6Be8Db8",
-      "Points": "0xFbEfB3098f698745e7d53814298f9dAE51D284A3",
-      "Providers": "0x38171e46b2f923371e31F5615781BA97c9891915",
-      "Reserve": "0xEa24bFE70bec3317029db20bE5981748AD2C198E",
-      "SimpliToken": "0x6C48F0335BDF9191f57d4B5cCD09AC7447040D33",
-      "SupportedAssetManager": "0x4D5A25F7D3d8F487ad1b5c57745AfD024bA5b311",
-      "Verifier": "0x88dD6fd42B2b9581DE9d43B1AeB8cF09E67E34ef",
-      "WrappedNative": "0x8B247cE6A56e39E6C4b7090e68aA07b13C1ee0B8"
+      "Attorney": "0xB9Ea42657F41fabD8166991A308C5C8FA565B0e1",
+      "BaseAsset": "0x39f21F3268F6A40F90ED152e22a77174B1C1f9B5",
+      "CeloBased": "0x4644898249a2af140847A979E9C8dbC18713DC8f",
+      "Escape": "0x30bbc7eCf6878FA09fbf3217192a7A454340DCE5",
+      "Faucet": "0xD34588B9889BB7C50c5ff2b6638d007938633d2A",
+      "Points": "0xc8E4Dc6Ac90C38a576d76D636d3166596F33025e",
+      "Providers": "0x7Bbc469cf2faeD30905a9Ef2D140E64e4dFF70B0",
+      "Reserve": "0xb52e0BcBD3AF3253A1e40BeACA3077ABecB4F3EF",
+      "SimpliToken": "0x1549e512865e12ff2c8905cc2CCEe581e4bB9142",
+      "SupportedAssetManager": "0xD225c72Ee0afff289F73FEF445e27Cc6Fc48f852",
+      "Verifier": "0x27df871f36503ba22F2aebf57096ad5dE6fC3bDd",
+      "WrappedNative": "0xcBaE0Ef7Fe8128b1462217AF3b77dBa92dBe5798"
     },
     {
       "stablecoin": "0x0000000000000000000000000000000000000000"

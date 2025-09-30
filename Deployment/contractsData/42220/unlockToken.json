@@ -1,5 +1,5 @@
 {
-  "contractAddress": "0x6C48F0335BDF9191f57d4B5cCD09AC7447040D33",
+  "contractAddress": "0x1549e512865e12ff2c8905cc2CCEe581e4bB9142",
   "functionName": "unlockToken",
   "inputCount": 1,
   "requireArgUpdate": false,
