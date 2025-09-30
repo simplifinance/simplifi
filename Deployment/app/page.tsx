@@ -59,7 +59,7 @@ export default function SimplifiApp() {
     return td.transactionData.map(({abi, contractAddress, functionName}) => {
       return {
         abi,
-        address: functionName === 'symbol'? formatAddr(td.contractAddresses.WrappedNative) : formatAddr(contractAddress),
+        address: functionName === 'symbol'? formatAddr(td.contractAddresses?.WrappedNative) : formatAddr(contractAddress),
         args: functionName === 'isVerified'? [account] : [],
         functionName
       }

@@ -6,7 +6,7 @@ import { getDefaultConfig, RainbowKitProvider, lightTheme } from "@rainbow-me/ra
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { str } from "@/utilities";
 // import { Chain } from "viem";
-import { celoAlfajores, celo } from 'wagmi/chains';
+import { celo } from 'wagmi/chains';
 
 // Your walletconnect project Id
 const projectId = str(process.env.NEXT_PUBLIC_PROJECT_ID);
@@ -111,13 +111,12 @@ const config = getDefaultConfig({
   appIcon: '/favicon-32x32.png',
   appDescription: 'A decentralized p2p, DeFi protocol',
   appUrl: 'https://testnet.simplifinance.xyz',
-  chains: [ celoAlfajores, celo ],
+  chains: [ celo ],
   ssr: true,
   multiInjectedProviderDiscovery: true,
   pollingInterval: 10_000,
   syncConnectedChain: true,
   transports: {
-    [celoAlfajores.id]: http(),
     [celo.id]: http(),
   },
 });
@@ -143,6 +142,7 @@ export default function AppProvider({children} : {children: React.ReactNode}) {
             modalSize="compact" 
             theme={theme} 
             showRecentTransactions={true}
+            initialChain={celo.id}
             appInfo={{
               appName: "Simplifinance",
               learnMoreUrl: 'https://testnet.simplifinance.xyz'

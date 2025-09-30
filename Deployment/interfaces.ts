@@ -502,7 +502,7 @@ export const emptyMockPoint : Point = {
 }
 
 const mockAsset : SupportedAsset = {
-  id: filterTransactionData({chainId: 44787, filter: false,}).contractAddresses.SimpliToken as Address,
+  id: filterTransactionData({chainId: 42220, filter: false,}).contractAddresses.SimpliToken as Address,
   name: "Simplfinance Token",
   symbol: "TSFT"
 }

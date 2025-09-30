@@ -12,7 +12,7 @@ export default function SignUpForRewards({disabled, toggleDrawer, openDrawer, op
     const { chainId } = useAccount();
     const { callback } = useAppStorage();
 
-    const { contractAddresses: ca, transactionData: td, pointsContract } = React.useMemo(() => {
+    const { transactionData: td, pointsContract } = React.useMemo(() => {
         const filtered = filterTransactionData({
             chainId,
             filter: true,
