@@ -64,7 +64,7 @@ export default function SimplifiApp() {
         functionName
       }
     });
-  }, [chainId, account]);
+  }, [chainId, account, callback]);
 
   // Fetch the data ahead
   const { refetch, data, isPending } = useReadContracts({

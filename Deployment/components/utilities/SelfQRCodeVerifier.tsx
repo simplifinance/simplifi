@@ -55,7 +55,7 @@ export default function SelfQRCodeVerifier({ toggleDrawer, back } : {toggleDrawe
         } catch (error) {
             console.error("Failed to initialize Self app:", error);
         }
-    }, [account, verifier]);
+    }, [account, verifier, chainId]);
 
     const displayToast = (message: string) => {
         setToastMessage(message);
