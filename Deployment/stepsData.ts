@@ -36,7 +36,7 @@ import setVerification42220 from "@/contractsData/42220/setVerification.json";
 // Global data import
 import globalData from "@/contractsData/global.json";
 
-const { chainIds, approvedFunctions } = globalData;
+const { approvedFunctions } = globalData;
 
 const steps = [
     [

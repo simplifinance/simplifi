@@ -107,10 +107,9 @@ export const filterAbi = (abi: any[], functionName: FunctionName) => {
  * @param param0 : Parameters
  * @returns object containing array of transaction data and approved functions
  */
-export function filterTransactionData({chainId, filter, functionNames, callback}: FilterTransactionDataProps) {
-  const { approvedFunctions, chainIds, contractAddresses } = globalContractData;
+export function filterTransactionData({filter, functionNames, callback}: FilterTransactionDataProps) {
+  const { approvedFunctions, contractAddresses } = globalContractData;
   let transactionData : TransactionData[] = [];
-  const index = chainIds.indexOf(chainId || 42220);
   if(filter) {
     assert(functionNames !== undefined, "FunctionNames not provided");
     functionNames.forEach((functionName) => {
@@ -127,7 +126,7 @@ export function filterTransactionData({chainId, filter, functionNames, callback}
   return {
     transactionData,
     approvedFunctions,
-    contractAddresses: contractAddresses[index],
+    contractAddresses: contractAddresses[0],
     isCelo : true
   }
 }
